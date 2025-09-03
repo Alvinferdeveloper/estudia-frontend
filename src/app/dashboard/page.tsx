@@ -45,7 +45,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
