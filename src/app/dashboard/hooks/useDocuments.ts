@@ -30,6 +30,10 @@ const uploadDocument = async (formData: FormData): Promise<Document> => {
   return data;
 };
 
+const deleteDocument = async (documentId: string): Promise<void> => {
+  await axios.delete(`http://localhost:3001/documents/${documentId}`, { withCredentials: true });
+};
+
 export const useDocuments = (topicId?: string) => {
   const queryClient = useQueryClient();
 
@@ -46,11 +50,21 @@ export const useDocuments = (topicId?: string) => {
     }
   });
 
+  const deleteMutation = useMutation<void, Error, string>({
+    mutationFn: deleteDocument,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents', topicId] });
+      queryClient.invalidateQueries({ queryKey: ['topics'] });
+    }
+  });
+
   return {
     documents,
     isLoading,
     isError,
     uploadDocument: uploadMutation.mutate,
     isUploading: uploadMutation.isPending,
+    deleteDocument: deleteMutation.mutate,
   };
 };
+

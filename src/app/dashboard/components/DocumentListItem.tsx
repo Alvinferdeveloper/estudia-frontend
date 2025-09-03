@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileText, MoreHorizontal, Download, Eye, Trash2 } from "lucide-react";
+import { FileText, MoreHorizontal, Download, Eye } from "lucide-react";
 import { Document } from "../hooks/useDocuments";
 import { Topic } from "../hooks/useTopics";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface DocumentListItemProps {
   doc: Document;
   topic: Topic | undefined;
+  deleteDocument: (documentId: string) => void;
 }
 
-export const DocumentListItem: React.FC<DocumentListItemProps> = ({ doc, topic }) => {
+export const DocumentListItem: React.FC<DocumentListItemProps> = ({ doc, topic, deleteDocument }) => {
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-4">
@@ -68,9 +70,8 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({ doc, topic }
               Download
             </a>
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

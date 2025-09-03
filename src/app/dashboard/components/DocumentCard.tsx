@@ -2,16 +2,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileText, MoreHorizontal, Download, Eye, Trash2 } from "lucide-react";
+import { FileText, MoreHorizontal, Download, Eye } from "lucide-react";
 import { Document } from "../hooks/useDocuments";
 import { Topic } from "../hooks/useTopics";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface DocumentCardProps {
   doc: Document;
   topic: Topic | undefined;
+  deleteDocument: (documentId: string) => void;
 }
 
-export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic }) => {
+export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic, deleteDocument }) => {
   return (
     <Card className="hover:shadow-md transition-shadow cursor-pointer group">
       <CardContent className="p-4">
@@ -53,9 +55,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic }) => {
                   Download
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

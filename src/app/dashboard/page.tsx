@@ -29,7 +29,7 @@ const DashboardPage = () => {
   }, [router]);
 
   const { topics } = useTopics();
-  const { documents, uploadDocument, isUploading } = useDocuments(selectedTopic?.id);
+  const { documents, uploadDocument, isUploading, deleteDocument } = useDocuments(selectedTopic?.id);
 
   const filteredDocuments = (documents || []).filter((doc: Document) => {
     const matchesTopic = !selectedTopic || doc.topicId === selectedTopic.id;
@@ -70,6 +70,7 @@ const DashboardPage = () => {
             topics={topics || []}
             viewMode={viewMode}
             searchQuery={searchQuery}
+            deleteDocument={deleteDocument}
           />
         </div>
       </main>

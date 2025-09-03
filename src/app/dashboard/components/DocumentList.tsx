@@ -10,9 +10,10 @@ interface DocumentListProps {
   topics: Topic[];
   viewMode: "grid" | "list";
   searchQuery: string;
+  deleteDocument: (documentId: string) => void;
 }
 
-export const DocumentList: React.FC<DocumentListProps> = ({ filteredDocuments, topics, viewMode, searchQuery }) => {
+export const DocumentList: React.FC<DocumentListProps> = ({ filteredDocuments, topics, viewMode, searchQuery, deleteDocument }) => {
   return (
     <Card>
       <CardHeader>
@@ -37,9 +38,9 @@ export const DocumentList: React.FC<DocumentListProps> = ({ filteredDocuments, t
             {filteredDocuments.map((doc) => {
               const topic = topics.find((t) => t.id === doc.topicId);
               if (viewMode === "grid") {
-                return <DocumentCard key={doc.id} doc={doc} topic={topic} />;
+                return <DocumentCard key={doc.id} doc={doc} topic={topic} deleteDocument={deleteDocument} />;
               } else {
-                return <DocumentListItem key={doc.id} doc={doc} topic={topic} />;
+                return <DocumentListItem key={doc.id} doc={doc} topic={topic} deleteDocument={deleteDocument} />;
               }
             })}
           </div>
