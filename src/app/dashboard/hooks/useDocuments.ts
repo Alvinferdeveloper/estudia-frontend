@@ -50,5 +50,6 @@ export const useDocuments = (topicId?: string) => {
     isLoading,
     isError,
     uploadDocument: uploadMutation.mutate,
+    isUploading: uploadMutation.isPending,
   };
 };

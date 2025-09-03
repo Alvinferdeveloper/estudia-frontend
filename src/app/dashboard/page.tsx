@@ -29,7 +29,7 @@ const DashboardPage = () => {
   }, [router]);
 
   const { topics } = useTopics();
-  const { documents, uploadDocument, isLoading: isUploading } = useDocuments(selectedTopic?.id);
+  const { documents, uploadDocument, isUploading } = useDocuments(selectedTopic?.id);
 
   const filteredDocuments = (documents || []).filter((doc: Document) => {
     const matchesTopic = !selectedTopic || doc.topicId === selectedTopic.id;

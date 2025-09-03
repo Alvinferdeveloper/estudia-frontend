@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, FileText } from "lucide-react";
+import { Upload, FileText, Loader2 } from "lucide-react";
 
 interface UploadSectionProps {
   selectedTopic: any;
@@ -107,7 +107,11 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, upl
                 </div>
               </div>
               <Button onClick={handleUpload} disabled={isUploading} className="min-w-[100px]">
-                {isUploading ? "Uploading..." : "Upload"}
+                {isUploading ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
+                ) : (
+                  "Upload"
+                )}
               </Button>
             </div>
             <div className="mt-4">
