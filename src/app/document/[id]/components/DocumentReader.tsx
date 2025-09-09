@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Document as PDFDocument, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge";
+import { useChat } from "@ai-sdk/react";
+import { useMessages } from '../hooks/useMessages';
+import { DefaultChatTransport } from "ai";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -28,15 +31,39 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
     const [scale, setScale] = useState<number>(1.2);
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedText, setSelectedText] = useState<string | null>(null);
-    const [inputMessage, setInputMessage] = useState<string>("")
-    const [messages, setMessages] = useState([
-        {
-            id: "1",
-            text: "¡Hola! Soy tu asistente de estudio con IA. Selecciona cualquier texto del PDF y pregúntame lo que necesites saber.",
-            isUser: false,
-            timestamp: new Date(),
-        },
-    ])
+    const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+    const [input, setInput] = useState('');
+
+    const { messages: initialMessages, createMessage } = useMessages(document.id);
+    const uiInitialMessages = useMemo(() => initialMessages.map((m) => ({
+        id: m.id,
+        role: m.role,
+        parts: [{ type: 'text' as const, text: m.content }],
+    })), [initialMessages]);
+
+    const { messages, sendMessage, setMessages } = useChat({
+        transport: new DefaultChatTransport({
+            api: '/api/chat',
+        }),
+        onFinish: (message) => {
+            console.log(message);
+            message.message.parts.forEach((part) => {
+                if (part.type === 'text') {
+                    createMessage({ role: 'assistant', content: part.text });
+                }
+            });
+        }
+    });
+
+    useEffect(() => {
+        if (uiInitialMessages.length > 0 && messages.length === 0) {
+            setMessages(uiInitialMessages);
+        }
+    }, [uiInitialMessages, messages.length, setMessages]);
+
+    function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setInput(e.target.value);
+    }
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
@@ -46,9 +73,24 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
     const handleTextSelection = () => {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
-            console.log("Selected Text:", selection.toString());
-            // Future: Send this text to LLM
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            setSelectedText(selection.toString());
+            setPopupPosition({ x: rect.left, y: rect.top - 40 });
+        } else {
+            setSelectedText(null);
         }
+    };
+
+    const handleChatClick = () => {
+        setIsChatOpen(true);
+    };
+
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        sendMessage({ text: input });
+        createMessage({ role: 'user', content: input });
+        setInput('');
     };
 
     return (
@@ -84,7 +126,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                                         <ChevronLeft className="h-4 w-4" />
                                     </Button>
                                     <span className="text-sm text-muted-foreground">
-                                        Página {pageNumber || 1} de {numPages || "--"}
+                                        Page {pageNumber || 1} of {numPages || "--"}
                                     </span>
                                     <Button
                                         variant="outline"
@@ -116,10 +158,10 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                                 className="gap-2"
                             >
                                 <MessageSquare className="h-4 w-4" />
-                                Asistente IA
+                                AI Assistant
                                 {selectedText && (
                                     <Badge variant="secondary" className="ml-1">
-                                        Texto seleccionado
+                                        Text Selected
                                     </Badge>
                                 )}
                             </Button>
@@ -142,13 +184,13 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                                             <Upload className="h-8 w-8 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <h3 className="font-serif font-semibold text-lg mb-2">Sube tu documento PDF</h3>
+                                            <h3 className="font-serif font-semibold text-lg mb-2">Upload your PDF</h3>
                                             <p className="text-muted-foreground text-sm mb-4">
-                                                Arrastra y suelta tu archivo PDF aquí o haz clic para seleccionar
+                                                Drag and drop your PDF here or click to select a file
                                             </p>
                                             <Button asChild>
                                                 <label htmlFor="pdf-upload" className="cursor-pointer">
-                                                    Seleccionar archivo
+                                                    Select File
                                                 </label>
                                             </Button>
                                         </div>
@@ -167,7 +209,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="h-5 w-5 text-accent" />
-                                    <h3 className="font-serif font-semibold">Asistente IA</h3>
+                                    <h3 className="font-serif font-semibold">AI Assistant</h3>
                                 </div>
                                 <Button variant="ghost" size="sm" onClick={() => setIsChatOpen(false)}>
                                     <X className="h-4 w-4" />
@@ -175,7 +217,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                             </div>
                             {selectedText && (
                                 <div className="mt-3 p-3 bg-accent/10 rounded-lg">
-                                    <p className="text-xs text-muted-foreground mb-1">Texto seleccionado:</p>
+                                    <p className="text-xs text-muted-foreground mb-1">Selected Text:</p>
                                     <p className="text-sm text-foreground line-clamp-3">"{selectedText}"</p>
                                 </div>
                             )}
@@ -185,12 +227,12 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                         <ScrollArea className="flex-1 p-4">
                             <div className="space-y-4">
                                 {messages.map((message) => (
-                                    <div key={message.id} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
+                                    <div key={message.id} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
                                         <div
-                                            className={`max-w-[80%] rounded-lg p-3 ${message.isUser ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-                                                }`}
-                                        >
-                                            <p className="text-sm">{message.text}</p>
+                                            className={`max-w-[80%] rounded-lg p-3 ${message.role === 'user' ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
+                                            {message.parts.map((part, index) =>
+                                                part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -199,21 +241,30 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
 
                         {/* Chat Input */}
                         <div className="p-4 border-t border-border">
-                            <div className="flex gap-2">
+                            <form onSubmit={handleFormSubmit} className="flex gap-2">
                                 <Input
-                                    placeholder="Pregunta sobre el documento..."
-                                    value={inputMessage}
-                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    placeholder="Ask about the document..."
+                                    value={input}
+                                    onChange={handleInputChange}
                                     className="flex-1"
                                 />
-                                <Button size="sm">
+                                <Button type="submit" size="sm">
                                     <Send className="h-4 w-4" />
                                 </Button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 )}
             </div>
+
+            {selectedText && (
+                <div style={{ position: 'fixed', top: popupPosition.y, left: popupPosition.x }}>
+                    <Button onClick={handleChatClick} size="sm" className="gap-2">
+                        <MessageSquare className="h-4 w-4" />
+                        Chat about this
+                    </Button>
+                </div>
+            )}
         </div>
     );
 };

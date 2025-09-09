@@ -1,3 +1,4 @@
+import { QueryProvider } from "@/app/providers/QueryProvider";
 import { getDocument } from "./actions";
 import DocumentClient from "./components/DocumentClient";
 import { Document } from "@/app/dashboard/hooks/useDocuments";
@@ -14,5 +15,9 @@ export default async function DocumentPage({ params }: { params: { id: string } 
     return <div>Document not found</div>;
   }
 
-  return <DocumentClient document={document} />;
+  return (
+    <QueryProvider>
+      <DocumentClient document={document} />
+    </QueryProvider>
+  )
 }
