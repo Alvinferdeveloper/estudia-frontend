@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Folder } from "lucide-react";
-import { Topic } from "../hooks/useTopics";
+import { Topic } from "@/app/types";
 
 interface TopicListProps {
   topics: Topic[];

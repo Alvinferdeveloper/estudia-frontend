@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { DocumentCard } from "./DocumentCard";
 import { DocumentListItem } from "./DocumentListItem";
-import { Document } from "../hooks/useDocuments";
-import { Topic } from "../hooks/useTopics";
+import { Document } from "@/app/types";
+import { Topic } from "@/app/types";
 
 interface DocumentListProps {
   filteredDocuments: Document[];

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { FileText, MoreHorizontal, Download, Eye } from "lucide-react";
-import { Document } from "../hooks/useDocuments";
-import { Topic } from "../hooks/useTopics";
+import { Document } from "@/app/types";
+import { Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface DocumentCardProps {
