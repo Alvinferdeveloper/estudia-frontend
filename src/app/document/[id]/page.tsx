@@ -1,7 +1,7 @@
 import { QueryProvider } from "@/app/providers/QueryProvider";
 import { getDocument } from "./actions";
 import DocumentClient from "./components/DocumentClient";
-import { Document } from "@/app/dashboard/hooks/useDocuments";
+import { Document } from "@/app/types";
 
 export interface DocumentFile extends Document {
   publicUrl: string;
