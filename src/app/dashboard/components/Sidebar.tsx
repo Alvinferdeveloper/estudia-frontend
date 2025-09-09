@@ -4,7 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import { Search, FileText } from "lucide-react";
 import { TopicList } from "./TopicList";
 import { CreateTopicDialog } from "./CreateTopicDialog";
-import { useTopics } from "../hooks/useTopics";
+import { useFetchTopics } from "../hooks/useFetchTopics";
+import { useCreateTopic } from "../hooks/useCreateTopic";
 
 interface SidebarProps {
   searchQuery: string;
@@ -19,7 +20,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   selectedTopic,
   handleTopicSelect,
 }) => {
-  const { topics, isLoading, isError, createTopic } = useTopics();
+  const { data: topics } = useFetchTopics();
+  const { mutate: createTopic } = useCreateTopic();
 
   const totalDocuments = topics?.reduce((acc, topic) => acc + topic.count, 0) || 0;
 

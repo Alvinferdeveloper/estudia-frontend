@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
-import { useTopics } from "./hooks/useTopics";
-import { useDocuments } from "./hooks/useDocuments";
+import { useFetchTopics } from "./hooks/useFetchTopics";
+import { useFetchDocuments } from "./hooks/useFetchDocuments";
+import { useUploadDocument } from "./hooks/useUploadDocument";
+import { useDeleteDocument } from "./hooks/useDeleteDocument";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { UploadSection } from "./components/UploadSection";
 import { DocumentList } from "./components/DocumentList";
 import { QueryProvider } from "../providers/QueryProvider";
-import { Document } from "./hooks/useDocuments";
+import { Document } from "@/app/types";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -28,8 +30,10 @@ const DashboardPage = () => {
     checkAuth();
   }, [router]);
 
-  const { topics } = useTopics();
-  const { documents, uploadDocument, isUploading, deleteDocument } = useDocuments(selectedTopic?.id);
+  const { data: topics } = useFetchTopics();
+  const { data: documents } = useFetchDocuments(selectedTopic?.id);
+  const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
+  const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
 
   const filteredDocuments = (documents || []).filter((doc: Document) => {
     const matchesTopic = !selectedTopic || doc.topicId === selectedTopic.id;

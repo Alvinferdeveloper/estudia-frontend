@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Document as PDFDocument, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -13,7 +13,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge";
 import { useChat } from "@ai-sdk/react";
-import { useMessages } from '../hooks/useMessages';
+import { useFetchMessages } from '../hooks/useFetchMessages';
+import { useCreateMessage } from '../hooks/useCreateMessage';
 import { DefaultChatTransport } from "ai";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -34,8 +35,10 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
     const [input, setInput] = useState('');
 
-    const { messages: initialMessages, createMessage } = useMessages(document.id);
-    const uiInitialMessages = useMemo(() => initialMessages.map((m) => ({
+    const { data: initialMessages } = useFetchMessages(document.id);
+    const { mutate: createMessage } = useCreateMessage(document.id);
+
+    const uiInitialMessages = useMemo(() => (initialMessages || []).map((m) => ({
         id: m.id,
         role: m.role,
         parts: [{ type: 'text' as const, text: m.content }],
@@ -218,7 +221,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                             {selectedText && (
                                 <div className="mt-3 p-3 bg-accent/10 rounded-lg">
                                     <p className="text-xs text-muted-foreground mb-1">Selected Text:</p>
-                                    <p className="text-sm text-foreground line-clamp-3">\"{selectedText}\"</p>
+                                    <p className="text-sm text-foreground line-clamp-3">"{selectedText}"</p>
                                 </div>
                             )}
                         </div>
