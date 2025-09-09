@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Document } from '@/app/types';
 
 const uploadDocument = async (formData: FormData): Promise<Document> => {
-  const { data } = await axios.post('http://localhost:3001/documents/upload', formData, {
+  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents/upload`, formData, {
     withCredentials: true,
     headers: {
       'Content-Type': 'multipart/form-data',

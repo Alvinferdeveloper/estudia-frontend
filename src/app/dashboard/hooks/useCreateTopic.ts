@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Topic } from '@/app/types';
 
 const createTopic = async (newTopic: { name: string; color: string }): Promise<Topic> => {
-  const { data } = await axios.post('http://localhost:3001/topics', newTopic, { withCredentials: true });
+  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/topics`, newTopic, { withCredentials: true });
   return data;
 };
 

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 const deleteDocument = async (documentId: string): Promise<void> => {
-  await axios.delete(`http://localhost:3001/documents/${documentId}`, { withCredentials: true });
+  await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}`, { withCredentials: true });
 };
 
 export const useDeleteDocument = (topicId?: string) => {

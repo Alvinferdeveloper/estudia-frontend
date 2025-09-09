@@ -4,8 +4,8 @@ import { Document } from '@/app/types';
 
 const fetchDocuments = async (topicId?: string): Promise<Document[]> => {
   const url = topicId
-    ? `http://localhost:3001/documents?topicId=${topicId}`
-    : `http://localhost:3001/documents`;
+    ? `${process.env.NEXT_PUBLIC_API_URL}/documents?topicId=${topicId}`
+    : `${process.env.NEXT_PUBLIC_API_URL}/documents`;
   const { data } = await axios.get(url, { withCredentials: true });
   return data;
 };
