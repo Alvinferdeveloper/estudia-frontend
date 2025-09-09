@@ -109,7 +109,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                 </div>
             </header>
 
-            <div className="flex-1 flex">
+            <div className="flex-1 flex overflow-hidden">
                 {/* PDF Viewer */}
                 <div className="flex-1 flex flex-col">
                     {/* PDF Controls */}
@@ -203,7 +203,7 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
 
                 {/* AI Chat Sidebar */}
                 {isChatOpen && (
-                    <div className="w-96 border-l border-border bg-card flex flex-col">
+                    <div className="w-96 border-l border-border bg-card flex flex-col h-full">
                         {/* Chat Header */}
                         <div className="p-4 border-b border-border">
                             <div className="flex items-center justify-between">
@@ -218,13 +218,13 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
                             {selectedText && (
                                 <div className="mt-3 p-3 bg-accent/10 rounded-lg">
                                     <p className="text-xs text-muted-foreground mb-1">Selected Text:</p>
-                                    <p className="text-sm text-foreground line-clamp-3">"{selectedText}"</p>
+                                    <p className="text-sm text-foreground line-clamp-3">\"{selectedText}\"</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Chat Messages */}
-                        <ScrollArea className="flex-1 p-4">
+                        <ScrollArea className="flex-1 p-4 overflow-auto">
                             <div className="space-y-4">
                                 {messages.map((message) => (
                                     <div key={message.id} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
@@ -267,4 +267,4 @@ export const DocumentClient: React.FC<DocumentClientProps> = ({ document }) => {
             )}
         </div>
     );
-};
+}
