@@ -10,12 +10,12 @@ import { DefaultChatTransport } from "ai";
 import { useFetchMessages } from '@/app/document/[id]/hooks/useFetchMessages';
 import { useCreateMessage } from '@/app/document/[id]/hooks/useCreateMessage';
 
-import { Header } from './Header';
-import { PdfControls } from './PdfControls';
-import { PdfViewer } from './PdfViewer';
-import { ChatSidebar } from './ChatSidebar';
-import { SelectionPopup } from './SelectionPopup';
-import { DocumentFile } from "../../page";
+import { Header } from '@/app/document/[id]/components/document-reader/Header';
+import { PdfControls } from '@/app/document/[id]/components/document-reader/PdfControls';
+import { PdfViewer } from '@/app/document/[id]/components/document-reader/PdfViewer';
+import { ChatSidebar } from '@/app/document/[id]/components/document-reader/ChatSidebar';
+import { SelectionPopup } from '@/app/document/[id]/components/document-reader/SelectionPopup';
+import { DocumentFile } from "@/app/document/[id]/page";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -28,7 +28,7 @@ interface DocumentReaderProps {
 
 export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [numPages, setNumPages] = useState<number | null>(null);
-    const [pageNumber, setPageNumber] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [scale, setScale] = useState<number>(1.2);
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedText, setSelectedText] = useState<string | null>(null);
@@ -69,7 +69,6 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
-        setPageNumber(1);
     }
 
     const handleTextSelection = () => {
@@ -102,21 +101,20 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
             <div className="flex-1 flex overflow-hidden">
                 <div className="flex-1 flex flex-col">
                     <PdfControls
-                        pageNumber={pageNumber}
+                        pageNumber={currentPage}
                         numPages={numPages}
                         scale={scale}
                         isChatOpen={isChatOpen}
                         selectedText={selectedText}
-                        onPageChange={setPageNumber}
                         onScaleChange={setScale}
                         onChatToggle={() => setIsChatOpen(!isChatOpen)}
                     />
                     <PdfViewer
                         publicUrl={document.publicUrl}
-                        pageNumber={pageNumber}
                         scale={scale}
                         onDocumentLoadSuccess={onDocumentLoadSuccess}
                         onTextSelection={handleTextSelection}
+                        onPageChange={setCurrentPage}
                     />
                 </div>
 
