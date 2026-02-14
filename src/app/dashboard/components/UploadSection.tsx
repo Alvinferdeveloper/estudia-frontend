@@ -1,9 +1,8 @@
 import { useState, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Upload, FileText, Loader2 } from "lucide-react";
+import { Upload, FileText, X, Paperclip } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface UploadSectionProps {
   selectedTopic: any;
@@ -14,40 +13,44 @@ interface UploadSectionProps {
 export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, uploadDocument, isUploading }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentTags, setDocumentTags] = useState("");
-  const [uploadMessage, setUploadMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setSelectedFile(event.target.files[0]);
-      setUploadMessage("");
-    } else {
-      setSelectedFile(null);
+      validateAndSetFile(event.target.files[0]);
     }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDragOver(false);
     const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].type === "application/pdf") {
-      setSelectedFile(files[0]);
+    if (files.length > 0) {
+      validateAndSetFile(files[0]);
     }
   };
 
-  const handleUpload = () => {
-    if (!selectedFile) {
-      setUploadMessage("Please select a file to upload.");
+  const validateAndSetFile = (file: File) => {
+    if (file.type !== "application/pdf") {
+      alert("Only PDF files are allowed.");
       return;
     }
+    setSelectedFile(file);
+  };
 
-    if (selectedFile.type !== "application/pdf") {
-      setUploadMessage("Only PDF files are allowed.");
-      return;
-    }
+  const handleUpload = () => {
+    if (!selectedFile) return;
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -64,23 +67,27 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, upl
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
-          Upload New Document {selectedTopic && `to ${selectedTopic.name}`}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="w-full max-w-4xl mx-auto px-2">
+      {!selectedFile ? (
         <div
-          className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors"
+          onClick={() => fileInputRef.current?.click()}
           onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
           onDrop={handleDrop}
+          className={cn(
+            "group relative flex items-center justify-center w-full h-24 rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden",
+            isDragOver
+              ? "border-primary bg-primary/5 scale-[1.01]"
+              : "border-border hover:border-primary/50 hover:bg-muted/30"
+          )}
         >
-          <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <div className="space-y-2">
-            <p className="text-lg font-medium">Drop your PDF here or click to browse</p>
-            <p className="text-sm text-muted-foreground">Supports PDF files up to 10MB</p>
+          <div className="flex flex-col items-center gap-1.5 transition-transform group-hover:scale-105">
+            <div className="p-2 rounded-full bg-background shadow-sm ring-1 ring-border">
+              <Upload className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <p className="text-sm text-muted-foreground font-medium">
+              <span className="text-foreground">Click to upload</span> or drag and drop
+            </p>
           </div>
           <Input
             ref={fileInputRef}
@@ -89,47 +96,58 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, upl
             onChange={handleFileChange}
             className="hidden"
           />
-          <Button variant="outline" className="mt-4 bg-transparent" onClick={() => fileInputRef.current?.click()}>
-            Choose File
-          </Button>
         </div>
+      ) : (
+        <div className="bg-card rounded-xl border shadow-sm p-4 animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 p-3 rounded-lg bg-primary/10 text-primary">
+              <FileText className="h-6 w-6" />
+            </div>
 
-        {selectedFile && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <FileText className="h-8 w-8 text-primary" />
+            <div className="flex-1 space-y-3">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-medium">{selectedFile.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(1)} MB
+                  <h4 className="font-medium text-foreground truncate max-w-[300px]">{selectedFile.name}</h4>
+                  <p className="text-xs text-muted-foreground">
+                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedTopic ? `Topic: ${selectedTopic.name}` : "No Topic Selected"}
                   </p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive -mt-1 -mr-1"
+                  onClick={() => setSelectedFile(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button onClick={handleUpload} disabled={isUploading} className="min-w-[100px]">
-                {isUploading ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
-                ) : (
-                  "Upload"
-                )}
-              </Button>
-            </div>
-            <div className="mt-4">
-              <Label htmlFor="document-tags">Tags (comma-separated)</Label>
-              <Input
-                id="document-tags"
-                value={documentTags}
-                onChange={(e) => setDocumentTags(e.target.value)}
-                placeholder="e.g., chemistry, notes, exam"
-              />
+
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <Input
+                    value={documentTags}
+                    onChange={(e) => setDocumentTags(e.target.value)}
+                    placeholder="Add tags separated by commas..."
+                    className="h-9 text-sm pr-8"
+                  />
+                  <Paperclip className="h-3.5 w-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
+                </div>
+                <Button
+                  onClick={handleUpload}
+                  disabled={isUploading}
+                  className="h-9 px-6 font-medium"
+                >
+                  {isUploading ? (
+                    <span className="flex items-center gap-2">Uploading...</span>
+                  ) : (
+                    "Upload File"
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
-        )}
-
-        {uploadMessage && (
-          <div className="mt-4 p-3 bg-primary/10 text-primary rounded-lg text-center">{uploadMessage}</div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </div>
   );
 };

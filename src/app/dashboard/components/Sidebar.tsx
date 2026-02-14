@@ -1,11 +1,14 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Search, FileText } from "lucide-react";
-import { TopicList } from "./TopicList";
-import { CreateTopicDialog } from "./CreateTopicDialog";
-import { useFetchTopics } from "../hooks/useFetchTopics";
-import { useCreateTopic } from "../hooks/useCreateTopic";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search, LayoutGrid, Layers } from "lucide-react";
+import { TopicList } from "@/app/dashboard/components/TopicList";
+import { CreateTopicDialog } from "@/app/dashboard/components/CreateTopicDialog";
+import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
+import { useCreateTopic } from "@/app/dashboard/hooks/useCreateTopic";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   searchQuery: string;
@@ -26,44 +29,90 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const totalDocuments = topics?.reduce((acc, topic) => acc + topic.count, 0) || 0;
 
   return (
-    <aside className="w-80 bg-card shadow-lg border-r border-border flex flex-col">
-      <div className="p-6 border-b border-border">
-        <h2 className="text-2xl font-bold text-foreground mb-4">StudyDocs</h2>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+    <aside className="w-80 h-screen flex flex-col bg-background/95 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* --- HEADER --- */}
+      <div className="p-6 pb-4 space-y-6">
+        {/* Branding */}
+        <div className="flex items-center gap-2 px-1">
+          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+            <LayoutGrid className="text-primary-foreground h-5 w-5" />
+          </div>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">StudyDocs</h2>
+        </div>
+
+        {/* Search Input */}
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/70 h-4 w-4 group-focus-within:text-primary transition-colors" />
           <Input
-            placeholder="Search documents..."
+            placeholder="Buscar documentos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-9 bg-secondary/50 border-transparent focus-visible:bg-background focus-visible:ring-1 transition-all"
           />
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 border rounded px-1.5 py-0.5 text-[10px] text-muted-foreground font-medium opacity-50">
+            ⌘K
+          </div>
         </div>
       </div>
 
-      <div className="p-6 flex-1 overflow-y-auto">
-        <Button
-          variant={!selectedTopic ? "default" : "ghost"}
-          onClick={() => handleTopicSelect(null)}
-          className="w-full justify-start mb-4 h-12"
-        >
-          <FileText className="mr-3 h-5 w-5" />
-          <div className="flex-1 text-left">
-            <div className="font-medium">All Documents</div>
-            <div className="text-xs text-muted-foreground">{totalDocuments} files</div>
+      {/* --- NAVIGATION --- */}
+      <div className="flex-1 overflow-hidden px-4">
+        <ScrollArea className="h-full pr-2 custom-scrollbar space-y-6">
+
+          {/* Main Menu */}
+          <div>
+            <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Biblioteca
+            </h3>
+            <Button
+              variant={!selectedTopic ? "secondary" : "ghost"}
+              onClick={() => handleTopicSelect(null)}
+              className={cn(
+                "w-full justify-between hover:bg-secondary h-10 font-normal transition-all hover:translate-x-1",
+                !selectedTopic ? "bg-secondary text-secondary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <div className="flex items-center">
+                <Layers className={cn("mr-2 h-4 w-4", !selectedTopic ? "text-primary" : "")} />
+                <span>Todos los archivos</span>
+              </div>
+              <span className="bg-background/80 text-muted-foreground text-[10px] font-medium px-2 py-0.5 rounded-full border border-border/50 shadow-sm">
+                {totalDocuments}
+              </span>
+            </Button>
           </div>
-        </Button>
 
-        <Separator className="my-4" />
+          <Separator className="bg-border/40" />
 
-        <TopicList
-          topics={topics || []}
-          selectedTopic={selectedTopic}
-          handleTopicSelect={handleTopicSelect}
-        />
+          {/* Topics Collection */}
+          <div>
+            <div className="flex items-center justify-between px-2 mb-2 mt-2">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Colecciones
+              </h3>
+            </div>
+
+            <div className="space-y-1">
+              <TopicList
+                topics={topics || []}
+                selectedTopic={selectedTopic}
+                handleTopicSelect={handleTopicSelect}
+              />
+            </div>
+          </div>
+        </ScrollArea>
       </div>
 
-      <div className="p-6 border-t border-border">
-        <CreateTopicDialog createTopic={createTopic} />
+      {/* --- FOOTER --- */}
+      <div className="p-4 border-t border-border/50 bg-card/30">
+        <CreateTopicDialog
+          createTopic={createTopic}
+        />
+        <div className="mt-2 text-center">
+          <p className="text-[10px] text-muted-foreground">
+            Presiona <kbd className="font-sans border rounded px-1">N</kbd> para crear
+          </p>
+        </div>
       </div>
     </aside>
   );

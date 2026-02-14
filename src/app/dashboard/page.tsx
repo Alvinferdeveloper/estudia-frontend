@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
-import { useFetchTopics } from "./hooks/useFetchTopics";
-import { useFetchDocuments } from "./hooks/useFetchDocuments";
-import { useUploadDocument } from "./hooks/useUploadDocument";
-import { useDeleteDocument } from "./hooks/useDeleteDocument";
-import { Sidebar } from "./components/Sidebar";
-import { Header } from "./components/Header";
-import { UploadSection } from "./components/UploadSection";
-import { DocumentList } from "./components/DocumentList";
-import { QueryProvider } from "../providers/QueryProvider";
+import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
+import { useFetchDocuments } from "@/app/dashboard/hooks/useFetchDocuments";
+import { useUploadDocument } from "@/app/dashboard/hooks/useUploadDocument";
+import { useDeleteDocument } from "@/app/dashboard/hooks/useDeleteDocument";
+import { Sidebar } from "@/app/dashboard/components/Sidebar";
+import { Header } from "@/app/dashboard/components/Header";
+import { UploadSection } from "@/app/dashboard/components/UploadSection";
+import { DocumentList } from "@/app/dashboard/components/DocumentList";
+import { QueryProvider } from "@/app/providers/QueryProvider";
 import { Document } from "@/app/types";
 
 const DashboardPage = () => {
@@ -63,19 +63,21 @@ const DashboardPage = () => {
           viewMode={viewMode}
           setViewMode={setViewMode}
         />
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <UploadSection
-            selectedTopic={selectedTopic}
-            uploadDocument={uploadDocument}
-            isUploading={isUploading}
-          />
-          <DocumentList
-            filteredDocuments={filteredDocuments}
-            topics={topics || []}
-            viewMode={viewMode}
-            searchQuery={searchQuery}
-            deleteDocument={deleteDocument}
-          />
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <div className="max-w-6xl mx-auto space-y-8">
+            <UploadSection
+              selectedTopic={selectedTopic}
+              uploadDocument={uploadDocument}
+              isUploading={isUploading}
+            />
+            <DocumentList
+              filteredDocuments={filteredDocuments}
+              topics={topics || []}
+              viewMode={viewMode}
+              searchQuery={searchQuery}
+              deleteDocument={deleteDocument}
+            />
+          </div>
         </div>
       </main>
     </div>
