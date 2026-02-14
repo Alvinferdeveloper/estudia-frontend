@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Folder } from "lucide-react";
+import Folder from "@/app/icons/Folder";
 import { Topic } from "@/app/types";
 import { cn } from "@/lib/utils";
 
@@ -26,9 +26,8 @@ export const TopicList: React.FC<TopicListProps> = ({ topics, selectedTopic, han
           >
             <div
               className="mr-3 p-1.5 rounded-md"
-              style={{ backgroundColor: topic.color || "#000000" }}
             >
-              <Folder className="h-4 w-4 text-white" />
+              <Folder size="md" color={topic.color} />
             </div>
             <div className="flex-1 text-left">
               <div className="font-medium">{topic.name}</div>

@@ -1,0 +1,47 @@
+import React from 'react';
+
+const SIZES = {
+    sm: 16,
+    md: 24,
+    lg: 35,
+    xl: 64
+} as const;
+
+type SizeKey = keyof typeof SIZES;
+
+interface FolderIconProps extends React.SVGProps<SVGSVGElement> {
+    size?: SizeKey | number;
+    color?: string;
+}
+
+export default function Folder({ size = 64, color = "#F5B800" }: FolderIconProps) {
+    return (
+        <svg
+            width={size}
+            height={size}
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ minWidth: size, minHeight: size }}
+        >
+            <path
+                d="M15 8L13.732 6.732C13.2631 6.26319 12.6271 5.99988 11.964 6H3.5C2.67157 6 2 6.67157 2 7.5V24.5C2 25.3284 2.67157 26 3.5 26H28.5C29.3284 26 30 25.3284 30 24.5V9.5C30 8.67157 29.3284 8 28.5 8H15Z"
+                fill={color}
+            />
+            <path
+                d="M15 8L13.732 9.268C13.2631 9.73681 12.6271 10.0001 11.964 10H2V24.5C2 25.3284 2.67157 26 3.5 26H28.5C29.3284 26 30 25.3284 30 24.5V9.5C30 8.67157 29.3284 8 28.5 8H15Z"
+                fill="black"
+                fillOpacity="0.05"
+            />
+            <path
+                d="M3.00014 25.5C2.71414 25.5 2.45014 25.416 2.22314 25.277C2.48614 25.709 2.95714 26 3.50014 26H28.5001C29.0431 26 29.5141 25.709 29.7771 25.277C29.5437 25.4216 29.2748 25.4988 29.0001 25.5H3.00014Z"
+                fill="#B64D07"
+            />
+            <path
+                d="M14.129 9.621L15.75 8H15L13.732 9.268C13.2631 9.73681 12.6271 10.0001 11.964 10H2V10.5H12.007C12.8029 10.5001 13.5663 10.1839 14.129 9.621Z"
+                fill="white"
+                fillOpacity="0.4"
+            />
+        </svg>
+    );
+}
