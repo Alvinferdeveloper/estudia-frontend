@@ -27,7 +27,7 @@ export const TopicList: React.FC<TopicListProps> = ({ topics, selectedTopic, han
             <div
               className="mr-3 p-1.5 rounded-md"
             >
-              <Folder size="md" color={topic.color} />
+              <Folder size="lg" color={topic.color} />
             </div>
             <div className="flex-1 text-left">
               <div className="font-medium">{topic.name}</div>

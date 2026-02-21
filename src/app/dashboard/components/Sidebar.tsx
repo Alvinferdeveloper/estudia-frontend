@@ -17,6 +17,8 @@ interface SidebarProps {
   handleTopicSelect: (topic: any) => void;
 }
 
+import { UserProfileMenu } from "@/components/user-profile-menu";
+
 export const Sidebar: React.FC<SidebarProps> = ({
   searchQuery,
   setSearchQuery,
@@ -32,12 +34,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className="w-80 h-screen flex flex-col bg-background/95 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* --- HEADER --- */}
       <div className="p-6 pb-4 space-y-6">
-        {/* Branding */}
-        <div className="flex items-center gap-2 px-1">
-          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-            <LayoutGrid className="text-primary-foreground h-5 w-5" />
+        {/* Branding & User Profile */}
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+              <LayoutGrid className="text-primary-foreground h-5 w-5" />
+            </div>
+            <h2 className="text-xl font-bold tracking-tight text-foreground">StudyDocs</h2>
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">StudyDocs</h2>
+          <UserProfileMenu />
         </div>
 
         {/* Search Input */}

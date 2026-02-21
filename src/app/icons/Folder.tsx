@@ -15,14 +15,13 @@ interface FolderIconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export default function Folder({ size = 64, color = "#F5B800" }: FolderIconProps) {
+    const sizeValue = typeof size === 'string' ? SIZES[size] : size;
     return (
         <svg
-            width={size}
-            height={size}
             viewBox="0 0 32 32"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            style={{ minWidth: size, minHeight: size }}
+            style={{ width: sizeValue, height: sizeValue }}
         >
             <path
                 d="M15 8L13.732 6.732C13.2631 6.26319 12.6271 5.99988 11.964 6H3.5C2.67157 6 2 6.67157 2 7.5V24.5C2 25.3284 2.67157 26 3.5 26H28.5C29.3284 26 30 25.3284 30 24.5V9.5C30 8.67157 29.3284 8 28.5 8H15Z"
