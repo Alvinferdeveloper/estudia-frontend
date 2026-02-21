@@ -31,24 +31,24 @@ export const Header: React.FC<HeaderProps> = ({ selectedTopic, filteredDocuments
         </p>
       </div>
 
-      <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
+      <div className="flex items-center gap-1 bg-secondary p-1 rounded-lg">
         <Button
-          variant="ghost"
+          variant="secondary"
           size="sm"
           onClick={() => setViewMode("grid")}
           className={cn(
-            "h-8 w-8 p-0 hover:bg-background transition-all",
+            "h-8 w-8 p-0 cursor-pointer hover:bg-background/50 transition-all",
             viewMode === "grid" && "bg-background text-foreground shadow-sm"
           )}
         >
           <Grid3X3 className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="secondary"
           size="sm"
           onClick={() => setViewMode("list")}
           className={cn(
-            "h-8 w-8 p-0 hover:bg-background transition-all",
+            "h-8 w-8 p-0 cursor-pointer hover:bg-background/50 transition-all",
             viewMode === "list" && "bg-background text-foreground shadow-sm"
           )}
         >

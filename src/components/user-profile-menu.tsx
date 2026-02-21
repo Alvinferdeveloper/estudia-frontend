@@ -18,26 +18,32 @@ import {
     DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import useAuth from "@/app/hooks/useAuth"
 
 export function UserProfileMenu() {
-    const { setTheme } = useTheme()
+    const { setTheme } = useTheme();
+    const { data: session } = useAuth();
+
+    const getInitials = (name = 'U') => {
+        return name.split(" ").map((n) => n[0]).join("");
+    }
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
+                <Button variant="ghost" className="relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src="/profile-placeholder.png" alt="Usuario" />
-                        <AvatarFallback className="bg-primary/10 text-primary font-medium">U</AvatarFallback>
+                        <AvatarImage src={session?.user?.image || undefined} alt="Usuario" />
+                        <AvatarFallback className="bg-primary/10 text-primary font-medium">{getInitials(session?.user?.name)}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start" side="right" sideOffset={10}>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">Mi Perfil</p>
+                        <p className="text-sm font-medium leading-none">{session?.user?.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            usuario@ejemplo.com
+                            {session?.user?.email}
                         </p>
                     </div>
                 </DropdownMenuLabel>

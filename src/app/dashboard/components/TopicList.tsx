@@ -20,7 +20,7 @@ export const TopicList: React.FC<TopicListProps> = ({ topics, selectedTopic, han
             variant={selectedTopic?.id === topic.id ? "default" : "ghost"}
             onClick={() => handleTopicSelect(topic)}
             className={cn(
-              "w-full justify-start h-10  px-2 text-sm font-normal text-muted-foreground hover:text-foreground hover:bg-secondary/80",
+              "w-full justify-start h-10  px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50",
               isSelected && "bg-secondary text-foreground font-medium"
             )}
           >

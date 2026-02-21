@@ -31,7 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const totalDocuments = topics?.reduce((acc, topic) => acc + topic.count, 0) || 0;
 
   return (
-    <aside className="w-80 h-screen flex flex-col bg-background/95 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <aside className="w-80 h-screen flex flex-col bg-background/50 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-secondary/50">
       {/* --- HEADER --- */}
       <div className="p-6 pb-4 space-y-6">
         {/* Branding & User Profile */}
@@ -46,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Search Input */}
-        <div className="relative group">
+        <div className="relative group bg-secondary">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/70 h-4 w-4 group-focus-within:text-primary transition-colors" />
           <Input
             placeholder="Buscar documentos..."

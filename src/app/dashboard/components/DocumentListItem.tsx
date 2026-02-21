@@ -35,7 +35,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({ doc, topic, 
   };
 
   return (
-    <div className="group flex items-center w-full rounded-md hover:bg-gray-200/50 transition-colors px-2 py-2 cursor-pointer border-b border-border/30 last:border-0">
+    <div className="group flex items-center w-full rounded-md hover:bg-background/10 transition-colors px-2 py-2 cursor-pointer border-b border-border/30 last:border-0">
       <div className="grid grid-cols-12 gap-4 w-full items-center">
 
         {/* Columna: Name ( 6 spaces) */}
