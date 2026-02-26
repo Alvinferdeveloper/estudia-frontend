@@ -31,11 +31,19 @@ const DashboardPage = () => {
   }, [router]);
 
   const { data: topics } = useFetchTopics();
-  const { data: documents } = useFetchDocuments(selectedTopic?.id);
+  const { 
+    data, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useFetchDocuments(selectedTopic?.id);
+  
+  const documents = data?.pages.flatMap((page) => page.data) || [];
+
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
 
-  const filteredDocuments = (documents || []).filter((doc: Document) => {
+  const filteredDocuments = documents.filter((doc: Document) => {
     const matchesTopic = !selectedTopic || doc.topicId === selectedTopic.id;
     const matchesSearch =
       !searchQuery ||
@@ -59,7 +67,7 @@ const DashboardPage = () => {
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header
           selectedTopic={selectedTopic}
-          filteredDocuments={filteredDocuments}
+          totalDocuments={data?.pages[0].total || 0}
           viewMode={viewMode}
           setViewMode={setViewMode}
         />
@@ -76,6 +84,9 @@ const DashboardPage = () => {
               viewMode={viewMode}
               searchQuery={searchQuery}
               deleteDocument={deleteDocument}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchNextPage={fetchNextPage}
             />
           </div>
         </div>

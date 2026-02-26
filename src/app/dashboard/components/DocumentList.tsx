@@ -10,6 +10,9 @@ interface DocumentListProps {
   viewMode: "grid" | "list";
   searchQuery: string;
   deleteDocument: (documentId: string) => void;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
 
 export const DocumentList: React.FC<DocumentListProps> = ({
@@ -18,8 +21,35 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   viewMode,
   searchQuery,
   deleteDocument,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
 }) => {
+  const observerTarget = React.useRef(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage?.();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   if (filteredDocuments.length === 0) {
+    // ...
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] text-center p-8 animate-in fade-in zoom-in-95 duration-300">
         <div className="bg-muted/30 p-6 rounded-full mb-4">
@@ -74,6 +104,21 @@ export const DocumentList: React.FC<DocumentListProps> = ({
               <DocumentListItem {...commonProps} />
             );
           })}
+        </div>
+        
+        {/* Intersection Observer Target */}
+        <div ref={observerTarget} className="h-10 w-full flex items-center justify-center mt-4">
+          {isFetchingNextPage && (
+            <div className="flex items-center gap-2 text-muted-foreground animate-pulse">
+              <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce" />
+              <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
+              <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.4s]" />
+              <span className="text-xs ml-2">Loading more...</span>
+            </div>
+          )}
+          {!hasNextPage && filteredDocuments.length > 0 && (
+            <span className="text-xs text-muted-foreground italic">No more documents</span>
+          )}
         </div>
       </div>
     </div>

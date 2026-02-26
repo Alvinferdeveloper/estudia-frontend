@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   selectedTopic: any;
-  filteredDocuments: any[];
+  totalDocuments: number;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ selectedTopic, filteredDocuments, viewMode, setViewMode }) => {
+export const Header: React.FC<HeaderProps> = ({ selectedTopic, totalDocuments, viewMode, setViewMode }) => {
   return (
     <header className="px-8 py-5 flex items-center justify-between bg-background/50 backdrop-blur-sm sticky top-0 z-10">
       <div className="space-y-1">
@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ selectedTopic, filteredDocuments
           )}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {filteredDocuments.length} {filteredDocuments.length === 1 ? "document" : "documents"} available
+          {totalDocuments} {totalDocuments === 1 ? "document" : "documents"} available
         </p>
       </div>
 
