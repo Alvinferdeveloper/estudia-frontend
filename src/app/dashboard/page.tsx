@@ -7,17 +7,18 @@ import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
 import { useFetchDocuments } from "@/app/dashboard/hooks/useFetchDocuments";
 import { useUploadDocument } from "@/app/dashboard/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/dashboard/hooks/useDeleteDocument";
+import { useDebounce } from "@/app/hooks/useDebounce";
 import { Sidebar } from "@/app/dashboard/components/Sidebar";
 import { Header } from "@/app/dashboard/components/Header";
 import { UploadSection } from "@/app/dashboard/components/UploadSection";
 import { DocumentList } from "@/app/dashboard/components/DocumentList";
 import { QueryProvider } from "@/app/providers/QueryProvider";
-import { Document } from "@/app/types";
 
 const DashboardPage = () => {
   const router = useRouter();
   const [selectedTopic, setSelectedTopic] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
@@ -31,26 +32,17 @@ const DashboardPage = () => {
   }, [router]);
 
   const { data: topics } = useFetchTopics();
-  const { 
-    data, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage 
-  } = useFetchDocuments(selectedTopic?.id);
-  
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useFetchDocuments(selectedTopic?.id, debouncedSearchQuery);
+
   const documents = data?.pages.flatMap((page) => page.data) || [];
 
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
-
-  const filteredDocuments = documents.filter((doc: Document) => {
-    const matchesTopic = !selectedTopic || doc.topicId === selectedTopic.id;
-    const matchesSearch =
-      !searchQuery ||
-      doc.fileName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (doc.tags && doc.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())));
-    return matchesTopic && matchesSearch;
-  });
 
   const handleTopicSelect = (topic: any | null) => {
     setSelectedTopic(topic);
@@ -79,7 +71,7 @@ const DashboardPage = () => {
               isUploading={isUploading}
             />
             <DocumentList
-              filteredDocuments={filteredDocuments}
+              filteredDocuments={documents}
               topics={topics || []}
               viewMode={viewMode}
               searchQuery={searchQuery}
