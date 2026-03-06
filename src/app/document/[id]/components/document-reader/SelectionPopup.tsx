@@ -1,21 +1,32 @@
 
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SelectionPopupProps {
     selectedText: string | null;
-    position: { x: number; y: number };
     onChatClick: () => void;
+    onCreateNoteClick: () => void;
 }
 
-export const SelectionPopup: React.FC<SelectionPopupProps> = ({ selectedText, position, onChatClick }) => {
+export const SelectionPopup: React.FC<SelectionPopupProps> = ({
+    selectedText,
+    onChatClick,
+    onCreateNoteClick
+}) => {
     if (!selectedText) return null;
 
     return (
-        <div style={{ position: 'fixed', top: position.y, left: position.x }}>
+        <div
+            className="flex gap-1 bg-background border p-1 rounded-md shadow-md"
+            onMouseDown={(e) => e.preventDefault()}
+        >
             <Button onClick={onChatClick} size="sm" className="gap-2">
                 <MessageSquare className="h-4 w-4" />
-                Chat about this
+                Chat
+            </Button>
+            <Button onClick={onCreateNoteClick} size="sm" className="gap-2">
+                <StickyNote className="h-4 w-4" />
+                Note
             </Button>
         </div>
     );

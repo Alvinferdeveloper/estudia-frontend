@@ -1,102 +1,116 @@
-import { Document as PDFDocument, Page } from 'react-pdf';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Upload } from 'lucide-react';
-import { useState } from 'react';
-import { usePdfVirtualization } from '@/app/document/[id]/hooks/usePdfVirtualization';
+"use client";
+
+import { useRef, useMemo, useCallback, useEffect } from "react";
+import { PdfLoader, PdfHighlighter, TextHighlight, useHighlightContainerContext, ViewportHighlight } from "react-pdf-highlighter-extended";
+import "react-pdf-highlighter-extended/dist/esm/style/PdfHighlighter.css";
+import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
+import { Annotation } from "@/app/types";
 
 interface PdfViewerProps {
-    publicUrl: string | null;
+    publicUrl: string;
     scale: number;
-    onDocumentLoadSuccess: ({ numPages }: { numPages: number }) => void;
-    onTextSelection: () => void;
+    annotations: Annotation[];
+    selectionTip: React.ReactNode;
+    onTextSelection: (selection: { text: string; rects: { top: number; left: number; width: number; height: number; pageWidth?: number; pageHeight?: number }[]; pageNumber: number }) => void;
     onPageChange: (page: number) => void;
+    onAnnotationClick: (annotation: Annotation) => void;
+    onAnnotationCreate: (highlight: any) => void;
+    setNumPages: (numPages: number) => void;
 }
+
+const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight) => void }) => {
+    const { highlight, isScrolledTo } = useHighlightContainerContext();
+    const highlightWithColor = highlight as ViewportHighlight & { color?: string };
+
+    return (
+        <div onClick={() => onClick(highlight)}>
+            <TextHighlight isScrolledTo={isScrolledTo} highlight={highlight} style={{ background: highlightWithColor.color }} />
+        </div>
+    );
+};
 
 export const PdfViewer: React.FC<PdfViewerProps> = ({
     publicUrl,
+    annotations,
     scale,
-    onDocumentLoadSuccess,
+    setNumPages,
+    selectionTip,
     onTextSelection,
-    onPageChange
+    onAnnotationClick,
 }) => {
-    const [numPages, setNumPages] = useState<number>(0);
+    const utilsRef = useRef<any>(null);
 
-    // Use custom hook for virtualization logic
-    const { visiblePages, containerRef, setPageRef } = usePdfVirtualization({
-        numPages,
-        onPageChange
-    });
+    useEffect(() => {
+        if (utilsRef.current) {
+            const viewer = utilsRef.current.getViewer();
+            if (viewer) {
+                viewer.currentScaleValue = scale.toString();
+            }
+        }
+    }, [scale]);
 
-    const handleDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-        setNumPages(numPages);
-        onDocumentLoadSuccess({ numPages });
-    };
+    const highlights = useMemo(() => {
+        return annotations.map((annotation) => ({
+            id: annotation.id,
+            color: annotation.color,
+            content: {
+                text: annotation.selectedText,
+            },
+            position: {
+                boundingRect: annotation.boundingRect,
+                rects: annotation.rects,
+                pageNumber: annotation.pageNumber,
+            }
+        }));
+    }, [annotations]);
+
+    const handleSelection = useCallback((selection: any) => {
+        const text = selection?.content?.text || "";
+        const position = selection?.position;
+        if (text.length > 0 && position) {
+            const rects = position.rects || [position.boundingRect];
+            onTextSelection({
+                text,
+                rects: rects.map((r: any) => ({
+                    top: r.y1,
+                    left: r.x1,
+                    width: r.x2 - r.x1,
+                    height: r.y2 - r.y1,
+                    pageWidth: r.width,
+                    pageHeight: r.height,
+                })),
+                pageNumber: position.boundingRect.pageNumber,
+            });
+        }
+    }, [onTextSelection]);
 
     return (
-        <div
-            ref={containerRef}
-            className="flex-1 overflow-auto bg-muted/30 p-8"
-        >
-            <div className="flex flex-col items-center gap-4">
-                {publicUrl ? (
-                    <PDFDocument
-                        file={publicUrl}
-                        onLoadSuccess={handleDocumentLoadSuccess}
-                        className="max-w-none"
-                    >
-                        {Array.from({ length: numPages }, (_, i) => i + 1).map((pageNum) => (
-                            <div
-                                key={pageNum}
-                                ref={setPageRef(pageNum)}
-                                data-page-number={pageNum}
-                                className="mb-4 shadow-2xl rounded-lg overflow-hidden bg-white"
-                                style={{
-                                    minHeight: visiblePages.has(pageNum) ? 'auto' : '1056px', // A4 height at 1.2 scale
-                                }}
-                                onMouseUp={onTextSelection}
-                            >
-                                {visiblePages.has(pageNum) ? (
-                                    <Page
-                                        pageNumber={pageNum}
-                                        scale={scale}
-                                        renderAnnotationLayer={true}
-                                        renderTextLayer={true}
-                                        loading={
-                                            <div className="flex items-center justify-center h-[1056px] bg-gray-100">
-                                                <div className="text-muted-foreground">Loading page {pageNum}...</div>
-                                            </div>
-                                        }
-                                    />
-                                ) : (
-                                    <div className="flex items-center justify-center h-[1056px] bg-gray-50">
-                                        <div className="text-muted-foreground text-sm">Page {pageNum}</div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </PDFDocument>
-                ) : (
-                    <Card className="p-12 text-center max-w-md">
-                        <div className="space-y-4">
-                            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                                <Upload className="h-8 w-8 text-muted-foreground" />
-                            </div>
-                            <div>
-                                <h3 className="font-serif font-semibold text-lg mb-2">Upload your PDF</h3>
-                                <p className="text-muted-foreground text-sm mb-4">
-                                    Drag and drop your PDF here or click to select a file
-                                </p>
-                                <Button asChild>
-                                    <label htmlFor="pdf-upload" className="cursor-pointer">
-                                        Select File
-                                    </label>
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-            </div>
+        <div className="flex-1 overflow-hidden bg-muted/30 relative">
+            <PdfLoader
+                document={publicUrl}
+                beforeLoad={() => <div className="p-8">Loading PDF...</div>}
+                workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"
+            >
+                {(pdfDoc) => {
+                    setNumPages(pdfDoc.numPages);
+                    return (
+                        <PdfHighlighter
+                            pdfScaleValue={scale}
+                            pdfDocument={pdfDoc}
+                            enableAreaSelection={(event) => event.altKey}
+                            highlights={highlights}
+                            onSelection={handleSelection}
+                            selectionTip={selectionTip}
+                            utilsRef={(utils) => { utilsRef.current = utils; }}
+                        >
+                            <HighlightContainer onClick={(highlight: ViewportHighlight) => {
+                                const annotation = annotations.find(a => a.id === highlight.id);
+                                if (annotation) onAnnotationClick(annotation);
+                            }} />
+                        </PdfHighlighter>
+                    );
+                }}
+            </PdfLoader>
         </div>
     );
 };

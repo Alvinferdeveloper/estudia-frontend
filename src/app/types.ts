@@ -22,3 +22,38 @@ export interface Message {
     content: string;
     createdAt: string;
 }
+
+export interface AnnotationRect {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    width: number;
+    height: number;
+    pageNumber: number;
+}
+
+export interface BoundingRect {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    width: number;
+    height: number;
+    pageNumber: number;
+}
+
+export interface Annotation {
+    id: string;
+    selectedText: string;
+    comment: string | null;
+    aiResponse: string | null;
+    color: string;
+    pageNumber: number;
+    boundingRect: BoundingRect;
+    rects: AnnotationRect[];
+    embedding: string | null;
+    documentId: string;
+    createdAt: string;
+    updatedAt: string;
+}
