@@ -14,7 +14,6 @@ interface PdfViewerProps {
     onTextSelection: (selection: { text: string; rects: { top: number; left: number; width: number; height: number; pageWidth?: number; pageHeight?: number }[]; pageNumber: number }) => void;
     onPageChange: (page: number) => void;
     onAnnotationClick: (annotation: Annotation) => void;
-    onAnnotationCreate: (highlight: any) => void;
     setNumPages: (numPages: number) => void;
 }
 
@@ -28,6 +27,23 @@ const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighligh
         </div>
     );
 };
+
+interface SelectionEvent {
+    content?: { text?: string };
+    position?: {
+        boundingRect: { x1: number; y1: number; x2: number; y2: number; width: number; height: number; pageNumber: number };
+        rects?: Array<{ x1: number; y1: number; x2: number; y2: number; width: number; height: number }>;
+    };
+}
+
+interface HighlightRect {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    width: number;
+    height: number;
+}
 
 export const PdfViewer: React.FC<PdfViewerProps> = ({
     publicUrl,
@@ -64,14 +80,14 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
         }));
     }, [annotations]);
 
-    const handleSelection = useCallback((selection: any) => {
+    const handleSelection = useCallback((selection: SelectionEvent) => {
         const text = selection?.content?.text || "";
         const position = selection?.position;
         if (text.length > 0 && position) {
             const rects = position.rects || [position.boundingRect];
             onTextSelection({
                 text,
-                rects: rects.map((r: any) => ({
+                rects: rects.map((r: HighlightRect) => ({
                     top: r.y1,
                     left: r.x1,
                     width: r.x2 - r.x1,

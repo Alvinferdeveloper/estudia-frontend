@@ -1,10 +1,11 @@
+import { Highlight } from "react-pdf-highlighter-extended";
 export interface Comment {
     text: string;
 }
 
 export interface HighlightObject {
     id: string;
-    position: any; // Type from react-pdf-highlighter-extended
+    position: Highlight['position'];
     content: { text?: string; image?: string };
     comment?: Comment;
 }

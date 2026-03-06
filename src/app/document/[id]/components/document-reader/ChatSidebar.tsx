@@ -2,7 +2,7 @@
 import { Sparkles, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChatMessageList } from "./ChatMessageList";
 import { UIMessage } from "ai";
 
 interface ChatSidebarProps {
@@ -34,26 +34,13 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onClose, selec
                 {selectedText && (
                     <div className="mt-3 p-3 bg-accent/10 rounded-lg">
                         <p className="text-xs text-muted-foreground mb-1">Selected Text:</p>
-                        <p className="text-sm text-foreground line-clamp-3">"{selectedText}"</p>
+                        <p className="text-sm text-foreground line-clamp-3">&quot;{selectedText}&quot;</p>
                     </div>
                 )}
             </div>
 
             {/* Chat Messages */}
-            <ScrollArea className="flex-1 p-4 overflow-auto">
-                <div className="space-y-4">
-                    {messages.map((message) => (
-                        <div key={message.id} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
-                            <div
-                                className={`max-w-[80%] rounded-lg p-3 ${message.role === 'user' ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
-                                {message.parts.map((part, index) =>
-                                    part.type === 'text' ? <span key={index}>{part.text}</span> : null,
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </ScrollArea>
+            <ChatMessageList messages={messages} />
 
             {/* Chat Input */}
             <div className="p-4 border-t border-border">

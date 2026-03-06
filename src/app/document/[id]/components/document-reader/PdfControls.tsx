@@ -10,11 +10,21 @@ interface PdfControlsProps {
     scale: number;
     isChatOpen: boolean;
     selectedText: string | null;
-    onScaleChange: (scale: number) => void;
     onChatToggle: () => void;
+    onZoomIn: () => void;
+    onZoomOut: () => void;
 }
 
-export const PdfControls: React.FC<PdfControlsProps> = ({ pageNumber, numPages, scale, isChatOpen, selectedText, onScaleChange, onChatToggle }) => (
+export const PdfControls: React.FC<PdfControlsProps> = ({ 
+    pageNumber, 
+    numPages, 
+    scale, 
+    isChatOpen, 
+    selectedText, 
+    onChatToggle,
+    onZoomIn,
+    onZoomOut,
+}) => (
     <div className="border-b border-border bg-card px-6 py-3">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -27,11 +37,11 @@ export const PdfControls: React.FC<PdfControlsProps> = ({ pageNumber, numPages, 
                 <Separator orientation="vertical" className="h-4" />
 
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onScaleChange(Math.max(0.5, scale - 0.1))}>
+                    <Button variant="outline" size="sm" onClick={onZoomOut}>
                         <ZoomOut className="h-4 w-4" />
                     </Button>
                     <span className="text-sm text-muted-foreground min-w-12 text-center">{Math.round(scale * 100)}%</span>
-                    <Button variant="outline" size="sm" onClick={() => onScaleChange(Math.min(3, scale + 0.1))}>
+                    <Button variant="outline" size="sm" onClick={onZoomIn}>
                         <ZoomIn className="h-4 w-4" />
                     </Button>
                 </div>
