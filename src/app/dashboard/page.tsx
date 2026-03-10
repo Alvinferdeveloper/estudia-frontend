@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
-import { useFetchDocuments } from "@/app/dashboard/hooks/useFetchDocuments";
+import { useFetchItems } from "@/app/dashboard/hooks/useFetchItems";
 import { useCreateFolder } from "@/app/dashboard/hooks/useFolders";
 import { useUploadDocument } from "@/app/dashboard/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/dashboard/hooks/useDeleteDocument";
@@ -44,7 +44,7 @@ const DashboardPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
-  } = useFetchDocuments(
+  } = useFetchItems(
     selectedTopic?.id,
     debouncedSearchQuery,
     selectedFolder?.id || null

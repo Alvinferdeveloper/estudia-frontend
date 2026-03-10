@@ -9,7 +9,17 @@ interface PaginatedItems {
   limit: number;
 }
 
-const fetchItems = async ({ pageParam = 1, topicId, folderId, search }: { pageParam?: number, topicId?: string, folderId?: string | null, search?: string }): Promise<PaginatedItems> => {
+const fetchItems = async ({ 
+  pageParam = 1, 
+  topicId, 
+  folderId, 
+  search 
+}: { 
+  pageParam?: number, 
+  topicId?: string, 
+  folderId?: string | null, 
+  search?: string 
+}): Promise<PaginatedItems> => {
   let url = `${process.env.NEXT_PUBLIC_API_URL}/documents/items?page=${pageParam}&limit=12`;
   if (topicId) url += `&topicId=${topicId}`;
   if (folderId) url += `&folderId=${folderId}`;
@@ -19,7 +29,7 @@ const fetchItems = async ({ pageParam = 1, topicId, folderId, search }: { pagePa
   return data;
 };
 
-export const useFetchDocuments = (topicId?: string, search?: string, folderId?: string | null) => {
+export const useFetchItems = (topicId?: string, search?: string, folderId?: string | null) => {
   return useInfiniteQuery<PaginatedItems, Error>({
     queryKey: ['items', topicId, folderId, search],
     queryFn: ({ pageParam }) => fetchItems({ pageParam: pageParam as number, topicId, folderId, search }),
