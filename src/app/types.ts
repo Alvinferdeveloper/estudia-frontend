@@ -6,7 +6,23 @@ export interface Document {
     createdAt: string;
     fileSize: string;
     topicId: string | null;
+    folderId: string | null;
     tags: string[];
+    type: 'document';
+}
+
+export interface Folder {
+    id: string;
+    name: string;
+    color: string;
+    topicId: string | null;
+    parentId: string | null;
+    createdAt: string;
+    count: number;
+    subfoldersCount: number;
+    type: 'folder';
+    subfolders?: Folder[];
+    documents?: Document[];
 }
 
 export interface Topic {

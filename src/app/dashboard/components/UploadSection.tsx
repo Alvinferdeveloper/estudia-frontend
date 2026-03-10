@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, FileText, X, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Folder, Topic } from "@/app/types";
 
 interface UploadSectionProps {
-  selectedTopic: any;
+  selectedTopic: Topic | null;
+  selectedFolder: Folder | null;
   uploadDocument: (formData: FormData) => void;
   isUploading: boolean;
 }
 
-export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, uploadDocument, isUploading }) => {
+export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, selectedFolder, uploadDocument, isUploading }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentTags, setDocumentTags] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -56,6 +58,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, upl
     formData.append("file", selectedFile);
     if (selectedTopic) {
       formData.append("topicId", selectedTopic.id);
+    }
+    if (selectedFolder) {
+      formData.append("folderId", selectedFolder.id);
     }
     if (documentTags.trim()) {
       formData.append("tags", documentTags.trim());
@@ -109,7 +114,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ selectedTopic, upl
                 <div>
                   <h4 className="font-medium text-foreground truncate max-w-[300px]">{selectedFile.name}</h4>
                   <p className="text-xs text-muted-foreground">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedTopic ? `Topic: ${selectedTopic.name}` : "No Topic Selected"}
+                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedFolder ? `Folder: ${selectedFolder.name}` : selectedTopic ? `Topic: ${selectedTopic.name}` : "No Topic Selected"}
                   </p>
                 </div>
                 <Button

@@ -9,12 +9,13 @@ import { CreateTopicDialog } from "@/app/dashboard/components/CreateTopicDialog"
 import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
 import { useCreateTopic } from "@/app/dashboard/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
+import { Topic } from "@/app/types";
 
 interface SidebarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedTopic: any;
-  handleTopicSelect: (topic: any) => void;
+  selectedTopic: Topic | null;
+  handleTopicSelect: (topic: Topic | null) => void;
 }
 
 import { UserProfileMenu } from "@/components/user-profile-menu";
@@ -109,11 +110,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* --- FOOTER --- */}
-      <div className="p-4 border-t border-border/50 bg-card/30">
+      <div className="p-4 border-t border-border/50 bg-card/30 space-y-2">
         <CreateTopicDialog
           createTopic={createTopic}
         />
-        <div className="mt-2 text-center">
+        <div className="text-center">
           <p className="text-[10px] text-muted-foreground">
             Presiona <kbd className="font-sans border rounded px-1">N</kbd> para crear
           </p>

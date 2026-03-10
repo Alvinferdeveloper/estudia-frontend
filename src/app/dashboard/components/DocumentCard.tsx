@@ -11,11 +11,12 @@ interface DocumentCardProps {
   doc: Document;
   topic: Topic | undefined;
   deleteDocument: (documentId: string) => void;
+  onClick?: () => void;
 }
 
-export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic, deleteDocument }) => {
+export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic, deleteDocument, onClick }) => {
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+    <Card className="hover:shadow-md transition-shadow cursor-pointer group" onClick={onClick}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -38,6 +39,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic, deleteDo
                 variant="ghost"
                 size="sm"
                 className="opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>

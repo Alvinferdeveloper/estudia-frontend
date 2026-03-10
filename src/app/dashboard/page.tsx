@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
 import { useFetchDocuments } from "@/app/dashboard/hooks/useFetchDocuments";
+import { useCreateFolder } from "@/app/dashboard/hooks/useFolders";
 import { useUploadDocument } from "@/app/dashboard/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/dashboard/hooks/useDeleteDocument";
 import { useDebounce } from "@/app/hooks/useDebounce";
@@ -13,11 +14,16 @@ import { Header } from "@/app/dashboard/components/Header";
 import { UploadSection } from "@/app/dashboard/components/UploadSection";
 import { DocumentList } from "@/app/dashboard/components/DocumentList";
 import { QueryProvider } from "@/app/providers/QueryProvider";
+import { Folder, Topic, Document } from "@/app/types";
+
+type PathItem = { type: 'topic' | 'folder'; item: Topic | Folder };
 
 const DashboardPage = () => {
   const router = useRouter();
-  const [selectedTopic, setSelectedTopic] = useState<any | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [folderPath, setFolderPath] = useState<Folder[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -37,15 +43,72 @@ const DashboardPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
-  } = useFetchDocuments(selectedTopic?.id, debouncedSearchQuery);
+  } = useFetchDocuments(
+    selectedTopic?.id,
+    debouncedSearchQuery,
+    selectedFolder?.id || null
+  );
 
-  const documents = data?.pages.flatMap((page) => page.data) || [];
-
+  const items = data?.pages.flatMap((page) => page.data) || [];
+  
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
+  const { mutate: createFolder } = useCreateFolder();
 
-  const handleTopicSelect = (topic: any | null) => {
+  // Build current path for breadcrumb
+  const currentPath: PathItem[] = useMemo(() => {
+    const path: PathItem[] = [];
+    if (selectedTopic) {
+      path.push({ type: 'topic', item: selectedTopic });
+    }
+    folderPath.forEach(folder => {
+      path.push({ type: 'folder', item: folder });
+    });
+    return path;
+  }, [selectedTopic, folderPath]);
+
+  const handleTopicSelect = (topic: Topic | null) => {
     setSelectedTopic(topic);
+    setSelectedFolder(null);
+    setFolderPath([]);
+  };
+
+  const handleFolderSelect = (folder: Folder | null) => {
+    if (!folder) {
+      // Go back to root
+      setSelectedFolder(null);
+      setFolderPath([]);
+    } else {
+      // Navigate into folder
+      setSelectedFolder(folder);
+      
+      // If folder is already in path, truncate path to it
+      const folderIndex = folderPath.findIndex(f => f.id === folder.id);
+      if (folderIndex !== -1) {
+        setFolderPath(folderPath.slice(0, folderIndex + 1));
+      } else {
+        setFolderPath(prev => [...prev, folder]);
+      }
+    }
+  };
+
+  const handleGoBack = () => {
+    if (folderPath.length > 0) {
+      const newPath = folderPath.slice(0, -1);
+      setFolderPath(newPath);
+      setSelectedFolder(newPath.length > 0 ? newPath[newPath.length - 1] : null);
+    }
+  };
+
+  const handleCreateFolder = () => {
+    if (!selectedTopic) return;
+    const parentId = selectedFolder?.id;
+    createFolder({
+      name: 'Nueva Carpeta',
+      color: '#0ea5e9',
+      topicId: selectedTopic.id,
+      parentId,
+    });
   };
 
   return (
@@ -59,19 +122,24 @@ const DashboardPage = () => {
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header
           selectedTopic={selectedTopic}
+          selectedFolder={selectedFolder}
           totalDocuments={data?.pages[0].total || 0}
           viewMode={viewMode}
           setViewMode={setViewMode}
+          onGoBack={folderPath.length > 0 ? handleGoBack : undefined}
+          onCreateFolder={selectedTopic ? handleCreateFolder : undefined}
         />
         <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
           <div className="max-w-6xl mx-auto space-y-8">
             <UploadSection
               selectedTopic={selectedTopic}
+              selectedFolder={selectedFolder}
               uploadDocument={uploadDocument}
               isUploading={isUploading}
             />
             <DocumentList
-              filteredDocuments={documents}
+              items={items}
+              selectedFolder={selectedFolder}
               topics={topics || []}
               viewMode={viewMode}
               searchQuery={searchQuery}
@@ -79,6 +147,8 @@ const DashboardPage = () => {
               hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
+              onFolderSelect={handleFolderSelect}
+              currentPath={currentPath}
             />
           </div>
         </div>
