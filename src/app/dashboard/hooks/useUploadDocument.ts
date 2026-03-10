@@ -18,6 +18,7 @@ export const useUploadDocument = (topicId?: string) => {
     mutationFn: uploadDocument,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents', topicId] });
+      queryClient.invalidateQueries({ queryKey: ['items'] });
       queryClient.invalidateQueries({ queryKey: ['topics'] });
     },
   });

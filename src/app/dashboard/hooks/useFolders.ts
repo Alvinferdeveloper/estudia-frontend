@@ -59,6 +59,7 @@ export const useCreateFolder = () => {
     mutationFn: createFolder,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['folders'] });
+      queryClient.invalidateQueries({ queryKey: ['items'] });
     },
   });
 };
@@ -74,6 +75,7 @@ export const useUpdateFolder = () => {
     mutationFn: updateFolder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['folders'] });
+      queryClient.invalidateQueries({ queryKey: ['items'] });
     },
   });
 };
@@ -88,6 +90,7 @@ export const useDeleteFolder = () => {
     mutationFn: deleteFolder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['folders'] });
+      queryClient.invalidateQueries({ queryKey: ['items'] });
     },
   });
 };

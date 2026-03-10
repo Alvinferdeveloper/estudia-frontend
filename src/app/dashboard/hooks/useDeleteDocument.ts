@@ -11,6 +11,7 @@ export const useDeleteDocument = (topicId?: string) => {
     mutationFn: deleteDocument,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents', topicId] });
+      queryClient.invalidateQueries({ queryKey: ['items'] });
       queryClient.invalidateQueries({ queryKey: ['topics'] });
     },
   });

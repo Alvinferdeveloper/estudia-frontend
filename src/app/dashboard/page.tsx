@@ -13,6 +13,7 @@ import { Sidebar } from "@/app/dashboard/components/Sidebar";
 import { Header } from "@/app/dashboard/components/Header";
 import { UploadSection } from "@/app/dashboard/components/UploadSection";
 import { DocumentList } from "@/app/dashboard/components/DocumentList";
+import { CreateFolderDialog } from "@/app/dashboard/components/CreateFolderDialog";
 import { QueryProvider } from "@/app/providers/QueryProvider";
 import { Folder, Topic, Document } from "@/app/types";
 
@@ -100,17 +101,6 @@ const DashboardPage = () => {
     }
   };
 
-  const handleCreateFolder = () => {
-    if (!selectedTopic) return;
-    const parentId = selectedFolder?.id;
-    createFolder({
-      name: 'Nueva Carpeta',
-      color: '#0ea5e9',
-      topicId: selectedTopic.id,
-      parentId,
-    });
-  };
-
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar
@@ -127,7 +117,15 @@ const DashboardPage = () => {
           viewMode={viewMode}
           setViewMode={setViewMode}
           onGoBack={folderPath.length > 0 ? handleGoBack : undefined}
-          onCreateFolder={selectedTopic ? handleCreateFolder : undefined}
+          createFolderDialog={
+            selectedTopic ? (
+              <CreateFolderDialog
+                createFolder={createFolder}
+                topicId={selectedTopic.id}
+                parentId={selectedFolder?.id}
+              />
+            ) : undefined
+          }
         />
         <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
           <div className="max-w-6xl mx-auto space-y-8">

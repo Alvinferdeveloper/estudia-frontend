@@ -10,7 +10,7 @@ interface HeaderProps {
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
   onGoBack?: () => void;
-  onCreateFolder?: () => void;
+  createFolderDialog?: React.ReactNode;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   viewMode, 
   setViewMode,
   onGoBack,
-  onCreateFolder,
+  createFolderDialog,
 }) => {
   return (
     <header className="px-8 py-5 flex items-center justify-between bg-background/50 backdrop-blur-sm sticky top-0 z-10">
@@ -61,16 +61,10 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {selectedTopic && onCreateFolder && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onCreateFolder}
-            className="gap-1"
-          >
-            <FolderPlus className="h-4 w-4" />
-            Nueva Carpeta
-          </Button>
+        {selectedTopic && createFolderDialog && (
+          <div className="flex items-center">
+            {createFolderDialog}
+          </div>
         )}
         <div className="flex items-center gap-1 bg-secondary p-1 rounded-lg">
           <Button
