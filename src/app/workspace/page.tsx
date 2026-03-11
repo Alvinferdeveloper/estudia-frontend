@@ -3,17 +3,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
-import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
-import { useFetchItems } from "@/app/dashboard/hooks/useFetchItems";
-import { useCreateFolder } from "@/app/dashboard/hooks/useFolders";
-import { useUploadDocument } from "@/app/dashboard/hooks/useUploadDocument";
-import { useDeleteDocument } from "@/app/dashboard/hooks/useDeleteDocument";
+import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
+import { useFetchItems } from "@/app/workspace/hooks/useFetchItems";
+import { useCreateFolder } from "@/app/workspace/hooks/useFolders";
+import { useUploadDocument } from "@/app/workspace/hooks/useUploadDocument";
+import { useDeleteDocument } from "@/app/workspace/hooks/useDeleteDocument";
 import { useDebounce } from "@/app/hooks/useDebounce";
-import { Sidebar } from "@/app/dashboard/components/Sidebar";
-import { Header } from "@/app/dashboard/components/Header";
-import { UploadSection } from "@/app/dashboard/components/UploadSection";
-import { DocumentList } from "@/app/dashboard/components/DocumentList";
-import { CreateFolderDialog } from "@/app/dashboard/components/CreateFolderDialog";
+import { Sidebar } from "@/app/workspace/components/Sidebar";
+import { Header } from "@/app/workspace/components/Header";
+import { UploadSection } from "@/app/workspace/components/UploadSection";
+import { DocumentList } from "@/app/workspace/components/DocumentList";
+import { CreateFolderDialog } from "@/app/workspace/components/CreateFolderDialog";
 import { QueryProvider } from "@/app/providers/QueryProvider";
 import { Folder, Topic, Document } from "@/app/types";
 
@@ -51,7 +51,7 @@ const DashboardPage = () => {
   );
 
   const items = data?.pages.flatMap((page) => page.data) || [];
-  
+
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
   const { mutate: createFolder } = useCreateFolder();
@@ -82,7 +82,7 @@ const DashboardPage = () => {
     } else {
       // Navigate into folder
       setSelectedFolder(folder);
-      
+
       // If folder is already in path, truncate path to it
       const folderIndex = folderPath.findIndex(f => f.id === folder.id);
       if (folderIndex !== -1) {

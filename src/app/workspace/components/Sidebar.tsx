@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, LayoutGrid, Layers } from "lucide-react";
-import { TopicList } from "@/app/dashboard/components/TopicList";
-import { CreateTopicDialog } from "@/app/dashboard/components/CreateTopicDialog";
-import { useFetchTopics } from "@/app/dashboard/hooks/useFetchTopics";
-import { useCreateTopic } from "@/app/dashboard/hooks/useCreateTopic";
+import { TopicList } from "@/app/workspace/components/TopicList";
+import { CreateTopicDialog } from "@/app/workspace/components/CreateTopicDialog";
+import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
+import { useCreateTopic } from "@/app/workspace/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
 import { Topic } from "@/app/types";
 

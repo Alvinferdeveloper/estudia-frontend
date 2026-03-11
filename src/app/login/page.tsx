@@ -29,13 +29,13 @@ export default function Login() {
       const { data, error: signInError } = await authClient.signIn.email({
         email,
         password,
-        callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+        callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/workspace`,
       });
 
       if (signInError) {
         setError(signInError.message || "Credenciales incorrectas.");
       } else {
-        router.push("/dashboard");
+        router.push("/workspace");
       }
     } catch (err) {
       setError("Error de conexión.");
@@ -48,7 +48,7 @@ export default function Login() {
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+        callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/workspace`,
       });
     } catch (err) {
       setError(`Error con ${provider}.`);

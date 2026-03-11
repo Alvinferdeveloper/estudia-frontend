@@ -37,7 +37,7 @@ export default function Register() {
       if (signUpError) {
         setError(signUpError.message || "Error al crear la cuenta. Inténtalo de nuevo.");
       } else {
-        router.push("/dashboard");
+        router.push("/workspace");
       }
     } catch (err) {
       setError("Error de conexión. Revisa tu internet.");
@@ -50,7 +50,7 @@ export default function Register() {
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: "/dashboard",
+        callbackURL: "/workspace",
       });
     } catch (err) {
       setError(`No se pudo conectar con ${provider}.`);

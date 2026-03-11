@@ -1,10 +1,10 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Inbox, ChevronRight } from "lucide-react";
-import { DocumentCard } from "@/app/dashboard/components/DocumentCard";
-import { DocumentListItem } from "@/app/dashboard/components/DocumentListItem";
-import { FolderListItem } from "@/app/dashboard/components/FolderListItem";
-import { FolderCard } from "@/app/dashboard/components/FolderCard";
+import { DocumentCard } from "@/app/workspace/components/DocumentCard";
+import { DocumentListItem } from "@/app/workspace/components/DocumentListItem";
+import { FolderListItem } from "@/app/workspace/components/FolderListItem";
+import { FolderCard } from "@/app/workspace/components/FolderCard";
 import FolderIcon from "@/app/icons/Folder";
 import { Document, Topic, Folder } from "@/app/types";
 import { Button } from "@/components/ui/button";
@@ -138,15 +138,15 @@ export const DocumentList: React.FC<DocumentListProps> = ({
             if (item.type === 'folder') {
               const folder = item as Folder;
               return viewMode === "grid" ? (
-                <FolderCard 
-                  key={folder.id} 
-                  folder={folder} 
-                  onClick={() => onFolderSelect(folder)} 
+                <FolderCard
+                  key={folder.id}
+                  folder={folder}
+                  onClick={() => onFolderSelect(folder)}
                 />
               ) : (
-                <FolderListItem 
-                  key={folder.id} 
-                  folder={folder} 
+                <FolderListItem
+                  key={folder.id}
+                  folder={folder}
                   onClick={() => onFolderSelect(folder)}
                 />
               );
@@ -174,7 +174,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
             }
           })}
         </div>
-        
+
         {/* Intersection Observer Target */}
         <div ref={observerTarget} className="h-10 w-full flex items-center justify-center mt-4">
           {isFetchingNextPage && (
