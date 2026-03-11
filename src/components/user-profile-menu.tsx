@@ -19,13 +19,26 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import useAuth from "@/app/hooks/useAuth"
+import { authClient } from "@/app/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export function UserProfileMenu() {
     const { setTheme } = useTheme();
-    const { data: session } = useAuth();
+    const { data: session, } = useAuth();
+    const router = useRouter();
 
     const getInitials = (name = 'U') => {
         return name.split(" ").map((n) => n[0]).join("");
+    }
+
+    const handleLogOut = () => {
+        authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    router.push("/");
+                }
+            }
+        });
     }
 
     return (
@@ -78,7 +91,7 @@ export function UserProfileMenu() {
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+                <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={handleLogOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Cerrar Sesión</span>
                 </DropdownMenuItem>
