@@ -130,3 +130,106 @@
 .react-pdf__Page__textContent {
   user-select: text !important;
 }
+
+/* Syntax highlighting for code blocks */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: #8b5cf6;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+  color: #10b981;
+}
+
+.hljs-deletion,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-meta {
+  color: #f472b6;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-selector-id,
+.hljs-variable {
+  color: #f59e0b;
+}
+
+.hljs-function,
+.hljs-title.function_ {
+  color: #3b82f6;
+}
+
+.hljs-params {
+  color: #e5e7eb;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-built_in,
+.dark .hljs-name,
+.dark .hljs-tag {
+  color: #a78bfa;
+}
+
+.dark .hljs-string,
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-attribute,
+.dark .hljs-literal,
+.dark .hljs-template-tag,
+.dark .hljs-template-variable,
+.dark .hljs-type,
+.dark .hljs-addition {
+  color: #34d399;
+}
+
+.dark .hljs-deletion,
+.dark .hljs-selector-attr,
+.dark .hljs-selector-pseudo,
+.dark .hljs-meta {
+  color: #f472b6;
+}
+
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #9ca3af;
+}
+
+.dark .hljs-number,
+.dark .hljs-regexp,
+.dark .hljs-selector-id,
+.dark .hljs-variable {
+  color: #fbbf24;
+}
+
+.dark .hljs-function,
+.dark .hljs-title.function_ {
+  color: #60a5fa;
+}
+
+.dark .hljs-params {
+  color: #d1d5db;
+}

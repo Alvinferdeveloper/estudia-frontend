@@ -12,7 +12,6 @@ import { PdfViewer } from "@/app/document/[id]/components/document-reader/PdfVie
 import { ChatSidebar } from "@/app/document/[id]/components/document-reader/ChatSidebar";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
 import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
-import { AnnotationPopup } from "@/app/document/[id]/components/document-reader/AnnotationPopup";
 import { DocumentFile } from "@/app/document/[id]/page";
 import { Annotation } from "@/app/types";
 
@@ -48,17 +47,26 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
-    const [selectedAnnotation, setSelectedAnnotation] = useState<Annotation | null>(null);
+    const [editingAnnotation, setEditingAnnotation] = useState<Annotation | null>(null);
 
     const { data: annotations = [], refetch: refetchAnnotations } = useFetchAnnotations(document.id);
     const { mutate: deleteAnnotation } = useDeleteAnnotation(document.id);
 
     const handleChatToggle = () => setIsChatOpen((prev) => !prev);
 
-    const handleNoteDialogOpen = () => setIsNoteDialogOpen(true);
+    const handleNoteDialogOpen = () => {
+        setEditingAnnotation(null);
+        setIsNoteDialogOpen(true);
+    };
+
+    const handleAnnotationClick = (annotation: Annotation) => {
+        setEditingAnnotation(annotation);
+        setIsNoteDialogOpen(true);
+    };
 
     const handleNoteDialogClose = () => {
         setIsNoteDialogOpen(false);
+        setEditingAnnotation(null);
         clearSelection();
     };
 
@@ -70,56 +78,72 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     }) => {
         const { selectedText, comment, aiResponse, color } = noteData;
 
-        const rects = selectionRects.map((r) => ({
-            x1: r.left,
-            y1: r.top,
-            x2: r.left + r.width,
-            y2: r.top + r.height,
-            width: r.pageWidth || 800,
-            height: r.pageHeight || 1200,
-            pageNumber: selectedPage,
-        }));
+        if (editingAnnotation) {
+            await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/annotations/${editingAnnotation.id}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        comment,
+                        aiResponse,
+                        color,
+                    }),
+                }
+            );
+        } else {
+            const rects = selectionRects.map((r) => ({
+                x1: r.left,
+                y1: r.top,
+                x2: r.left + r.width,
+                y2: r.top + r.height,
+                width: r.pageWidth || 800,
+                height: r.pageHeight || 1200,
+                pageNumber: selectedPage,
+            }));
 
-        const boundingRect = {
-            x1: Math.min(...rects.map((r) => r.x1)),
-            y1: Math.min(...rects.map((r) => r.y1)),
-            x2: Math.max(...rects.map((r) => r.x2)),
-            y2: Math.max(...rects.map((r) => r.y2)),
-            width: rects[0]?.width || 800,
-            height: rects[0]?.height || 1200,
-            pageNumber: currentPage,
-        };
+            const boundingRect = {
+                x1: Math.min(...rects.map((r) => r.x1)),
+                y1: Math.min(...rects.map((r) => r.y1)),
+                x2: Math.max(...rects.map((r) => r.x2)),
+                y2: Math.max(...rects.map((r) => r.y2)),
+                width: rects[0]?.width || 800,
+                height: rects[0]?.height || 1200,
+                pageNumber: currentPage,
+            };
 
-        await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/annotations`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    selectedText,
-                    comment,
-                    aiResponse,
-                    color,
-                    pageNumber: currentPage,
-                    boundingRect,
-                    rects,
-                }),
-            }
-        );
+            await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/annotations`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        selectedText,
+                        comment,
+                        aiResponse,
+                        color,
+                        pageNumber: currentPage,
+                        boundingRect,
+                        rects,
+                    }),
+                }
+            );
+        }
 
         refetchAnnotations();
     };
 
-    const handleAnnotationClick = (annotation: Annotation) => {
-        setSelectedAnnotation(annotation);
-    };
-
-    const handleDeleteAnnotation = (annotationId: string) => {
-        deleteAnnotation(annotationId, {
-            onSuccess: () => {
-                setSelectedAnnotation(null);
-                refetchAnnotations();
-            },
+    const handleDeleteNote = async (annotationId: string) => {
+        return new Promise<void>((resolve, reject) => {
+            deleteAnnotation(annotationId, {
+                onSuccess: () => {
+                    refetchAnnotations();
+                    resolve();
+                },
+                onError: (err) => {
+                    reject(err);
+                },
+            });
         });
     };
 
@@ -173,18 +197,12 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
             <StreamingNoteDialog
                 isOpen={isNoteDialogOpen}
                 onClose={handleNoteDialogClose}
-                selectedText={selectedText || ""}
+                selectedText={editingAnnotation?.selectedText || selectedText || ""}
                 documentFileName={document.fileName}
                 onSaveNote={handleSaveNote}
+                onDeleteNote={handleDeleteNote}
+                existingAnnotation={editingAnnotation}
             />
-
-            {selectedAnnotation && (
-                <AnnotationPopup
-                    annotation={selectedAnnotation}
-                    onClose={() => setSelectedAnnotation(null)}
-                    onDelete={handleDeleteAnnotation}
-                />
-            )}
         </div>
     );
 };
