@@ -3,8 +3,8 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { UIMessage } from "ai";
 import { Message } from "@/app/types";
-import { useFetchMessages } from "./useFetchMessages";
-import { useCreateMessage } from "./useCreateMessage";
+import { useFetchMessages } from "@/app/document/[id]/hooks/useFetchMessages";
+import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
 
 interface UseChatAssistantOptions {
   documentId: string;
@@ -17,6 +17,7 @@ interface UseChatAssistantReturn {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   setInput: (input: string) => void;
+  setMessages: (messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[])) => void;
 }
 
 export const useChatAssistant = ({
@@ -37,7 +38,7 @@ export const useChatAssistant = ({
     [initialMessages]
   );
 
-  const { messages, sendMessage, setMessages, isLoading } = useChat({
+  const { messages, sendMessage, setMessages, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
@@ -67,7 +68,7 @@ export const useChatAssistant = ({
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (input.trim()) {
-        sendMessage({ text: input });
+        sendMessage({ parts: [{ type: "text" as const, text: input }] });
         createMessage({ role: "user", content: input });
         setInput("");
       }
@@ -78,9 +79,10 @@ export const useChatAssistant = ({
   return {
     messages,
     input,
-    isLoading,
+    isLoading: status === 'streaming',
     handleInputChange,
     handleFormSubmit,
     setInput,
+    setMessages,
   };
 };

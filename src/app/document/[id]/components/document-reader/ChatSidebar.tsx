@@ -1,3 +1,4 @@
+"use client";
 
 import { Sparkles, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,19 +9,26 @@ import { UIMessage } from "ai";
 interface ChatSidebarProps {
     isOpen: boolean;
     onClose: () => void;
-    selectedText: string | null;
     messages: UIMessage[];
     input: string;
+    selectedText: string;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onClose, selectedText, messages, input, onInputChange, onFormSubmit }) => {
+export const ChatSidebar: React.FC<ChatSidebarProps> = ({
+    isOpen,
+    onClose,
+    messages,
+    input,
+    selectedText,
+    onInputChange,
+    onFormSubmit,
+}) => {
     if (!isOpen) return null;
 
     return (
         <div className="w-96 border-l border-border bg-card flex flex-col h-full">
-            {/* Chat Header */}
             <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -39,14 +47,12 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onClose, selec
                 )}
             </div>
 
-            {/* Chat Messages */}
             <ChatMessageList messages={messages} />
 
-            {/* Chat Input */}
             <div className="p-4 border-t border-border">
                 <form onSubmit={onFormSubmit} className="flex gap-2">
                     <Input
-                        placeholder="Ask about the document..."
+                        placeholder="Pregunta sobre el documento..."
                         value={input}
                         onChange={onInputChange}
                         className="flex-1"
@@ -58,4 +64,4 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onClose, selec
             </div>
         </div>
     );
-}
+};

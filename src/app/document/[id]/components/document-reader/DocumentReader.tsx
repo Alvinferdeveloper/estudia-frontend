@@ -5,6 +5,8 @@ import { useFetchAnnotations, useDeleteAnnotation } from "@/app/document/[id]/ho
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
 import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
+import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
+import { UIMessage } from "ai";
 
 import { Header } from "@/app/document/[id]/components/document-reader/Header";
 import { PdfControls } from "@/app/document/[id]/components/document-reader/PdfControls";
@@ -30,22 +32,46 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         zoomOut,
     } = useDocumentViewer();
 
-    const {
-        selectedText,
-        selectionRects,
-        selectedPage,
-        handleTextSelection,
-        clearSelection,
-    } = useTextSelection();
+    const { mutate: createMessage } = useCreateMessage(document.id);
 
     const {
         messages,
         input,
         handleInputChange,
         handleFormSubmit,
+        setMessages,
     } = useChatAssistant({ documentId: document.id });
 
-    const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+    const addContextMessage = (text: string, page: number) => {
+        const content = `📌 Texto seleccionado (pág. ${page}):
+
+"${text}"
+
+Pregunta lo que quieras sobre este fragmento.`;
+        const contextMessage: UIMessage = {
+            id: `context-${Date.now()}`,
+            role: "assistant",
+            parts: [{ type: "text" as const, text: content }],
+        };
+        setMessages((msgs) => {
+            const lastMsg = msgs[msgs.length - 1];
+            if (lastMsg?.role === "assistant" && lastMsg.id.startsWith("context-")) {
+                return msgs;
+            }
+            return [...msgs, contextMessage];
+        });
+        createMessage({ role: "assistant", content });
+    };
+
+    const {
+        selectedText,
+        selectionRects,
+        selectedPage,
+        handleTextSelection,
+        clearSelection,
+    } = useTextSelection({ onTextSelected: addContextMessage });
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
     const [editingAnnotation, setEditingAnnotation] = useState<Annotation | null>(null);
 
@@ -84,11 +110,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        comment,
-                        aiResponse,
-                        color,
-                    }),
+                    body: JSON.stringify({ comment, aiResponse, color }),
                 }
             );
         } else {
@@ -99,7 +121,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 y2: r.top + r.height,
                 width: r.pageWidth || 800,
                 height: r.pageHeight || 1200,
-                pageNumber: selectedPage,
+                pageNumber: selectedPage ?? currentPage,
             }));
 
             const boundingRect = {
@@ -140,9 +162,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                     refetchAnnotations();
                     resolve();
                 },
-                onError: (err) => {
-                    reject(err);
-                },
+                onError: (err) => reject(err),
             });
         });
     };
@@ -186,8 +206,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 <ChatSidebar
                     isOpen={isChatOpen}
                     onClose={() => setIsChatOpen(false)}
-                    selectedText={selectedText}
                     messages={messages}
+                    selectedText={selectedText || ''}
                     input={input}
                     onInputChange={handleInputChange}
                     onFormSubmit={handleFormSubmit}
