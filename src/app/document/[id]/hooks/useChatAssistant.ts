@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, type ChatTransport } from "ai";
 import { UIMessage } from "ai";
 import { Message } from "@/app/types";
 import { useFetchMessages } from "@/app/document/[id]/hooks/useFetchMessages";
@@ -8,6 +8,7 @@ import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
 
 interface UseChatAssistantOptions {
   documentId: string;
+  documentName: string;
 }
 
 interface UseChatAssistantReturn {
@@ -22,6 +23,7 @@ interface UseChatAssistantReturn {
 
 export const useChatAssistant = ({
   documentId,
+  documentName,
 }: UseChatAssistantOptions): UseChatAssistantReturn => {
   const [input, setInput] = useState("");
 
@@ -38,9 +40,17 @@ export const useChatAssistant = ({
     [initialMessages]
   );
 
-  const { messages, sendMessage, setMessages, status } = useChat({
+  const { messages, sendMessage, setMessages, status, } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/chat",
+      api: "/api/chat", prepareSendMessagesRequest: ({ messages }) => {
+        return {
+          body: {
+            messages,
+            documentId,
+            documentName,
+          },
+        };
+      },
     }),
     onFinish: (message) => {
       message.message.parts.forEach((part) => {
@@ -68,7 +78,7 @@ export const useChatAssistant = ({
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (input.trim()) {
-        sendMessage({ parts: [{ type: "text" as const, text: input }] });
+        sendMessage({ parts: [{ type: "text" as const, text: input, }] });
         createMessage({ role: "user", content: input });
         setInput("");
       }

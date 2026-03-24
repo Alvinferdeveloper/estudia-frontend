@@ -1,5 +1,6 @@
+"use client";
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 interface HeaderProps {

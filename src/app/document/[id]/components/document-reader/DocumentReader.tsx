@@ -40,7 +40,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         handleInputChange,
         handleFormSubmit,
         setMessages,
-    } = useChatAssistant({ documentId: document.id });
+    } = useChatAssistant({ documentId: document.id, documentName: document.fileName });
 
     const addContextMessage = (text: string, page: number) => {
         const content = `📌 Texto seleccionado (pág. ${page}):
