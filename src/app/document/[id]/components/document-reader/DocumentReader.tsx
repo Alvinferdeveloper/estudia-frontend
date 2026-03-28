@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFetchAnnotations, useDeleteAnnotation } from "@/app/document/[id]/hooks/useAnnotations";
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
@@ -77,6 +77,22 @@ Pregunta lo que quieras sobre este fragmento.`;
 
     const { data: annotations = [], refetch: refetchAnnotations } = useFetchAnnotations(document.id);
     const { mutate: deleteAnnotation } = useDeleteAnnotation(document.id);
+    const [localAnnotations, setLocalAnnotations] = useState<Annotation[]>([]);
+
+    const annotationsToShow = localAnnotations.length > 0 ? localAnnotations : annotations;
+
+    const handleAnnotationUpdated = (updatedAnnotation: Annotation) => {
+        setLocalAnnotations(prev => {
+            if (prev.length === 0) {
+                return annotations.map(a => a.id === updatedAnnotation.id ? updatedAnnotation : a);
+            }
+            return prev.map(a => a.id === updatedAnnotation.id ? updatedAnnotation : a);
+        });
+    };
+
+    useEffect(() => {
+        setLocalAnnotations(annotations);
+    }, [annotations]);
 
     const handleChatToggle = () => setIsChatOpen((prev) => !prev);
 
@@ -105,14 +121,18 @@ Pregunta lo que quieras sobre este fragmento.`;
         const { selectedText, comment, aiResponse, color } = noteData;
 
         if (editingAnnotation) {
-            await fetch(
+            const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/annotations/${editingAnnotation.id}`,
                 {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ comment, aiResponse, color }),
+                    credentials: "include",
                 }
             );
+            if (!res.ok) {
+                throw new Error(`Failed to update note: ${res.status}`);
+            }
         } else {
             const rects = selectionRects.map((r) => ({
                 x1: r.left,
@@ -186,7 +206,7 @@ Pregunta lo que quieras sobre este fragmento.`;
                     <PdfViewer
                         publicUrl={document.publicUrl}
                         scale={scale}
-                        annotations={annotations}
+                        annotations={annotationsToShow}
                         setNumPages={setNumPages}
                         onTextSelection={handleTextSelection}
                         onPageChange={setCurrentPage}
@@ -221,6 +241,7 @@ Pregunta lo que quieras sobre este fragmento.`;
                 documentFileName={document.fileName}
                 onSaveNote={handleSaveNote}
                 onDeleteNote={handleDeleteNote}
+                onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
             />
         </div>

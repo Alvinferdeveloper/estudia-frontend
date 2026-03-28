@@ -5,11 +5,18 @@ interface UseStreamingNoteOptions {
   apiEndpoint?: string;
 }
 
+interface UseStreamingNoteBody {
+  selectedText: string;
+  prompt: string;
+  documentContext?: string;
+  originalNote?: string;
+}
+
 interface UseStreamingNoteReturn {
   completion: string;
   isLoading: boolean;
   error: Error | undefined;
-  complete: (prompt: string, body: object) => Promise<string | null | undefined>;
+  complete: (prompt: string, body: UseStreamingNoteBody) => Promise<string | null | undefined>;
   stop: () => void;
   setCompletion: (completion: string) => void;
 }
@@ -31,7 +38,7 @@ export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStre
   });
 
   const wrappedComplete = useCallback(
-    async (prompt: string, body: object) => {
+    async (prompt: string, body: UseStreamingNoteBody) => {
       return await complete(prompt, { body });
     },
     [complete]

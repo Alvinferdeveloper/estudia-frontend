@@ -8,13 +8,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, Sparkles, Save, FileText, Edit3, Trash2 } from "lucide-react";
+import { Loader2, Sparkles, Save, FileText, Trash2, ArrowRightCircle, Check } from "lucide-react";
 import { useStreamingNote } from "@/app/document/[id]/hooks/useStreamingNote";
 import { Annotation } from "@/app/types";
+import axios from "axios";
 import {
   NoteColorPicker,
   NoteEditor,
   NoteForm,
+  NoteDiffViewer,
 } from "@/app/document/[id]/components/document-reader/note-ui";
 
 const DEFAULT_COLOR = "#FFEB3B";
@@ -31,6 +33,7 @@ interface StreamingNoteDialogProps {
     color: string;
   }) => Promise<void>;
   onDeleteNote?: (id: string) => Promise<void>;
+  onAnnotationUpdated?: (updatedAnnotation: Annotation) => void;
   existingAnnotation?: Annotation | null;
 }
 
@@ -41,6 +44,7 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   documentFileName,
   onSaveNote,
   onDeleteNote,
+  onAnnotationUpdated,
   existingAnnotation,
 }) => {
   const [prompt, setPrompt] = useState("");
@@ -49,8 +53,11 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDiff, setShowDiff] = useState(false);
+  const [isAcceptingChanges, setIsAcceptingChanges] = useState(false);
+  const [localOriginalNote, setLocalOriginalNote] = useState("");
   const initialPromptRef = useRef("");
-  const initialCompletionRef = useRef("");
+  const originalCompletionRef = useRef("");
 
   const {
     completion,
@@ -68,8 +75,10 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     setSaveError(null);
     setCompletion("");
     setIsExpanded(false);
+    setShowDiff(false);
+    setLocalOriginalNote("");
     initialPromptRef.current = "";
-    initialCompletionRef.current = "";
+    originalCompletionRef.current = "";
   }, [setCompletion]);
 
   useEffect(() => {
@@ -79,7 +88,8 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
         setSelectedColor(existingAnnotation.color || DEFAULT_COLOR);
         setCompletion(existingAnnotation.aiResponse || "");
         initialPromptRef.current = existingAnnotation.comment || "";
-        initialCompletionRef.current = existingAnnotation.aiResponse || "";
+        originalCompletionRef.current = existingAnnotation.aiResponse || "";
+        setLocalOriginalNote(existingAnnotation.aiResponse || "");
         setIsExpanded(true);
       } else {
         handleReset();
@@ -95,28 +105,117 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
       selectedText,
       prompt,
       documentContext: `Document: ${documentFileName}`,
+      originalNote: isEditMode ? originalCompletionRef.current : undefined,
     });
   };
 
   const handleRegenerate = async () => {
     if (!initialPromptRef.current) return;
     setCompletion("");
-    await complete(initialPromptRef.current, {
-      selectedText,
-      prompt: initialPromptRef.current,
-      documentContext: `Document: ${documentFileName}`,
-    });
+    setShowDiff(false);
+
+    if (isEditMode) {
+      const { data } = await axios.post(
+        `/api/generate-note`,
+        {
+          selectedText,
+          prompt: initialPromptRef.current,
+          documentContext: `Document: ${documentFileName}`,
+          originalNote: completion,
+        }
+      );
+      setCompletion(data.content);
+    } else {
+      await complete(initialPromptRef.current, {
+        selectedText,
+        prompt: initialPromptRef.current,
+        documentContext: `Document: ${documentFileName}`,
+      });
+    }
   };
 
   const handleRequestChanges = async (changePrompt: string) => {
     if (!changePrompt.trim()) return;
     const combinedPrompt = `${initialPromptRef.current}. Also: ${changePrompt}`;
     setCompletion("");
-    await complete(combinedPrompt, {
-      selectedText,
-      prompt: combinedPrompt,
-      documentContext: `Document: ${documentFileName}`,
-    });
+    setShowDiff(false);
+
+    if (isEditMode) {
+      const { data } = await axios.post(
+        `/api/generate-note`,
+        {
+          selectedText,
+          prompt: combinedPrompt,
+          documentContext: `Document: ${documentFileName}`,
+          originalNote: completion,
+        }
+      );
+      setCompletion(data.content);
+    } else {
+      await complete(combinedPrompt, {
+        selectedText,
+        prompt: combinedPrompt,
+        documentContext: `Document: ${documentFileName}`,
+      });
+    }
+  };
+
+  const handleApplyDiff = (mergedText: string) => {
+    setCompletion(mergedText);
+    setShowDiff(false);
+  };
+
+  const handleAcceptChanges = async (mergedText: string) => {
+    if (!existingAnnotation) return;
+
+    setIsAcceptingChanges(true);
+    setSaveError(null);
+
+    try {
+      console.log("[handleAcceptChanges] annotation id:", existingAnnotation.id);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/annotations/${existingAnnotation.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            comment: initialPromptRef.current,
+            aiResponse: mergedText,
+            color: selectedColor
+          }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        let errorBody: unknown;
+        try {
+          errorBody = await response.json();
+        } catch {
+          errorBody = await response.text();
+        }
+        console.error(
+          `[handleAcceptChanges] HTTP ${response.status} ${response.statusText}`,
+          errorBody
+        );
+        setSaveError(`Error ${response.status}: ${response.statusText}`);
+        return;
+      }
+
+      const updatedAnnotation = await response.json();
+
+      if (onAnnotationUpdated) {
+        onAnnotationUpdated(updatedAnnotation);
+      }
+    } catch (err) {
+      // Solo se ejecuta ante errores de red (sin conexión, CORS, etc.)
+      const errorType = err instanceof Error ? err.constructor.name : typeof err;
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error(`[handleAcceptChanges] Network error (${errorType}):`, errorMessage, err);
+      setSaveError(`Network error: ${errorMessage}`);
+    } finally {
+      setIsAcceptingChanges(false);
+    }
   };
 
   const handleSave = async () => {
@@ -167,7 +266,9 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   const isReady = completion.trim().length > 0 && !isLoading;
   const hasError = error !== undefined;
   const showGeneratedNote = isExpanded && completion;
-  const hasChanges = completion !== initialCompletionRef.current;
+  const hasChanges = isEditMode && completion !== originalCompletionRef.current;
+
+  const showDiffMode = isEditMode && hasChanges && !isLoading && completion.length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -179,28 +280,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
         `}
         style={{ maxWidth: "85vw" }}
       >
-        <DialogHeader className="px-6 py-4 border-b shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                <p className="text-xs text-muted-foreground">{documentFileName}</p>
-              </div>
-            </div>
-            {isEditMode && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="text-destructive mr-6 cursor-pointer hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-        </DialogHeader>
-
         <div className="flex-1 overflow-hidden flex flex-col">
           {showGeneratedNote ? (
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -210,43 +289,67 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                     <FileText className="w-3 h-3" />
                     Selected Text
                   </div>
-                  <div className="max-h-24 overflow-y-auto w-full">
+                  <div className="max-h-24 overflow-y-auto flex justify-between w-full">
                     <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap pr-4">
                       {selectedText}
                     </p>
+                    {isEditMode && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="Delete note"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="text-destructive mr-6 cursor-pointer hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <div className="p-3 border-b bg-gradient-to-r from-primary to-primary/70 dark:from-primary/30 dark:to-primary/30 shrink-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm font-medium">
-                      <Sparkles className="w-4 h-4 text-white" />
-                      <span className="text-white font-semibold">
-                        {isEditMode ? "Current Note" : "Generated Note"}
+              {showDiffMode && showDiff ? (
+                <NoteDiffViewer
+                  originalText={originalCompletionRef.current}
+                  newText={completion}
+                  onApply={handleApplyDiff}
+                  onCancel={() => setShowDiff(false)}
+                />
+              ) : (
+                <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                  <div className="p-3 border-b bg-gradient-to-r from-primary to-primary/70 dark:from-primary/30 dark:to-primary/30 shrink-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm font-medium">
+                        <Sparkles className="w-4 h-4 text-white" />
+                        <span className="text-white font-semibold">
+                          {isEditMode ? "Current Note" : "Generated Note"}
+                        </span>
+                      </div>
+                      <span
+                        className="text-xs text-white truncate max-w-[200px]"
+                        title={initialPromptRef.current}
+                      >
+                        {initialPromptRef.current}
                       </span>
                     </div>
-                    <span
-                      className="text-xs text-white truncate max-w-[200px]"
-                      title={initialPromptRef.current}
-                    >
-                      {initialPromptRef.current}
-                    </span>
                   </div>
-                </div>
 
-                <NoteEditor
-                  completion={completion}
-                  isLoading={isLoading}
-                  initialPrompt={initialPromptRef.current}
-                  hasError={hasError}
-                  errorMessage={hasError ? error?.message : undefined}
-                  onRegenerate={handleRegenerate}
-                  onRequestChanges={handleRequestChanges}
-                  onStop={stop}
-                />
-              </div>
+                  <NoteEditor
+                    completion={completion}
+                    isLoading={isLoading}
+                    initialPrompt={initialPromptRef.current}
+                    originalNote={localOriginalNote}
+                    hasError={hasError}
+                    errorMessage={hasError ? error?.message : undefined}
+                    onRegenerate={handleRegenerate}
+                    onRequestChanges={handleRequestChanges}
+                    onStop={stop}
+                    onAcceptChanges={isEditMode ? handleAcceptChanges : undefined}
+                    onOriginalNoteUpdated={isEditMode ? setLocalOriginalNote : undefined}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <NoteForm
@@ -264,6 +367,17 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
           {showGeneratedNote ? (
             <>
               <div className="flex items-center gap-2">
+                {isEditMode && hasChanges && !showDiff && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDiff(true)}
+                    className="gap-1"
+                  >
+                    <ArrowRightCircle className="w-3 h-3" />
+                    Review Changes
+                  </Button>
+                )}
                 <Label className="text-sm font-medium">Highlight Color:</Label>
                 <NoteColorPicker
                   selectedColor={selectedColor}

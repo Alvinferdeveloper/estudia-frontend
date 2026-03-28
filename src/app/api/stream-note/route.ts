@@ -7,66 +7,73 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
+const BASE_SYSTEM_PROMPT = `Eres un asistente de estudio especializado en crear notas claras y bien formateadas.
+
+## FORMATO (OBLIGATORIO)
+Usa markdown correctamente:
+- ## para secciones principales, ### para subsecciones
+- **negrita** para conceptos importantes, *cursiva* para énfasis
+- \`código\` para código inline, \`\`\`lenguaje para bloques de código
+- $fórmula$ para matemáticas inline, $$fórmula$$ para bloque
+- --- para separadores de secciones
+- Tablas markdown cuando aplique
+
+## OBJETIVO
+Crea notas educativas que:
+- Resuman el texto seleccionado
+- Expliquen conceptos de forma clara
+- Incluyan ejemplos cuando sea útil
+- Usen estructura jerárquica con encabezados
+`;
+
 export async function POST(req: Request) {
-  const { selectedText, prompt, documentContext }: {
+  const { 
+    selectedText, 
+    prompt, 
+    documentContext,
+    originalNote 
+  }: {
     selectedText: string;
     prompt: string;
     documentContext?: string;
+    originalNote?: string;
   } = await req.json();
 
-  const systemPrompt = `You are an AI study assistant specialized in creating clear, well-formatted study notes.
+  let userContent = `Texto seleccionado del documento: "${selectedText}"`;
 
-## CONTEXT
-- Document: ${documentContext || 'No additional context'}
-- Selected text: "${selectedText}"
-- User request: ${prompt}
+  if (documentContext) {
+    userContent += `\nContexto del documento: ${documentContext}`;
+  }
 
-## FORMATTING RULES (CRITICAL)
-You MUST follow these formatting rules strictly:
+  if (originalNote) {
+    userContent += `
+---
+NOTA ACTUAL (existente):
+---
+${originalNote}
 
-1. USE MARKDOWN PROPERLY - Do NOT use asterisks as separators (***). Use proper markdown:
-   - # for headings (## for main sections, ### for subsections)
-   - **text** for bold, *text* for italic
-   - \`code\` for inline code, \`\`\`language for code blocks
-   - > for quotes or key concepts
-   - - or * for bullet points
-   - 1. for numbered lists
+Instrucción del usuario: "${prompt}"
 
-2. CODE FORMATTING - Always specify the language for code blocks:
-   \`\`\`python
-   def example():
-       pass
-   \`\`\`
+INSTRUCCIONES ESPECIALES:
+- Mantén TODO el contenido de la nota actual que NO necesite cambios
+- Solo modifica, agrega o elimina lo que sea necesario según la instrucción del usuario
+- Si el usuario pide "agregar una sección", SOLO agrega esa sección al final o donde tenga sentido
+- Si el usuario pide "explica más sobre X", SOLO agrega esa explicación
+- NO regeneres todo el contenido desde cero
+- Responde solo con la nota mejorada, sin comentarios adicionales`;
+  } else {
+    userContent += `
+---
+Solicitud del usuario: ${prompt}
 
-3. MATH & FORMULAS - Use LaTeX format:
-   - Inline: $formula$
-   - Block: $$formula$$
-
-4. STRUCTURE - Organize content with clear hierarchy:
-   - Start with the main concept (heading)
-   - Use bullet points for key points
-   - Include examples when helpful
-   - End with a summary or key takeaway
-
-5. VISUAL SEPARATORS - Use --- for section dividers instead of ***
-
-6. TABLES - Use markdown tables when comparing or listing structured data
-
-## OUTPUT
-Provide a clear, educational response that:
-- Directly addresses the user's request
-- Is well-structured with markdown headings and lists
-- Includes code examples with proper syntax highlighting
-- Highlights important concepts with bold text
-- Uses quotes for definitions or key terms`;
+Responde con una nota de estudio basada en el texto seleccionado.`;
+  }
 
   const result = streamText({
     model: google('gemini-2.5-flash-lite'),
     messages: [
-      {
-        role: 'user',
-        content: systemPrompt,
-      },
+      { role: 'system', content: BASE_SYSTEM_PROMPT },
+      { role: 'user', content: userContent },
     ],
   });
 
