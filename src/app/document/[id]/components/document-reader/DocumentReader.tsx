@@ -112,6 +112,22 @@ Pregunta lo que quieras sobre este fragmento.`;
         clearSelection();
     };
 
+    const handleColorChange = async (color: string) => {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/annotations/${editingAnnotation?.id}`,
+            {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ color }),
+                credentials: "include",
+            }
+        );
+        if (!res.ok) {
+            throw new Error(`Failed to update note: ${res.status}`);
+        }
+        refetchAnnotations();
+    };
+
     const handleSaveNote = async (noteData: {
         selectedText: string;
         comment: string;
@@ -241,6 +257,7 @@ Pregunta lo que quieras sobre este fragmento.`;
                 documentFileName={document.fileName}
                 onSaveNote={handleSaveNote}
                 onDeleteNote={handleDeleteNote}
+                onColorChange={handleColorChange}
                 onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
             />

@@ -33,6 +33,7 @@ interface StreamingNoteDialogProps {
   }) => Promise<void>;
   onDeleteNote?: (id: string) => Promise<void>;
   onAnnotationUpdated?: (updatedAnnotation: Annotation) => void;
+  onColorChange: (color: string) => Promise<void>;
   existingAnnotation?: Annotation | null;
 }
 
@@ -44,6 +45,7 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   onSaveNote,
   onDeleteNote,
   onAnnotationUpdated,
+  onColorChange,
   existingAnnotation,
 }) => {
   const [prompt, setPrompt] = useState("");
@@ -253,6 +255,11 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     onClose();
   };
 
+  const handleChangeColor = async (color: string) => {
+    setSelectedColor(color);
+    onColorChange(color);
+  };
+
   const isReady = completion.trim().length > 0 && !isLoading;
   const hasError = error !== undefined;
   const showGeneratedNote = isExpanded && completion;
@@ -349,37 +356,9 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                 <Label className="text-sm font-medium">Highlight Color:</Label>
                 <NoteColorPicker
                   selectedColor={selectedColor}
-                  onColorChange={setSelectedColor}
+                  onColorChange={handleChangeColor}
                   size="sm"
                 />
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  className="rounded-sm cursor-pointer"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  disabled={isSaving || !isReady}
-                  className="bg-primary cursor-pointer rounded-sm"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : isEditMode && !hasChanges ? (
-                    "Update Color"
-                  ) : (
-                    <>
-                      <Save className="mr-2 h-4 w-4" />
-                      {isEditMode ? "Save Changes" : "Save Note"}
-                    </>
-                  )}
-                </Button>
               </div>
             </>
           ) : (
