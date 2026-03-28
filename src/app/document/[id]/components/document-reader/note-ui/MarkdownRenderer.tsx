@@ -1,7 +1,178 @@
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
-import type { ReactNode } from "react";
+import { Check, Copy } from "lucide-react";
+import { JetBrains_Mono, Inter } from "next/font/google";
+import type { Components } from "react-markdown";
+import type { ClassAttributes, HTMLAttributes, ReactNode } from "react";
+import type { ExtraProps } from "react-markdown";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+type CodeProps = ClassAttributes<HTMLElement> &
+  HTMLAttributes<HTMLElement> &
+  ExtraProps & {
+    inline?: boolean;
+  };
+
+const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
+  const match = /language-(\w+)/.exec(className ?? "");
+  const language = match ? match[1] : "text";
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = () => {
+    const codeText = String(children).replace(/\n$/, "");
+    navigator.clipboard.writeText(codeText);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  if (!inline) {
+    return (
+      <div className="relative rounded-lg overflow-hidden my-6 border border-zinc-800 bg-[#1a1b26]">
+        <div className="flex items-center justify-between px-4 py-2 bg-[#1f2335] text-zinc-400 text-xs font-sans">
+          <span className="uppercase tracking-wider font-semibold">
+            {language}
+          </span>
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1.5 hover:text-zinc-100 transition-colors"
+            aria-label="Copiar código"
+          >
+            {isCopied ? <Check size={14} /> : <Copy size={14} />}
+            {isCopied ? "Copiado" : "Copiar"}
+          </button>
+        </div>
+        <pre className={`overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-zinc-50 ${jetbrainsMono.className}`}>
+          <code className={`${className ?? ""} !p-0`} {...props}>
+            {children}
+          </code>
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <code
+      className={`bg-zinc-800/60 text-zinc-200 px-1.5 py-0.5 rounded-md text-[0.85em] border border-zinc-700 ${jetbrainsMono.className}`}
+      {...props}
+    >
+      {children}
+    </code>
+  );
+};
+
+type WithChildren = { children?: ReactNode };
+
+type AnchorProps = WithChildren & { href?: string };
+
+const MarkdownComponents: Components = {
+  pre: ({ children }: WithChildren) => <>{children}</>,
+  code: CodeBlock,
+
+  h1: ({ children }: WithChildren) => (
+    <h1 className="text-xl font-bold text-zinc-100 mt-5 mb-5 border-b border-zinc-700/50 pb-3">
+      {children}
+    </h1>
+  ),
+  h2: ({ children }: WithChildren) => (
+    <h2 className="text-md font-bold text-zinc-100 mt-4 mb-2">
+      {children}
+    </h2>
+  ),
+  h3: ({ children }: WithChildren) => (
+    <h3 className="text-sm font-semibold text-zinc-200 mt-4 mb-2">
+      {children}
+    </h3>
+  ),
+  h4: ({ children }: WithChildren) => (
+    <h4 className="text-base font-semibold text-zinc-300 mt-5 mb-2">
+      {children}
+    </h4>
+  ),
+
+  p: ({ children }: WithChildren) => (
+    <p className="text-zinc-300 my-4 leading-7">
+      {children}
+    </p>
+  ),
+
+  strong: ({ children }: WithChildren) => (
+    <strong className="text-zinc-100 font-semibold">{children}</strong>
+  ),
+
+  em: ({ children }: WithChildren) => (
+    <em className="text-zinc-400 italic">{children}</em>
+  ),
+
+  a: ({ children, href }: AnchorProps) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-400 hover:text-blue-300 underline underline-offset-2 font-medium"
+    >
+      {children}
+    </a>
+  ),
+
+  ul: ({ children }: WithChildren) => (
+    <ul className="list-disc list-inside my-4 space-y-2 text-zinc-300 marker:text-zinc-500">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }: WithChildren) => (
+    <ol className="list-decimal list-inside my-4 space-y-2 text-zinc-300 marker:text-zinc-500">
+      {children}
+    </ol>
+  ),
+  li: ({ children }: WithChildren) => (
+    <li className="leading-7 text-zinc-300 ml-2">
+      {children}
+    </li>
+  ),
+
+  blockquote: ({ children }: WithChildren) => (
+    <blockquote className="border-l-4 border-blue-500/60 pl-4 py-2 my-5 italic text-zinc-400 bg-zinc-800/30 rounded-r-lg">
+      {children}
+    </blockquote>
+  ),
+
+  hr: () => <hr className="my-6 border-zinc-700" />,
+
+  table: ({ children }: WithChildren) => (
+    <div className="overflow-x-auto my-6 rounded-lg border border-zinc-700">
+      <table className="min-w-full divide-y divide-zinc-700">
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children }: WithChildren) => (
+    <thead className="bg-zinc-800/60">{children}</thead>
+  ),
+  th: ({ children }: WithChildren) => (
+    <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-200 border-b border-zinc-700">
+      {children}
+    </th>
+  ),
+  td: ({ children }: WithChildren) => (
+    <td className="px-4 py-3 text-sm text-zinc-400 border-b border-zinc-800">
+      {children}
+    </td>
+  ),
+  tbody: ({ children }: WithChildren) => (
+    <tbody className="divide-y divide-zinc-800">{children}</tbody>
+  ),
+};
 
 interface MarkdownRendererProps {
   content: string;
@@ -9,83 +180,11 @@ interface MarkdownRendererProps {
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   return (
-    <div className="prose prose-sm dark:prose-invert max-w-none">
+    <div className={`w-full text-[15px] px-8 leading-relaxed ${inter.className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
-        components={{
-          h1: ({ children }: { children?: ReactNode }) => (
-            <h1 className="text-2xl font-bold mb-4 text-foreground mt-6 first:mt-0">
-              {children}
-            </h1>
-          ),
-          h2: ({ children }: { children?: ReactNode }) => (
-            <h2 className="text-xl font-semibold mb-3 text-foreground mt-6">
-              {children}
-            </h2>
-          ),
-          h3: ({ children }: { children?: ReactNode }) => (
-            <h3 className="text-lg font-medium mb-2 text-foreground mt-4">
-              {children}
-            </h3>
-          ),
-          p: ({ children }: { children?: ReactNode }) => (
-            <p className="mb-4 leading-relaxed text-foreground/90">{children}</p>
-          ),
-          ul: ({ children }: { children?: ReactNode }) => (
-            <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>
-          ),
-          ol: ({ children }: { children?: ReactNode }) => (
-            <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>
-          ),
-          li: ({ children }: { children?: ReactNode }) => (
-            <li className="text-foreground/90">{children}</li>
-          ),
-          code: ({ className, children, ...props }: any) => {
-            const isInline = !className;
-            if (isInline) {
-              return (
-                <code
-                  className="px-1.5 py-0.5 rounded bg-muted text-purple-600 dark:text-purple-400 text-sm font-mono"
-                  {...props}
-                >
-                  {children}
-                </code>
-              );
-            }
-            return <code className={className} {...props}>{children}</code>;
-          },
-          pre: ({ children }: { children?: ReactNode }) => (
-            <pre className="bg-muted rounded-lg p-4 overflow-x-auto mb-4 border">
-              {children}
-            </pre>
-          ),
-          blockquote: ({ children }: { children?: ReactNode }) => (
-            <blockquote className="border-l-4 border-purple-500 pl-4 py-2 my-4 bg-purple-50 dark:bg-purple-950/30 italic">
-              {children}
-            </blockquote>
-          ),
-          strong: ({ children }: { children?: ReactNode }) => (
-            <strong className="font-semibold text-foreground">{children}</strong>
-          ),
-          em: ({ children }: { children?: ReactNode }) => <em className="italic">{children}</em>,
-          hr: () => <hr className="my-6 border-muted" />,
-          table: ({ children }: { children?: ReactNode }) => (
-            <div className="overflow-x-auto mb-4">
-              <table className="w-full border-collapse border border-border">
-                {children}
-              </table>
-            </div>
-          ),
-          th: ({ children }: { children?: ReactNode }) => (
-            <th className="border border-border bg-muted px-3 py-2 text-left font-semibold">
-              {children}
-            </th>
-          ),
-          td: ({ children }: { children?: ReactNode }) => (
-            <td className="border border-border px-3 py-2">{children}</td>
-          ),
-        }}
+        components={MarkdownComponents}
       >
         {content}
       </ReactMarkdown>

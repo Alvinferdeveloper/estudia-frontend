@@ -5,6 +5,12 @@ import { useMemo } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { computeDiff, DiffChunk, mergeAcceptedChunks, acceptAll, rejectAll } from "./lib/diff";
+import { JetBrains_Mono } from "next/font/google";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
 interface NoteEditorProps {
   completion: string;
@@ -110,7 +116,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
 
   const displayContent = completion + (isLoading ? " ▊" : "");
 
-  const baseLineStyles = "px-4 py-[2px] font-mono text-[14px] leading-relaxed break-words [&_*]:m-0 [&_p]:m-0 [&_pre]:m-0[&_pre]:p-0 [&_pre]:bg-transparent [&_pre]:font-mono [&_pre]:text-[14px]";
+  const baseLineStyles = `px-4 py-3 ${jetbrainsMono.className} text-[14px] leading-relaxed break-words [&_pre]:m-0 [&_pre]:p-0 [&_pre]:bg-transparent [&_pre]:text-[14px]`;
 
   const renderChunks = () => {
     const elements = [];
