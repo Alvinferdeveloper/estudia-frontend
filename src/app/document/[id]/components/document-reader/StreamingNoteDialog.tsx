@@ -164,7 +164,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     setSaveError(null);
 
     try {
-      console.log("[handleAcceptChanges] annotation id:", existingAnnotation.id);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/annotations/${existingAnnotation.id}`,
         {
@@ -178,33 +177,14 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
           credentials: "include",
         }
       );
-
-      if (!response.ok) {
-        let errorBody: unknown;
-        try {
-          errorBody = await response.json();
-        } catch {
-          errorBody = await response.text();
-        }
-        console.error(
-          `[handleAcceptChanges] HTTP ${response.status} ${response.statusText}`,
-          errorBody
-        );
-        setSaveError(`Error ${response.status}: ${response.statusText}`);
-        return;
-      }
-
       const updatedAnnotation = await response.json();
 
       if (onAnnotationUpdated) {
         onAnnotationUpdated(updatedAnnotation);
       }
     } catch (err) {
-      // Solo se ejecuta ante errores de red (sin conexión, CORS, etc.)
-      const errorType = err instanceof Error ? err.constructor.name : typeof err;
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error(`[handleAcceptChanges] Network error (${errorType}):`, errorMessage, err);
-      setSaveError(`Network error: ${errorMessage}`);
+      console.error(`[handleAcceptChanges] Network error:`, err);
+      setSaveError(`Network error: ${err}`);
     } finally {
       setIsAcceptingChanges(false);
     }
