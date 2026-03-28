@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, Sparkles, Save, FileText, Trash2, ArrowRightCircle, Check } from "lucide-react";
+import { Loader2, Sparkles, Save, FileText, Trash2, Check } from "lucide-react";
 import { useStreamingNote } from "@/app/document/[id]/hooks/useStreamingNote";
 import { Annotation } from "@/app/types";
 import axios from "axios";
@@ -16,7 +16,6 @@ import {
   NoteColorPicker,
   NoteEditor,
   NoteForm,
-  NoteDiffViewer,
 } from "@/app/document/[id]/components/document-reader/note-ui";
 
 const DEFAULT_COLOR = "#FFEB3B";
@@ -53,7 +52,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showDiff, setShowDiff] = useState(false);
   const [isAcceptingChanges, setIsAcceptingChanges] = useState(false);
   const [localOriginalNote, setLocalOriginalNote] = useState("");
   const initialPromptRef = useRef("");
@@ -75,7 +73,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     setSaveError(null);
     setCompletion("");
     setIsExpanded(false);
-    setShowDiff(false);
     setLocalOriginalNote("");
     initialPromptRef.current = "";
     originalCompletionRef.current = "";
@@ -112,7 +109,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   const handleRegenerate = async () => {
     if (!initialPromptRef.current) return;
     setCompletion("");
-    setShowDiff(false);
 
     if (isEditMode) {
       const { data } = await axios.post(
@@ -138,7 +134,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     if (!changePrompt.trim()) return;
     const combinedPrompt = `${initialPromptRef.current}. Also: ${changePrompt}`;
     setCompletion("");
-    setShowDiff(false);
 
     if (isEditMode) {
       const { data } = await axios.post(
@@ -158,11 +153,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
         documentContext: `Document: ${documentFileName}`,
       });
     }
-  };
-
-  const handleApplyDiff = (mergedText: string) => {
-    setCompletion(mergedText);
-    setShowDiff(false);
   };
 
   const handleAcceptChanges = async (mergedText: string) => {
@@ -268,8 +258,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   const showGeneratedNote = isExpanded && completion;
   const hasChanges = isEditMode && completion !== originalCompletionRef.current;
 
-  const showDiffMode = isEditMode && hasChanges && !isLoading && completion.length > 0;
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
@@ -309,47 +297,38 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                 </div>
               </div>
 
-              {showDiffMode && showDiff ? (
-                <NoteDiffViewer
-                  originalText={originalCompletionRef.current}
-                  newText={completion}
-                  onApply={handleApplyDiff}
-                  onCancel={() => setShowDiff(false)}
-                />
-              ) : (
-                <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                  <div className="p-3 border-b bg-gradient-to-r from-primary to-primary/70 dark:from-primary/30 dark:to-primary/30 shrink-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm font-medium">
-                        <Sparkles className="w-4 h-4 text-white" />
-                        <span className="text-white font-semibold">
-                          {isEditMode ? "Current Note" : "Generated Note"}
-                        </span>
-                      </div>
-                      <span
-                        className="text-xs text-white truncate max-w-[200px]"
-                        title={initialPromptRef.current}
-                      >
-                        {initialPromptRef.current}
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                <div className="p-3 border-b bg-gradient-to-r from-primary to-primary/70 dark:from-primary/30 dark:to-primary/30 shrink-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Sparkles className="w-4 h-4 text-white" />
+                      <span className="text-white font-semibold">
+                        {isEditMode ? "Current Note" : "Generated Note"}
                       </span>
                     </div>
+                    <span
+                      className="text-xs text-white truncate max-w-[200px]"
+                      title={initialPromptRef.current}
+                    >
+                      {initialPromptRef.current}
+                    </span>
                   </div>
-
-                  <NoteEditor
-                    completion={completion}
-                    isLoading={isLoading}
-                    initialPrompt={initialPromptRef.current}
-                    originalNote={localOriginalNote}
-                    hasError={hasError}
-                    errorMessage={hasError ? error?.message : undefined}
-                    onRegenerate={handleRegenerate}
-                    onRequestChanges={handleRequestChanges}
-                    onStop={stop}
-                    onAcceptChanges={isEditMode ? handleAcceptChanges : undefined}
-                    onOriginalNoteUpdated={isEditMode ? setLocalOriginalNote : undefined}
-                  />
                 </div>
-              )}
+
+                <NoteEditor
+                  completion={completion}
+                  isLoading={isLoading}
+                  initialPrompt={initialPromptRef.current}
+                  originalNote={localOriginalNote}
+                  hasError={hasError}
+                  errorMessage={hasError ? error?.message : undefined}
+                  onRegenerate={handleRegenerate}
+                  onRequestChanges={handleRequestChanges}
+                  onStop={stop}
+                  onAcceptChanges={isEditMode ? handleAcceptChanges : undefined}
+                  onOriginalNoteUpdated={isEditMode ? setLocalOriginalNote : undefined}
+                />
+              </div>
             </div>
           ) : (
             <NoteForm
@@ -367,17 +346,6 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
           {showGeneratedNote ? (
             <>
               <div className="flex items-center gap-2">
-                {isEditMode && hasChanges && !showDiff && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowDiff(true)}
-                    className="gap-1"
-                  >
-                    <ArrowRightCircle className="w-3 h-3" />
-                    Review Changes
-                  </Button>
-                )}
                 <Label className="text-sm font-medium">Highlight Color:</Label>
                 <NoteColorPicker
                   selectedColor={selectedColor}
