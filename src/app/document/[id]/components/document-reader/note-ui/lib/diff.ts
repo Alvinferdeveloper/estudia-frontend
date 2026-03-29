@@ -78,8 +78,8 @@ export function mergeAcceptedChunks(chunks: DiffChunk[]): string {
       resultLines.push(chunk.text);
     } else if (chunk.type === 'add' && chunk.accepted === true) {
       resultLines.push(chunk.text);
-    } else if (chunk.type === 'remove' && chunk.accepted === false) {
-      // If we REJECTED the removal, we keep the original text
+    } else if (chunk.type === 'remove' && chunk.accepted !== true) {
+      // If we REJECTED the removal or haven't decided yet, we keep the original text
       resultLines.push(chunk.text);
     }
   });

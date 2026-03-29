@@ -1,12 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { DiffChunk } from "./lib/diff";
 import { MarkdownRenderer } from "./MarkdownRenderer";
-import { JetBrains_Mono } from "next/font/google";
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-});
 
 interface DiffViewProps {
   chunks: DiffChunk[];
@@ -14,124 +8,147 @@ interface DiffViewProps {
   onReject: (index: number) => void;
 }
 
+interface Hunk {
+  type: 'unchanged' | 'change';
+  items: (DiffChunk & { originalIndex: number })[];
+}
+
 export const DiffView: React.FC<DiffViewProps> = ({ chunks, onAccept, onReject }) => {
-  const baseLineStyles = `px-4 py-1.5 text-[14px] leading-relaxed break-words [&_pre]:m-0 [&_pre]:p-0 [&_pre]:bg-transparent [&_pre]:text-[14px]`;
 
-  const renderChunks = () => {
-    const elements = [];
-    let i = 0;
+  const hunks = useMemo(() => {
+    const result: Hunk[] = [];
+    let currentHunk: (DiffChunk & { originalIndex: number })[] = [];
+    let isBuildingChange = false;
+    const MAX_GAP = 2;
 
-    while (i < chunks.length) {
+    // Crucial function: Decides if a text should survive in the normal view
+    // after being accepted or rejected.
+    const survives = (c: DiffChunk) => {
+      if (c.type === 'unchanged') return true;
+      if (c.type === 'add' && c.accepted === true) return true;
+      if (c.type === 'remove' && c.accepted === false) return true;
+      return false; // Accepted deletions or rejected additions disappear.
+    };
+
+    for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
+      const item = { ...chunk, originalIndex: i };
 
-      // 1. GROUPING: Remove + Add (Replace)
-      if (
-        chunk.type === 'remove' &&
-        chunk.accepted === null &&
-        i + 1 < chunks.length &&
-        chunks[i + 1].type === 'add' &&
-        chunks[i + 1].accepted === null
-      ) {
-        const addChunk = chunks[i + 1];
-        const removeIdx = i;
-        const addIdx = i + 1;
+      // A block is "pending" if it is a modification that has not been accepted/rejected
+      const isPending = chunk.type !== 'unchanged' && chunk.accepted === null;
 
-        elements.push(
-          <div key={`group-${i}`} className="relative border-b border-zinc-800/20 last:border-0 font-sans">
-            <div className="absolute right-4 top-1.5 z-20 flex overflow-hidden rounded-md border border-[#454545] bg-[#252526] shadow-xl text-[12px]">
-              <button
-                onClick={() => { onAccept(removeIdx); onAccept(addIdx); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#295c92] hover:bg-[#346baf] text-white transition-colors border-r border-[#454545] cursor-pointer"
-              >
-                Accept <span className="text-white/60 text-[10px]">Alt+↵</span>
-              </button>
-              <button
-                onClick={() => { onReject(removeIdx); onReject(addIdx); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[#cccccc] hover:text-white hover:bg-[#3c3c3c] transition-colors cursor-pointer"
-              >
-                Reject <span className="text-[#cccccc]/60 text-[10px]">Shift+Alt+⌫</span>
-              </button>
-            </div>
+      if (isPending) {
+        if (!isBuildingChange) {
+          if (currentHunk.length > 0) {
+            result.push({ type: 'unchanged', items: currentHunk });
+            currentHunk = [];
+          }
+          isBuildingChange = true;
+        }
+        currentHunk.push(item);
+      } else {
+        if (isBuildingChange) {
+          // We should NEVER absorb a block that has already been accepted/rejected.
+          let canAbsorb = chunk.type === 'unchanged';
+          let foundPendingSoon = false;
 
-            {/* Deleted part */}
-            <div className={`${baseLineStyles} bg-[#4b1818]/40 text-red-400 opacity-80 line-through decoration-red-500/40 py-2`}>
-              <MarkdownRenderer content={chunk.text} compact className="!px-0" />
-            </div>
-            {/* Added part */}
-            <div className={`${baseLineStyles} bg-[#1b3a32]/60 text-[#4ec9b0] shadow-[inset_2px_0_0_0_#4ec9b0] py-2`}>
-              <MarkdownRenderer content={addChunk.text} compact className="!px-0" />
-            </div>
-          </div>
-        );
-        i += 2;
-        continue;
+          if (canAbsorb) {
+            let gapSize = 0;
+            for (let j = i; j < chunks.length; j++) {
+              const future = chunks[j];
+              const futurePending = future.type !== 'unchanged' && future.accepted === null;
+              if (futurePending) {
+                foundPendingSoon = true;
+                break;
+              }
+              if (future.type !== 'unchanged') {
+                break; // We hit an already resolved change. We can't absorb.
+              }
+              gapSize++;
+              if (gapSize > MAX_GAP) break;
+            }
+          }
+
+          if (canAbsorb && foundPendingSoon) {
+            currentHunk.push(item);
+          } else {
+            // We close the change block safely
+            result.push({ type: 'change', items: currentHunk });
+            currentHunk = [];
+            isBuildingChange = false;
+
+            // We start the normal text only if the current block survives
+            if (survives(chunk)) currentHunk.push(item);
+          }
+        } else {
+          if (survives(chunk)) {
+            currentHunk.push(item);
+          }
+        }
       }
-
-      // 2. Unchanged chunks
-      if (chunk.type === 'unchanged') {
-        elements.push(
-          <div key={`chunk-${i}`} className={`${baseLineStyles} opacity-90 text-foreground py-1`}>
-            <MarkdownRenderer content={chunk.text} compact className="!px-0 font-sans" />
-          </div>
-        );
-        i++;
-        continue;
-      }
-
-      // 3. Individual changes PENDING
-      if (chunk.accepted === null) {
-        const isAdd = chunk.type === 'add';
-        const currentIdx = i;
-
-        elements.push(
-          <div key={`chunk-${i}`} className="relative border-b border-zinc-800/20 last:border-0 font-sans">
-            <div className="absolute right-4 top-1.5 z-20 flex overflow-hidden rounded-md border border-[#454545] bg-[#252526] shadow-xl text-[12px]">
-              <button
-                onClick={() => onAccept(currentIdx)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#295c92] hover:bg-[#346baf] text-white transition-colors border-r border-[#454545] cursor-pointer"
-              >
-                Accept <span className="text-white/60 text-[10px]">Alt+↵</span>
-              </button>
-              <button
-                onClick={() => onReject(currentIdx)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[#cccccc] hover:text-white hover:bg-[#3c3c3c] transition-colors cursor-pointer"
-              >
-                Reject <span className="text-[#cccccc]/60 text-[10px]">Shift+Alt+⌫</span>
-              </button>
-            </div>
-
-            <div className={`${baseLineStyles} py-2 ${isAdd
-              ? 'bg-[#1b3a32]/60 text-[#4ec9b0] shadow-[inset_2px_0_0_0_#4ec9b0]'
-              : 'bg-[#4b1818]/40 text-red-400 opacity-80 line-through decoration-red-500/40'
-              }`}>
-              <MarkdownRenderer content={chunk.text} compact className="!px-0" />
-            </div>
-          </div>
-        );
-        i++;
-        continue;
-      }
-
-      // 4. Accepted or rejected changes
-      const isAccepted = chunk.accepted;
-      const isAdd = chunk.type === 'add';
-
-      if ((isAdd && !isAccepted) || (!isAdd && isAccepted)) {
-        i++;
-        continue;
-      }
-
-      elements.push(
-        <div key={`chunk-${i}`} className={`${baseLineStyles} text-foreground transition-colors duration-300 py-1`}>
-          <MarkdownRenderer content={chunk.text} compact className="!px-0 font-sans" />
-        </div>
-      );
-
-      i++;
     }
 
-    return elements;
-  };
+    if (currentHunk.length > 0) {
+      result.push({ type: isBuildingChange ? 'change' : 'unchanged', items: currentHunk });
+    }
+    return result;
+  }, [chunks]);
 
-  return <div className="flex flex-col bg-[#1e1e1e] font-sans">{renderChunks()}</div>;
+  return (
+    <div className="flex flex-col bg-[#1e1e1e] font-sans">
+      {hunks.map((hunk, index) => {
+        // RENDERING: NORMAL TEXT (No changes or changes already accepted/rejected)
+        if (hunk.type === 'unchanged') {
+          const combinedText = hunk.items.map(c => c.text).join('\n');
+          if (!combinedText.trim()) return null; // Avoid rendering empty blocks
+          return (
+            <div key={`unchanged-${index}`} className="flow-root opacity-90 transition-opacity">
+              <MarkdownRenderer content={combinedText} />
+            </div>
+          );
+        }
+
+        // RENDERING: MODIFIED BLOCK (Pending action)
+        const allIndices = hunk.items
+          .filter(item => item.accepted === null && item.type !== 'unchanged')
+          .map(item => item.originalIndex);
+
+        const hasRemove = hunk.items.some(c => c.type === 'remove');
+        const hasAdd = hunk.items.some(c => c.type === 'add');
+
+        const removeText = hunk.items.filter(c => c.type === 'remove' || c.type === 'unchanged').map(c => c.text).join('\n');
+        const addText = hunk.items.filter(c => c.type === 'add' || c.type === 'unchanged').map(c => c.text).join('\n');
+
+        return (
+          <div key={`hunk-change-${index}`} className="relative group/block bg-[#1e1e1e]">
+            {allIndices.length > 0 && (
+              <div className="absolute right-4 top-2 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
+                <div className="flex overflow-hidden rounded border border-[#454545] bg-[#252526] shadow-xl text-[12px]">
+                  <button onClick={() => allIndices.forEach(onAccept)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#295c92] hover:bg-[#346baf] text-white transition-colors border-r border-[#454545] cursor-pointer">
+                    Accept <span className="text-white/50 text-[10px]">Alt+↵</span>
+                  </button>
+                  <button onClick={() => allIndices.forEach(onReject)} className="flex items-center gap-1.5 px-3 py-1.5 text-[#cccccc] hover:text-white hover:bg-[#3c3c3c] transition-colors cursor-pointer">
+                    Reject <span className="text-[#cccccc]/50 text-[10px]">Shift+Alt+⌫</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col">
+              {hasRemove && (
+                <div className="flow-root bg-[#4b1818]/50 line-through decoration-red-500/40">
+                  <MarkdownRenderer content={removeText} />
+                </div>
+              )}
+              {hasAdd && (
+                <div className="flow-root bg-[#083a20]/50">
+                  <MarkdownRenderer content={addText} />
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
