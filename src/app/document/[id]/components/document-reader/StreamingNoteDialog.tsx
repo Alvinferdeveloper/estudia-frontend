@@ -1,24 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, Sparkles, Save, FileText, Trash2, Check } from "lucide-react";
-import { useStreamingNote } from "@/app/document/[id]/hooks/useStreamingNote";
+import { Loader2, Sparkles, FileText, Trash2 } from "lucide-react";
 import { Annotation } from "@/app/types";
-import axios from "axios";
 import {
   NoteColorPicker,
   NoteEditor,
   NoteForm,
 } from "@/app/document/[id]/components/document-reader/note-ui";
-
-const DEFAULT_COLOR = "#FFEB3B";
+import { useNoteDialog } from "@/app/document/[id]/hooks/useNoteDialog";
+import { useNoteActions } from "@/app/document/[id]/hooks/useNoteActions";
 
 interface StreamingNoteDialogProps {
   isOpen: boolean;
@@ -48,202 +44,46 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   onColorChange,
   existingAnnotation,
 }) => {
-  const [prompt, setPrompt] = useState("");
-  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isAcceptingChanges, setIsAcceptingChanges] = useState(false);
-  const [localOriginalNote, setLocalOriginalNote] = useState("");
-  const initialPromptRef = useRef("");
-  const originalCompletionRef = useRef("");
+  const dialog = useNoteDialog({
+    isOpen,
+    existingAnnotation,
+    onClose,
+  });
 
-  const {
-    completion,
-    isLoading,
-    error,
-    complete,
-    stop,
-    setCompletion,
-  } = useStreamingNote();
-
-  const isEditMode = !!existingAnnotation;
-
-  const handleReset = useCallback(() => {
-    setPrompt("");
-    setSaveError(null);
-    setCompletion("");
-    setIsExpanded(false);
-    setLocalOriginalNote("");
-    initialPromptRef.current = "";
-    originalCompletionRef.current = "";
-  }, [setCompletion]);
-
-  useEffect(() => {
-    if (isOpen) {
-      if (existingAnnotation) {
-        setPrompt(existingAnnotation.comment || "");
-        setSelectedColor(existingAnnotation.color || DEFAULT_COLOR);
-        setCompletion(existingAnnotation.aiResponse || "");
-        initialPromptRef.current = existingAnnotation.comment || "";
-        originalCompletionRef.current = existingAnnotation.aiResponse || "";
-        setLocalOriginalNote(existingAnnotation.aiResponse || "");
-        setIsExpanded(true);
-      } else {
-        handleReset();
-      }
-    }
-  }, [isOpen, existingAnnotation, handleReset]);
-
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
-    initialPromptRef.current = prompt;
-    setIsExpanded(true);
-    await complete(prompt, {
-      selectedText,
-      prompt,
-      documentContext: `Document: ${documentFileName}`,
-      originalNote: isEditMode ? originalCompletionRef.current : undefined,
-    });
-  };
-
-  const handleRegenerate = async () => {
-    if (!initialPromptRef.current) return;
-    setCompletion("");
-
-    if (isEditMode) {
-      const { data } = await axios.post(
-        `/api/generate-note`,
-        {
-          selectedText,
-          prompt: initialPromptRef.current,
-          documentContext: `Document: ${documentFileName}`,
-          originalNote: completion,
-        }
-      );
-      setCompletion(data.content);
-    } else {
-      await complete(initialPromptRef.current, {
-        selectedText,
-        prompt: initialPromptRef.current,
-        documentContext: `Document: ${documentFileName}`,
-      });
-    }
-  };
-
-  const handleRequestChanges = async (changePrompt: string) => {
-    if (!changePrompt.trim()) return;
-    const combinedPrompt = `${initialPromptRef.current}. Also: ${changePrompt}`;
-    setCompletion("");
-
-    if (isEditMode) {
-      const { data } = await axios.post(
-        `/api/generate-note`,
-        {
-          selectedText,
-          prompt: combinedPrompt,
-          documentContext: `Document: ${documentFileName}`,
-          originalNote: completion,
-        }
-      );
-      setCompletion(data.content);
-    } else {
-      await complete(combinedPrompt, {
-        selectedText,
-        prompt: combinedPrompt,
-        documentContext: `Document: ${documentFileName}`,
-      });
-    }
-  };
-
-  const handleAcceptChanges = async (mergedText: string) => {
-    if (!existingAnnotation) return;
-
-    setIsAcceptingChanges(true);
-    setSaveError(null);
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/annotations/${existingAnnotation.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            comment: initialPromptRef.current,
-            aiResponse: mergedText,
-            color: selectedColor
-          }),
-          credentials: "include",
-        }
-      );
-      const updatedAnnotation = await response.json();
-
-      if (onAnnotationUpdated) {
-        onAnnotationUpdated(updatedAnnotation);
-      }
-    } catch (err) {
-      console.error(`[handleAcceptChanges] Network error:`, err);
-      setSaveError(`Network error: ${err}`);
-    } finally {
-      setIsAcceptingChanges(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!completion.trim()) return;
-
-    setIsSaving(true);
-    setSaveError(null);
-
-    try {
-      await onSaveNote({
-        selectedText,
-        comment: initialPromptRef.current,
-        aiResponse: completion,
-        color: selectedColor,
-      });
-      handleClose();
-    } catch (err) {
-      console.error("Error saving note:", err);
-      setSaveError("Failed to save note. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!existingAnnotation || !onDeleteNote) return;
-
-    setIsDeleting(true);
-    try {
-      await onDeleteNote(existingAnnotation.id);
-      handleClose();
-    } catch (err) {
-      console.error("Error deleting note:", err);
-      setSaveError("Failed to delete note. Please try again.");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  const actions = useNoteActions({
+    isOpen,
+    documentFileName,
+    selectedText,
+    existingAnnotation,
+    onSaveNote,
+    onDeleteNote,
+    onAnnotationUpdated,
+    onClose: dialog.handleReset, // Reset on internal "success" close
+    prompt: dialog.prompt,
+    selectedColor: dialog.selectedColor,
+    initialPromptRef: dialog.initialPromptRef,
+    originalCompletionRef: dialog.originalCompletionRef,
+    setIsExpanded: dialog.setIsExpanded,
+    setSaveError: dialog.setSaveError,
+    setLocalOriginalNote: dialog.setLocalOriginalNote,
+  });
 
   const handleClose = () => {
-    if (isLoading) {
-      stop();
+    if (actions.isLoading) {
+      actions.stop();
     }
-    handleReset();
+    dialog.handleReset();
     onClose();
   };
 
   const handleChangeColor = async (color: string) => {
-    setSelectedColor(color);
+    dialog.setSelectedColor(color);
     onColorChange(color);
   };
 
-  const isReady = completion.trim().length > 0 && !isLoading;
-  const hasError = error !== undefined;
-  const showGeneratedNote = isExpanded && completion;
-  const hasChanges = isEditMode && completion !== originalCompletionRef.current;
+  const isReady = actions.completion.trim().length > 0 && !actions.isLoading;
+  const hasError = actions.error !== undefined;
+  const showGeneratedNote = dialog.isExpanded && actions.completion;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -268,13 +108,13 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                     <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap pr-4">
                       {selectedText}
                     </p>
-                    {isEditMode && (
+                    {dialog.isEditMode && (
                       <Button
                         variant="ghost"
                         size="sm"
                         title="Delete note"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
+                        onClick={actions.handleDelete}
+                        disabled={actions.isDeleting}
                         className="text-destructive mr-6 cursor-pointer hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -290,57 +130,55 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <Sparkles className="w-4 h-4 text-white" />
                       <span className="text-white font-semibold">
-                        {isEditMode ? "Current Note" : "Generated Note"}
+                        {dialog.isEditMode ? "Current Note" : "Generated Note"}
                       </span>
                     </div>
                     <span
                       className="text-xs text-white truncate max-w-[200px]"
-                      title={initialPromptRef.current}
+                      title={dialog.initialPromptRef.current}
                     >
-                      {initialPromptRef.current}
+                      {dialog.initialPromptRef.current}
                     </span>
                   </div>
                 </div>
 
                 <NoteEditor
-                  completion={completion}
-                  isLoading={isLoading}
-                  initialPrompt={initialPromptRef.current}
-                  originalNote={localOriginalNote}
+                  completion={actions.completion}
+                  isLoading={actions.isLoading}
+                  initialPrompt={dialog.initialPromptRef.current}
+                  originalNote={dialog.localOriginalNote}
                   hasError={hasError}
-                  errorMessage={hasError ? error?.message : undefined}
-                  onRegenerate={handleRegenerate}
-                  onRequestChanges={handleRequestChanges}
-                  onStop={stop}
-                  onAcceptChanges={isEditMode ? handleAcceptChanges : undefined}
-                  onOriginalNoteUpdated={isEditMode ? setLocalOriginalNote : undefined}
+                  errorMessage={hasError ? actions.error?.message : undefined}
+                  onRegenerate={actions.handleRegenerate}
+                  onRequestChanges={actions.handleRequestChanges}
+                  onStop={actions.stop}
+                  onAcceptChanges={dialog.isEditMode ? actions.handleAcceptChanges : undefined}
+                  onOriginalNoteUpdated={dialog.isEditMode ? dialog.setLocalOriginalNote : undefined}
                 />
               </div>
             </div>
           ) : (
             <NoteForm
               selectedText={selectedText}
-              prompt={prompt}
-              onPromptChange={setPrompt}
-              selectedColor={selectedColor}
-              onColorChange={setSelectedColor}
-              error={hasError ? error?.message : undefined}
+              prompt={dialog.prompt}
+              onPromptChange={dialog.setPrompt}
+              selectedColor={dialog.selectedColor}
+              onColorChange={dialog.setSelectedColor}
+              error={hasError ? actions.error?.message : undefined}
             />
           )}
         </div>
 
         <div className="border-t p-4 flex items-center justify-between shrink-0 bg-background">
           {showGeneratedNote ? (
-            <>
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium">Highlight Color:</Label>
-                <NoteColorPicker
-                  selectedColor={selectedColor}
-                  onColorChange={handleChangeColor}
-                  size="sm"
-                />
-              </div>
-            </>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm font-medium">Highlight Color:</Label>
+              <NoteColorPicker
+                selectedColor={dialog.selectedColor}
+                onColorChange={handleChangeColor}
+                size="sm"
+              />
+            </div>
           ) : (
             <>
               <Button
@@ -351,11 +189,11 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                 Cancel
               </Button>
               <Button
-                onClick={handleGenerate}
-                disabled={isLoading || !prompt.trim()}
+                onClick={actions.handleGenerate}
+                disabled={actions.isLoading || !dialog.prompt.trim()}
                 className="bg-primary cursor-pointer rounded-sm"
               >
-                {isLoading ? (
+                {actions.isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Generating...

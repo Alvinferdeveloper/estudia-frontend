@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useFetchAnnotations, useDeleteAnnotation } from "@/app/document/[id]/hooks/useAnnotations";
+import { useState } from "react";
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
 import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
 import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
+import { useAnnotationActions } from "@/app/document/[id]/hooks/useAnnotationActions";
 import { UIMessage } from "ai";
 
 import { Header } from "@/app/document/[id]/components/document-reader/Header";
@@ -43,11 +43,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     } = useChatAssistant({ documentId: document.id, documentName: document.fileName });
 
     const addContextMessage = (text: string, page: number) => {
-        const content = `📌 Texto seleccionado (pág. ${page}):
-
-"${text}"
-
-Pregunta lo que quieras sobre este fragmento.`;
+        const content = `📌 Texto seleccionado (pág. ${page}):\n\n"${text}"\n\nPregunta lo que quieras sobre este fragmento.`;
         const contextMessage: UIMessage = {
             id: `context-${Date.now()}`,
             role: "assistant",
@@ -75,24 +71,18 @@ Pregunta lo que quieras sobre este fragmento.`;
     const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
     const [editingAnnotation, setEditingAnnotation] = useState<Annotation | null>(null);
 
-    const { data: annotations = [], refetch: refetchAnnotations } = useFetchAnnotations(document.id);
-    const { mutate: deleteAnnotation } = useDeleteAnnotation(document.id);
-    const [localAnnotations, setLocalAnnotations] = useState<Annotation[]>([]);
-
-    const annotationsToShow = localAnnotations.length > 0 ? localAnnotations : annotations;
-
-    const handleAnnotationUpdated = (updatedAnnotation: Annotation) => {
-        setLocalAnnotations(prev => {
-            if (prev.length === 0) {
-                return annotations.map(a => a.id === updatedAnnotation.id ? updatedAnnotation : a);
-            }
-            return prev.map(a => a.id === updatedAnnotation.id ? updatedAnnotation : a);
-        });
-    };
-
-    useEffect(() => {
-        setLocalAnnotations(annotations);
-    }, [annotations]);
+    const {
+        annotations,
+        handleAnnotationUpdated,
+        handleColorChange,
+        handleSaveNote,
+        handleDeleteNote,
+    } = useAnnotationActions({
+        documentId: document.id,
+        currentPage,
+        selectionRects,
+        selectedPage,
+    });
 
     const handleChatToggle = () => setIsChatOpen((prev) => !prev);
 
@@ -110,97 +100,6 @@ Pregunta lo que quieras sobre este fragmento.`;
         setIsNoteDialogOpen(false);
         setEditingAnnotation(null);
         clearSelection();
-    };
-
-    const handleColorChange = async (color: string) => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/annotations/${editingAnnotation?.id}`,
-            {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ color }),
-                credentials: "include",
-            }
-        );
-        if (!res.ok) {
-            throw new Error(`Failed to update note: ${res.status}`);
-        }
-        refetchAnnotations();
-    };
-
-    const handleSaveNote = async (noteData: {
-        selectedText: string;
-        comment: string;
-        aiResponse: string;
-        color: string;
-    }) => {
-        const { selectedText, comment, aiResponse, color } = noteData;
-
-        if (editingAnnotation) {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/annotations/${editingAnnotation.id}`,
-                {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ comment, aiResponse, color }),
-                    credentials: "include",
-                }
-            );
-            if (!res.ok) {
-                throw new Error(`Failed to update note: ${res.status}`);
-            }
-        } else {
-            const rects = selectionRects.map((r) => ({
-                x1: r.left,
-                y1: r.top,
-                x2: r.left + r.width,
-                y2: r.top + r.height,
-                width: r.pageWidth || 800,
-                height: r.pageHeight || 1200,
-                pageNumber: selectedPage ?? currentPage,
-            }));
-
-            const boundingRect = {
-                x1: Math.min(...rects.map((r) => r.x1)),
-                y1: Math.min(...rects.map((r) => r.y1)),
-                x2: Math.max(...rects.map((r) => r.x2)),
-                y2: Math.max(...rects.map((r) => r.y2)),
-                width: rects[0]?.width || 800,
-                height: rects[0]?.height || 1200,
-                pageNumber: currentPage,
-            };
-
-            await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/annotations`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        selectedText,
-                        comment,
-                        aiResponse,
-                        color,
-                        pageNumber: currentPage,
-                        boundingRect,
-                        rects,
-                    }),
-                }
-            );
-        }
-
-        refetchAnnotations();
-    };
-
-    const handleDeleteNote = async (annotationId: string) => {
-        return new Promise<void>((resolve, reject) => {
-            deleteAnnotation(annotationId, {
-                onSuccess: () => {
-                    refetchAnnotations();
-                    resolve();
-                },
-                onError: (err) => reject(err),
-            });
-        });
     };
 
     return (
@@ -222,7 +121,7 @@ Pregunta lo que quieras sobre este fragmento.`;
                     <PdfViewer
                         publicUrl={document.publicUrl}
                         scale={scale}
-                        annotations={annotationsToShow}
+                        annotations={annotations}
                         setNumPages={setNumPages}
                         onTextSelection={handleTextSelection}
                         onPageChange={setCurrentPage}
@@ -255,9 +154,13 @@ Pregunta lo que quieras sobre este fragmento.`;
                 onClose={handleNoteDialogClose}
                 selectedText={editingAnnotation?.selectedText || selectedText || ""}
                 documentFileName={document.fileName}
-                onSaveNote={handleSaveNote}
+                onSaveNote={(noteData) => handleSaveNote(noteData, editingAnnotation)}
                 onDeleteNote={handleDeleteNote}
-                onColorChange={handleColorChange}
+                onColorChange={(color) =>
+                    editingAnnotation
+                        ? handleColorChange(editingAnnotation.id, color)
+                        : Promise.resolve()
+                }
                 onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
             />

@@ -176,11 +176,22 @@ const MarkdownComponents: Components = {
 
 interface MarkdownRendererProps {
   content: string;
+  className?: string;
+  compact?: boolean;
 }
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ 
+  content, 
+  className,
+  compact = false 
+}) => {
   return (
-    <div className={`w-full text-[15px] px-8 leading-relaxed ${inter.className}`}>
+    <div className={`
+      w-full text-[15px] px-4 leading-relaxed 
+      ${inter.className} 
+      ${compact ? "[&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_h1]:my-0 [&_h2]:my-0 [&_h3]:my-0 [&_h4]:my-0 [&_blockquote]:my-0 [&_pre]:my-0 [&_hr]:my-2" : ""}
+      ${className ?? ""}
+    `}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
