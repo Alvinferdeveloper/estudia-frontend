@@ -83,7 +83,7 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
 
   const isReady = actions.completion.trim().length > 0 && !actions.isLoading;
   const hasError = actions.error !== undefined;
-  const showGeneratedNote = dialog.isExpanded && actions.completion;
+  const showGeneratedNote = dialog.isExpanded && (existingAnnotation || actions.completion);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

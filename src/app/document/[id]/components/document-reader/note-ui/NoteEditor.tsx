@@ -99,6 +99,13 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
     ));
   };
 
+  const handleApplyChanges = () => {
+    if (changePrompt.trim()) {
+      onRequestChanges(changePrompt);
+      setChangePrompt("");
+    }
+  };
+
   const displayContent = completion + (isLoading ? " ▊" : "");
   const baseLineStyles = `px-4 py-3 ${jetbrainsMono.className} text-[14px] leading-relaxed break-words [&_pre]:m-0 [&_pre]:p-0 [&_pre]:bg-transparent [&_pre]:text-[14px]`;
 
@@ -106,10 +113,10 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
     <div className="flex-1 flex flex-col overflow-hidden bg-[#1e1e1e]">
       <div ref={noteAreaRef} className="flex-1 overflow-y-auto py-2 scroll-smooth">
         {isEditMode && hasChanges ? (
-          <DiffView 
-            chunks={chunks} 
-            onAccept={handleAccept} 
-            onReject={handleReject} 
+          <DiffView
+            chunks={chunks}
+            onAccept={handleAccept}
+            onReject={handleReject}
           />
         ) : (
           <div className={baseLineStyles}>
@@ -135,7 +142,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
               </Button>
             ) : (
               <div className="flex items-center gap-1">
-                <Button className="rounded-sm bg-primary hover:bg-primary/80 cursor-pointer text-white" onClick={() => { if (changePrompt.trim()) { onRequestChanges(changePrompt); setChangePrompt(""); } }} disabled={!changePrompt.trim()} size="sm">
+                <Button className="rounded-sm bg-primary hover:bg-primary/80 cursor-pointer text-white" onClick={handleApplyChanges} disabled={!changePrompt.trim()} size="sm">
                   Apply
                 </Button>
                 <Button variant="outline" className="border-[#454545] cursor-pointer bg-transparent text-[#cccccc] hover:bg-[#333]" onClick={onRegenerate} size="sm" title="Regenerate">
