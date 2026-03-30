@@ -1,45 +1,35 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter, 
-  DialogTrigger, 
-  DialogClose,
-  DialogDescription
-} from "@/components/ui/dialog";
+import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface DeleteConfirmationDialogProps {
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 }
 
 export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ onConfirm }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button className="flex items-center w-full text-destructive">
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete
-        </button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you sure you want to delete this document?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete the document and all of its associated data.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button variant="destructive" onClick={onConfirm}>Delete</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center w-full text-destructive p-2 hover:bg-destructive/10 rounded-sm transition-colors text-sm font-medium cursor-pointer"
+      >
+        <Trash2 className="mr-2 h-4 w-4" />
+        Delete
+      </button>
+
+      <ConfirmDialog
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        onConfirm={onConfirm}
+        title="Delete Document"
+        description="Are you sure you want to delete this document? This action cannot be undone and will permanently delete all associated data."
+        confirmText="Delete"
+        variant="destructive"
+      />
+    </>
   );
 };

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -17,6 +19,7 @@ import {
 } from "@/app/document/[id]/components/document-reader/note-ui";
 import { useNoteDialog } from "@/app/document/[id]/hooks/useNoteDialog";
 import { useNoteActions } from "@/app/document/[id]/hooks/useNoteActions";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface StreamingNoteDialogProps {
   isOpen: boolean;
@@ -46,6 +49,7 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
   onColorChange,
   existingAnnotation,
 }) => {
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const dialog = useNoteDialog({
     isOpen,
     existingAnnotation,
@@ -116,16 +120,28 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
                       {selectedText}
                     </p>
                     {dialog.isEditMode && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        title="Delete note"
-                        onClick={actions.handleDelete}
-                        disabled={actions.isDeleting}
-                        className="text-destructive mr-6 cursor-pointer hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          title="Delete note"
+                          onClick={() => setIsDeleteConfirmOpen(true)}
+                          disabled={actions.isDeleting}
+                          className="text-destructive mr-6 cursor-pointer hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+
+                        <ConfirmDialog
+                          isOpen={isDeleteConfirmOpen}
+                          onOpenChange={setIsDeleteConfirmOpen}
+                          onConfirm={actions.handleDelete}
+                          title="Delete Note?"
+                          description="Are you sure you want to delete this note? This action cannot be undone."
+                          confirmText="Delete"
+                          isLoading={actions.isDeleting}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
