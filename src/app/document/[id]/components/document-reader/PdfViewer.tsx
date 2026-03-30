@@ -55,6 +55,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     onAnnotationClick,
 }) => {
     const utilsRef = useRef<any>(null);
+    const numPagesRef = useRef<number | null>(null);
 
     useEffect(() => {
         if (utilsRef.current) {
@@ -108,7 +109,10 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                 workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"
             >
                 {(pdfDoc) => {
-                    setNumPages(pdfDoc.numPages);
+                    if (numPagesRef.current !== pdfDoc.numPages) {
+                        numPagesRef.current = pdfDoc.numPages;
+                        setTimeout(() => setNumPages(pdfDoc.numPages), 0);
+                    }
                     return (
                         <PdfHighlighter
                             pdfScaleValue={scale}
