@@ -64,7 +64,10 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
     onSaveNote,
     onDeleteNote,
     onAnnotationUpdated,
-    onClose: dialog.handleReset, // Reset on internal "success" close
+    onClose: () => {
+      dialog.handleReset();
+      onClose();
+    },
     prompt: dialog.prompt,
     selectedColor: dialog.selectedColor,
     initialPromptRef: dialog.initialPromptRef,
