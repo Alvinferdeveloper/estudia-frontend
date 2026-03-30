@@ -1,7 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter, 
+  DialogTrigger, 
+  DialogClose,
+  DialogDescription
+} from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 
 interface DeleteConfirmationDialogProps {
@@ -20,10 +29,10 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure you want to delete this document?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete the document and all of its associated data.
+          </DialogDescription>
         </DialogHeader>
-        <p className="text-muted-foreground">
-          This action cannot be undone. This will permanently delete the document and all of its associated data.
-        </p>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>

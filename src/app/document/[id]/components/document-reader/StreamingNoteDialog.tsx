@@ -3,6 +3,8 @@
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -95,6 +97,11 @@ export const StreamingNoteDialog: React.FC<StreamingNoteDialogProps> = ({
         `}
         style={{ maxWidth: "85vw" }}
       >
+        <DialogTitle className="sr-only">Note Editor</DialogTitle>
+        <DialogDescription className="sr-only">
+          AI-powered note generation and editing from selected document text.
+        </DialogDescription>
+
         <div className="flex-1 overflow-hidden flex flex-col">
           {showGeneratedNote ? (
             <div className="flex-1 flex flex-col overflow-hidden">
