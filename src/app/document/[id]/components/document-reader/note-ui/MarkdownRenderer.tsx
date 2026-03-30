@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -180,11 +180,11 @@ interface MarkdownRendererProps {
   compact?: boolean;
 }
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ 
-  content, 
+export const MarkdownRenderer = memo(({
+  content,
   className,
-  compact = false 
-}) => {
+  compact = false
+}: MarkdownRendererProps) => {
   return (
     <div className={`
       w-full text-[15px] px-4 leading-relaxed 
@@ -201,4 +201,6 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
       </ReactMarkdown>
     </div>
   );
-};
+});
+
+MarkdownRenderer.displayName = "MarkdownRenderer";
