@@ -79,16 +79,16 @@ export const useAnnotationActions = ({
       const { selectedText, comment, aiResponse, color } = noteData;
 
       if (editingAnnotation) {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<Annotation>((resolve, reject) => {
           updateAnnotationMutation(
             {
               annotationId: editingAnnotation.id,
               update: { comment, aiResponse, color },
             },
             {
-              onSuccess: () => {
+              onSuccess: (data) => {
                 refetchAnnotations();
-                resolve();
+                resolve(data);
               },
               onError: (err) => reject(err),
             }
@@ -116,7 +116,7 @@ export const useAnnotationActions = ({
         pageNumber: currentPage,
       };
 
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<Annotation>((resolve, reject) => {
         createAnnotationMutation(
           {
             selectedText,
@@ -128,9 +128,9 @@ export const useAnnotationActions = ({
             rects,
           },
           {
-            onSuccess: () => {
+            onSuccess: (data) => {
               refetchAnnotations();
-              resolve();
+              resolve(data);
             },
             onError: (err) => reject(err),
           }

@@ -154,7 +154,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 onClose={handleNoteDialogClose}
                 selectedText={editingAnnotation?.selectedText || selectedText || ""}
                 documentFileName={document.fileName}
-                onSaveNote={(noteData) => handleSaveNote(noteData, editingAnnotation)}
+                onSaveNote={async (noteData) => {
+                    const saved = await handleSaveNote(noteData, editingAnnotation);
+                    setEditingAnnotation(saved);
+                    return saved;
+                }}
                 onDeleteNote={handleDeleteNote}
                 onColorChange={(color) =>
                     editingAnnotation

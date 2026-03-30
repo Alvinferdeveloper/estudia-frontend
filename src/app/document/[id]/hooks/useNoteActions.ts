@@ -13,7 +13,7 @@ interface UseNoteActionsOptions {
     comment: string;
     aiResponse: string;
     color: string;
-  }) => Promise<void>;
+  }) => Promise<Annotation>;
   onDeleteNote?: (id: string) => Promise<void>;
   onAnnotationUpdated?: (updatedAnnotation: Annotation) => void;
   onClose: () => void;
@@ -71,13 +71,35 @@ export const useNoteActions = ({
     if (!prompt.trim()) return;
     initialPromptRef.current = prompt;
     setIsExpanded(true);
-    await complete(prompt, {
+    const result = await complete(prompt, {
       selectedText,
       prompt,
       documentContext: `Document: ${documentFileName}`,
       originalNote: !!existingAnnotation ? originalCompletionRef.current : undefined,
     });
-  }, [prompt, selectedText, documentFileName, existingAnnotation, complete, initialPromptRef, originalCompletionRef, setIsExpanded, setLocalOriginalNote]);
+    
+    // Automatically save the first time it generates
+    if (result && !existingAnnotation) {
+      try {
+        const savedAnnotation = await onSaveNote({
+          selectedText,
+          comment: initialPromptRef.current,
+          aiResponse: result,
+          color: selectedColor,
+        });
+        
+        // Optionally update any dialog state that depends on the newly created annotation
+        // if needed by onAnnotationUpdated
+        if (onAnnotationUpdated) {
+           onAnnotationUpdated(savedAnnotation);
+        }
+
+      } catch (err) {
+        console.error("Auto-save failed:", err);
+        setSaveError("Failed to save automatically. Please try saving manually.");
+      }
+    }
+  }, [prompt, selectedText, documentFileName, existingAnnotation, complete, initialPromptRef, originalCompletionRef, setIsExpanded, setLocalOriginalNote, onSaveNote, selectedColor, onAnnotationUpdated, setSaveError]);
 
   const handleRegenerate = useCallback(async () => {
     if (!initialPromptRef.current) return;

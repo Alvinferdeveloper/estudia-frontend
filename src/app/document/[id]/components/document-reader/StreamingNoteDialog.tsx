@@ -26,7 +26,7 @@ interface StreamingNoteDialogProps {
     comment: string;
     aiResponse: string;
     color: string;
-  }) => Promise<void>;
+  }) => Promise<Annotation>;
   onDeleteNote?: (id: string) => Promise<void>;
   onAnnotationUpdated?: (updatedAnnotation: Annotation) => void;
   onColorChange: (color: string) => Promise<void>;
