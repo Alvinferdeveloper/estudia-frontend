@@ -68,8 +68,7 @@ export function PricingCard({
       <Button
         onClick={() => onSelect(plan)}
         disabled={currentPlan || isLoading}
-        variant={isPopular ? "default" : "outline"}
-        className={cn("w-full py-6 font-semibold rounded-xl",
+        className={cn("w-full py-6 font-semibold rounded-xl bg-primary/80 text-white cursor-pointer",
           currentPlan && "bg-secondary text-secondary-foreground hover:bg-secondary border-none"
         )}
       >
