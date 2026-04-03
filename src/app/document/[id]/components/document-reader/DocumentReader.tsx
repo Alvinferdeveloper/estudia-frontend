@@ -104,7 +104,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     return (
         <div className="h-screen bg-background flex flex-col">
-            <Header fileName={document.fileName} />
+            <Header fileName={document.fileName} documentId={document.id} />
 
             <div className="flex-1 flex overflow-hidden">
                 <div className="flex-1 flex flex-col">
