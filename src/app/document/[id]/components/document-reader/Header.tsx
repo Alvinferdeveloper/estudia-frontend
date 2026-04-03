@@ -59,9 +59,12 @@ export const Header: React.FC<HeaderProps> = ({ fileName, documentId }) => {
                         <DropdownMenuItem onClick={() => handleExport("csv")}>
                             CSV (.csv)
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExport("anki")}>
+                            Anki Flashcards (.apkg)
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleExport("pdf")} className="text-xs text-muted-foreground">
-                            Best for sharing & printing
+                        <DropdownMenuItem onClick={() => handleExport("anki")} className="text-xs text-muted-foreground">
+                            Import to Anki app
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

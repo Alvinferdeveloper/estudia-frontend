@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export type ExportFormat = "markdown" | "json" | "csv" | "pdf";
+export type ExportFormat = "markdown" | "json" | "csv" | "pdf" | "anki";
 
 interface ExportResponse {
   content: string;
@@ -27,7 +27,9 @@ export const useExportAnnotations = (documentId: string) => {
 export const downloadExport = (response: ExportResponse) => {
   let blob: Blob;
   
-  if (response.contentType === 'application/pdf') {
+  const isBinaryFormat = response.contentType === 'application/pdf' || response.contentType === 'application/apkg';
+  
+  if (isBinaryFormat) {
     const binaryString = atob(response.content);
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
