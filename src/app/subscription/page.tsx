@@ -73,7 +73,8 @@ export default function SubscriptionPage() {
     <PayPalScriptProvider options={{
       clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb",
       currency: "USD",
-      intent: "capture"
+      intent: "capture",
+      vault: true
     }}>
       <div className="min-h-screen from-background relative">
         <header className="absolute top-0 w-full z-10">

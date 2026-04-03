@@ -71,6 +71,12 @@ export interface CreateOrderResponse {
   paymentId: string;
 }
 
+export interface CreateSubscriptionResponse {
+  subscriptionId: string;
+  approvalUrl: string;
+  paymentId: string;
+}
+
 const fetchSubscription = async (): Promise<Subscription> => {
   const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/subscriptions`, {
     withCredentials: true,
@@ -110,9 +116,18 @@ const createPaymentOrder = async (plan: SubscriptionPlan): Promise<CreateOrderRe
   return data;
 };
 
+const createSubscription = async (plan: SubscriptionPlan): Promise<CreateSubscriptionResponse> => {
+  const { data } = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/payments/create-subscription`,
+    { plan },
+    { withCredentials: true }
+  );
+  return data;
+};
+
 const capturePayment = async (paymentId: string): Promise<any> => {
   const { data } = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/payments/capture/${paymentId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/payments/activate-subscription/${paymentId}`,
     {},
     { withCredentials: true }
   );
@@ -142,7 +157,7 @@ export const usePlans = () => {
 
 export const useUpdatePlan = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: updatePlan,
     onSuccess: () => {
@@ -159,9 +174,22 @@ export const useCreatePaymentOrder = () => {
   });
 };
 
+export const useCreateSubscription = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createSubscription,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
+      queryClient.invalidateQueries({ queryKey: ['usage'] });
+    },
+  }, queryClient);
+};
+
 export const useCapturePayment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: capturePayment,
     onSuccess: () => {
