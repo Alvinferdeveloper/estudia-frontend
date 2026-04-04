@@ -40,7 +40,19 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         handleInputChange,
         handleFormSubmit,
         setMessages,
+        setInput,
     } = useChatAssistant({ documentId: document.id, documentName: document.fileName });
+
+    const handleSuggestionSubmit = (suggestion: string) => {
+        setInput(suggestion);
+        setIsChatOpen(true);
+        setTimeout(() => {
+            const form = window.document.querySelector('form') as HTMLFormElement;
+            if (form) {
+                form.requestSubmit();
+            }
+        }, 100);
+    };
 
     const addContextMessage = (text: string, page: number) => {
         const content = `📌 Texto seleccionado (pág. ${page}):\n\n"${text}"\n\nPregunta lo que quieras sobre este fragmento.`;
@@ -146,6 +158,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                     input={input}
                     onInputChange={handleInputChange}
                     onFormSubmit={handleFormSubmit}
+                    onSuggestionSubmit={handleSuggestionSubmit}
                 />
             </div>
 

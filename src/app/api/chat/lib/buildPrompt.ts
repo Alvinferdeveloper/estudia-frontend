@@ -16,5 +16,12 @@ export function buildSystemPrompt(documentName: string, chunks: SearchResult[]):
     prompt += `Responde de forma clara, concisa y útil para facilitar el estudio.`;
   }
 
+  prompt += `\n\nIMPORTANT: After your answer, generate 2-3 follow-up questions the user might ask next. Format exactly as:
+[SUGGESTIONS]
+1. [question 1]
+2. [question 2]
+3. [question 3]
+If no relevant follow-ups, write: NONE`;
+
   return prompt;
 }

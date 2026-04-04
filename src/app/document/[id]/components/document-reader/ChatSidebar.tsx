@@ -14,6 +14,7 @@ interface ChatSidebarProps {
     selectedText: string;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onSuggestionSubmit?: (suggestion: string) => void;
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -24,6 +25,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     selectedText,
     onInputChange,
     onFormSubmit,
+    onSuggestionSubmit,
 }) => {
     if (!isOpen) return null;
 
@@ -47,7 +49,10 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 )}
             </div>
 
-            <ChatMessageList messages={messages} />
+            <ChatMessageList
+                messages={messages}
+                onSuggestionSubmit={onSuggestionSubmit}
+            />
 
             <div className="p-4 border-t border-border">
                 <form onSubmit={onFormSubmit} className="flex gap-2">
