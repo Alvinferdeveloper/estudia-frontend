@@ -51,11 +51,18 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     scale,
     setNumPages,
     selectionTip,
+    onPageChange,
     onTextSelection,
     onAnnotationClick,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
+    const eventBusAttachedRef = useRef(false);
+    const onPageChangeRef = useRef(onPageChange);
+
+    useEffect(() => {
+        onPageChangeRef.current = onPageChange;
+    }, [onPageChange]);
 
     useEffect(() => {
         if (utilsRef.current) {
@@ -65,7 +72,6 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
             }
         }
     }, [scale]);
-
     const highlights = useMemo(() => {
         return annotations.map((annotation) => ({
             id: annotation.id,
@@ -121,7 +127,16 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                             highlights={highlights}
                             onSelection={handleSelection}
                             selectionTip={selectionTip}
-                            utilsRef={(utils) => { utilsRef.current = utils; }}
+                            utilsRef={(utils) => { 
+                                utilsRef.current = utils; 
+                                const viewer = utils?.getViewer();
+                                if (viewer?.eventBus && !eventBusAttachedRef.current) {
+                                    eventBusAttachedRef.current = true;
+                                    viewer.eventBus.on("pagechanging", (evt: { pageNumber: number }) => {
+                                        onPageChangeRef.current(evt.pageNumber);
+                                    });
+                                }
+                            }}
                         >
                             <HighlightContainer onClick={(highlight: ViewportHighlight) => {
                                 const annotation = annotations.find(a => a.id === highlight.id);
