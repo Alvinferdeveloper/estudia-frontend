@@ -13,6 +13,9 @@ interface PdfControlsProps {
     onChatToggle: () => void;
     onZoomIn: () => void;
     onZoomOut: () => void;
+    examMode?: boolean;
+    selectedPages?: number[];
+    onPageSelect?: (page: number) => void;
 }
 
 export const PdfControls: React.FC<PdfControlsProps> = ({ 
@@ -24,8 +27,11 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
     onChatToggle,
     onZoomIn,
     onZoomOut,
+    examMode = false,
+    selectedPages = [],
+    onPageSelect,
 }) => (
-    <div className="border-b border-border bg-card px-6 py-3">
+    <div className="border-b border-border bg-card px-6 py-3 relative">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">

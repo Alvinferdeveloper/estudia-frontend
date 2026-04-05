@@ -32,6 +32,9 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         zoomOut,
     } = useDocumentViewer();
 
+    const [examMode, setExamMode] = useState(false);
+    const [selectedPages, setSelectedPages] = useState<number[]>([]);
+
     const { mutate: createMessage } = useCreateMessage(document.id);
 
     const {
@@ -42,6 +45,24 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         setMessages,
         setInput,
     } = useChatAssistant({ documentId: document.id, documentName: document.fileName });
+
+    const handleTogglePage = (pageNumber: number) => {
+        setSelectedPages(prev => {
+            if (prev.includes(pageNumber)) {
+                return prev.filter(p => p !== pageNumber);
+            }
+            return [...prev, pageNumber];
+        });
+    };
+
+    const handleEnableExamMode = () => {
+        setExamMode(true);
+    };
+
+    const handleDisableExamMode = () => {
+        setExamMode(false);
+        setSelectedPages([]);
+    };
 
     const handleSuggestionSubmit = (suggestion: string) => {
         setInput(suggestion);
@@ -116,10 +137,19 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     return (
         <div className="h-screen bg-background flex flex-col">
-            <Header fileName={document.fileName} documentId={document.id} />
+            <Header
+                fileName={document.fileName}
+                documentId={document.id}
+                numPages={numPages || 0}
+                document={document}
+                examMode={examMode}
+                selectedPages={selectedPages}
+                onEnableExamMode={handleEnableExamMode}
+                onDisableExamMode={handleDisableExamMode}
+            />
 
             <div className="flex-1 flex overflow-hidden">
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col relative">
                     <PdfControls
                         pageNumber={currentPage}
                         numPages={numPages}
@@ -129,6 +159,9 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         onChatToggle={handleChatToggle}
                         onZoomIn={zoomIn}
                         onZoomOut={zoomOut}
+                        examMode={examMode}
+                        selectedPages={selectedPages}
+                        onPageSelect={handleTogglePage}
                     />
                     <PdfViewer
                         publicUrl={document.publicUrl}
@@ -139,7 +172,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         onPageChange={setCurrentPage}
                         onAnnotationClick={handleAnnotationClick}
                         selectionTip={
-                            selectedText && (
+                            selectedText && !examMode && (
                                 <SelectionPopup
                                     selectedText={selectedText}
                                     onChatClick={handleChatToggle}
@@ -147,6 +180,9 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 />
                             )
                         }
+                        examMode={examMode}
+                        selectedPages={selectedPages}
+                        onPageSelect={handleTogglePage}
                     />
                 </div>
 

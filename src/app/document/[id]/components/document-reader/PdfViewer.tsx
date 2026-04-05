@@ -5,6 +5,7 @@ import { PdfLoader, PdfHighlighter, TextHighlight, useHighlightContainerContext,
 import "react-pdf-highlighter-extended/dist/esm/style/PdfHighlighter.css";
 import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
 import { Annotation } from "@/app/types";
+import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 
 interface PdfViewerProps {
     publicUrl: string;
@@ -15,18 +16,10 @@ interface PdfViewerProps {
     onPageChange: (page: number) => void;
     onAnnotationClick: (annotation: Annotation) => void;
     setNumPages: (numPages: number) => void;
+    examMode?: boolean;
+    selectedPages?: number[];
+    onPageSelect?: (page: number) => void;
 }
-
-const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight) => void }) => {
-    const { highlight, isScrolledTo } = useHighlightContainerContext();
-    const highlightWithColor = highlight as ViewportHighlight & { color?: string };
-
-    return (
-        <div onClick={() => onClick(highlight)}>
-            <TextHighlight isScrolledTo={isScrolledTo} highlight={highlight} style={{ background: highlightWithColor.color }} />
-        </div>
-    );
-};
 
 interface SelectionEvent {
     content?: { text?: string };
@@ -45,6 +38,17 @@ interface HighlightRect {
     height: number;
 }
 
+const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight) => void }) => {
+    const { highlight, isScrolledTo } = useHighlightContainerContext();
+    const highlightWithColor = highlight as ViewportHighlight & { color?: string };
+
+    return (
+        <div onClick={() => onClick(highlight)}>
+            <TextHighlight isScrolledTo={isScrolledTo} highlight={highlight} style={{ background: highlightWithColor.color }} />
+        </div>
+    );
+};
+
 export const PdfViewer: React.FC<PdfViewerProps> = ({
     publicUrl,
     annotations,
@@ -54,11 +58,20 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     onPageChange,
     onTextSelection,
     onAnnotationClick,
+    examMode = false,
+    selectedPages = [],
+    onPageSelect,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
     const eventBusAttachedRef = useRef(false);
     const onPageChangeRef = useRef(onPageChange);
+
+    const { setUtils } = usePdfPageOverlay({
+        examMode,
+        selectedPages,
+        onPageSelect,
+    });
 
     useEffect(() => {
         onPageChangeRef.current = onPageChange;
@@ -72,13 +85,12 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
             }
         }
     }, [scale]);
+
     const highlights = useMemo(() => {
         return annotations.map((annotation) => ({
             id: annotation.id,
             color: annotation.color,
-            content: {
-                text: annotation.selectedText,
-            },
+            content: { text: annotation.selectedText },
             position: {
                 boundingRect: annotation.boundingRect,
                 rects: annotation.rects,
@@ -127,8 +139,9 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                             highlights={highlights}
                             onSelection={handleSelection}
                             selectionTip={selectionTip}
-                            utilsRef={(utils) => { 
-                                utilsRef.current = utils; 
+                            utilsRef={(utils) => {
+                                utilsRef.current = utils;
+                                setUtils(utils);
                                 const viewer = utils?.getViewer();
                                 if (viewer?.eventBus && !eventBusAttachedRef.current) {
                                     eventBusAttachedRef.current = true;

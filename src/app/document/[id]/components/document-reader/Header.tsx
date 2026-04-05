@@ -11,13 +11,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/document/[id]/hooks/useExportAnnotations";
+import { ExamMode } from "@/app/document/[id]/components/exam/ExamMode";
+import { DocumentFile } from "@/app/document/[id]/page";
 
 interface HeaderProps {
     fileName: string;
     documentId: string;
+    numPages: number;
+    document: DocumentFile;
+    examMode?: boolean;
+    selectedPages?: number[];
+    onEnableExamMode?: () => void;
+    onDisableExamMode?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ fileName, documentId }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+    fileName, 
+    documentId, 
+    numPages, 
+    document,
+    examMode = false,
+    selectedPages = [],
+    onEnableExamMode,
+    onDisableExamMode,
+}) => {
     const { mutate: exportNotes, isPending } = useExportAnnotations(documentId);
 
     const handleExport = (format: ExportFormat) => {
@@ -39,35 +56,45 @@ export const Header: React.FC<HeaderProps> = ({ fileName, documentId }) => {
                     <Separator orientation="vertical" className="h-6" />
                     <p className="text-sm text-muted-foreground truncate max-w-md">{fileName}</p>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" disabled={isPending}>
-                            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
-                            Export Notes
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleExport("markdown")}>
-                            Markdown (.md)
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExport("pdf")}>
-                            PDF (.pdf)
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExport("json")}>
-                            JSON (.json)
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExport("csv")}>
-                            CSV (.csv)
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExport("anki")}>
-                            Anki Flashcards (.apkg)
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleExport("anki")} className="text-xs text-muted-foreground">
-                            Import to Anki app
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-2">
+                    <ExamMode 
+                        document={document} 
+                        numPages={numPages}
+                        examMode={examMode}
+                        selectedPages={selectedPages}
+                        onEnableExamMode={onEnableExamMode || (() => {})}
+                        onDisableExamMode={onDisableExamMode || (() => {})}
+                    />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" disabled={isPending}>
+                                {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                                Export Notes
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleExport("markdown")}>
+                                Markdown (.md)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport("pdf")}>
+                                PDF (.pdf)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport("json")}>
+                                JSON (.json)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport("csv")}>
+                                CSV (.csv)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport("anki")}>
+                                Anki Flashcards (.apkg)
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleExport("anki")} className="text-xs text-muted-foreground">
+                                Import to Anki app
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
         </header>
     );
