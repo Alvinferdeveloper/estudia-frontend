@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useGenerateQuestions, useEvaluateAnswer } from "../../hooks/useExam";
+import { useGenerateQuestions, useEvaluateAnswer, QuestionType } from "../../hooks/useExam";
 import { ExamModeButton } from "./ExamModeButton";
 import { ExamSetupDialog } from "./ExamSetupDialog";
 import { ExamUI } from "./ExamUI";
@@ -13,7 +13,8 @@ interface Question {
   text: string;
   idealAnswer: string;
   examId?: string;
-  type?: string;
+  type?: QuestionType;
+  options?: string[];
   order?: number;
 }
 
@@ -35,8 +36,8 @@ interface ExamModeProps {
   onDisableExamMode: () => void;
 }
 
-export const ExamMode: React.FC<ExamModeProps> = ({
-  document,
+export const ExamMode: React.FC<ExamModeProps> = ({ 
+  document, 
   numPages,
   examMode,
   selectedPages,
@@ -48,6 +49,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState('');
+  const [questionType, setQuestionType] = useState<QuestionType>('open');
 
   const generateQuestionsMutation = useGenerateQuestions();
   const evaluateAnswerMutation = useEvaluateAnswer();
@@ -61,18 +63,20 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     onDisableExamMode();
   }, [onDisableExamMode]);
 
-  const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; title: string }) => {
+  const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; questionType: QuestionType; title: string }) => {
     try {
       setExamPhase('generating');
-
+      setQuestionType(config.questionType);
+      
       const content = `Content from pages ${selectedPages.join(', ')} of ${document.fileName}`;
-
+      
       const generatedQuestions = await generateQuestionsMutation.mutateAsync({
         content,
         pages: selectedPages,
         difficulty: config.difficulty,
+        questionType: config.questionType,
       });
-
+      
       setQuestions(generatedQuestions.map((q, i) => ({ ...q, id: i.toString() })));
       setExamPhase('exam');
     } catch (error) {
@@ -84,14 +88,15 @@ export const ExamMode: React.FC<ExamModeProps> = ({
   const handleSubmitAnswer = useCallback(async () => {
     const currentQuestion = questions[currentIndex];
     if (!currentQuestion) return;
-
+    
     try {
       const evaluation = await evaluateAnswerMutation.mutateAsync({
         userAnswer: currentAnswer,
         idealAnswer: currentQuestion.idealAnswer,
         question: currentQuestion.text,
+        questionType: currentQuestion.type || questionType,
       });
-
+      
       setAnswers(prev => [...prev, {
         questionId: currentIndex.toString(),
         userAnswer: currentAnswer,
@@ -102,7 +107,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     } catch (error) {
       console.error('Failed to evaluate answer:', error);
     }
-  }, [questions, currentIndex, currentAnswer, evaluateAnswerMutation]);
+  }, [questions, currentIndex, currentAnswer, evaluateAnswerMutation, questionType]);
 
   const handleNextQuestion = useCallback(() => {
     if (currentIndex < questions.length - 1) {
@@ -151,17 +156,18 @@ export const ExamMode: React.FC<ExamModeProps> = ({
             currentAnswer={currentAnswer}
             onAnswerChange={setCurrentAnswer}
             onNext={answers.find(a => a.questionId === currentIndex.toString())
-              ? handleNextQuestion
+              ? handleNextQuestion 
               : handleSubmitAnswer}
             isSubmitting={evaluateAnswerMutation.isPending}
             onFinish={handleFinish}
+            currentQuestionType={questionType}
           />
         );
 
       case 'results':
         const totalScore = answers.reduce((sum, a) => sum + a.score, 0);
         const averageScore = answers.length > 0 ? totalScore / answers.length : 0;
-
+        
         return (
           <ExamResultsScreen
             results={{
@@ -174,13 +180,15 @@ export const ExamMode: React.FC<ExamModeProps> = ({
                 totalQuestions: questions.length,
                 title: `Exam - ${selectedPages.length} pages`,
                 difficulty: 'medium',
+                questionType,
                 createdAt: new Date().toISOString(),
               },
               questions: questions.map((q, i) => ({
                 id: i.toString(),
                 examId: 'local',
                 text: q.text,
-                type: 'open',
+                type: q.type || questionType,
+                options: q.options,
                 order: i + 1,
                 idealAnswer: q.idealAnswer
               })),
