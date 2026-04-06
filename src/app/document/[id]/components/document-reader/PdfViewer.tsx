@@ -19,6 +19,7 @@ interface PdfViewerProps {
     examMode?: boolean;
     selectedPages?: number[];
     onPageSelect?: (page: number) => void;
+    onPdfLoad?: (pdfDoc: any) => void;
 }
 
 interface SelectionEvent {
@@ -61,6 +62,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     examMode = false,
     selectedPages = [],
     onPageSelect,
+    onPdfLoad,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
@@ -129,7 +131,10 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                 {(pdfDoc) => {
                     if (numPagesRef.current !== pdfDoc.numPages) {
                         numPagesRef.current = pdfDoc.numPages;
-                        setTimeout(() => setNumPages(pdfDoc.numPages), 0);
+                        setTimeout(() => {
+                            setNumPages(pdfDoc.numPages);
+                            if (onPdfLoad) onPdfLoad(pdfDoc);
+                        }, 0);
                     }
                     return (
                         <PdfHighlighter

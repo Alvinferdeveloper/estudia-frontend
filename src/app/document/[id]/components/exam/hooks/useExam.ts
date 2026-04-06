@@ -109,3 +109,55 @@ export const useEvaluateAnswer = () => {
     },
   });
 };
+
+export const useCreateExam = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      documentId: string;
+      pages: number[];
+      mode: string;
+      difficulty: string;
+      title: string;
+      questionType: QuestionType;
+      totalQuestions: number;
+    }) => {
+      const { data: result } = await axios.post<{ id: string }>(
+        `${process.env.NEXT_PUBLIC_API_URL}/exam`,
+        data,
+        { withCredentials: true }
+      );
+      return result;
+    },
+  });
+};
+
+export const useSaveExamResult = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      examId: string;
+      score: number;
+      correctAnswers: number;
+      totalQuestions: number;
+    }) => {
+      const { data: result } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/exam/result`,
+        data,
+        { withCredentials: true }
+      );
+      return result;
+    },
+  });
+};
+
+export const useUserExams = (documentId?: string) => {
+  return useQuery({
+    queryKey: ['exams', documentId],
+    queryFn: async () => {
+      const url = documentId 
+        ? `${process.env.NEXT_PUBLIC_API_URL}/exam?documentId=${documentId}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/exam`;
+      const { data } = await axios.get<Exam[]>(url, { withCredentials: true });
+      return data;
+    },
+  });
+};

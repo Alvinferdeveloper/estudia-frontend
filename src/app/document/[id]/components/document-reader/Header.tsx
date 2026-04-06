@@ -21,6 +21,7 @@ interface HeaderProps {
     document: DocumentFile;
     examMode?: boolean;
     selectedPages?: number[];
+    pdfDoc?: any;
     onEnableExamMode?: () => void;
     onDisableExamMode?: () => void;
 }
@@ -32,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
     document,
     examMode = false,
     selectedPages = [],
+    pdfDoc,
     onEnableExamMode,
     onDisableExamMode,
 }) => {
@@ -62,6 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
                         numPages={numPages}
                         examMode={examMode}
                         selectedPages={selectedPages}
+                        pdfDoc={pdfDoc}
                         onEnableExamMode={onEnableExamMode || (() => {})}
                         onDisableExamMode={onDisableExamMode || (() => {})}
                     />

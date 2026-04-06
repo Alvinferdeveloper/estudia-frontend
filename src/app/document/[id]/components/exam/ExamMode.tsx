@@ -13,6 +13,7 @@ interface ExamModeProps {
   numPages: number;
   examMode: boolean;
   selectedPages: number[];
+  pdfDoc?: any;
   onEnableExamMode: () => void;
   onDisableExamMode: () => void;
 }
@@ -22,6 +23,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
   numPages,
   examMode,
   selectedPages,
+  pdfDoc,
   onEnableExamMode,
   onDisableExamMode,
 }) => {
@@ -43,7 +45,9 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     isSubmitting
   } = useExamSession({
     documentName: document.fileName,
+    documentId: document.id,
     selectedPages,
+    pdfDoc,
     onDisableExamMode,
   });
 

@@ -21,7 +21,7 @@ export const PageOverlay: React.FC<PageOverlayProps> = ({
             onClick={onClick}
         >
             {isSelected && (
-                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-red-600 flex items-center justify-center shadow-lg border-2 border-background">
+                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-lg border-2 border-background">
                     {selectionIndex !== null ? (
                         <span className="text-sm font-bold text-accent-foreground">
                             {selectionIndex + 1}

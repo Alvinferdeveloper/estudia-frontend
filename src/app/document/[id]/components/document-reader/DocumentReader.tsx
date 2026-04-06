@@ -34,6 +34,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     const [examMode, setExamMode] = useState(false);
     const [selectedPages, setSelectedPages] = useState<number[]>([]);
+    const [pdfDoc, setPdfDoc] = useState<any>(null);
 
     const { mutate: createMessage } = useCreateMessage(document.id);
 
@@ -144,6 +145,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 document={document}
                 examMode={examMode}
                 selectedPages={selectedPages}
+                pdfDoc={pdfDoc}
                 onEnableExamMode={handleEnableExamMode}
                 onDisableExamMode={handleDisableExamMode}
             />
@@ -183,6 +185,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         examMode={examMode}
                         selectedPages={selectedPages}
                         onPageSelect={handleTogglePage}
+                        onPdfLoad={setPdfDoc}
                     />
                 </div>
 
