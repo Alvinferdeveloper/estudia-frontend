@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { ChevronRight, Loader2, Check, X } from "lucide-react";
-import { Question, Answer, QuestionType } from "@/app/document/[id]/hooks/useExam";
+import { Question, Answer, QuestionType, QUESTION_TYPES } from "@/app/document/[id]/components/exam/hooks/useExam";
 
 interface ExamUIProps {
   questions: Question[];
@@ -41,7 +41,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
     if (hasAnswered) return null;
 
     switch (currentQuestionType) {
-      case 'multiple_choice':
+      case QUESTION_TYPES.MULTIPLE_CHOICE:
         return (
           <div className="space-y-2">
             {currentQuestion.options?.map((option, idx) => {
@@ -52,11 +52,10 @@ export const ExamUI: React.FC<ExamUIProps> = ({
                   key={idx}
                   onClick={() => onAnswerChange(optionLetter)}
                   disabled={isSubmitting}
-                  className={`w-full p-3 rounded-lg border text-left transition-all ${
-                    isSelected
+                  className={`w-full p-3 rounded-lg border text-left transition-all ${isSelected
                       ? 'border-accent bg-accent/10'
                       : 'border-border hover:border-accent/50'
-                  }`}
+                    }`}
                 >
                   {option}
                 </button>
@@ -65,7 +64,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           </div>
         );
 
-      case 'true_false':
+      case QUESTION_TYPES.TRUE_FALSE:
         return (
           <div className="flex gap-4">
             <Button
@@ -91,7 +90,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           </div>
         );
 
-      case 'fill_blank':
+      case QUESTION_TYPES.FILL_BLANK:
         return (
           <input
             type="text"
@@ -120,25 +119,24 @@ export const ExamUI: React.FC<ExamUIProps> = ({
     if (!hasAnswered || !currentAnswerData) return null;
 
     const isCorrect = currentAnswerData.score === 10;
-    const showCorrectAnswer = ['multiple_choice', 'true_false', 'fill_blank'].includes(currentQuestionType);
+    const showCorrectAnswer = ([QUESTION_TYPES.MULTIPLE_CHOICE, QUESTION_TYPES.TRUE_FALSE, QUESTION_TYPES.FILL_BLANK] as QuestionType[]).includes(currentQuestionType);
 
     return (
       <div className="space-y-4">
         <div className="p-4 bg-muted rounded-lg">
           <p className="text-sm text-muted-foreground mb-2">Your answer:</p>
           <p className="font-medium">
-            {currentQuestionType === 'multiple_choice' && currentQuestion.options
+            {currentQuestionType === QUESTION_TYPES.MULTIPLE_CHOICE && currentQuestion.options
               ? currentQuestion.options[currentAnswerData.userAnswer.charCodeAt(0) - 65]
-              : currentQuestionType === 'true_false'
-              ? currentAnswerData.userAnswer === 'true' ? 'True' : 'False'
-              : currentAnswerData.userAnswer
+              : currentQuestionType === QUESTION_TYPES.TRUE_FALSE
+                ? currentAnswerData.userAnswer === 'true' ? 'True' : 'False'
+                : currentAnswerData.userAnswer
             }
           </p>
         </div>
 
-        <div className={`p-4 rounded-lg border ${
-          isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
-        }`}>
+        <div className={`p-4 rounded-lg border ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
+          }`}>
           <div className="flex items-center gap-2 mb-2">
             <span className="font-medium">Score:</span>
             <span className={`text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
@@ -152,17 +150,17 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           <div className="p-4 bg-muted/50 rounded-lg">
             <p className="text-sm text-muted-foreground mb-1">Correct answer:</p>
             <p className="font-medium">
-              {currentQuestionType === 'multiple_choice' && currentQuestion.options && currentQuestion.idealAnswer
+              {currentQuestionType === QUESTION_TYPES.MULTIPLE_CHOICE && currentQuestion.options && currentQuestion.idealAnswer
                 ? currentQuestion.options[currentQuestion.idealAnswer.charCodeAt(0) - 65]
-                : currentQuestionType === 'true_false'
-                ? currentQuestion.idealAnswer === 'true' ? 'True' : 'False'
-                : currentQuestion.idealAnswer
+                : currentQuestionType === QUESTION_TYPES.TRUE_FALSE
+                  ? currentQuestion.idealAnswer === 'true' ? 'True' : 'False'
+                  : currentQuestion.idealAnswer
               }
             </p>
           </div>
         )}
 
-        {currentQuestionType === 'open' && currentQuestion.idealAnswer && (
+        {currentQuestionType === QUESTION_TYPES.OPEN && currentQuestion.idealAnswer && (
           <div className="p-4 bg-muted/50 rounded-lg">
             <p className="text-sm text-muted-foreground mb-1">Ideal answer:</p>
             <p className="text-sm">{currentQuestion.idealAnswer}</p>
@@ -174,11 +172,11 @@ export const ExamUI: React.FC<ExamUIProps> = ({
 
   const getSubmitButtonText = () => {
     switch (currentQuestionType) {
-      case 'multiple_choice':
+      case QUESTION_TYPES.MULTIPLE_CHOICE:
         return 'Submit Answer';
-      case 'true_false':
+      case QUESTION_TYPES.TRUE_FALSE:
         return 'Submit';
-      case 'fill_blank':
+      case QUESTION_TYPES.FILL_BLANK:
         return 'Submit';
       default:
         return 'Submit Answer';

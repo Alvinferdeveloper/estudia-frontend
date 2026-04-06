@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { QuestionType } from "../../hooks/useExam";
+import {
+  QuestionType,
+  QUESTION_TYPES,
+  EXAM_MODES,
+  DIFFICULTY_LEVELS
+} from "@/app/document/[id]/components/exam/hooks/useExam";
 
 interface ExamSetupDialogProps {
   selectedPages: number[];
@@ -15,31 +20,31 @@ interface ExamSetupDialogProps {
 
 const modes = [
   {
-    id: 'quick_review',
+    id: EXAM_MODES.QUICK_REVIEW,
     title: 'Quick Review',
     description: '5 questions to test your understanding',
-    defaultType: 'open' as QuestionType,
+    defaultType: QUESTION_TYPES.OPEN,
   },
   {
-    id: 'exam_simulation',
+    id: EXAM_MODES.EXAM_SIMULATION,
     title: 'Exam Simulation',
     description: 'Realistic test conditions with time pressure',
-    defaultType: 'multiple_choice' as QuestionType,
+    defaultType: QUESTION_TYPES.MULTIPLE_CHOICE,
   },
   {
-    id: 'custom',
+    id: EXAM_MODES.CUSTOM,
     title: 'Custom',
     description: 'Configure your own exam settings',
-    defaultType: 'open' as QuestionType,
+    defaultType: QUESTION_TYPES.OPEN,
   },
 ];
 
 const questionTypes: { id: QuestionType; label: string; icon: string }[] = [
-  { id: 'open', label: 'Open Answer', icon: '📝' },
-  { id: 'multiple_choice', label: 'Multiple Choice', icon: '🔘' },
-  { id: 'true_false', label: 'True/False', icon: '✓✗' },
-  { id: 'fill_blank', label: 'Fill in Blank', icon: '___' },
-  { id: 'mixed', label: 'Mixed', icon: '🎲' },
+  { id: QUESTION_TYPES.OPEN, label: 'Open Answer', icon: '📝' },
+  { id: QUESTION_TYPES.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: '🔘' },
+  { id: QUESTION_TYPES.TRUE_FALSE, label: 'True/False', icon: '✓✗' },
+  { id: QUESTION_TYPES.FILL_BLANK, label: 'Fill in Blank', icon: '___' },
+  { id: QUESTION_TYPES.MIXED, label: 'Mixed', icon: '🎲' },
 ];
 
 export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
@@ -47,14 +52,14 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   onStartExam,
   onCancel,
 }) => {
-  const [selectedMode, setSelectedMode] = useState('quick_review');
-  const [difficulty, setDifficulty] = useState('medium');
-  const [questionType, setQuestionType] = useState<QuestionType>('open');
+  const [selectedMode, setSelectedMode] = useState<string>(EXAM_MODES.QUICK_REVIEW);
+  const [difficulty, setDifficulty] = useState<string>(DIFFICULTY_LEVELS.MEDIUM);
+  const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
 
   const handleModeChange = (modeId: string) => {
     setSelectedMode(modeId);
     const mode = modes.find(m => m.id === modeId);
-    if (mode && modeId !== 'custom') {
+    if (mode && modeId !== EXAM_MODES.CUSTOM) {
       setQuestionType(mode.defaultType);
     }
   };
@@ -126,7 +131,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           <div className="space-y-2">
             <label className="text-sm font-medium">Difficulty</label>
             <div className="flex gap-2">
-              {['easy', 'medium', 'hard'].map((d) => (
+              {[DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD].map((d) => (
                 <Button
                   key={d}
                   variant={difficulty === d ? "default" : "outline"}

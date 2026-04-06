@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, XCircle, RotateCcw, FileText } from "lucide-react";
-import { ExamResults } from "@/app/document/[id]/hooks/useExam";
+import { ExamResults } from "@/app/document/[id]/components/exam/hooks/useExam";
 
 interface ExamResultsScreenProps {
   results: ExamResults;

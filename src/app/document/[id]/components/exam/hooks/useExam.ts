@@ -1,7 +1,41 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export type QuestionType = 'open' | 'multiple_choice' | 'true_false' | 'fill_blank' | 'mixed';
+export const QUESTION_TYPES = {
+  OPEN: 'open',
+  MULTIPLE_CHOICE: 'multiple_choice',
+  TRUE_FALSE: 'true_false',
+  FILL_BLANK: 'fill_blank',
+  MIXED: 'mixed',
+} as const;
+
+export type QuestionType = typeof QUESTION_TYPES[keyof typeof QUESTION_TYPES];
+
+export const EXAM_PHASES = {
+  INACTIVE: 'inactive',
+  SETUP: 'setup',
+  GENERATING: 'generating',
+  EXAM: 'exam',
+  RESULTS: 'results',
+} as const;
+
+export type ExamPhase = typeof EXAM_PHASES[keyof typeof EXAM_PHASES];
+
+export const DIFFICULTY_LEVELS = {
+  EASY: 'easy',
+  MEDIUM: 'medium',
+  HARD: 'hard',
+} as const;
+
+export type DifficultyLevel = typeof DIFFICULTY_LEVELS[keyof typeof DIFFICULTY_LEVELS];
+
+export const EXAM_MODES = {
+  QUICK_REVIEW: 'quick_review',
+  EXAM_SIMULATION: 'exam_simulation',
+  CUSTOM: 'custom',
+} as const;
+
+export type ExamModeType = typeof EXAM_MODES[keyof typeof EXAM_MODES];
 
 export interface Exam {
   id: string;

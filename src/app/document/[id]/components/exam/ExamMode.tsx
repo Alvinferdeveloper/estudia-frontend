@@ -1,31 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useGenerateQuestions, useEvaluateAnswer, QuestionType } from "../../hooks/useExam";
-import { ExamModeButton } from "./ExamModeButton";
-import { ExamSetupDialog } from "./ExamSetupDialog";
-import { ExamUI } from "./ExamUI";
-import { ExamResultsScreen } from "./ExamResultsScreen";
-import { DocumentFile } from "../../page";
-
-interface Question {
-  id: string;
-  text: string;
-  idealAnswer: string;
-  examId?: string;
-  type?: QuestionType;
-  options?: string[];
-  order?: number;
-}
-
-interface Answer {
-  questionId: string;
-  userAnswer: string;
-  score: number;
-  feedback: string;
-}
-
-type ExamPhase = 'inactive' | 'setup' | 'generating' | 'exam' | 'results';
+import { useExamSession } from "@/app/document/[id]/components/exam/hooks/useExamSession";
+import { EXAM_PHASES } from "@/app/document/[id]/components/exam/hooks/useExam";
+import { ExamModeButton } from "@/app/document/[id]/components/exam/ExamModeButton";
+import { ExamSetupDialog } from "@/app/document/[id]/components/exam/ExamSetupDialog";
+import { ExamUI } from "@/app/document/[id]/components/exam/ExamUI";
+import { ExamResultsScreen } from "@/app/document/[id]/components/exam/ExamResultsScreen";
+import { DocumentFile } from "@/app/document/[id]/page";
 
 interface ExamModeProps {
   document: DocumentFile;
@@ -36,99 +17,39 @@ interface ExamModeProps {
   onDisableExamMode: () => void;
 }
 
-export const ExamMode: React.FC<ExamModeProps> = ({ 
-  document, 
+export const ExamMode: React.FC<ExamModeProps> = ({
+  document,
   numPages,
   examMode,
   selectedPages,
   onEnableExamMode,
   onDisableExamMode,
 }) => {
-  const [examPhase, setExamPhase] = useState<ExamPhase>('inactive');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentAnswer, setCurrentAnswer] = useState('');
-  const [questionType, setQuestionType] = useState<QuestionType>('open');
-
-  const generateQuestionsMutation = useGenerateQuestions();
-  const evaluateAnswerMutation = useEvaluateAnswer();
-
-  const disableExamMode = useCallback(() => {
-    setExamPhase('inactive');
-    setQuestions([]);
-    setAnswers([]);
-    setCurrentIndex(0);
-    setCurrentAnswer('');
-    onDisableExamMode();
-  }, [onDisableExamMode]);
-
-  const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; questionType: QuestionType; title: string }) => {
-    try {
-      setExamPhase('generating');
-      setQuestionType(config.questionType);
-      
-      const content = `Content from pages ${selectedPages.join(', ')} of ${document.fileName}`;
-      
-      const generatedQuestions = await generateQuestionsMutation.mutateAsync({
-        content,
-        pages: selectedPages,
-        difficulty: config.difficulty,
-        questionType: config.questionType,
-      });
-      
-      setQuestions(generatedQuestions.map((q, i) => ({ ...q, id: i.toString() })));
-      setExamPhase('exam');
-    } catch (error) {
-      console.error('Failed to generate questions:', error);
-      disableExamMode();
-    }
-  }, [selectedPages, document.fileName, generateQuestionsMutation, disableExamMode]);
-
-  const handleSubmitAnswer = useCallback(async () => {
-    const currentQuestion = questions[currentIndex];
-    if (!currentQuestion) return;
-    
-    try {
-      const evaluation = await evaluateAnswerMutation.mutateAsync({
-        userAnswer: currentAnswer,
-        idealAnswer: currentQuestion.idealAnswer,
-        question: currentQuestion.text,
-        questionType: currentQuestion.type || questionType,
-      });
-      
-      setAnswers(prev => [...prev, {
-        questionId: currentIndex.toString(),
-        userAnswer: currentAnswer,
-        score: evaluation.score,
-        feedback: evaluation.feedback,
-      }]);
-      setCurrentAnswer('');
-    } catch (error) {
-      console.error('Failed to evaluate answer:', error);
-    }
-  }, [questions, currentIndex, currentAnswer, evaluateAnswerMutation, questionType]);
-
-  const handleNextQuestion = useCallback(() => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    }
-  }, [currentIndex, questions.length]);
-
-  const handleFinish = useCallback(() => {
-    setExamPhase('results');
-  }, []);
-
-  const handleRetry = useCallback(() => {
-    setCurrentIndex(0);
-    setAnswers([]);
-    setCurrentAnswer('');
-    setExamPhase('exam');
-  }, []);
+  const {
+    examPhase,
+    questions,
+    answers,
+    currentIndex,
+    currentAnswer,
+    questionType,
+    setCurrentAnswer,
+    handleStartExam,
+    handleSubmitAnswer,
+    handleNextQuestion,
+    handleFinish,
+    handleRetry,
+    handleContinueFromSelection,
+    disableExamMode,
+    isSubmitting
+  } = useExamSession({
+    documentName: document.fileName,
+    selectedPages,
+    onDisableExamMode,
+  });
 
   const renderContent = () => {
     switch (examPhase) {
-      case 'setup':
+      case EXAM_PHASES.SETUP:
         return (
           <ExamSetupDialog
             selectedPages={selectedPages}
@@ -137,7 +58,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           />
         );
 
-      case 'generating':
+      case EXAM_PHASES.GENERATING:
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
             <div className="text-center space-y-4">
@@ -147,7 +68,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           </div>
         );
 
-      case 'exam':
+      case EXAM_PHASES.EXAM:
         return (
           <ExamUI
             questions={questions.map((q, i) => ({ ...q, id: i.toString() }))}
@@ -156,18 +77,18 @@ export const ExamMode: React.FC<ExamModeProps> = ({
             currentAnswer={currentAnswer}
             onAnswerChange={setCurrentAnswer}
             onNext={answers.find(a => a.questionId === currentIndex.toString())
-              ? handleNextQuestion 
+              ? handleNextQuestion
               : handleSubmitAnswer}
-            isSubmitting={evaluateAnswerMutation.isPending}
+            isSubmitting={isSubmitting}
             onFinish={handleFinish}
             currentQuestionType={questionType}
           />
         );
 
-      case 'results':
-        const totalScore = answers.reduce((sum, a) => sum + a.score, 0);
+      case EXAM_PHASES.RESULTS:
+        const totalScore = answers.reduce((sum, a) => sum + (a.score || 0), 0);
         const averageScore = answers.length > 0 ? totalScore / answers.length : 0;
-        
+
         return (
           <ExamResultsScreen
             results={{
@@ -211,19 +132,13 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     }
   };
 
-  const handleContinueFromSelection = useCallback(() => {
-    if (selectedPages.length > 0) {
-      setExamPhase('setup');
-    }
-  }, [selectedPages]);
-
   return (
     <>
       <ExamModeButton
         onClick={onEnableExamMode}
-        isActive={examMode || examPhase !== 'inactive'}
+        isActive={examMode || examPhase !== EXAM_PHASES.INACTIVE}
       />
-      {examMode && selectedPages.length > 0 && examPhase === 'inactive' && (
+      {examMode && selectedPages.length > 0 && examPhase === EXAM_PHASES.INACTIVE && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[500]">
           <div className="bg-card border border-border rounded-lg shadow-lg px-4 py-3 flex items-center gap-4">
             <span className="text-sm font-medium">
