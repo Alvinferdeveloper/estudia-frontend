@@ -1,5 +1,5 @@
-import { fetchWithAuth } from './fetchWithAuth';
-import { SearchResult } from './types';
+import { fetchWithAuth } from '@/app/api/utils/fetchWithAuth';
+import { SearchResult } from '@/app/api/chat/prompts/types';
 
 export async function searchDocumentChunks(
   documentId: string,

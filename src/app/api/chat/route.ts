@@ -1,15 +1,11 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { convertToModelMessages, streamText } from 'ai';
-import { ChatRequestBody, SearchResult } from '@/app/api/chat/lib/types';
-import { ensureDocumentIsVectorized } from '@/app/api/chat/lib/ensureVectorized';
-import { searchDocumentChunks, getLastUserQuery } from '@/app/api/chat/lib/searchDocument';
-import { buildSystemPrompt } from '@/app/api/chat/lib/buildPrompt';
+import { ChatRequestBody, SearchResult } from '@/app/api/chat/prompts/types';
+import { ensureDocumentIsVectorized } from '@/app/api/chat/prompts/ensureVectorized';
+import { searchDocumentChunks, getLastUserQuery } from '@/app/api/chat/prompts/searchDocument';
+import { buildSystemPrompt } from './prompts/buildPrompt';
+import { AI_MODELS } from '@/app/api/lib/ai/models';
 
 export const runtime = 'edge';
-
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
-});
 
 export async function POST(req: Request) {
   const json = await req.json();
@@ -30,7 +26,7 @@ export async function POST(req: Request) {
   const modelMessages = convertToModelMessages(messages);
 
   const result = streamText({
-    model: google('gemini-2.5-flash'),
+    model: AI_MODELS.chat,
     system: systemPrompt,
     messages: modelMessages,
   });

@@ -1,4 +1,4 @@
-import { SearchResult } from './types';
+import { SearchResult } from '@/app/api/chat/prompts/types';
 
 export function buildSystemPrompt(documentName: string, chunks: SearchResult[]): string {
   let prompt = `Eres un asistente de estudio del documento "${documentName}". `;

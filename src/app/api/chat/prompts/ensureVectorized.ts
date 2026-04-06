@@ -1,4 +1,4 @@
-import { fetchWithAuth } from './fetchWithAuth';
+import { fetchWithAuth } from '@/app/api/utils/fetchWithAuth';
 
 export async function ensureDocumentIsVectorized(documentId: string): Promise<void> {
   try {
