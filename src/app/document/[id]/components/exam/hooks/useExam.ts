@@ -149,6 +149,22 @@ export const useSaveExamResult = () => {
   });
 };
 
+export const useSaveExamQuestions = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      examId: string;
+      questions: { text: string; type: string; options?: string; idealAnswer: string; order: number }[];
+    }) => {
+      const { data: result } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/exam/questions`,
+        data,
+        { withCredentials: true }
+      );
+      return result;
+    },
+  });
+};
+
 export const useUserExams = (documentId?: string) => {
   return useQuery({
     queryKey: ['exams', documentId],

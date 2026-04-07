@@ -4,6 +4,7 @@ import {
   useEvaluateAnswer,
   useCreateExam,
   useSaveExamResult,
+  useSaveExamQuestions,
   QuestionType,
   ExamPhase,
   EXAM_PHASES,
@@ -33,6 +34,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
   const evaluateAnswerMutation = useEvaluateAnswer();
   const createExamMutation = useCreateExam();
   const saveResultMutation = useSaveExamResult();
+  const saveQuestionsMutation = useSaveExamQuestions();
 
   const disableExamMode = useCallback(() => {
     setExamPhase(EXAM_PHASES.INACTIVE);
@@ -91,12 +93,24 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
       });
 
       setExamId(exam.id);
+
+      await saveQuestionsMutation.mutateAsync({
+        examId: exam.id,
+        questions: generatedQuestions.map((q: any, i: number) => ({
+          text: q.text,
+          type: q.type || config.questionType,
+          options: q.options ? JSON.stringify(q.options) : undefined,
+          idealAnswer: q.idealAnswer || q.correctAnswer || '',
+          order: i + 1,
+        })),
+      });
+
       setExamPhase(EXAM_PHASES.EXAM);
     } catch (error) {
       console.error('Failed to generate questions:', error);
       disableExamMode();
     }
-  }, [selectedPages, documentName, documentId, pdfDoc, generateQuestionsMutation, createExamMutation, disableExamMode]);
+  }, [selectedPages, documentName, documentId, pdfDoc, generateQuestionsMutation, createExamMutation, saveQuestionsMutation, disableExamMode]);
 
   const handleSubmitAnswer = useCallback(async () => {
     const currentQuestion = questions[currentIndex];
