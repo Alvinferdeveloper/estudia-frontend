@@ -101,7 +101,6 @@ export const ExamMode: React.FC<ExamModeProps> = ({
                 documentId: document.id,
                 pages: selectedPages,
                 mode: 'custom',
-                score: averageScore,
                 totalQuestions: questions.length,
                 title: `Exam - ${selectedPages.length} pages`,
                 difficulty: 'medium',

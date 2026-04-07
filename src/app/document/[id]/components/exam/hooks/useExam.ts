@@ -42,11 +42,19 @@ export interface Exam {
   documentId: string;
   pages: number[];
   mode: string;
-  score: number | null;
   totalQuestions: number;
   title: string;
   difficulty: string;
   questionType?: QuestionType;
+  createdAt: string;
+}
+
+export interface ExamResult {
+  id: string;
+  examId: string;
+  score: number | null;
+  correctAnswers: number;
+  totalQuestions: number;
   createdAt: string;
 }
 
@@ -77,9 +85,9 @@ export interface ExamResults {
 
 export const useGenerateQuestions = () => {
   return useMutation({
-    mutationFn: async (data: { 
-      content: string; 
-      pages: number[]; 
+    mutationFn: async (data: {
+      content: string;
+      pages: number[];
       difficulty: string;
       questionType?: QuestionType;
       numQuestions?: number;
@@ -95,9 +103,9 @@ export const useGenerateQuestions = () => {
 
 export const useEvaluateAnswer = () => {
   return useMutation({
-    mutationFn: async (data: { 
-      userAnswer: string; 
-      idealAnswer: string; 
+    mutationFn: async (data: {
+      userAnswer: string;
+      idealAnswer: string;
       question: string;
       questionType?: QuestionType;
     }) => {
@@ -139,13 +147,27 @@ export const useSaveExamResult = () => {
       correctAnswers: number;
       totalQuestions: number;
     }) => {
-      const { data: result } = await axios.post(
+      const { data: result } = await axios.post<ExamResult>(
         `${process.env.NEXT_PUBLIC_API_URL}/exam/result`,
         data,
         { withCredentials: true }
       );
       return result;
     },
+  });
+};
+
+export const useExamResults = (examId: string) => {
+  return useQuery({
+    queryKey: ['examResults', examId],
+    queryFn: async () => {
+      const { data } = await axios.get<ExamResult[]>(
+        `${process.env.NEXT_PUBLIC_API_URL}/exam/${examId}/results`,
+        { withCredentials: true }
+      );
+      return data;
+    },
+    enabled: !!examId,
   });
 };
 
@@ -169,7 +191,7 @@ export const useUserExams = (documentId?: string) => {
   return useQuery({
     queryKey: ['exams', documentId],
     queryFn: async () => {
-      const url = documentId 
+      const url = documentId
         ? `${process.env.NEXT_PUBLIC_API_URL}/exam?documentId=${documentId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/exam`;
       const { data } = await axios.get<Exam[]>(url, { withCredentials: true });
