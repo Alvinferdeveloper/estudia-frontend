@@ -5,6 +5,8 @@ import { AI_MODELS } from '@/app/api/lib/ai/models';
 
 export type { QuestionType } from './prompts/buildPrompt';
 
+const USE_FALLBACK_ONLY = process.env.USE_FALLBACK_ONLY === 'true';
+
 export async function POST(req: Request) {
   const json = await req.json();
   const { action, data } = json;
@@ -14,6 +16,11 @@ export async function POST(req: Request) {
       const { content, pages, difficulty, questionType, numQuestions = 5 } = data;
 
       if (questionType === 'mixed') {
+        if (USE_FALLBACK_ONLY) {
+          const fallback = generateFallbackQuestions('mixed', numQuestions);
+          return Response.json({ questions: fallback });
+        }
+
         const types = ['open', 'multiple_choice', 'true_false', 'fill_blank'];
         const questionsPerType = Math.floor(numQuestions / types.length);
         const remainder = numQuestions % types.length;
@@ -61,6 +68,11 @@ export async function POST(req: Request) {
         });
       }
 
+      if (USE_FALLBACK_ONLY) {
+        const fallback = generateFallbackQuestions(questionType as QuestionType, numQuestions);
+        return Response.json({ questions: fallback });
+      }
+
       const prompt = buildGenerateQuestionsPrompt({
         content,
         pages,
@@ -106,6 +118,13 @@ export async function POST(req: Request) {
         return Response.json({
           score: isCorrect ? 10 : 0,
           feedback: isCorrect ? 'Correct!' : `Incorrect. The correct answer is: ${idealAnswer}`,
+        });
+      }
+
+      if (USE_FALLBACK_ONLY) {
+        return Response.json({
+          score: 5,
+          feedback: 'Dev mode: Using fallback evaluation. In production, this would be evaluated by AI.',
         });
       }
 
