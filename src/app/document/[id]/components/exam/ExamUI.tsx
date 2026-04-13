@@ -1,8 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
-import { ChevronRight, Loader2, Check, X } from "lucide-react";
+import React, { useEffect, useCallback } from "react";
 import { Question, Answer, QuestionType, QUESTION_TYPES } from "@/app/document/[id]/components/exam/hooks/useExam";
+import { ExamHeader } from "@/app/document/[id]/components/exam/components/ExamHeader";
+import { AnswerInput } from "@/app/document/[id]/components/exam/components/AnswerInput";
+import { AnswerFeedback } from "@/app/document/[id]/components/exam/components/AnswerFeedback";
+import { ExamFooter } from "@/app/document/[id]/components/exam/components/ExamFooter";
+import { MascotCompanion } from "@/app/document/[id]/components/exam/components/MascotCompanion";
+import { cn } from "@/lib/utils";
 
 interface ExamUIProps {
   questions: Question[];
@@ -16,6 +19,24 @@ interface ExamUIProps {
   currentQuestionType: QuestionType;
 }
 
+// Badge del tipo de pregunta
+const QuestionTypeBadge: React.FC<{ type: QuestionType }> = ({ type }) => {
+  const labels: Record<QuestionType, string> = {
+    [QUESTION_TYPES.MULTIPLE_CHOICE]: "Opción múltiple",
+    [QUESTION_TYPES.TRUE_FALSE]: "Verdadero / Falso",
+    [QUESTION_TYPES.FILL_BLANK]: "Completar espacio",
+    [QUESTION_TYPES.OPEN]: "Respuesta abierta",
+    [QUESTION_TYPES.MIXED]: "Mixto",
+  };
+  return (
+    <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60 bg-primary/[0.06] px-5 py-1 rounded-full border border-primary/10">
+      {labels[type] ?? type}
+    </span>
+  );
+};
+
+// Mascota con frases motivacionales
+
 export const ExamUI: React.FC<ExamUIProps> = ({
   questions,
   answers,
@@ -28,222 +49,114 @@ export const ExamUI: React.FC<ExamUIProps> = ({
   currentQuestionType: defaultQuestionType,
 }) => {
   const currentQuestion = questions[currentIndex];
-  const currentAnswerData = answers.find(a => a.questionId === currentQuestion?.id);
+  const currentAnswerData = answers.find((a) => a.questionId === currentQuestion?.id);
   const isLastQuestion = currentIndex === questions.length - 1;
   const hasAnswered = !!currentAnswerData;
   const currentQuestionType = currentQuestion?.type || defaultQuestionType;
+  const isCorrect = currentAnswerData?.score === 10;
+
+  // Atajo de teclado: Enter para avanzar/enviar
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        const isTextArea =
+          currentQuestionType === QUESTION_TYPES.OPEN ||
+          currentQuestionType === QUESTION_TYPES.FILL_BLANK;
+
+        // En textarea solo avanzar si ya respondió, o si no es textarea
+        if (!isTextArea || hasAnswered) {
+          if ((!currentAnswer.trim() && !hasAnswered) || isSubmitting) return;
+          e.preventDefault();
+          if (hasAnswered) {
+            isLastQuestion ? onFinish() : onNext();
+          } else {
+            onNext();
+          }
+        }
+      }
+    },
+    [currentAnswer, currentQuestionType, hasAnswered, isLastQuestion, isSubmitting, onFinish, onNext]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   if (!currentQuestion) return null;
 
-  const progress = ((currentIndex + 1) / questions.length) * 100;
-
-  const renderAnswerInput = () => {
-    if (hasAnswered) return null;
-
-    switch (currentQuestionType) {
-      case QUESTION_TYPES.MULTIPLE_CHOICE:
-        return (
-          <div className="space-y-2">
-            {currentQuestion.options?.map((option, idx) => {
-              const optionLetter = String.fromCharCode(65 + idx);
-              const isSelected = currentAnswer === optionLetter;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => onAnswerChange(optionLetter)}
-                  disabled={isSubmitting}
-                  className={`w-full p-3 rounded-lg border text-left transition-all ${isSelected
-                      ? 'border-accent bg-accent/10'
-                      : 'border-border hover:border-accent/50'
-                    }`}
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
-        );
-
-      case QUESTION_TYPES.TRUE_FALSE:
-        return (
-          <div className="flex gap-4">
-            <Button
-              variant={currentAnswer === 'true' ? 'default' : 'outline'}
-              size="lg"
-              onClick={() => onAnswerChange('true')}
-              disabled={isSubmitting}
-              className="flex-1"
-            >
-              <Check className="mr-2 h-4 w-4" />
-              True
-            </Button>
-            <Button
-              variant={currentAnswer === 'false' ? 'default' : 'outline'}
-              size="lg"
-              onClick={() => onAnswerChange('false')}
-              disabled={isSubmitting}
-              className="flex-1"
-            >
-              <X className="mr-2 h-4 w-4" />
-              False
-            </Button>
-          </div>
-        );
-
-      case QUESTION_TYPES.FILL_BLANK:
-        return (
-          <input
-            type="text"
-            value={currentAnswer}
-            onChange={(e) => onAnswerChange(e.target.value)}
-            placeholder="Type your answer..."
-            className="w-full p-3 rounded-lg border border-border focus:border-accent focus:outline-none"
-            disabled={isSubmitting}
-          />
-        );
-
-      default:
-        return (
-          <Textarea
-            placeholder="Write your answer here..."
-            value={currentAnswer}
-            onChange={(e) => onAnswerChange(e.target.value)}
-            className="min-h-[150px]"
-            disabled={isSubmitting}
-          />
-        );
-    }
-  };
-
-  const renderAnswerFeedback = () => {
-    if (!hasAnswered || !currentAnswerData) return null;
-
-    const isCorrect = currentAnswerData.score === 10;
-    const showCorrectAnswer = ([QUESTION_TYPES.MULTIPLE_CHOICE, QUESTION_TYPES.TRUE_FALSE, QUESTION_TYPES.FILL_BLANK] as QuestionType[]).includes(currentQuestionType);
-
-    return (
-      <div className="space-y-4">
-        <div className="p-4 bg-muted rounded-lg">
-          <p className="text-sm text-muted-foreground mb-2">Your answer:</p>
-          <p className="font-medium">
-            {currentQuestionType === QUESTION_TYPES.MULTIPLE_CHOICE && currentQuestion.options
-              ? currentQuestion.options[currentAnswerData.userAnswer.charCodeAt(0) - 65]
-              : currentQuestionType === QUESTION_TYPES.TRUE_FALSE
-                ? currentAnswerData.userAnswer === 'true' ? 'True' : 'False'
-                : currentAnswerData.userAnswer
-            }
-          </p>
-        </div>
-
-        <div className={`p-4 rounded-lg border ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
-          }`}>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-medium">Score:</span>
-            <span className={`text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-              {currentAnswerData.score}/10
-            </span>
-          </div>
-          <p className="text-sm">{currentAnswerData.feedback}</p>
-        </div>
-
-        {showCorrectAnswer && (
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-1">Correct answer:</p>
-            <p className="font-medium">
-              {currentQuestionType === QUESTION_TYPES.MULTIPLE_CHOICE && currentQuestion.options && currentQuestion.idealAnswer
-                ? currentQuestion.options[currentQuestion.idealAnswer.charCodeAt(0) - 65]
-                : currentQuestionType === QUESTION_TYPES.TRUE_FALSE
-                  ? currentQuestion.idealAnswer === 'true' ? 'True' : 'False'
-                  : currentQuestion.idealAnswer
-              }
-            </p>
-          </div>
-        )}
-
-        {currentQuestionType === QUESTION_TYPES.OPEN && currentQuestion.idealAnswer && (
-          <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-1">Ideal answer:</p>
-            <p className="text-sm">{currentQuestion.idealAnswer}</p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const getSubmitButtonText = () => {
-    switch (currentQuestionType) {
-      case QUESTION_TYPES.MULTIPLE_CHOICE:
-        return 'Submit Answer';
-      case QUESTION_TYPES.TRUE_FALSE:
-        return 'Submit';
-      case QUESTION_TYPES.FILL_BLANK:
-        return 'Submit';
-      default:
-        return 'Submit Answer';
-    }
-  };
-
-  const canSubmit = () => {
-    if (isSubmitting) return false;
-    if (!currentAnswer.trim()) return false;
-    return true;
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
-      <div className="max-w-2xl w-full mx-4 space-y-6">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Question {currentIndex + 1} of {questions.length}</span>
-            <span>{Math.round(progress)}%</span>
+    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground overflow-hidden selection:bg-primary/15">
+      <ExamHeader
+        currentIndex={currentIndex}
+        totalQuestions={questions.length}
+        onFinish={onFinish}
+      />
+
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-2xl mx-auto px-6 py-8 pb-24">
+
+          {/* Mascota */}
+          <MascotCompanion
+            state={isSubmitting ? 'submitting' : hasAnswered ? 'answered' : 'idle'}
+            isCorrect={isCorrect}
+          />
+
+          {/* Número + tipo de pregunta */}
+          <div className="flex items-center gap-3 mb-5 animate-in fade-in duration-500">
+            <span className="text-md font-bold text-muted-foreground/50 tabular-nums">
+              {String(currentIndex + 1).padStart(2, "0")}
+            </span>
+            <div className="h-1 flex-1 bg-border/30" />
+            <QuestionTypeBadge type={currentQuestionType} />
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
 
-        <div className="bg-card rounded-lg shadow-lg p-6 space-y-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-medium px-2 py-1 bg-accent/20 text-accent rounded">
-                {currentQuestionType.replace('_', ' ').toUpperCase()}
-              </span>
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Question {currentIndex + 1}</h3>
-            <p className="text-lg">{currentQuestion.text}</p>
-          </div>
+          {/* Pregunta */}
+          <article
+            key={currentIndex}
+            className="animate-in fade-in slide-in-from-bottom-2 duration-500"
+          >
+            <h1 className={cn(
+              "text-xl font-semibold leading-relaxed tracking-tight text-balance",
+              hasAnswered ? "text-foreground/70" : "text-foreground"
+            )}>
+              {currentQuestion.text}
+            </h1>
 
-          {hasAnswered ? renderAnswerFeedback() : renderAnswerInput()}
-        </div>
-
-        <div className="flex justify-end">
-          {hasAnswered ? (
-            isLastQuestion ? (
-              <Button onClick={onFinish} size="lg">
-                View Results
-              </Button>
-            ) : (
-              <Button onClick={onNext} size="lg">
-                Next Question
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            )
-          ) : (
-            <Button
-              onClick={onNext}
-              disabled={!canSubmit()}
-              size="lg"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Evaluating...
-                </>
+            {/* Input de respuesta o feedback */}
+            <div className="transition-all duration-400">
+              {hasAnswered ? (
+                currentAnswerData && (
+                  <AnswerFeedback
+                    currentAnswerData={currentAnswerData}
+                    currentQuestion={currentQuestion}
+                    currentQuestionType={currentQuestionType}
+                    isCorrect={isCorrect}
+                  />
+                )
               ) : (
-                getSubmitButtonText()
+                <AnswerInput
+                  currentQuestion={currentQuestion}
+                  currentAnswer={currentAnswer}
+                  currentQuestionType={currentQuestionType}
+                  isSubmitting={isSubmitting}
+                  onAnswerChange={onAnswerChange}
+                />
               )}
-            </Button>
-          )}
+            </div>
+          </article>
         </div>
-      </div>
+      </main>
+
+      <ExamFooter
+        hasAnswered={hasAnswered}
+        isCorrect={isCorrect}
+        isLastQuestion={isLastQuestion}
+        isSubmitting={isSubmitting}
+        currentAnswer={currentAnswer}
+        onNext={onNext}
+        onFinish={onFinish}
+      />
     </div>
   );
 };
