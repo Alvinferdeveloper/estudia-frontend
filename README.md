@@ -48,7 +48,15 @@ Visualiza tus PDFs y chatea directamente con ellos. Extrae conceptos clave, pide
   <img src="/public/images/docs/chat.png" alt="AI Analysis Screenshot" />
 </div>
 
-### 3. Exámenes de Autoevaluación
+### 3. Generacion de notas
+Crea notas basadas en el contenido de tus archivos. Genera explicaciones resumidas que te ayudan a entender conceptos complejos, o resalta los puntos clave de tus documentos. Modifica en tiempo real el contenido de tus notas para adaptarlas a tu estilo de aprendizaje.
+
+<!-- Placeholder para Imagen: Exam UI with Mascot Companion -->
+<div align="center">
+  <img src="/public/images/docs/note.png" alt="Exam UI Screenshot" />
+</div>
+
+### 4. Exámenes de Autoevaluación
 Genera exámenes de opción múltiple, verdadero/falso o desarrollo basados exclusivamente en el contenido de tus archivos. Recibe feedback académico inmediato de nuestra mascota guía.
 <!-- Placeholder para Imagen: Exam UI with Mascot Companion -->
 <div align="center">
