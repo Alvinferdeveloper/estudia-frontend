@@ -42,7 +42,9 @@ export const useChatAssistant = ({
 
   const { messages, sendMessage, setMessages, status, } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/chat", prepareSendMessagesRequest: ({ messages }) => {
+      api: `${process.env.NEXT_PUBLIC_API_URL}/ai/chat`,
+      credentials: 'include',
+      prepareSendMessagesRequest: ({ messages }) => {
         return {
           body: {
             messages,

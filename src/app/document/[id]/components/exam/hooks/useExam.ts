@@ -93,8 +93,9 @@ export const useGenerateQuestions = () => {
       numQuestions?: number;
     }) => {
       const { data: result } = await axios.post<{ questions: any[] }>(
-        '/api/exam',
-        { action: 'generate_questions', data },
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/exam/generate`,
+        data,
+        { withCredentials: true }
       );
       return result.questions;
     },
@@ -110,8 +111,9 @@ export const useEvaluateAnswer = () => {
       questionType?: QuestionType;
     }) => {
       const { data: result } = await axios.post<{ score: number; feedback: string }>(
-        '/api/exam',
-        { action: 'evaluate_answer', data },
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/exam/evaluate`,
+        data,
+        { withCredentials: true }
       );
       return result;
     },

@@ -22,7 +22,7 @@ interface UseStreamingNoteReturn {
 }
 
 export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStreamingNoteReturn => {
-  const { apiEndpoint = "/api/stream-note" } = options;
+  const { apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/stream` } = options;
 
   const {
     completion,

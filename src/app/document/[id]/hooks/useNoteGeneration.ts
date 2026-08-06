@@ -42,11 +42,15 @@ export const useNoteGeneration = ({
       setError(null);
 
       try {
-        const response = await axios.post(`/api/generate-note`, {
-          selectedText,
-          prompt,
-          documentContext: `Document: ${documentFileName}`,
-        });
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/generate`,
+          {
+            selectedText,
+            prompt,
+            documentContext: `Document: ${documentFileName}`,
+          },
+          { withCredentials: true }
+        );
 
         const generatedContent = response.data.content;
 

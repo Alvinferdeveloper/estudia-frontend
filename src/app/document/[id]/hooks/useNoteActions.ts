@@ -107,12 +107,16 @@ export const useNoteActions = ({
     setCompletion("");
 
     if (existingAnnotation) {
-      const { data } = await axios.post(`/api/generate-note`, {
-        selectedText,
-        prompt: initialPromptRef.current,
-        documentContext: `Document: ${documentFileName}`,
-        originalNote: completion,
-      });
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/generate`,
+        {
+          selectedText,
+          prompt: initialPromptRef.current,
+          documentContext: `Document: ${documentFileName}`,
+          originalNote: completion,
+        },
+        { withCredentials: true }
+      );
       setCompletion(data.content);
     } else {
       await complete(initialPromptRef.current, {
@@ -130,12 +134,16 @@ export const useNoteActions = ({
     setCompletion("");
 
     if (existingAnnotation) {
-      const { data } = await axios.post(`/api/generate-note`, {
-        selectedText,
-        prompt: combinedPrompt,
-        documentContext: `Document: ${documentFileName}`,
-        originalNote: completion,
-      });
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/generate`,
+        {
+          selectedText,
+          prompt: combinedPrompt,
+          documentContext: `Document: ${documentFileName}`,
+          originalNote: completion,
+        },
+        { withCredentials: true }
+      );
       setCompletion(data.content);
     } else {
       await complete(combinedPrompt, {
