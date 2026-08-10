@@ -35,6 +35,7 @@ export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStre
     api: apiEndpoint,
     streamProtocol: "text",
     body: {},
+    credentials: 'include'
   });
 
   const wrappedComplete = useCallback(

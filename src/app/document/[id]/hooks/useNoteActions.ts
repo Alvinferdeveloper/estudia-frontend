@@ -1,5 +1,4 @@
 import { useState, useCallback, MutableRefObject, useEffect } from "react";
-import axios from "axios";
 import { useStreamingNote } from "@/app/document/[id]/hooks/useStreamingNote";
 import { Annotation } from "@/app/types";
 
@@ -106,25 +105,12 @@ export const useNoteActions = ({
     setLocalOriginalNote(completion);
     setCompletion("");
 
-    if (existingAnnotation) {
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/generate`,
-        {
-          selectedText,
-          prompt: initialPromptRef.current,
-          documentContext: `Document: ${documentFileName}`,
-          originalNote: completion,
-        },
-        { withCredentials: true }
-      );
-      setCompletion(data.content);
-    } else {
-      await complete(initialPromptRef.current, {
-        selectedText,
-        prompt: initialPromptRef.current,
-        documentContext: `Document: ${documentFileName}`,
-      });
-    }
+    await complete(initialPromptRef.current, {
+      selectedText,
+      prompt: initialPromptRef.current,
+      documentContext: `Document: ${documentFileName}`,
+      originalNote: existingAnnotation ? completion : undefined,
+    });
   }, [selectedText, documentFileName, existingAnnotation, completion, complete, setCompletion, initialPromptRef, setLocalOriginalNote]);
 
   const handleRequestChanges = useCallback(async (changePrompt: string) => {
@@ -133,25 +119,12 @@ export const useNoteActions = ({
     setLocalOriginalNote(completion);
     setCompletion("");
 
-    if (existingAnnotation) {
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/generate`,
-        {
-          selectedText,
-          prompt: combinedPrompt,
-          documentContext: `Document: ${documentFileName}`,
-          originalNote: completion,
-        },
-        { withCredentials: true }
-      );
-      setCompletion(data.content);
-    } else {
-      await complete(combinedPrompt, {
-        selectedText,
-        prompt: combinedPrompt,
-        documentContext: `Document: ${documentFileName}`,
-      });
-    }
+    await complete(combinedPrompt, {
+      selectedText,
+      prompt: combinedPrompt,
+      documentContext: `Document: ${documentFileName}`,
+      originalNote: existingAnnotation ? completion : undefined,
+    });
   }, [selectedText, documentFileName, existingAnnotation, completion, complete, setCompletion, initialPromptRef, setLocalOriginalNote]);
 
   const handleAcceptChanges = useCallback(async (mergedText: string) => {
