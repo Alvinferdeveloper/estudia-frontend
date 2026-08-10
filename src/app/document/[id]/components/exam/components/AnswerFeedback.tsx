@@ -25,7 +25,8 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
       return currentQuestion.options[currentQuestion.idealAnswer.charCodeAt(0) - 65];
     }
     if (currentQuestionType === QUESTION_TYPES.TRUE_FALSE) {
-      return currentQuestion.idealAnswer === 'true' ? 'Verdadero' : 'Falso';
+      const isTrue = ['true', 'verdadero', 'v', '1'].includes(String(currentQuestion.idealAnswer).toLowerCase().trim());
+      return isTrue ? 'Verdadero' : 'Falso';
     }
     return currentQuestion.idealAnswer;
   })();
