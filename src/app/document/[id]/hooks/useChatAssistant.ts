@@ -66,11 +66,26 @@ export const useChatAssistant = ({
     },
   });
 
+  const loadedConversation = useRef<string | null>(null);
+
   useEffect(() => {
-    if (uiInitialMessages.length > 0 && messages.length === 0) {
-      setMessages(uiInitialMessages);
+    if (loadedConversation.current !== conversationId) {
+      loadedConversation.current = conversationId;
+      setMessages([]);
     }
-  }, [uiInitialMessages, messages.length, setMessages]);
+  }, [conversationId, setMessages]);
+
+  useEffect(() => {
+    if (
+      !conversationId ||
+      loadedConversation.current !== conversationId ||
+      messages.length > 0 ||
+      uiInitialMessages.length === 0
+    ) {
+      return;
+    }
+    setMessages(uiInitialMessages);
+  }, [uiInitialMessages, conversationId, messages.length, setMessages]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,14 +105,6 @@ export const useChatAssistant = ({
     },
     [input, sendMessage, createMessage, conversationId]
   );
-
-  const prevConversation = useRef(conversationId);
-  useEffect(() => {
-    if (prevConversation.current !== conversationId) {
-      prevConversation.current = conversationId;
-      setMessages([]);
-    }
-  }, [conversationId, setMessages]);
 
   return {
     messages,
