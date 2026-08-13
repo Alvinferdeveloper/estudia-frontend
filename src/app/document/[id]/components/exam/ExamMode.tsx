@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useExamSession } from "@/app/document/[id]/components/exam/hooks/useExamSession";
-import { EXAM_PHASES } from "@/app/document/[id]/components/exam/hooks/useExam";
+import { EXAM_PHASES, useUserExams } from "@/app/document/[id]/components/exam/hooks/useExam";
 import { ExamModeButton } from "@/app/document/[id]/components/exam/ExamModeButton";
 import { ExamSetupDialog } from "@/app/document/[id]/components/exam/ExamSetupDialog";
 import { ExamUI } from "@/app/document/[id]/components/exam/ExamUI";
 import { ExamResultsScreen } from "@/app/document/[id]/components/exam/ExamResultsScreen";
+import { SavedExamsDialog } from "@/app/document/[id]/components/exam/SavedExamsDialog";
 import { DocumentFile } from "@/app/document/[id]/page";
 
 interface ExamModeProps {
@@ -27,6 +29,9 @@ export const ExamMode: React.FC<ExamModeProps> = ({
   onEnableExamMode,
   onDisableExamMode,
 }) => {
+  const [showSavedExams, setShowSavedExams] = useState(false);
+  const { data: userExams } = useUserExams(document.id);
+
   const {
     examPhase,
     questions,
@@ -34,6 +39,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     currentIndex,
     currentAnswer,
     questionType,
+    examMeta,
     setCurrentAnswer,
     handleStartExam,
     handleSubmitAnswer,
@@ -41,6 +47,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     handleFinish,
     handleRetry,
     handleContinueFromSelection,
+    handleLoadExam,
     disableExamMode,
     isSubmitting
   } = useExamSession({
@@ -93,20 +100,22 @@ export const ExamMode: React.FC<ExamModeProps> = ({
         const totalScore = answers.reduce((sum, a) => sum + (a.score || 0), 0);
         const averageScore = answers.length > 0 ? totalScore / answers.length : 0;
 
+        const resultsExamMeta = examMeta ?? {
+          id: 'local',
+          documentId: document.id,
+          pages: selectedPages,
+          mode: 'custom' as const,
+          totalQuestions: questions.length,
+          title: `Exam - ${selectedPages.length} pages`,
+          difficulty: 'medium',
+          questionType,
+          createdAt: new Date().toISOString(),
+        };
+
         return (
           <ExamResultsScreen
             results={{
-              exam: {
-                id: 'local',
-                documentId: document.id,
-                pages: selectedPages,
-                mode: 'custom',
-                totalQuestions: questions.length,
-                title: `Exam - ${selectedPages.length} pages`,
-                difficulty: 'medium',
-                questionType,
-                createdAt: new Date().toISOString(),
-              },
+              exam: resultsExamMeta,
               questions: questions.map((q, i) => ({
                 id: i.toString(),
                 examId: 'local',
@@ -141,17 +150,27 @@ export const ExamMode: React.FC<ExamModeProps> = ({
         onClick={onEnableExamMode}
         isActive={examMode || examPhase !== EXAM_PHASES.INACTIVE}
       />
-      {examMode && selectedPages.length > 0 && examPhase === EXAM_PHASES.INACTIVE && (
+      {examMode && examPhase === EXAM_PHASES.INACTIVE && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[500]">
           <div className="bg-card border border-border rounded-lg shadow-lg px-4 py-3 flex items-center gap-4">
-            <span className="text-sm font-medium">
-              {selectedPages.length} page{selectedPages.length !== 1 ? 's' : ''} selected
-            </span>
+            {selectedPages.length > 0 && (
+              <span className="text-sm font-medium">
+                {selectedPages.length} page{selectedPages.length !== 1 ? 's' : ''} selected
+              </span>
+            )}
+            {selectedPages.length > 0 && (
+              <button
+                onClick={handleContinueFromSelection}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90"
+              >
+                New Exam
+              </button>
+            )}
             <button
-              onClick={handleContinueFromSelection}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90"
+              onClick={() => setShowSavedExams(true)}
+              className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/90"
             >
-              Continue
+              My Exams{userExams && userExams.length > 0 ? ` (${userExams.length})` : ''}
             </button>
             <button
               onClick={disableExamMode}
@@ -161,6 +180,19 @@ export const ExamMode: React.FC<ExamModeProps> = ({
             </button>
           </div>
         </div>
+      )}
+      {showSavedExams && (
+        <SavedExamsDialog
+          documentId={document.id}
+          onSelect={(examId) => {
+            const exam = userExams?.find((e) => e.id === examId);
+            if (exam) {
+              handleLoadExam(exam);
+              setShowSavedExams(false);
+            }
+          }}
+          onClose={() => setShowSavedExams(false)}
+        />
       )}
       {renderContent()}
     </>

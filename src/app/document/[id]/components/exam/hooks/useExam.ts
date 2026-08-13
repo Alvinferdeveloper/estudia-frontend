@@ -189,6 +189,33 @@ export const useSaveExamQuestions = () => {
   });
 };
 
+interface RawExamQuestion {
+  id: string;
+  examId: string;
+  order: number;
+  text: string;
+  type?: QuestionType | null;
+  options?: string | null;
+  idealAnswer: string | null;
+}
+
+export const fetchExamQuestions = async (examId: string): Promise<Question[]> => {
+  const { data } = await axios.get<RawExamQuestion[]>(
+    `${process.env.NEXT_PUBLIC_API_URL}/exam/${examId}/questions`,
+    { withCredentials: true }
+  );
+
+  return data.map((q) => ({
+    id: q.id,
+    examId: q.examId,
+    text: q.text,
+    type: q.type ?? undefined,
+    options: q.options ? JSON.parse(q.options) : undefined,
+    order: q.order,
+    idealAnswer: q.idealAnswer,
+  }));
+};
+
 export const useUserExams = (documentId?: string) => {
   return useQuery({
     queryKey: ['exams', documentId],

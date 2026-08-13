@@ -5,12 +5,14 @@ import {
   useCreateExam,
   useSaveExamResult,
   useSaveExamQuestions,
+  fetchExamQuestions,
   QuestionType,
   ExamPhase,
   EXAM_PHASES,
   QUESTION_TYPES,
   Question,
-  Answer
+  Answer,
+  Exam
 } from "@/app/document/[id]/components/exam/hooks/useExam";
 
 interface UseExamSessionProps {
@@ -29,6 +31,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
   const [examId, setExamId] = useState<string | null>(null);
+  const [examMeta, setExamMeta] = useState<Exam | null>(null);
 
   const generateQuestionsMutation = useGenerateQuestions();
   const evaluateAnswerMutation = useEvaluateAnswer();
@@ -43,8 +46,31 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     setCurrentIndex(0);
     setCurrentAnswer('');
     setExamId(null);
+    setExamMeta(null);
     onDisableExamMode();
   }, [onDisableExamMode]);
+
+  const handleLoadExam = useCallback(async (exam: Exam) => {
+    try {
+      const loadedQuestions = await fetchExamQuestions(exam.id);
+      if (loadedQuestions.length === 0) return;
+
+      const sortedQuestions = [...loadedQuestions].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
+      );
+
+      setQuestions(sortedQuestions);
+      setExamId(exam.id);
+      setExamMeta(exam);
+      setQuestionType(exam.questionType ?? sortedQuestions[0].type ?? QUESTION_TYPES.OPEN);
+      setCurrentIndex(0);
+      setAnswers([]);
+      setCurrentAnswer('');
+      setExamPhase(EXAM_PHASES.EXAM);
+    } catch (error) {
+      console.error('Failed to load exam:', error);
+    }
+  }, []);
 
   const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; questionType: QuestionType; title: string }) => {
     try {
@@ -190,7 +216,9 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     handleFinish,
     handleRetry,
     handleContinueFromSelection,
+    handleLoadExam,
     disableExamMode,
+    examMeta,
     isSubmitting: evaluateAnswerMutation.isPending
   };
 };
