@@ -14,3 +14,16 @@ export const getDocument = async (id: string) => {
     return null;
   }
 };
+
+export const touchDocumentAccess = async (id: string) => {
+  try {
+    const cookieStore = await cookies();
+    await axios.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/documents/${id}/access`,
+      {},
+      { headers: { cookie: cookieStore.toString() }, withCredentials: true },
+    );
+  } catch (error) {
+    console.error('Error touching document access:', error);
+  }
+};

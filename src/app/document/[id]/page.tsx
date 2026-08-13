@@ -1,5 +1,5 @@
 import { QueryProvider } from "@/app/providers/QueryProvider";
-import { getDocument } from "./actions";
+import { getDocument, touchDocumentAccess } from "./actions";
 import DocumentClient from "./components/DocumentClient";
 import { Document } from "@/app/types";
 
@@ -14,6 +14,8 @@ export default async function DocumentPage({ params }: { params: { id: string } 
   if (!document) {
     return <div>Document not found</div>;
   }
+
+  void touchDocumentAccess(id);
 
   return (
     <QueryProvider>

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, LayoutGrid, Layers } from "lucide-react";
+import { Search, LayoutGrid, Clock } from "lucide-react";
 import { TopicList } from "@/app/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/workspace/components/CreateTopicDialog";
 import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
@@ -14,8 +14,10 @@ import { Topic } from "@/app/types";
 interface SidebarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  view: 'recent' | 'topic';
   selectedTopic: Topic | null;
   handleTopicSelect: (topic: Topic | null) => void;
+  onSelectRecent: () => void;
 }
 
 import { UserProfileMenu } from "@/components/user-profile-menu";
@@ -23,13 +25,13 @@ import { UserProfileMenu } from "@/components/user-profile-menu";
 export const Sidebar: React.FC<SidebarProps> = ({
   searchQuery,
   setSearchQuery,
+  view,
   selectedTopic,
   handleTopicSelect,
+  onSelectRecent,
 }) => {
   const { data: topics } = useFetchTopics();
   const { mutate: createTopic } = useCreateTopic();
-
-  const totalDocuments = topics?.reduce((acc, topic) => acc + topic.count, 0) || 0;
 
   return (
     <aside className="w-80 h-screen flex flex-col bg-background/50 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-secondary/50">
@@ -71,20 +73,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
               Biblioteca
             </h3>
             <Button
-              variant={!selectedTopic ? "secondary" : "ghost"}
-              onClick={() => handleTopicSelect(null)}
+              variant={view === 'recent' ? "secondary" : "ghost"}
+              onClick={onSelectRecent}
               className={cn(
                 "w-full justify-between hover:bg-secondary h-10 font-normal transition-all hover:translate-x-1",
-                !selectedTopic ? "bg-secondary text-secondary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                view === 'recent' ? "bg-secondary text-secondary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <div className="flex items-center">
-                <Layers className={cn("mr-2 h-4 w-4", !selectedTopic ? "text-primary" : "")} />
-                <span>Todos los archivos</span>
+                <Clock className={cn("mr-2 h-4 w-4", view === 'recent' ? "text-primary" : "")} />
+                <span>Recientes</span>
               </div>
-              <span className="bg-background/80 text-muted-foreground text-[10px] font-medium px-2 py-0.5 rounded-full border border-border/50 shadow-sm">
-                {totalDocuments}
-              </span>
             </Button>
           </div>
 

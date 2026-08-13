@@ -4,6 +4,7 @@ export interface Document {
     filePath: string;
     mimeType: string;
     createdAt: string;
+    lastAccessedAt: string | null;
     fileSize: string;
     topicId: string | null;
     folderId: string | null;

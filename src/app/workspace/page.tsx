@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
 import { useFetchItems } from "@/app/workspace/hooks/useFetchItems";
+import { useFetchRecentDocuments } from "@/app/workspace/hooks/useFetchRecentDocuments";
 import { useCreateFolder } from "@/app/workspace/hooks/useFolders";
 import { useUploadDocument } from "@/app/workspace/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/workspace/hooks/useDeleteDocument";
@@ -21,6 +22,7 @@ type PathItem = { type: 'topic' | 'folder'; item: Topic | Folder };
 
 const DashboardPage = () => {
   const router = useRouter();
+  const [view, setView] = useState<"recent" | "topic">("recent");
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,7 +52,17 @@ const DashboardPage = () => {
     selectedFolder?.id || null
   );
 
-  const items = data?.pages.flatMap((page) => page.data) || [];
+  const { data: recentData } = useFetchRecentDocuments(
+    debouncedSearchQuery,
+    view === 'recent'
+  );
+
+  const items: (Document | Folder)[] =
+    view === 'recent'
+      ? (recentData || []).map((doc) => ({ ...doc, type: 'document' as const }))
+      : (data?.pages.flatMap((page) => page.data) || []);
+
+  const recentCount = view === 'recent' ? (recentData?.length ?? 0) : 0;
 
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
@@ -69,7 +81,15 @@ const DashboardPage = () => {
   }, [selectedTopic, folderPath]);
 
   const handleTopicSelect = (topic: Topic | null) => {
+    setView('topic');
     setSelectedTopic(topic);
+    setSelectedFolder(null);
+    setFolderPath([]);
+  };
+
+  const handleSelectRecent = () => {
+    setView('recent');
+    setSelectedTopic(null);
     setSelectedFolder(null);
     setFolderPath([]);
   };
@@ -106,14 +126,17 @@ const DashboardPage = () => {
       <Sidebar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        view={view}
         selectedTopic={selectedTopic}
         handleTopicSelect={handleTopicSelect}
+        onSelectRecent={handleSelectRecent}
       />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header
+          view={view}
           selectedTopic={selectedTopic}
           selectedFolder={selectedFolder}
-          totalDocuments={data?.pages[0].total || 0}
+          totalDocuments={view === 'recent' ? recentCount : data?.pages[0].total || 0}
           viewMode={viewMode}
           setViewMode={setViewMode}
           onGoBack={folderPath.length > 0 ? handleGoBack : undefined}
@@ -129,12 +152,14 @@ const DashboardPage = () => {
         />
         <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
           <div className="max-w-6xl mx-auto space-y-8">
-            <UploadSection
-              selectedTopic={selectedTopic}
-              selectedFolder={selectedFolder}
-              uploadDocument={uploadDocument}
-              isUploading={isUploading}
-            />
+            {view === 'topic' && (
+              <UploadSection
+                selectedTopic={selectedTopic}
+                selectedFolder={selectedFolder}
+                uploadDocument={uploadDocument}
+                isUploading={isUploading}
+              />
+            )}
             <DocumentList
               items={items}
               selectedFolder={selectedFolder}

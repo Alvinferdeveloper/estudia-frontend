@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Grid3X3, List, LayoutGrid, ArrowLeft, FolderPlus } from "lucide-react";
+import { Grid3X3, List, LayoutGrid, ArrowLeft, FolderPlus, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Folder, Topic } from "@/app/types";
 
 interface HeaderProps {
+  view: "recent" | "topic";
   selectedTopic: Topic | null;
   selectedFolder: Folder | null;
   totalDocuments: number;
@@ -13,11 +14,12 @@ interface HeaderProps {
   createFolderDialog?: React.ReactNode;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  selectedTopic, 
-  selectedFolder, 
-  totalDocuments, 
-  viewMode, 
+export const Header: React.FC<HeaderProps> = ({
+  view,
+  selectedTopic,
+  selectedFolder,
+  totalDocuments,
+  viewMode,
   setViewMode,
   onGoBack,
   createFolderDialog,
@@ -37,7 +39,12 @@ export const Header: React.FC<HeaderProps> = ({
         )}
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground">
-            {selectedFolder ? (
+            {view === 'recent' ? (
+              <>
+                <Clock className="w-5 h-5 text-muted-foreground" />
+                Recientes
+              </>
+            ) : selectedFolder ? (
               <>
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedFolder.color || "#000000" }} />
                 {selectedFolder.name}

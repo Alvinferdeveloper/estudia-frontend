@@ -25,9 +25,11 @@ interface DocumentListItemProps {
 
 
 export const DocumentListItem: React.FC<DocumentListItemProps> = ({ doc, topic, deleteDocument, onClick }) => {
-  const formattedDate = doc.createdAt
-    ? format(new Date(doc.createdAt), "MMM d, yyyy")
-    : "Unknown";
+  const formattedDate = doc.lastAccessedAt
+    ? format(new Date(doc.lastAccessedAt), "MMM d, yyyy")
+    : doc.createdAt
+      ? format(new Date(doc.createdAt), "MMM d, yyyy")
+      : "Unknown";
 
   const router = useRouter();
 
