@@ -39,6 +39,15 @@ export interface Message {
     createdAt: string;
 }
 
+export interface Conversation {
+    id: string;
+    documentId: string;
+    userId: string;
+    title: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface AnnotationRect {
     x1: number;
     y1: number;

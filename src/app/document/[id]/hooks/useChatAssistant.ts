@@ -9,6 +9,7 @@ import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
 interface UseChatAssistantOptions {
   documentId: string;
   documentName: string;
+  conversationId: string | null;
 }
 
 interface UseChatAssistantReturn {
@@ -24,11 +25,12 @@ interface UseChatAssistantReturn {
 export const useChatAssistant = ({
   documentId,
   documentName,
+  conversationId,
 }: UseChatAssistantOptions): UseChatAssistantReturn => {
   const [input, setInput] = useState("");
 
-  const { data: initialMessages } = useFetchMessages(documentId);
-  const { mutate: createMessage } = useCreateMessage(documentId);
+  const { data: initialMessages } = useFetchMessages(documentId, conversationId);
+  const { mutate: createMessage } = useCreateMessage(documentId, conversationId);
 
   const uiInitialMessages = useMemo(
     () =>
@@ -50,6 +52,7 @@ export const useChatAssistant = ({
             messages,
             documentId,
             documentName,
+            conversationId,
           },
         };
       },
@@ -79,14 +82,22 @@ export const useChatAssistant = ({
   const handleFormSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (input.trim()) {
+      if (input.trim() && conversationId) {
         sendMessage({ parts: [{ type: "text" as const, text: input, }] });
         createMessage({ role: "user", content: input });
         setInput("");
       }
     },
-    [input, sendMessage, createMessage]
+    [input, sendMessage, createMessage, conversationId]
   );
+
+  const prevConversation = useRef(conversationId);
+  useEffect(() => {
+    if (prevConversation.current !== conversationId) {
+      prevConversation.current = conversationId;
+      setMessages([]);
+    }
+  }, [conversationId, setMessages]);
 
   return {
     messages,

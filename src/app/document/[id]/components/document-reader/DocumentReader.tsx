@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
 import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
 import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
+import { useConversations } from "@/app/document/[id]/hooks/useConversations";
 import { useAnnotationActions } from "@/app/document/[id]/hooks/useAnnotationActions";
 import { UIMessage } from "ai";
 
@@ -35,8 +36,16 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [examMode, setExamMode] = useState(false);
     const [selectedPages, setSelectedPages] = useState<number[]>([]);
     const [pdfDoc, setPdfDoc] = useState<any>(null);
+    const [conversationId, setConversationId] = useState<string | null>(null);
 
-    const { mutate: createMessage } = useCreateMessage(document.id);
+    const {
+        list: conversations,
+        create: createConversation,
+        remove: deleteConversation,
+        rename: renameConversation,
+    } = useConversations(document.id);
+
+    const { mutate: createMessage } = useCreateMessage(document.id, conversationId);
 
     const {
         messages,
@@ -45,7 +54,36 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         handleFormSubmit,
         setMessages,
         setInput,
-    } = useChatAssistant({ documentId: document.id, documentName: document.fileName });
+    } = useChatAssistant({
+        documentId: document.id,
+        documentName: document.fileName,
+        conversationId,
+    });
+
+    useEffect(() => {
+        if (
+            !conversationId &&
+            conversations.data &&
+            conversations.data.length > 0
+        ) {
+            setConversationId(conversations.data[0].id);
+        }
+    }, [conversations.data, conversationId]);
+
+    const handleNewConversation = async () => {
+        const conv = await createConversation.mutateAsync({});
+        setConversationId(conv.id);
+    };
+
+    const handleSelectConversation = (id: string) => setConversationId(id);
+
+    const handleDeleteConversation = async (id: string) => {
+        await deleteConversation.mutateAsync(id);
+        if (id === conversationId) setConversationId(null);
+    };
+
+    const handleRenameConversation = (id: string, title: string) =>
+        renameConversation.mutateAsync({ id, title });
 
     const handleTogglePage = (pageNumber: number) => {
         setSelectedPages(prev => {
@@ -90,7 +128,9 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
             }
             return [...msgs, contextMessage];
         });
-        createMessage({ role: "assistant", content });
+        if (conversationId) {
+            createMessage({ role: "assistant", content });
+        }
     };
 
     const {
@@ -192,6 +232,12 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 <ChatSidebar
                     isOpen={isChatOpen}
                     onClose={() => setIsChatOpen(false)}
+                    conversations={conversations.data ?? []}
+                    activeConversationId={conversationId}
+                    onSelectConversation={handleSelectConversation}
+                    onNewConversation={handleNewConversation}
+                    onDeleteConversation={handleDeleteConversation}
+                    onRenameConversation={handleRenameConversation}
                     messages={messages}
                     selectedText={selectedText || ''}
                     input={input}
