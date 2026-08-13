@@ -38,7 +38,7 @@ export const NoteForm: React.FC<NoteFormProps> = ({
 
       <div>
         <Label htmlFor="prompt-input" className="flex items-center gap-2 text-sm font-medium mb-2">
-          <Sparkles className="w-4 h-4 text-purple-500" />
+          <Sparkles className="w-4 h-4 text-primary" />
           What would you like the AI to do?
         </Label>
         <Textarea
@@ -60,7 +60,7 @@ export const NoteForm: React.FC<NoteFormProps> = ({
         />
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
 };

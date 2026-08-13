@@ -11,8 +11,8 @@ export const ExamModeButton: React.FC<ExamModeButtonProps> = ({ onClick, isActiv
     <Button
       variant={isActive ? "default" : "outline"}
       size="sm"
+      className="press-feedback"
       onClick={onClick}
-      className={isActive ? "bg-accent" : ""}
     >
       <FlaskConical className="mr-2 h-4 w-4" />
       Exam Mode

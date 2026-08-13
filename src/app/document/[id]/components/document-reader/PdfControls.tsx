@@ -1,8 +1,5 @@
 
-import { ZoomIn, ZoomOut, MessageSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { ZoomIn, ZoomOut, Sparkles } from "lucide-react";
 
 interface PdfControlsProps {
     pageNumber: number;
@@ -18,55 +15,61 @@ interface PdfControlsProps {
     onPageSelect?: (page: number) => void;
 }
 
-export const PdfControls: React.FC<PdfControlsProps> = ({ 
-    pageNumber, 
-    numPages, 
-    scale, 
-    isChatOpen, 
-    selectedText, 
+export const PdfControls: React.FC<PdfControlsProps> = ({
+    pageNumber,
+    numPages,
+    scale,
+    isChatOpen,
+    selectedText,
     onChatToggle,
     onZoomIn,
     onZoomOut,
-    examMode = false,
-    selectedPages = [],
-    onPageSelect,
 }) => (
-    <div className="border-b border-border bg-card px-6 py-3 relative">
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                        Page {pageNumber || 1} of {numPages || "--"}
-                    </span>
-                </div>
-
-                <Separator orientation="vertical" className="h-4" />
-
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={onZoomOut}>
-                        <ZoomOut className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm text-muted-foreground min-w-12 text-center">{Math.round(scale * 100)}%</span>
-                    <Button variant="outline" size="sm" onClick={onZoomIn}>
-                        <ZoomIn className="h-4 w-4" />
-                    </Button>
-                </div>
+    <>
+        {/* Floating toolbar: page indicator + zoom */}
+        <div className="pointer-events-none absolute inset-x-0 top-4 z-20 flex justify-center">
+            <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-md">
+                <span className="px-2 text-xs font-medium tabular-nums text-muted-foreground">
+                    {pageNumber || 1} / {numPages || "--"}
+                </span>
+                <div className="h-4 w-px bg-border" />
+                <button
+                    onClick={onZoomOut}
+                    className="press-feedback flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+                >
+                    <ZoomOut className="h-3.5 w-3.5" />
+                </button>
+                <span className="min-w-10 text-center text-xs font-medium tabular-nums text-muted-foreground">
+                    {Math.round(scale * 100)}%
+                </span>
+                <button
+                    onClick={onZoomIn}
+                    className="press-feedback flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+                >
+                    <ZoomIn className="h-3.5 w-3.5" />
+                </button>
             </div>
-
-            <Button
-                variant={isChatOpen ? "default" : "outline"}
-                size="sm"
-                onClick={onChatToggle}
-                className="gap-2"
-            >
-                <MessageSquare className="h-4 w-4" />
-                AI Assistant
-                {selectedText && (
-                    <Badge variant="secondary" className="ml-1">
-                        Text Selected
-                    </Badge>
-                )}
-            </Button>
         </div>
-    </div>
+
+        {/* Floating "Ask AI" trigger */}
+        <div className="absolute right-4 top-4 z-20">
+            <button
+                onClick={onChatToggle}
+                className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
+                    isChatOpen
+                        ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
+                        : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
+                }`}
+            >
+                <Sparkles className="h-4 w-4" />
+                Asistente IA
+                {selectedText && !isChatOpen && (
+                    <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                    </span>
+                )}
+            </button>
+        </div>
+    </>
 );

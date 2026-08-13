@@ -1,92 +1,69 @@
 import React from "react";
-import {
-  MoreHorizontal,
-  Share2,
-  Star,
-} from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 interface FolderListItemProps {
   folder: Folder;
   onClick?: () => void;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
-export const FolderListItem: React.FC<FolderListItemProps> = ({ folder, onClick }) => {
-
+export const FolderListItem: React.FC<FolderListItemProps> = ({
+  folder,
+  onClick,
+  isSelected = false,
+  onToggleSelect,
+}) => {
   return (
     <div
-      className="group flex items-center w-full rounded-md hover:bg-background/10 transition-colors px-2 py-2 cursor-pointer border-b border-border/30 last:border-0"
+      className={cn(
+        "group flex w-full cursor-pointer items-center rounded-md px-2 py-2 transition-colors duration-150",
+        isSelected ? "bg-primary/[0.06]" : "hover:bg-accent/60"
+      )}
       onClick={onClick}
     >
-      <div className="grid grid-cols-12 gap-4 w-full items-center">
+      <div className="grid w-full grid-cols-12 items-center gap-4">
+        <div className="col-span-1 flex items-center">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect?.();
+            }}
+            className={cn(
+              "press-feedback flex h-5 w-5 items-center justify-center rounded-md border-2 transition-all duration-150",
+              isSelected
+                ? "border-primary bg-primary text-primary-foreground opacity-100"
+                : "border-border opacity-0 group-hover:opacity-100 hover:border-primary"
+            )}
+          >
+            {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
+          </button>
+        </div>
 
-        {/* Columna: Name (6 spaces) */}
-        <div className="col-span-6 flex items-center gap-3 overflow-hidden">
-          <div className="flex-shrink-0">
-            <FolderIcon size="md" color={folder.color} />
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-medium truncate text-foreground/90 group-hover:text-primary transition-colors">
+        <div className="col-span-5 flex min-w-0 items-center gap-3">
+          <FolderIcon size="md" color={folder.color} />
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-medium text-foreground/90 transition-colors group-hover:text-primary">
               {folder.name}
             </span>
-            <span className="text-[11px] text-muted-foreground truncate">
+            <span className="truncate text-[11px] text-muted-foreground">
               {folder.count} {folder.count === 1 ? 'archivo' : 'archivos'}
             </span>
           </div>
         </div>
 
-        {/* Columna: Opened/Date (3 spaces) */}
-        <div className="col-span-3 text-xs text-muted-foreground">
+        <div className="col-span-2 text-xs text-muted-foreground">
           {folder.subfoldersCount > 0 && `${folder.subfoldersCount} carpetas`}
         </div>
 
-        {/* Columna: Owner (2 spaces) */}
-        <div className="col-span-2 text-xs text-muted-foreground truncate">
-          Carpeta
+        <div className="col-span-2" />
+
+        <div className="col-span-2 flex items-center justify-end text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100">
+          <ChevronRight className="h-4 w-4" />
         </div>
-
-        {/* Columna: Activity / Actions (1 space, aligned to right) */}
-        <div className="col-span-1 flex justify-end items-center opacity-0 group-hover:opacity-100 transition-opacity">
-
-          {/* Action Buttons (Share & Star) */}
-          <div className="flex items-center mr-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-primary/20">
-              <Share2 className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-yellow-500 hover:bg-primary/20">
-              <Star className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-
-          {/* Menu Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="default"
-                size="icon"
-                className="h-7 w-7"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem className="cursor-pointer" onClick={() => console.log("Rename")}>Rename</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600 focus:text-red-600 cursor-pointer" onClick={(e) => { e.stopPropagation(); console.log("Delete"); }}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ export const DiffView: React.FC<DiffViewProps> = ({ chunks, onAccept, onReject }
   const hunks = useDiffHunks(chunks);
 
   return (
-    <div className="flex flex-col bg-[#1e1e1e] font-sans">
+    <div className="flex flex-col bg-card font-sans">
       {hunks.map((hunk, index) => {
         // RENDERING: NORMAL TEXT (No changes or changes already accepted/rejected)
         if (hunk.type === 'unchanged') {
@@ -39,15 +39,15 @@ export const DiffView: React.FC<DiffViewProps> = ({ chunks, onAccept, onReject }
         const addText = hunk.items.filter(c => c.type === 'add' || c.type === 'unchanged').map(c => c.text).join('\n');
 
         return (
-          <div key={`hunk-change-${index}`} className="relative group/block bg-[#1e1e1e]">
+          <div key={`hunk-change-${index}`} className="relative group/block bg-card">
             {allIndices.length > 0 && (
               <div className="absolute right-4 top-2 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
-                <div className="flex overflow-hidden rounded border border-[#454545] bg-[#252526] shadow-xl text-[12px]">
-                  <button onClick={() => allIndices.forEach(onAccept)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#295c92] hover:bg-[#346baf] text-white transition-colors border-r border-[#454545] cursor-pointer">
-                    Accept <span className="text-white/50 text-[10px]">Alt+↵</span>
+                <div className="flex overflow-hidden rounded-lg border border-border shadow-lg text-[12px]">
+                  <button onClick={() => allIndices.forEach(onAccept)} className="press-feedback flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground transition-colors border-r border-border cursor-pointer">
+                    Accept <span className="text-primary-foreground/60 text-[10px]">Alt+↵</span>
                   </button>
-                  <button onClick={() => allIndices.forEach(onReject)} className="flex items-center gap-1.5 px-3 py-1.5 text-[#cccccc] hover:text-white hover:bg-[#3c3c3c] transition-colors cursor-pointer">
-                    Reject <span className="text-[#cccccc]/50 text-[10px]">Shift+Alt+⌫</span>
+                  <button onClick={() => allIndices.forEach(onReject)} className="press-feedback flex items-center gap-1.5 px-3 py-1.5 text-foreground/70 hover:text-foreground hover:bg-accent transition-colors cursor-pointer">
+                    Reject <span className="text-muted-foreground text-[10px]">Shift+Alt+⌫</span>
                   </button>
                 </div>
               </div>
@@ -55,12 +55,12 @@ export const DiffView: React.FC<DiffViewProps> = ({ chunks, onAccept, onReject }
 
             <div className="flex flex-col">
               {hasRemove && (
-                <div className="flow-root bg-[#4b1818]/50 line-through decoration-red-500/40">
+                <div className="flow-root bg-danger/10 line-through decoration-danger/40">
                   <MarkdownRenderer content={removeText} />
                 </div>
               )}
               {hasAdd && (
-                <div className="flow-root bg-[#083a20]/50">
+                <div className="flow-root bg-success/10">
                   <MarkdownRenderer content={addText} />
                 </div>
               )}

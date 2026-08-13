@@ -22,7 +22,7 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full shrink-0"
+          className="press-feedback h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full shrink-0"
           onClick={onFinish}
         >
           <X size={15} />

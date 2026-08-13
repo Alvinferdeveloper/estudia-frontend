@@ -1,87 +1,103 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileText, MoreHorizontal, Download, Eye } from "lucide-react";
+import { FileText, MoreHorizontal, Download, Eye, Check } from "lucide-react";
 import { Document } from "@/app/types";
 import { Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { cn } from "@/lib/utils";
 
 interface DocumentCardProps {
   doc: Document;
   topic: Topic | undefined;
   deleteDocument: (documentId: string) => void;
   onClick?: () => void;
+  index?: number;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
-export const DocumentCard: React.FC<DocumentCardProps> = ({ doc, topic, deleteDocument, onClick }) => {
-  return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer group" onClick={onClick}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div
-              className="p-2 rounded-lg"
-              style={{ backgroundColor: topic?.color || "#cccccc" }}
-            >
-              <FileText className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-medium truncate text-pretty">{doc.fileName}</h4>
-              <p className="text-sm text-muted-foreground">
-                {(Number(doc.fileSize) / (1024 * 1024)).toFixed(1)} MB
-              </p>
-            </div>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <a href={`/document/${doc.id}`} className="flex items-center w-full">
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+export const DocumentCard: React.FC<DocumentCardProps> = ({
+  doc,
+  topic,
+  deleteDocument,
+  onClick,
+  index = 0,
+  isSelected = false,
+  onToggleSelect,
+}) => {
+  const tint = topic?.color || "var(--muted-foreground)";
 
-        <div className="space-y-2">
-          {topic && (
-            <Badge variant="secondary" className="text-xs">
-              {topic.name}
-            </Badge>
+  return (
+    <div
+      onClick={onClick}
+      style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
+      className={cn(
+        "group relative flex cursor-pointer flex-col gap-2 rounded-xl p-2 transition-colors duration-150 ease-[var(--ease-out)] animate-in fade-in slide-in-from-bottom-1",
+        isSelected ? "bg-primary/[0.06]" : "hover:bg-accent/60"
+      )}
+    >
+      {/* Miniatura */}
+      <div
+        className={cn(
+          "relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg transition-transform duration-200 ease-[var(--ease-out)] group-hover:scale-[1.02]",
+          isSelected && "ring-2 ring-primary"
+        )}
+        style={{ backgroundColor: `color-mix(in oklch, ${tint} 10%, var(--muted))` }}
+      >
+        <FileText className="h-9 w-9" style={{ color: tint }} strokeWidth={1.5} />
+
+        {/* Checkbox de selección */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleSelect?.();
+          }}
+          className={cn(
+            "press-feedback absolute left-2 top-2 flex h-5 w-5 items-center justify-center rounded-md border-2 transition-all duration-150",
+            isSelected
+              ? "border-primary bg-primary text-primary-foreground opacity-100"
+              : "border-white/80 bg-black/10 opacity-0 backdrop-blur-sm group-hover:opacity-100 hover:border-primary"
           )}
-          <div className="flex flex-wrap gap-1">
-            {doc?.tags?.map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Uploaded {new Date(doc.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+        >
+          {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
+        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="press-feedback absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-card/90 text-foreground opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100"
+            >
+              <MoreHorizontal className="h-3.5 w-3.5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem>
+              <a href={`/document/${doc.id}`} className="flex items-center w-full">
+                <Eye className="mr-2 h-4 w-4" />
+                View
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Metadatos */}
+      <div className="min-w-0 px-1">
+        <h4 className="truncate text-sm font-medium text-foreground">{doc.fileName}</h4>
+        <p className="truncate text-xs text-muted-foreground">
+          {topic ? `${topic.name} · ` : ""}
+          {(Number(doc.fileSize) / (1024 * 1024)).toFixed(1)} MB
+        </p>
+      </div>
+    </div>
   );
 };

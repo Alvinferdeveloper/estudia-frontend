@@ -9,7 +9,6 @@ import { UIMessage } from "ai";
 import { Conversation } from "@/app/types";
 
 interface ChatSidebarProps {
-    isOpen: boolean;
     onClose: () => void;
     conversations: Conversation[];
     activeConversationId: string | null;
@@ -18,6 +17,7 @@ interface ChatSidebarProps {
     onDeleteConversation: (id: string) => void;
     onRenameConversation: (id: string, title: string) => void;
     messages: UIMessage[];
+    isLoading?: boolean;
     input: string;
     selectedText: string;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,7 +26,6 @@ interface ChatSidebarProps {
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
-    isOpen,
     onClose,
     conversations,
     activeConversationId,
@@ -35,6 +34,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     onDeleteConversation,
     onRenameConversation,
     messages,
+    isLoading,
     input,
     selectedText,
     onInputChange,
@@ -43,8 +43,6 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 }) => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingTitle, setEditingTitle] = useState("");
-
-    if (!isOpen) return null;
 
     const startRename = (conv: Conversation) => {
         setEditingId(conv.id);
@@ -60,14 +58,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     };
 
     return (
-        <div className="w-96 border-l border-border bg-card flex flex-col h-full">
+        <div className="w-full h-full border-l border-border bg-card flex flex-col">
             <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-accent" />
-                        <h3 className="font-serif font-semibold">AI Assistant</h3>
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                        </div>
+                        <h3 className="font-semibold tracking-tight">Asistente IA</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={onClose}>
+                    <Button variant="ghost" size="sm" className="press-feedback" onClick={onClose}>
                         <X className="h-4 w-4" />
                     </Button>
                 </div>
@@ -79,7 +79,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 px-2 text-xs"
+                        className="press-feedback h-7 px-2 text-xs"
                         onClick={onNewConversation}
                     >
                         <Plus className="h-3.5 w-3.5 mr-1" />
@@ -151,11 +151,15 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
             <ChatMessageList
                 messages={messages}
+                isLoading={isLoading}
                 onSuggestionSubmit={onSuggestionSubmit}
             />
 
             <div className="p-4 border-t border-border">
-                <form onSubmit={onFormSubmit} className="flex gap-2">
+                <form
+                    onSubmit={onFormSubmit}
+                    className="flex items-center gap-1 rounded-full border border-border bg-background pl-4 pr-1.5 py-1.5 transition-colors duration-150 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20"
+                >
                     <Input
                         placeholder={
                             activeConversationId
@@ -165,9 +169,14 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         value={input}
                         onChange={onInputChange}
                         disabled={!activeConversationId}
-                        className="flex-1"
+                        className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 h-8 px-0"
                     />
-                    <Button type="submit" size="sm" disabled={!activeConversationId}>
+                    <Button
+                        type="submit"
+                        size="icon"
+                        disabled={!activeConversationId || !input.trim()}
+                        className="press-feedback h-8 w-8 shrink-0 rounded-full"
+                    >
                         <Send className="h-4 w-4" />
                     </Button>
                 </form>

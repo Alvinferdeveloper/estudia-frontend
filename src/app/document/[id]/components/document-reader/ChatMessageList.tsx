@@ -1,11 +1,40 @@
 import { UIMessage } from "ai";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MarkdownRenderer } from "@/app/document/[id]/components/document-reader/note-ui/MarkdownRenderer";
-import { Sparkles, ChevronRight } from "lucide-react";
+import { Sparkles, ChevronRight, User } from "lucide-react";
 
 interface ChatMessageListProps {
   messages: UIMessage[];
+  isLoading?: boolean;
   onSuggestionSubmit?: (suggestion: string) => void;
+}
+
+function Avatar({ role }: { role: string }) {
+  if (role === "user") {
+    return (
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+        <User className="h-3.5 w-3.5" />
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <Sparkles className="h-3.5 w-3.5" />
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div className="flex justify-start gap-2.5">
+      <Avatar role="assistant" />
+      <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm border border-border/50 bg-muted/50 px-4 py-3">
+        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.3s]" />
+        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.15s]" />
+        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce" />
+      </div>
+    </div>
+  );
 }
 
 function extractSuggestions(text: string): string[] {
@@ -25,10 +54,14 @@ function cleanMessageText(text: string): string {
   return text.replace(/\[SUGGESTIONS\][\s\S]*$/i, '').trim();
 }
 
-export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, onSuggestionSubmit }) => {
+export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, isLoading, onSuggestionSubmit }) => {
   const handleSuggestionClick = (suggestion: string) => {
     onSuggestionSubmit?.(suggestion);
   };
+
+  const lastMessage = messages[messages.length - 1];
+  const showTypingIndicator = isLoading && (!lastMessage || lastMessage.role === "user");
+
   return (
     <ScrollArea className="flex-1 p-4 overflow-auto">
       <div className="space-y-6">
@@ -37,14 +70,16 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, onSu
           const fullText = textPart?.text || '';
           const suggestions = message.role === "assistant" ? extractSuggestions(fullText) : [];
           const cleanText = cleanMessageText(fullText);
+          const isUser = message.role === "user";
 
           return (
             <div
               key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex gap-2.5 animate-in fade-in slide-in-from-bottom-1 duration-300 ${isUser ? "flex-row-reverse" : "flex-row"}`}
             >
+              <Avatar role={message.role} />
               <div
-                className={`max-w-[85%] p-2 shadow-sm ${message.role === "user"
+                className={`max-w-[80%] p-2 shadow-sm ${isUser
                   ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
                   : "bg-muted/50 text-foreground border border-border/50 rounded-2xl rounded-tl-sm"
                   }`}
@@ -75,7 +110,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, onSu
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(suggestion)}
-                          className="group flex items-center justify-between gap-2 text-sm bg-background border border-border hover:border-primary/50 hover:bg-background/80 cursor-pointer text-foreground px-3.5 py-2 rounded-xl transition-all duration-200 text-left shadow-sm active:scale-[0.98]"
+                          className="press-feedback group flex items-center justify-between gap-2 text-sm bg-background border border-border hover:border-primary/50 hover:bg-background/80 cursor-pointer text-foreground px-3.5 py-2 rounded-xl transition-all duration-200 text-left shadow-sm"
                         >
                           <span className="leading-tight">{suggestion}</span>
                           <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 flex-shrink-0" />
@@ -88,6 +123,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, onSu
             </div>
           );
         })}
+
+        {showTypingIndicator && <TypingIndicator />}
       </div>
     </ScrollArea>
   );

@@ -45,10 +45,10 @@ export function UserProfileMenu() {
     }
 
     const planColors: Record<string, string> = {
-        free: "bg-gray-500",
-        basic: "bg-blue-500",
-        pro: "bg-purple-500",
-        enterprise: "bg-orange-500",
+        free: "bg-muted text-muted-foreground",
+        basic: "bg-info text-info-foreground",
+        pro: "bg-primary text-primary-foreground",
+        enterprise: "bg-warning text-warning-foreground",
     };
 
     const planNames: Record<string, string> = {
@@ -61,7 +61,7 @@ export function UserProfileMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
+                <Button variant="ghost" className="press-feedback relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src={session?.user?.image || undefined} alt="Usuario" />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">{getInitials(session?.user?.name)}</AvatarFallback>
@@ -87,7 +87,7 @@ export function UserProfileMenu() {
                                     <Zap className="w-3 h-3" />
                                     Current Plan
                                 </span>
-                                <span className={cn("text-xs text-white px-2 py-0.5 rounded-full", planColors[usage.plan])}>
+                                <span className={cn("text-xs px-2 py-0.5 rounded-full", planColors[usage.plan])}>
                                     {planNames[usage.plan]}
                                 </span>
                             </div>

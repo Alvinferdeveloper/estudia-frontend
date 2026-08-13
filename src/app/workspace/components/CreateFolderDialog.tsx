@@ -18,6 +18,9 @@ interface CreateFolderDialogProps {
   createFolder: (folder: { name: string; color: string; topicId: string; parentId?: string }) => void;
   topicId: string;
   parentId?: string;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const PRESET_COLORS = [
@@ -33,14 +36,23 @@ const PRESET_COLORS = [
   "#000000",
 ];
 
-export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({ 
-  createFolder, 
+export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
+  createFolder,
   topicId,
-  parentId 
+  parentId,
+  trigger,
+  open: openProp,
+  onOpenChange: onOpenChangeProp,
 }) => {
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isOpen = openProp ?? internalOpen;
+  const setIsOpen = (open: boolean) => {
+    onOpenChangeProp?.(open);
+    setInternalOpen(open);
+  };
 
   const handleCreate = () => {
     if (!newFolderName.trim()) return;
@@ -60,10 +72,12 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
       if (!open) resetForm();
     }}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full justify-start h-9 px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50">
-          <FolderPlus className="mr-2 h-4 w-4" />
-          <span>Nueva Carpeta</span>
-        </Button>
+        {trigger ?? (
+          <Button variant="ghost" size="sm" className="w-full justify-start h-9 px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50">
+            <FolderPlus className="mr-2 h-4 w-4" />
+            <span>Nueva Carpeta</span>
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
@@ -131,13 +145,13 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="destructive" className="h-8 rounded-sm cursor-pointer" onClick={() => setIsOpen(false)}>
+          <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
             Cancelar
           </Button>
           <Button
             onClick={handleCreate}
             disabled={!newFolderName.trim()}
-            className="bg-primary rounded-sm h-8 cursor-pointer"
+            className="press-feedback h-8 cursor-pointer"
           >
             Crear Carpeta
           </Button>

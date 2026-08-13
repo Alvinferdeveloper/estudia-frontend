@@ -1,123 +1,116 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, LayoutGrid, Clock } from "lucide-react";
+import { Clock, FolderOpen, Plus } from "lucide-react";
 import { TopicList } from "@/app/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/workspace/components/CreateTopicDialog";
+import { NewMenu } from "@/app/workspace/components/NewMenu";
 import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
 import { useCreateTopic } from "@/app/workspace/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
-import { Topic } from "@/app/types";
+import { Folder, Topic } from "@/app/types";
 
 interface SidebarProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
   view: 'recent' | 'topic';
   selectedTopic: Topic | null;
+  selectedFolder: Folder | null;
   handleTopicSelect: (topic: Topic | null) => void;
   onSelectRecent: () => void;
+  createFolder: (folder: { name: string; color: string; topicId: string; parentId?: string }) => void;
+  uploadDocument: (formData: FormData, options?: { onSuccess?: () => void; onError?: () => void }) => void;
+  isUploading: boolean;
+  totalDocuments: number;
 }
 
-import { UserProfileMenu } from "@/components/user-profile-menu";
-
 export const Sidebar: React.FC<SidebarProps> = ({
-  searchQuery,
-  setSearchQuery,
   view,
   selectedTopic,
+  selectedFolder,
   handleTopicSelect,
   onSelectRecent,
+  createFolder,
+  uploadDocument,
+  isUploading,
+  totalDocuments,
 }) => {
   const { data: topics } = useFetchTopics();
   const { mutate: createTopic } = useCreateTopic();
 
   return (
-    <aside className="w-80 h-screen flex flex-col bg-background/50 border-r border-border/50 backdrop-blur supports-[backdrop-filter]:bg-secondary/50">
-      {/* --- HEADER --- */}
-      <div className="p-6 pb-4 space-y-6">
-        {/* Branding & User Profile */}
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-              <LayoutGrid className="text-primary-foreground h-5 w-5" />
-            </div>
-            <h2 className="text-xl font-bold tracking-tight text-foreground">StudyDocs</h2>
-          </div>
-          <UserProfileMenu />
+    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border/60 bg-secondary/30">
+      {/* --- BRANDING --- */}
+      <div className="flex items-center gap-2 px-5 pt-5">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <span className="text-sm font-bold">e</span>
         </div>
+        <h2 className="text-base font-semibold tracking-tight text-foreground">estudiIA</h2>
+      </div>
 
-        {/* Search Input */}
-        <div className="relative group bg-secondary">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/70 h-4 w-4 group-focus-within:text-primary transition-colors" />
-          <Input
-            placeholder="Buscar documentos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-secondary/50 border-transparent focus-visible:bg-background focus-visible:ring-1 transition-all"
-          />
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 border rounded px-1.5 py-0.5 text-[10px] text-muted-foreground font-medium opacity-50">
-            ⌘K
-          </div>
-        </div>
+      {/* --- NEW BUTTON --- */}
+      <div className="px-5 pt-4">
+        <NewMenu
+          selectedTopic={selectedTopic}
+          selectedFolder={selectedFolder}
+          createFolder={createFolder}
+          uploadDocument={uploadDocument}
+          isUploading={isUploading}
+          className="w-full justify-center"
+        />
       </div>
 
       {/* --- NAVIGATION --- */}
-      <div className="flex-1 overflow-hidden px-4">
-        <ScrollArea className="h-full pr-2 custom-scrollbar space-y-6">
-
-          {/* Main Menu */}
-          <div>
-            <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Biblioteca
-            </h3>
-            <Button
-              variant={view === 'recent' ? "secondary" : "ghost"}
+      <div className="mt-5 flex-1 overflow-hidden px-3">
+        <ScrollArea className="h-full pr-2">
+          <nav className="space-y-0.5">
+            <button
               onClick={onSelectRecent}
               className={cn(
-                "w-full justify-between hover:bg-secondary h-10 font-normal transition-all hover:translate-x-1",
-                view === 'recent' ? "bg-secondary text-secondary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                "press-feedback flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-150",
+                view === 'recent'
+                  ? "bg-primary/10 font-medium text-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >
-              <div className="flex items-center">
-                <Clock className={cn("mr-2 h-4 w-4", view === 'recent' ? "text-primary" : "")} />
-                <span>Recientes</span>
-              </div>
-            </Button>
+              <Clock className="h-4 w-4" />
+              Recientes
+            </button>
+          </nav>
+
+          <div className="mt-6 flex items-center justify-between px-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Colecciones
+            </h3>
+            <CreateTopicDialog
+              createTopic={createTopic}
+              trigger={
+                <button className="press-feedback flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              }
+            />
           </div>
 
-          <Separator className="bg-border/40" />
-
-          {/* Topics Collection */}
-          <div>
-            <div className="flex items-center justify-between px-2 mb-2 mt-2">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Colecciones
-              </h3>
-            </div>
-
-            <div className="space-y-1">
+          <div className="mt-1">
+            {topics && topics.length > 0 ? (
               <TopicList
-                topics={topics || []}
-                selectedTopic={selectedTopic}
+                topics={topics}
+                selectedTopic={view === 'topic' ? selectedTopic : null}
                 handleTopicSelect={handleTopicSelect}
               />
-            </div>
+            ) : (
+              <p className="px-3 py-2 text-xs text-muted-foreground">
+                Aún no tienes colecciones.
+              </p>
+            )}
           </div>
         </ScrollArea>
       </div>
 
-      {/* --- FOOTER --- */}
-      <div className="p-4 border-t border-border/50 bg-card/30 space-y-2">
-        <CreateTopicDialog
-          createTopic={createTopic}
-        />
-        <div className="text-center">
-          <p className="text-[10px] text-muted-foreground">
-            Presiona <kbd className="font-sans border rounded px-1">N</kbd> para crear
-          </p>
-        </div>
+      {/* --- FOOTER STAT --- */}
+      <div className="flex items-center gap-2 border-t border-border/60 px-5 py-4 text-xs text-muted-foreground">
+        <FolderOpen className="h-3.5 w-3.5" />
+        <span>
+          <span className="font-medium tabular-nums text-foreground">{totalDocuments}</span> documento{totalDocuments === 1 ? "" : "s"} guardado{totalDocuments === 1 ? "" : "s"}
+        </span>
       </div>
     </aside>
   );

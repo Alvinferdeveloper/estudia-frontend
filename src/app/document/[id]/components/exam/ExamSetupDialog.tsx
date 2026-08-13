@@ -1,11 +1,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { PenLine, CircleDot, CheckCheck, Underline, Shuffle } from "lucide-react";
+import {
   QuestionType,
   QUESTION_TYPES,
   EXAM_MODES,
   DIFFICULTY_LEVELS
 } from "@/app/document/[id]/components/exam/hooks/useExam";
+import { cn } from "@/lib/utils";
 
 interface ExamSetupDialogProps {
   selectedPages: number[];
@@ -39,12 +49,12 @@ const modes = [
   },
 ];
 
-const questionTypes: { id: QuestionType; label: string; icon: string }[] = [
-  { id: QUESTION_TYPES.OPEN, label: 'Open Answer', icon: '📝' },
-  { id: QUESTION_TYPES.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: '🔘' },
-  { id: QUESTION_TYPES.TRUE_FALSE, label: 'True/False', icon: '✓✗' },
-  { id: QUESTION_TYPES.FILL_BLANK, label: 'Fill in Blank', icon: '___' },
-  { id: QUESTION_TYPES.MIXED, label: 'Mixed', icon: '🎲' },
+const questionTypes: { id: QuestionType; label: string; icon: React.ElementType }[] = [
+  { id: QUESTION_TYPES.OPEN, label: 'Open Answer', icon: PenLine },
+  { id: QUESTION_TYPES.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: CircleDot },
+  { id: QUESTION_TYPES.TRUE_FALSE, label: 'True/False', icon: CheckCheck },
+  { id: QUESTION_TYPES.FILL_BLANK, label: 'Fill in Blank', icon: Underline },
+  { id: QUESTION_TYPES.MIXED, label: 'Mixed', icon: Shuffle },
 ];
 
 export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
@@ -74,16 +84,16 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[100] bg-black/50">
-      <div className="bg-card rounded-lg shadow-xl max-w-lg w-full mx-4">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold">Exam Setup</h2>
-          <p className="text-sm text-muted-foreground">
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-w-lg gap-0 p-0">
+        <DialogHeader className="p-4 pb-3">
+          <DialogTitle>Exam Setup</DialogTitle>
+          <DialogDescription>
             {selectedPages.length} pages selected
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+        <div className="max-h-[60vh] space-y-4 overflow-y-auto p-4 pt-0">
           <div className="space-y-2">
             <label className="text-sm font-medium">Exam Mode</label>
             <div className="grid gap-2">
@@ -91,13 +101,12 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
                 <button
                   key={mode.id}
                   onClick={() => handleModeChange(mode.id)}
-                  className={`
-                    p-3 rounded-lg border text-left transition-all
-                    ${selectedMode === mode.id
-                      ? "border-accent bg-accent/10"
-                      : "border-border hover:border-accent/50"
-                    }
-                  `}
+                  className={cn(
+                    "press-feedback rounded-lg border p-3 text-left transition-colors duration-150",
+                    selectedMode === mode.id
+                      ? "border-primary bg-primary/[0.06]"
+                      : "border-border hover:border-primary/40"
+                  )}
                 >
                   <div className="font-medium">{mode.title}</div>
                   <div className="text-sm text-muted-foreground">{mode.description}</div>
@@ -109,22 +118,24 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           <div className="space-y-2">
             <label className="text-sm font-medium">Question Type</label>
             <div className="grid grid-cols-2 gap-2">
-              {questionTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => setQuestionType(type.id)}
-                  className={`
-                    p-2 rounded-lg border text-center transition-all text-sm
-                    ${questionType === type.id
-                      ? "border-accent bg-accent/10"
-                      : "border-border hover:border-accent/50"
-                    }
-                  `}
-                >
-                  <span className="block text-lg mb-1">{type.icon}</span>
-                  {type.label}
-                </button>
-              ))}
+              {questionTypes.map((type) => {
+                const Icon = type.icon;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => setQuestionType(type.id)}
+                    className={cn(
+                      "press-feedback flex flex-col items-center gap-1.5 rounded-lg border p-2.5 text-center text-sm transition-colors duration-150",
+                      questionType === type.id
+                        ? "border-primary bg-primary/[0.06]"
+                        : "border-border hover:border-primary/40"
+                    )}
+                  >
+                    <Icon className={cn("h-4 w-4", questionType === type.id ? "text-primary" : "text-muted-foreground")} />
+                    {type.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -136,6 +147,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
                   key={d}
                   variant={difficulty === d ? "default" : "outline"}
                   size="sm"
+                  className="press-feedback"
                   onClick={() => setDifficulty(d)}
                 >
                   {d.charAt(0).toUpperCase() + d.slice(1)}
@@ -145,15 +157,15 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           </div>
         </div>
 
-        <div className="p-4 border-t border-border flex justify-end gap-2">
-          <Button variant="ghost" onClick={onCancel}>
+        <DialogFooter className="border-t border-border p-4">
+          <Button variant="ghost" className="press-feedback" onClick={onCancel}>
             Cancel
           </Button>
-          <Button onClick={handleStart}>
+          <Button className="press-feedback" onClick={handleStart}>
             Start Exam
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

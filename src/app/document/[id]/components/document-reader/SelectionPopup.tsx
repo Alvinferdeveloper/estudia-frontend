@@ -1,6 +1,6 @@
 
+import { motion } from "motion/react";
 import { MessageSquare, StickyNote } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface SelectionPopupProps {
     selectedText: string | null;
@@ -16,18 +16,28 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
     if (!selectedText) return null;
 
     return (
-        <div
-            className="flex gap-1 bg-background border p-1 rounded-md shadow-md"
+        <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 40 }}
+            className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/95 p-1 shadow-lg shadow-black/10 backdrop-blur-md"
             onMouseDown={(e) => e.preventDefault()}
         >
-            <Button onClick={onChatClick} size="sm" className="gap-2">
-                <MessageSquare className="h-4 w-4" />
+            <button
+                onClick={onChatClick}
+                className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+            >
+                <MessageSquare className="h-3.5 w-3.5" />
                 Chat
-            </Button>
-            <Button onClick={onCreateNoteClick} size="sm" className="gap-2">
-                <StickyNote className="h-4 w-4" />
-                Note
-            </Button>
-        </div>
+            </button>
+            <div className="h-4 w-px bg-border" />
+            <button
+                onClick={onCreateNoteClick}
+                className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+            >
+                <StickyNote className="h-3.5 w-3.5" />
+                Nota
+            </button>
+        </motion.div>
     );
 }

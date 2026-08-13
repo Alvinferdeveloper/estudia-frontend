@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useExamSession } from "@/app/document/[id]/components/exam/hooks/useExamSession";
 import { EXAM_PHASES, useUserExams } from "@/app/document/[id]/components/exam/hooks/useExam";
 import { ExamModeButton } from "@/app/document/[id]/components/exam/ExamModeButton";
@@ -72,9 +73,9 @@ export const ExamMode: React.FC<ExamModeProps> = ({
       case EXAM_PHASES.GENERATING:
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p>Generating questions with AI...</p>
+            <div className="space-y-4 text-center">
+              <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+              <p className="text-sm text-muted-foreground">Generating questions with AI...</p>
             </div>
           </div>
         );
@@ -151,35 +152,40 @@ export const ExamMode: React.FC<ExamModeProps> = ({
         isActive={examMode || examPhase !== EXAM_PHASES.INACTIVE}
       />
       {examMode && examPhase === EXAM_PHASES.INACTIVE && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[500]">
-          <div className="bg-card border border-border rounded-lg shadow-lg px-4 py-3 flex items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 40 }}
+          className="fixed bottom-6 left-1/2 z-[500] -translate-x-1/2"
+        >
+          <div className="flex items-center gap-4 rounded-full border border-border/60 bg-card/95 px-4 py-2.5 shadow-lg shadow-black/10 backdrop-blur-md">
             {selectedPages.length > 0 && (
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium tabular-nums">
                 {selectedPages.length} page{selectedPages.length !== 1 ? 's' : ''} selected
               </span>
             )}
             {selectedPages.length > 0 && (
               <button
                 onClick={handleContinueFromSelection}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90"
+                className="press-feedback rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
               >
                 New Exam
               </button>
             )}
             <button
               onClick={() => setShowSavedExams(true)}
-              className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/90"
+              className="press-feedback rounded-full bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors duration-150 hover:bg-secondary/90"
             >
               My Exams{userExams && userExams.length > 0 ? ` (${userExams.length})` : ''}
             </button>
             <button
               onClick={disableExamMode}
-              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
+              className="press-feedback px-2 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
             >
               Clear
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
       {showSavedExams && (
         <SavedExamsDialog
@@ -194,7 +200,17 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           onClose={() => setShowSavedExams(false)}
         />
       )}
-      {renderContent()}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={examPhase}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          {renderContent()}
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 };

@@ -1,6 +1,7 @@
 "use client";
 
-import { BookOpen, Loader2, Download } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, Loader2, Download, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,9 +52,16 @@ export const Header: React.FC<HeaderProps> = ({
         <header className="border-b border-border bg-card px-6 py-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
+                    <Link
+                        href="/workspace"
+                        className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+                        title="Volver al workspace"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                    </Link>
                     <div className="flex items-center gap-2">
                         <BookOpen className="h-6 w-6 text-accent" />
-                        <h1 className="text-xl font-serif font-bold text-foreground">AI PDF Reader</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground">AI PDF Reader</h1>
                     </div>
                     <Separator orientation="vertical" className="h-6" />
                     <p className="text-sm text-muted-foreground truncate max-w-md">{fileName}</p>
@@ -70,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" disabled={isPending}>
+                            <Button variant="outline" size="sm" className="press-feedback" disabled={isPending}>
                                 {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
                                 Export Notes
                             </Button>

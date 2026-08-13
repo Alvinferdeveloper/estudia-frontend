@@ -32,26 +32,22 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
   })();
 
   return (
-    <div className="mt-6 space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500">
+    <div className="mt-6 space-y-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
       {/* Feedback principal */}
       <div className={cn(
-        "relative px-4 py-3.5 rounded-xl border overflow-hidden",
+        "rounded-xl border px-4 py-3.5",
         isCorrect
           ? "border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20"
           : "border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/20"
       )}>
-        {/* Acento lateral */}
-        <div className={cn(
-          "absolute top-0 left-0 w-0.5 h-full rounded-l-xl",
-          isCorrect ? "bg-emerald-500" : "bg-amber-500"
-        )} />
-
-        <div className="flex items-start gap-3 pl-2">
+        <div className="flex items-start gap-3">
           <div className={cn(
-            "mt-0.5 shrink-0",
-            isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+            isCorrect
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+              : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
           )}>
-            {isCorrect ? <Sparkles size={14} /> : <Info size={14} />}
+            {isCorrect ? <Sparkles size={12} /> : <Info size={12} />}
           </div>
           <div className="flex-1 min-w-0">
             <p className={cn(

@@ -68,7 +68,11 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           if ((!currentAnswer.trim() && !hasAnswered) || isSubmitting) return;
           e.preventDefault();
           if (hasAnswered) {
-            isLastQuestion ? onFinish() : onNext();
+            if (isLastQuestion) {
+              onFinish();
+            } else {
+              onNext();
+            }
           } else {
             onNext();
           }
@@ -103,7 +107,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           />
 
           {/* Número + tipo de pregunta */}
-          <div className="flex items-center gap-3 mb-5 animate-in fade-in duration-500">
+          <div className="flex items-center gap-3 mb-5 animate-in fade-in duration-200">
             <span className="text-md font-bold text-muted-foreground/50 tabular-nums">
               {String(currentIndex + 1).padStart(2, "0")}
             </span>
@@ -114,7 +118,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
           {/* Pregunta */}
           <article
             key={currentIndex}
-            className="animate-in fade-in slide-in-from-bottom-2 duration-500"
+            className="animate-in fade-in slide-in-from-bottom-1 duration-200"
           >
             <h1 className={cn(
               "text-xl font-semibold leading-relaxed tracking-tight text-balance",

@@ -3,11 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -76,6 +89,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --success: oklch(0.6 0.14 155);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.77 0.16 80);
+  --warning-foreground: oklch(0.205 0 0);
+  --danger: oklch(0.64597 0.23973 27.231);
+  --danger-foreground: oklch(1 0 0);
+  --info: oklch(0.6 0.15 230);
+  --info-foreground: oklch(1 0 0);
 }
 
 .dark {
@@ -110,6 +131,14 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --success: oklch(0.72 0.17 155);
+  --success-foreground: oklch(0.145 0 0);
+  --warning: oklch(0.8 0.17 80);
+  --warning-foreground: oklch(0.145 0 0);
+  --danger: oklch(0.64597 0.23973 27.231);
+  --danger-foreground: oklch(1 0 0);
+  --info: oklch(0.7 0.17 230);
+  --info-foreground: oklch(0.145 0 0);
 }
 
 @layer base {
@@ -232,4 +261,30 @@
 
 .dark .hljs-params {
   color: #d1d5db;
+}
+
+.textLayer span {
+  padding: 1px 0.5px;
+  margin: -1px -0.5px;
+  /* compensates for the padding so as not to shift the visual layout */
+}
+
+.press-feedback {
+  transition: transform 160ms var(--ease-out);
+}
+
+.press-feedback:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-in"],
+  [class*="animate-bounce"] {
+    animation: none !important;
+  }
+
+  .press-feedback,
+  .press-feedback:active {
+    transform: none !important;
+  }
 }

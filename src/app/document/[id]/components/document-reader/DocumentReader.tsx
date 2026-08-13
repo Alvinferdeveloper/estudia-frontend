@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
 import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
@@ -50,6 +52,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const {
         messages,
         input,
+        isLoading: isChatLoading,
         handleInputChange,
         handleFormSubmit,
         setMessages,
@@ -190,61 +193,82 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 onDisableExamMode={handleDisableExamMode}
             />
 
-            <div className="flex-1 flex overflow-hidden">
-                <div className="flex-1 flex flex-col relative">
-                    <PdfControls
-                        pageNumber={currentPage}
-                        numPages={numPages}
-                        scale={scale}
-                        isChatOpen={isChatOpen}
-                        selectedText={selectedText}
-                        onChatToggle={handleChatToggle}
-                        onZoomIn={zoomIn}
-                        onZoomOut={zoomOut}
-                        examMode={examMode}
-                        selectedPages={selectedPages}
-                        onPageSelect={handleTogglePage}
-                    />
-                    <PdfViewer
-                        publicUrl={document.publicUrl}
-                        scale={scale}
-                        annotations={annotations}
-                        setNumPages={setNumPages}
-                        onTextSelection={handleTextSelection}
-                        onPageChange={setCurrentPage}
-                        onAnnotationClick={handleAnnotationClick}
-                        selectionTip={
-                            selectedText && !examMode && (
-                                <SelectionPopup
-                                    selectedText={selectedText}
-                                    onChatClick={handleChatToggle}
-                                    onCreateNoteClick={handleNoteDialogOpen}
-                                />
-                            )
-                        }
-                        examMode={examMode}
-                        selectedPages={selectedPages}
-                        onPageSelect={handleTogglePage}
-                        onPdfLoad={setPdfDoc}
-                    />
-                </div>
+            <div className="flex-1 overflow-hidden">
+                <Group orientation="horizontal" className="h-full">
+                    <Panel minSize="40" className="flex flex-col relative">
+                        <PdfControls
+                            pageNumber={currentPage}
+                            numPages={numPages}
+                            scale={scale}
+                            isChatOpen={isChatOpen}
+                            selectedText={selectedText}
+                            onChatToggle={handleChatToggle}
+                            onZoomIn={zoomIn}
+                            onZoomOut={zoomOut}
+                            examMode={examMode}
+                            selectedPages={selectedPages}
+                            onPageSelect={handleTogglePage}
+                        />
+                        <PdfViewer
+                            publicUrl={document.publicUrl}
+                            scale={scale}
+                            annotations={annotations}
+                            setNumPages={setNumPages}
+                            onTextSelection={handleTextSelection}
+                            onPageChange={setCurrentPage}
+                            onAnnotationClick={handleAnnotationClick}
+                            selectionTip={
+                                selectedText && !examMode && (
+                                    <SelectionPopup
+                                        selectedText={selectedText}
+                                        onChatClick={handleChatToggle}
+                                        onCreateNoteClick={handleNoteDialogOpen}
+                                    />
+                                )
+                            }
+                            examMode={examMode}
+                            selectedPages={selectedPages}
+                            onPageSelect={handleTogglePage}
+                            onPdfLoad={setPdfDoc}
+                        />
+                    </Panel>
 
-                <ChatSidebar
-                    isOpen={isChatOpen}
-                    onClose={() => setIsChatOpen(false)}
-                    conversations={conversations.data ?? []}
-                    activeConversationId={conversationId}
-                    onSelectConversation={handleSelectConversation}
-                    onNewConversation={handleNewConversation}
-                    onDeleteConversation={handleDeleteConversation}
-                    onRenameConversation={handleRenameConversation}
-                    messages={messages}
-                    selectedText={selectedText || ''}
-                    input={input}
-                    onInputChange={handleInputChange}
-                    onFormSubmit={handleFormSubmit}
-                    onSuggestionSubmit={handleSuggestionSubmit}
-                />
+                    <AnimatePresence>
+                        {isChatOpen && (
+                            <>
+                                <Separator className="group relative w-2.5 shrink-0 cursor-col-resize outline-none">
+                                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors duration-150 group-hover:bg-primary/50 group-active:bg-primary" />
+                                </Separator>
+                                <Panel defaultSize="30" minSize="22" maxSize="45">
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 24 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 24 }}
+                                        transition={{ type: "spring", stiffness: 340, damping: 38 }}
+                                        className="h-full"
+                                    >
+                                        <ChatSidebar
+                                            onClose={() => setIsChatOpen(false)}
+                                            conversations={conversations.data ?? []}
+                                            activeConversationId={conversationId}
+                                            onSelectConversation={handleSelectConversation}
+                                            onNewConversation={handleNewConversation}
+                                            onDeleteConversation={handleDeleteConversation}
+                                            onRenameConversation={handleRenameConversation}
+                                            messages={messages}
+                                            isLoading={isChatLoading}
+                                            selectedText={selectedText || ''}
+                                            input={input}
+                                            onInputChange={handleInputChange}
+                                            onFormSubmit={handleFormSubmit}
+                                            onSuggestionSubmit={handleSuggestionSubmit}
+                                        />
+                                    </motion.div>
+                                </Panel>
+                            </>
+                        )}
+                    </AnimatePresence>
+                </Group>
             </div>
 
             <StreamingNoteDialog

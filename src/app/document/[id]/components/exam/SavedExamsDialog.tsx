@@ -1,4 +1,14 @@
 import { useUserExams } from "@/app/document/[id]/components/exam/hooks/useExam";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Inbox } from "lucide-react";
 
 interface SavedExamsDialogProps {
   documentId: string;
@@ -14,31 +24,25 @@ export const SavedExamsDialog: React.FC<SavedExamsDialogProps> = ({
   const { data: exams, isLoading } = useUserExams(documentId);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[100] bg-black/50">
-      <div className="bg-card rounded-lg shadow-xl max-w-lg w-full mx-4">
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">My Exams</h2>
-            <p className="text-sm text-muted-foreground">
-              Re-take a previously saved exam
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
-            aria-label="Close"
-          >
-            ✕
-          </button>
-        </div>
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg gap-0 p-0">
+        <DialogHeader className="p-4 pb-3">
+          <DialogTitle>My Exams</DialogTitle>
+          <DialogDescription>
+            Re-take a previously saved exam
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
+        <div className="max-h-[60vh] overflow-y-auto p-4 pt-0">
           {isLoading && <p className="text-sm text-muted-foreground">Loading...</p>}
 
           {!isLoading && exams && exams.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              No saved exams yet. Create one first.
-            </p>
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <Inbox className="h-8 w-8 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">
+                No saved exams yet. Create one first.
+              </p>
+            </div>
           )}
 
           {!isLoading && exams && exams.length > 0 && (
@@ -47,7 +51,7 @@ export const SavedExamsDialog: React.FC<SavedExamsDialogProps> = ({
                 <button
                   key={exam.id}
                   onClick={() => onSelect(exam.id)}
-                  className="w-full p-3 rounded-lg border text-left transition-all border-border hover:border-accent/50 hover:bg-accent/10"
+                  className="press-feedback w-full rounded-lg border border-border p-3 text-left transition-colors duration-150 hover:border-primary/40"
                 >
                   <div className="font-medium">{exam.title}</div>
                   <div className="text-sm text-muted-foreground">
@@ -60,15 +64,12 @@ export const SavedExamsDialog: React.FC<SavedExamsDialogProps> = ({
           )}
         </div>
 
-        <div className="p-4 border-t border-border flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm rounded-md border border-border hover:bg-muted"
-          >
+        <DialogFooter className="border-t border-border p-4">
+          <Button variant="outline" className="press-feedback" onClick={onClose}>
             Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

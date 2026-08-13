@@ -28,7 +28,7 @@ const MultipleChoiceInput: React.FC<{
           onClick={() => onAnswerChange(optionLetter)}
           disabled={isSubmitting}
           className={cn(
-            "group relative w-full px-3 py-5 rounded-lg border text-left transition-all duration-200 text-sm flex items-center gap-2.5",
+            "press-feedback group relative w-full px-3 py-5 rounded-lg border text-left transition-all duration-200 text-sm flex items-center gap-2.5",
             isSelected
               ? "border-primary/60 bg-primary/[0.04] ring-1 ring-primary/20"
               : "border-border bg-transparent hover:border-primary/30 hover:bg-muted/20"
@@ -66,7 +66,7 @@ const TrueFalseInput: React.FC<{
         onClick={() => onAnswerChange(val)}
         disabled={isSubmitting}
         className={cn(
-          "flex-1 h-16 flex flex-col items-center justify-center gap-1.5 rounded-xl border transition-all duration-200",
+          "press-feedback flex-1 h-16 flex flex-col items-center justify-center gap-1.5 rounded-xl border transition-all duration-200",
           currentAnswer === val
             ? "border-primary/60 bg-primary/[0.04] ring-1 ring-primary/20"
             : "border-border bg-transparent hover:border-primary/30 hover:bg-muted/20"

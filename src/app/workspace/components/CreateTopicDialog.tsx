@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 interface CreateTopicDialogProps {
   createTopic: (topic: { name: string; color: string }) => void;
+  trigger?: React.ReactNode;
 }
 
 const PRESET_COLORS = [
@@ -31,7 +32,7 @@ const PRESET_COLORS = [
   "#000000", // Black
 ];
 
-export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopic }) => {
+export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopic, trigger }) => {
   const [newTopicName, setNewTopicName] = useState("");
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
   const [isOpen, setIsOpen] = useState(false);
@@ -54,9 +55,11 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
       if (!open) resetForm();
     }}>
       <DialogTrigger asChild>
-        <Button className="w-full shadow-sm cursor-pointer">
-          <PlusCircle className="mr-2 h-4 w-4" /> Create New Topic
-        </Button>
+        {trigger ?? (
+          <Button className="w-full shadow-sm cursor-pointer">
+            <PlusCircle className="mr-2 h-4 w-4" /> Create New Topic
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
@@ -128,13 +131,13 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="destructive" className="h-8 rounded-sm cursor-pointer" onClick={() => setIsOpen(false)}>
+          <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button
             onClick={handleCreate}
             disabled={!newTopicName.trim()}
-            className="bg-primary rounded-sm h-8 cursor-pointer"
+            className="press-feedback h-8 cursor-pointer"
           >
             Create Collection
           </Button>

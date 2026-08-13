@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { CheckCircle, XCircle, RotateCcw, FileText } from "lucide-react";
 import { ExamResults } from "@/app/document/[id]/components/exam/hooks/useExam";
+import { cn } from "@/lib/utils";
 
 interface ExamResultsScreenProps {
   results: ExamResults;
@@ -19,91 +18,91 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
 
   const getScoreColor = (score: number | null) => {
     if (score === null) return 'text-muted-foreground';
-    if (score >= 7) return 'text-green-500';
-    if (score >= 5) return 'text-yellow-500';
-    return 'text-red-500';
+    if (score >= 7) return 'text-emerald-600 dark:text-emerald-400';
+    if (score >= 5) return 'text-amber-600 dark:text-amber-400';
+    return 'text-rose-600 dark:text-rose-400';
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background overflow-y-auto">
-      <div className="max-w-2xl w-full mx-4 py-8 space-y-6">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Exam Complete!</CardTitle>
-            <CardDescription>{exam.title}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">Average Score</p>
-              <p className={`text-6xl font-bold ${getScoreColor(averageScore)}`}>
-                {averageScore.toFixed(1)}
-                <span className="text-2xl text-muted-foreground">/10</span>
-              </p>
-            </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
+      <div className="mx-auto w-full max-w-xl px-6 py-16">
+        {/* Encabezado editorial: título + score en la misma línea */}
+        <div className="flex items-end justify-between gap-6 border-b border-border pb-6">
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              Examen finalizado
+            </p>
+            <h1 className="mt-1 truncate text-2xl font-bold tracking-tight text-foreground">
+              {exam.title}
+            </h1>
+          </div>
+          <p className={cn("shrink-0 font-mono text-5xl font-bold tabular-nums", getScoreColor(averageScore))}>
+            {averageScore.toFixed(1)}
+            <span className="text-xl text-muted-foreground">/10</span>
+          </p>
+        </div>
 
-            <Progress value={averageScore * 10} className="h-3" />
+        {/* Stats en línea, sin cards repetidas */}
+        <div className="mt-5 flex items-center gap-6 text-sm">
+          <span className="text-foreground">
+            <span className="font-mono font-semibold tabular-nums">{questions.length}</span>{" "}
+            <span className="text-muted-foreground">preguntas</span>
+          </span>
+          <span className="h-3 w-px bg-border" />
+          <span className="text-foreground">
+            <span className="font-mono font-semibold tabular-nums">{exam.pages.length}</span>{" "}
+            <span className="text-muted-foreground">páginas</span>
+          </span>
+          <span className="h-3 w-px bg-border" />
+          <span className="text-foreground capitalize">{exam.difficulty}</span>
+        </div>
 
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="text-2xl font-bold">{questions.length}</p>
-                <p className="text-xs text-muted-foreground">Questions</p>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="text-2xl font-bold">{exam.pages.length}</p>
-                <p className="text-xs text-muted-foreground">Pages</p>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="text-2xl font-bold">{exam.difficulty}</p>
-                <p className="text-xs text-muted-foreground">Difficulty</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Question Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* Desglose por pregunta */}
+        <div className="mt-10">
+          <p className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Desglose
+          </p>
+          <div className="divide-y divide-border/60">
             {questions.map((question, index) => {
               const answer = answers.find(a => a.questionId === question.id);
               const score = answer?.score ?? null;
+              const isGood = score !== null && score >= 5;
 
               return (
                 <div
                   key={question.id}
-                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  className="flex items-center justify-between gap-4 py-3"
                 >
-                  <div className="flex items-center gap-3">
-                    {score !== null && score >= 5 ? (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
+                  <div className="flex min-w-0 items-center gap-3">
+                    {isGood ? (
+                      <CheckCircle className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                     ) : (
-                      <XCircle className="h-5 w-5 text-red-500" />
+                      <XCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
                     )}
-                    <div>
-                      <p className="text-sm font-medium">Question {index + 1}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">Pregunta {index + 1}</p>
+                      <p className="truncate text-xs text-muted-foreground">
                         {question.text}
                       </p>
                     </div>
                   </div>
-                  <span className={`font-bold ${getScoreColor(score)}`}>
-                    {score !== null ? `${score}/10` : '-'}
+                  <span className={cn("shrink-0 font-mono text-sm font-semibold tabular-nums", getScoreColor(score))}>
+                    {score !== null ? `${score}/10` : '—'}
                   </span>
                 </div>
               );
             })}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={onClose}>
+        <div className="mt-10 flex justify-end gap-2">
+          <Button variant="outline" className="press-feedback" onClick={onClose}>
             <FileText className="mr-2 h-4 w-4" />
-            Close
+            Cerrar
           </Button>
-          <Button onClick={onRetry}>
+          <Button className="press-feedback" onClick={onRetry}>
             <RotateCcw className="mr-2 h-4 w-4" />
-            Retry Exam
+            Reintentar
           </Button>
         </div>
       </div>

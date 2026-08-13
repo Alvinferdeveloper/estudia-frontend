@@ -43,22 +43,22 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] border-[#454545] bg-[#252526] text-[#cccccc] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
         <DialogHeader className="flex flex-col items-center gap-3 pt-8 px-6">
-          <DialogTitle className="text-xl font-semibold text-white text-center">
+          <DialogTitle className="text-xl font-semibold text-foreground text-center">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-center text-[#aaaaaa] text-sm leading-relaxed">
+          <DialogDescription className="text-center text-muted-foreground text-sm leading-relaxed">
             {description}
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex gap-3 mt-8 p-6 bg-[#1e1e1e]/50 border-t border-[#454545]">
+        <DialogFooter className="flex gap-3 mt-8 p-6 bg-muted/40 border-t border-border">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
-            className="flex-1 rounded-sm border-[#454545] bg-transparent text-[#cccccc] hover:bg-[#333] hover:text-white cursor-pointer transition-colors"
+            className="press-feedback flex-1 cursor-pointer transition-colors"
           >
             {cancelText}
           </Button>
@@ -66,10 +66,10 @@ export function ConfirmDialog({
             onClick={handleConfirm}
             disabled={isLoading}
             className={cn(
-              "flex-1 rounded-sm cursor-pointer font-medium transition-all",
+              "press-feedback flex-1 cursor-pointer font-medium transition-all",
               variant === "destructive"
-                ? "bg-destructive hover:bg-destructive/80 text-white"
-                : "bg-primary hover:bg-primary/90 text-white"
+                ? "bg-destructive hover:bg-destructive/90 text-white"
+                : "bg-primary hover:bg-primary/90 text-primary-foreground"
             )}
           >
             {isLoading ? (
