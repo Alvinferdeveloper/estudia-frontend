@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Sparkles } from "lucide-react";
+import { X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
@@ -28,16 +28,11 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
           <X size={15} />
         </Button>
 
-        <div className="flex-1 relative flex items-center">
+        <div className="flex-1 flex items-center">
           <Progress
             value={progress}
             className="h-4 rounded-full bg-muted/60 border-0"
           />
-          {progress > 0 && (
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 text-primary">
-              <Sparkles size={10} className="opacity-60" />
-            </div>
-          )}
         </div>
 
         <span className="text-xs font-semibold text-muted-foreground tabular-nums w-11 text-right">

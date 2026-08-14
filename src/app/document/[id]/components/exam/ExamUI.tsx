@@ -121,7 +121,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
             className="animate-in fade-in slide-in-from-bottom-1 duration-200"
           >
             <h1 className={cn(
-              "text-xl font-semibold leading-relaxed tracking-tight text-balance",
+              "text-2xl font-semibold leading-snug tracking-tight text-balance transition-colors duration-300",
               hasAnswered ? "text-foreground/70" : "text-foreground"
             )}>
               {currentQuestion.text}

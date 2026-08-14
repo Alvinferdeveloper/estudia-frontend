@@ -50,12 +50,12 @@ export const ExamFooter: React.FC<ExamFooterProps> = ({
         <Button
           size="sm"
           className={cn(
-            "h-10 px-12 text-xs font-semibold cursor-pointer rounded-md text-foreground transition-all duration-300 shadow-md group ml-auto",
+            "press-feedback ml-auto h-10 rounded-full px-8 text-xs font-semibold text-white shadow-md transition-colors duration-200 ease-[var(--ease-out)]",
             hasAnswered
               ? isCorrect
                 ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/10"
-                : "bg-amber-600 hover:bg-amber-700  shadow-amber-500/10"
-              : "bg-primary hover:bg-primary/80 shadow-primary/20"
+                : "bg-amber-600 hover:bg-amber-700 shadow-amber-500/10"
+              : "bg-primary hover:bg-primary/90 shadow-primary/20"
           )}
           disabled={isDisabled}
           onClick={hasAnswered ? (isLastQuestion ? onFinish : onNext) : onNext}

@@ -27,7 +27,7 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
       <div className="mx-auto w-full max-w-xl px-6 py-16">
         {/* Encabezado editorial: título + score en la misma línea */}
-        <div className="flex items-end justify-between gap-6 border-b border-border pb-6">
+        <div className="flex animate-in fade-in slide-in-from-bottom-2 items-end justify-between gap-6 border-b border-border pb-6 duration-500">
           <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Examen finalizado
@@ -36,14 +36,22 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
               {exam.title}
             </h1>
           </div>
-          <p className={cn("shrink-0 font-mono text-5xl font-bold tabular-nums", getScoreColor(averageScore))}>
+          <p
+            className={cn(
+              "shrink-0 animate-in zoom-in-95 font-mono text-5xl font-bold tabular-nums duration-500",
+              getScoreColor(averageScore)
+            )}
+          >
             {averageScore.toFixed(1)}
             <span className="text-xl text-muted-foreground">/10</span>
           </p>
         </div>
 
         {/* Stats en línea, sin cards repetidas */}
-        <div className="mt-5 flex items-center gap-6 text-sm">
+        <div
+          className="mt-5 flex animate-in fade-in slide-in-from-bottom-1 items-center gap-6 text-sm duration-500"
+          style={{ animationDelay: "100ms" }}
+        >
           <span className="text-foreground">
             <span className="font-mono font-semibold tabular-nums">{questions.length}</span>{" "}
             <span className="text-muted-foreground">preguntas</span>
@@ -71,7 +79,8 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
               return (
                 <div
                   key={question.id}
-                  className="flex items-center justify-between gap-4 py-3"
+                  style={{ animationDelay: `${150 + Math.min(index, 10) * 40}ms` }}
+                  className="flex animate-in fade-in slide-in-from-bottom-1 items-center justify-between gap-4 py-3 duration-500"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     {isGood ? (

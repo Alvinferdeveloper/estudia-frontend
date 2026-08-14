@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Sparkles, Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { Answer, Question, QuestionType, QUESTION_TYPES } from "@/app/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
 
@@ -32,49 +32,59 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
   })();
 
   return (
-    <div className="mt-6 space-y-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
-      {/* Feedback principal */}
-      <div className={cn(
-        "rounded-xl border px-4 py-3.5",
+    <div
+      className={cn(
+        "mt-6 overflow-hidden rounded-xl border animate-in fade-in slide-in-from-bottom-1 duration-300",
         isCorrect
           ? "border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20"
           : "border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/20"
-      )}>
-        <div className="flex items-start gap-3">
-          <div className={cn(
-            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+      )}
+    >
+      <div className="flex items-start gap-3 px-4 py-3.5">
+        <div
+          className={cn(
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full animate-in zoom-in-50 duration-300",
             isCorrect
               ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
               : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
-          )}>
-            {isCorrect ? <Sparkles size={12} /> : <Info size={12} />}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className={cn(
-              "text-[11px] font-bold uppercase tracking-widest mb-1",
+          )}
+        >
+          {isCorrect ? <Check size={12} strokeWidth={3} /> : <Info size={12} />}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p
+            className={cn(
+              "mb-1 text-[11px] font-bold uppercase tracking-widest",
               isCorrect ? "text-emerald-600/70 dark:text-emerald-400/70" : "text-amber-600/70 dark:text-amber-400/70"
-            )}>
-              {isCorrect ? "Correcto" : "Incorrecto"}
-            </p>
-            <p className={cn(
+            )}
+          >
+            {isCorrect ? "Correcto" : "Incorrecto"}
+          </p>
+          <p
+            className={cn(
               "text-sm leading-relaxed",
               isCorrect ? "text-emerald-800 dark:text-emerald-200" : "text-amber-800 dark:text-amber-200"
-            )}>
-              {currentAnswerData.feedback}
-            </p>
-          </div>
+            )}
+          >
+            {currentAnswerData.feedback}
+          </p>
         </div>
       </div>
 
       {/* Respuesta correcta */}
       {!isCorrect && showCorrectAnswer && (
-        <div className="px-4 py-3 rounded-xl border border-primary/15 bg-primary/[0.03] flex items-center gap-3">
-          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+        <div
+          className={cn(
+            "flex items-center gap-3 border-t px-4 py-3",
+            "border-amber-500/15 bg-background/40"
+          )}
+        >
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Check size={12} />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/50 mb-0.5">Respuesta correcta</p>
-            <p className="text-sm font-medium text-foreground truncate">{correctAnswerLabel}</p>
+            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/50">Respuesta correcta</p>
+            <p className="truncate text-sm font-medium text-foreground">{correctAnswerLabel}</p>
           </div>
         </div>
       )}
