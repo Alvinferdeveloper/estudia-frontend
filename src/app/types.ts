@@ -4,11 +4,14 @@ export interface Document {
     filePath: string;
     mimeType: string;
     createdAt: string;
+    updatedAt: string;
     lastAccessedAt: string | null;
     fileSize: string;
     topicId: string | null;
     folderId: string | null;
     tags: string[];
+    isStarred: boolean;
+    pageCount: number | null;
     type: 'document';
 }
 
@@ -19,8 +22,11 @@ export interface Folder {
     topicId: string | null;
     parentId: string | null;
     createdAt: string;
+    updatedAt: string;
     count: number;
     subfoldersCount: number;
+    totalSize: string;
+    isStarred: boolean;
     type: 'folder';
     subfolders?: Folder[];
     documents?: Document[];

@@ -30,6 +30,8 @@ interface DocumentListProps {
   onToggleSelect?: (id: string) => void;
   allSelected?: boolean;
   onToggleSelectAll?: () => void;
+  onToggleDocumentStar?: (id: string, isStarred: boolean) => void;
+  onToggleFolderStar?: (id: string, isStarred: boolean) => void;
 }
 
 export const DocumentList: React.FC<DocumentListProps> = ({
@@ -51,6 +53,8 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   onToggleSelect,
   allSelected,
   onToggleSelectAll,
+  onToggleDocumentStar,
+  onToggleFolderStar,
 }) => {
   const router = useRouter();
   const observerTarget = React.useRef(null);
@@ -182,6 +186,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   onClick={() => onFolderSelect(folder)}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(folder.id)}
+                  onToggleStar={() => onToggleFolderStar?.(folder.id, !folder.isStarred)}
                 />
               ) : (
                 <FolderListItem
@@ -190,6 +195,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   onClick={() => onFolderSelect(folder)}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(folder.id)}
+                  onToggleStar={() => onToggleFolderStar?.(folder.id, !folder.isStarred)}
                 />
               );
             } else {
@@ -208,6 +214,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   onClick={() => handleDocumentClick(doc.id)}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(doc.id)}
+                  onToggleStar={() => onToggleDocumentStar?.(doc.id, !doc.isStarred)}
                 />
               ) : (
                 <DocumentListItem
@@ -218,6 +225,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   onClick={() => handleDocumentClick(doc.id)}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(doc.id)}
+                  onToggleStar={() => onToggleDocumentStar?.(doc.id, !doc.isStarred)}
                 />
               );
             }

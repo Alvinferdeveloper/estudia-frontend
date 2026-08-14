@@ -1,9 +1,10 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileText, MoreHorizontal, Download, Eye, Check } from "lucide-react";
+import { FileText, MoreHorizontal, Download, Eye, Check, Star } from "lucide-react";
 import { Document } from "@/app/types";
 import { Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { cn } from "@/lib/utils";
+import { formatBytes } from "@/lib/format";
 
 interface DocumentCardProps {
   doc: Document;
@@ -13,6 +14,7 @@ interface DocumentCardProps {
   index?: number;
   isSelected?: boolean;
   onToggleSelect?: () => void;
+  onToggleStar?: () => void;
 }
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({
@@ -23,6 +25,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   index = 0,
   isSelected = false,
   onToggleSelect,
+  onToggleStar,
 }) => {
   const tint = topic?.color || "var(--muted-foreground)";
 
@@ -83,11 +86,21 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
                 Download
               </a>
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onToggleStar?.()}>
+              <Star className={cn("mr-2 h-4 w-4", doc.isStarred && "fill-current text-amber-500")} />
+              {doc.isStarred ? "Unstar" : "Star"}
+            </DropdownMenuItem>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {doc.isStarred && (
+          <div className="absolute bottom-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-card/90 text-amber-500 shadow-sm">
+            <Star className="h-3 w-3 fill-current" />
+          </div>
+        )}
       </div>
 
       {/* Metadatos */}
@@ -95,7 +108,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         <h4 className="truncate text-sm font-medium text-foreground">{doc.fileName}</h4>
         <p className="truncate text-xs text-muted-foreground">
           {topic ? `${topic.name} · ` : ""}
-          {(Number(doc.fileSize) / (1024 * 1024)).toFixed(1)} MB
+          {formatBytes(doc.fileSize)}
+          {doc.pageCount ? ` · ${doc.pageCount}p` : ""}
         </p>
       </div>
     </div>

@@ -1,14 +1,17 @@
 import React from "react";
-import { ChevronRight, Check } from "lucide-react";
+import { format } from "date-fns";
+import { ChevronRight, Check, Star } from "lucide-react";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
 import { cn } from "@/lib/utils";
+import { formatBytes } from "@/lib/format";
 
 interface FolderListItemProps {
   folder: Folder;
   onClick?: () => void;
   isSelected?: boolean;
   onToggleSelect?: () => void;
+  onToggleStar?: () => void;
 }
 
 export const FolderListItem: React.FC<FolderListItemProps> = ({
@@ -16,6 +19,7 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
   onClick,
   isSelected = false,
   onToggleSelect,
+  onToggleStar,
 }) => {
   return (
     <div
@@ -51,18 +55,33 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
             </span>
             <span className="truncate text-[11px] text-muted-foreground">
               {folder.count} {folder.count === 1 ? 'archivo' : 'archivos'}
+              {folder.subfoldersCount > 0 && ` · ${folder.subfoldersCount} carpetas`}
             </span>
           </div>
         </div>
 
         <div className="col-span-2 text-xs text-muted-foreground">
-          {folder.subfoldersCount > 0 && `${folder.subfoldersCount} carpetas`}
+          {folder.updatedAt ? format(new Date(folder.updatedAt), "MMM d, yyyy") : "—"}
         </div>
 
-        <div className="col-span-2" />
+        <div className="col-span-2 text-xs tabular-nums text-muted-foreground">
+          {Number(folder.totalSize) > 0 ? formatBytes(folder.totalSize) : "—"}
+        </div>
 
-        <div className="col-span-2 flex items-center justify-end text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100">
-          <ChevronRight className="h-4 w-4" />
+        <div className="col-span-2 flex items-center justify-end gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStar?.();
+            }}
+            className={cn(
+              "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150",
+              folder.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
+          </button>
+          <ChevronRight className="h-4 w-4 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
         </div>
       </div>
     </div>

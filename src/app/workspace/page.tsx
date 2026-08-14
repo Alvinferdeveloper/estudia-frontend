@@ -11,6 +11,7 @@ import { useFetchRecentDocuments } from "@/app/workspace/hooks/useFetchRecentDoc
 import { useCreateFolder, useDeleteFolder } from "@/app/workspace/hooks/useFolders";
 import { useUploadDocument } from "@/app/workspace/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/workspace/hooks/useDeleteDocument";
+import { useToggleDocumentStar, useToggleFolderStar } from "@/app/workspace/hooks/useToggleStar";
 import { useDebounce } from "@/app/hooks/useDebounce";
 import { Sidebar } from "@/app/workspace/components/Sidebar";
 import { Header, SortBy } from "@/app/workspace/components/Header";
@@ -92,6 +93,8 @@ const DashboardPage = () => {
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
   const { mutate: createFolder } = useCreateFolder();
   const { mutate: deleteFolder } = useDeleteFolder();
+  const { mutate: toggleDocumentStar } = useToggleDocumentStar();
+  const { mutate: toggleFolderStar } = useToggleFolderStar();
 
   // Build current path for breadcrumb
   const currentPath: PathItem[] = useMemo(() => {
@@ -298,6 +301,8 @@ const DashboardPage = () => {
               onToggleSelect={toggleSelect}
               allSelected={allSelected}
               onToggleSelectAll={toggleSelectAll}
+              onToggleDocumentStar={(id, isStarred) => toggleDocumentStar({ id, isStarred })}
+              onToggleFolderStar={(id, isStarred) => toggleFolderStar({ id, isStarred })}
             />
           </div>
         </div>

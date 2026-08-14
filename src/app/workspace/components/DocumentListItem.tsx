@@ -1,6 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
-import { MoreHorizontal, FileText, Eye, Download, Check } from "lucide-react";
+import { MoreHorizontal, FileText, Eye, Download, Check, Star } from "lucide-react";
 import { Document, Topic } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { cn } from "@/lib/utils";
+import { formatBytes } from "@/lib/format";
 
 interface DocumentListItemProps {
   doc: Document;
@@ -19,6 +20,7 @@ interface DocumentListItemProps {
   onClick?: () => void;
   isSelected?: boolean;
   onToggleSelect?: () => void;
+  onToggleStar?: () => void;
 }
 
 export const DocumentListItem: React.FC<DocumentListItemProps> = ({
@@ -28,9 +30,12 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
   onClick,
   isSelected = false,
   onToggleSelect,
+  onToggleStar,
 }) => {
-  const formattedDate = doc.lastAccessedAt
-    ? format(new Date(doc.lastAccessedAt), "MMM d, yyyy")
+  // "Modificado" refleja el contenido/metadata del documento (updatedAt), no la última
+  // vez que se abrió (lastAccessedAt) — son conceptos distintos.
+  const formattedDate = doc.updatedAt
+    ? format(new Date(doc.updatedAt), "MMM d, yyyy")
     : doc.createdAt
       ? format(new Date(doc.createdAt), "MMM d, yyyy")
       : "Unknown";
@@ -71,6 +76,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             </span>
             <span className="truncate text-[11px] text-muted-foreground">
               {topic?.name || "Sin colección"}
+              {doc.pageCount ? ` · ${doc.pageCount}p` : ""}
             </span>
           </div>
         </div>
@@ -80,39 +86,53 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
         </div>
 
         <div className="col-span-2 text-xs tabular-nums text-muted-foreground">
-          {(Number(doc.fileSize) / (1024 * 1024)).toFixed(1)} MB
+          {formatBytes(doc.fileSize)}
         </div>
 
-        <div className="col-span-2 flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="press-feedback h-7 w-7"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem>
-                <a href={`/document/${doc.id}`} className="flex w-full items-center">
-                  <Eye className="mr-2 h-4 w-4" />
-                  Ver
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex w-full items-center">
-                  <Download className="mr-2 h-4 w-4" />
-                  Descargar
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="col-span-2 flex items-center justify-end gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStar?.();
+            }}
+            className={cn(
+              "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150",
+              doc.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />
+          </button>
+          <div className="opacity-0 transition-opacity group-hover:opacity-100">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="press-feedback h-7 w-7"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuItem>
+                  <a href={`/document/${doc.id}`} className="flex w-full items-center">
+                    <Eye className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex w-full items-center">
+                    <Download className="mr-2 h-4 w-4" />
+                    Descargar
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </div>
