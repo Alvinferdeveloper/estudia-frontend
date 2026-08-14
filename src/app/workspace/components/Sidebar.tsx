@@ -36,7 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { mutate: createTopic } = useCreateTopic();
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border/60 bg-secondary/30">
+    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border/60 bg-secondary/60">
       {/* --- BRANDING --- */}
       <div className="flex items-center gap-2 px-5 pt-5">
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
