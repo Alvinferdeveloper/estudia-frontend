@@ -173,6 +173,39 @@ export const useExamResults = (examId: string) => {
   });
 };
 
+export interface ExamStats {
+  attemptCount: number;
+  highestScore: number | null;
+  lowestScore: number | null;
+  lastScore: number | null;
+  lastAttemptAt: string | null;
+}
+
+export function computeExamStats(results: ExamResult[]): ExamStats {
+  if (results.length === 0) {
+    return {
+      attemptCount: 0,
+      highestScore: null,
+      lowestScore: null,
+      lastScore: null,
+      lastAttemptAt: null,
+    };
+  }
+
+  const scored = results.filter((r) => r.score !== null) as (ExamResult & { score: number })[];
+  const sortedByDate = [...results].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  return {
+    attemptCount: results.length,
+    highestScore: scored.length ? Math.max(...scored.map((r) => r.score)) : null,
+    lowestScore: scored.length ? Math.min(...scored.map((r) => r.score)) : null,
+    lastScore: sortedByDate[0].score,
+    lastAttemptAt: sortedByDate[0].createdAt,
+  };
+}
+
 export const useSaveExamQuestions = () => {
   return useMutation({
     mutationFn: async (data: {
