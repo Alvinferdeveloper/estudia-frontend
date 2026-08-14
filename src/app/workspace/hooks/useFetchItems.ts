@@ -9,30 +9,41 @@ interface PaginatedItems {
   limit: number;
 }
 
-const fetchItems = async ({ 
-  pageParam = 1, 
-  topicId, 
-  folderId, 
-  search 
-}: { 
-  pageParam?: number, 
-  topicId?: string, 
-  folderId?: string | null, 
-  search?: string 
+const fetchItems = async ({
+  pageParam = 1,
+  topicId,
+  folderId,
+  search,
+  sortBy,
+}: {
+  pageParam?: number,
+  topicId?: string,
+  folderId?: string | null,
+  search?: string,
+  sortBy?: 'date' | 'name',
 }): Promise<PaginatedItems> => {
   let url = `${process.env.NEXT_PUBLIC_API_URL}/documents/items?page=${pageParam}&limit=12`;
   if (topicId) url += `&topicId=${topicId}`;
   if (folderId) url += `&folderId=${folderId}`;
   if (search) url += `&search=${encodeURIComponent(search)}`;
-  
+  if (sortBy) url += `&sortBy=${sortBy}`;
+
   const { data } = await axios.get(url, { withCredentials: true });
   return data;
 };
 
-export const useFetchItems = (topicId?: string, search?: string, folderId?: string | null) => {
+export const useFetchItems = (
+  topicId?: string,
+  search?: string,
+  folderId?: string | null,
+  sortBy: 'date' | 'name' = 'date',
+) => {
   return useInfiniteQuery<PaginatedItems, Error>({
-    queryKey: ['items', topicId, folderId, search],
-    queryFn: ({ pageParam }) => fetchItems({ pageParam: pageParam as number, topicId, folderId, search }),
+    // sortBy is part of the key on purpose: changing it must start a fresh
+    // infinite query from page 1 instead of re-sorting partially loaded
+    // pages on the client (which would make items jump around mid-scroll).
+    queryKey: ['items', topicId, folderId, search, sortBy],
+    queryFn: ({ pageParam }) => fetchItems({ pageParam: pageParam as number, topicId, folderId, search, sortBy }),
     getNextPageParam: (lastPage) => {
       const totalPages = Math.ceil(lastPage.total / lastPage.limit);
       return lastPage.page < totalPages ? lastPage.page + 1 : undefined;

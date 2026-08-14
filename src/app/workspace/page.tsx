@@ -56,7 +56,8 @@ const DashboardPage = () => {
   } = useFetchItems(
     selectedTopic?.id,
     debouncedSearchQuery,
-    selectedFolder?.id || null
+    selectedFolder?.id || null,
+    sortBy
   );
 
   const { data: recentData } = useFetchRecentDocuments(
@@ -69,23 +70,26 @@ const DashboardPage = () => {
       ? (recentData || []).map((doc) => ({ ...doc, type: 'document' as const }))
       : (data?.pages.flatMap((page) => page.data) || []);
 
+  // "Recientes" no pagina (se trae completo de una sola vez), así que
+  // reordenarlo en el cliente es seguro. La vista de carpeta/tema SÍ pagina
+  // con scroll infinito — ahí el orden ya viene resuelto por el backend
+  // (sortBy es parte de la query key de useFetchItems), así que no hay que
+  // volver a ordenar aquí: hacerlo rompería el scroll al cargar más páginas.
   const sortedItems = useMemo(() => {
-    const folders = items.filter((i): i is Folder => i.type === 'folder');
-    const docs = items.filter((i): i is Document => i.type === 'document');
+    if (view !== 'recent') return items;
 
+    const docs = [...items] as Document[];
     if (sortBy === 'name') {
-      folders.sort((a, b) => a.name.localeCompare(b.name));
       docs.sort((a, b) => a.fileName.localeCompare(b.fileName));
     } else {
-      folders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       docs.sort((a, b) => {
         const bd = new Date(b.lastAccessedAt || b.createdAt).getTime();
         const ad = new Date(a.lastAccessedAt || a.createdAt).getTime();
         return bd - ad;
       });
     }
-    return [...folders, ...docs];
-  }, [items, sortBy]);
+    return docs;
+  }, [items, sortBy, view]);
 
   const recentCount = view === 'recent' ? (recentData?.length ?? 0) : 0;
 
