@@ -1,22 +1,28 @@
 import React from "react";
 import { format } from "date-fns";
-import { ChevronRight, Check, Star } from "lucide-react";
+import { Check, Star, Trash2 } from "lucide-react";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/lib/format";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface FolderListItemProps {
   folder: Folder;
   onClick?: () => void;
+  deleteFolder?: (folderId: string) => void;
   isSelected?: boolean;
   onToggleSelect?: () => void;
   onToggleStar?: () => void;
 }
 
+const actionButtonClass =
+  "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150";
+
 export const FolderListItem: React.FC<FolderListItemProps> = ({
   folder,
   onClick,
+  deleteFolder,
   isSelected = false,
   onToggleSelect,
   onToggleStar,
@@ -74,14 +80,26 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
+            title={folder.isStarred ? "Unstar" : "Star"}
             className={cn(
-              "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150",
+              actionButtonClass,
               folder.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
             )}
           >
             <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
           </button>
-          <ChevronRight className="h-4 w-4 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
+          <DeleteConfirmationDialog
+            onConfirm={() => deleteFolder?.(folder.id)}
+            trigger={(open) => (
+              <button
+                onClick={open}
+                title="Eliminar"
+                className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive")}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          />
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ interface DocumentListProps {
   viewMode: "grid" | "list";
   searchQuery: string;
   deleteDocument: (documentId: string) => void;
+  deleteFolder: (folderId: string) => void;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
@@ -41,6 +42,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   viewMode,
   searchQuery,
   deleteDocument,
+  deleteFolder,
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
@@ -184,6 +186,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   folder={folder}
                   index={index}
                   onClick={() => onFolderSelect(folder)}
+                  deleteFolder={deleteFolder}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(folder.id)}
                   onToggleStar={() => onToggleFolderStar?.(folder.id, !folder.isStarred)}
@@ -193,6 +196,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   key={folder.id}
                   folder={folder}
                   onClick={() => onFolderSelect(folder)}
+                  deleteFolder={deleteFolder}
                   isSelected={isSelected}
                   onToggleSelect={() => onToggleSelect?.(folder.id)}
                   onToggleStar={() => onToggleFolderStar?.(folder.id, !folder.isStarred)}

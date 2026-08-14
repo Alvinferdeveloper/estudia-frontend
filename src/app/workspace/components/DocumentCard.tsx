@@ -1,6 +1,5 @@
 import { format } from "date-fns";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileText, MoreHorizontal, Download, Eye, Check, Star } from "lucide-react";
+import { FileText, Download, Check, Star, Trash2 } from "lucide-react";
 import { Document } from "@/app/types";
 import { Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
@@ -17,6 +16,9 @@ interface DocumentCardProps {
   onToggleSelect?: () => void;
   onToggleStar?: () => void;
 }
+
+const actionButtonClass =
+  "press-feedback flex h-6 w-6 items-center justify-center rounded-full bg-card/90 shadow-sm transition-opacity duration-150";
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({
   doc,
@@ -35,7 +37,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
       onClick={onClick}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
       className={cn(
-        "group relative flex cursor-pointer flex-col gap-2 rounded-xl p-2 transition-colors duration-150 ease-[var(--ease-out)] animate-in fade-in slide-in-from-bottom-1",
+        "group relative flex cursor-pointer flex-col gap-2 rounded-lg p-2 transition-colors duration-150 ease-[var(--ease-out)] animate-in fade-in slide-in-from-bottom-1",
         isSelected ? "bg-primary/[0.06]" : "hover:bg-accent/60"
       )}
     >
@@ -65,43 +67,44 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
         </button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="press-feedback absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-card/90 text-foreground opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100"
-            >
-              <MoreHorizontal className="h-3.5 w-3.5" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-            <DropdownMenuItem>
-              <a href={`/document/${doc.id}`} className="flex items-center w-full">
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStar?.()}>
-              <Star className={cn("mr-2 h-4 w-4", doc.isStarred && "fill-current text-amber-500")} />
-              {doc.isStarred ? "Unstar" : "Star"}
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {doc.isStarred && (
-          <div className="absolute bottom-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-card/90 text-amber-500 shadow-sm">
-            <Star className="h-3 w-3 fill-current" />
-          </div>
-        )}
+        {/* Acciones en línea */}
+        <div className="absolute right-2 top-2 flex items-center gap-1">
+          <a
+            href={doc.filePath}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Download"
+            onClick={(e) => e.stopPropagation()}
+            className={cn(actionButtonClass, "text-foreground opacity-0 group-hover:opacity-100")}
+          >
+            <Download className="h-3.5 w-3.5" />
+          </a>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStar?.();
+            }}
+            title={doc.isStarred ? "Unstar" : "Star"}
+            className={cn(
+              actionButtonClass,
+              doc.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />
+          </button>
+          <DeleteConfirmationDialog
+            onConfirm={() => deleteDocument(doc.id)}
+            trigger={(open) => (
+              <button
+                onClick={open}
+                title="Delete"
+                className={cn(actionButtonClass, "text-foreground opacity-0 hover:text-destructive group-hover:opacity-100")}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          />
+        </div>
       </div>
 
       {/* Metadatos */}

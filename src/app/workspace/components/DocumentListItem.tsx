@@ -1,17 +1,13 @@
 import React from "react";
 import { format } from "date-fns";
-import { MoreHorizontal, FileText, Eye, Download, Check, Star } from "lucide-react";
+import { FileText, Download, Check, Star, Trash2 } from "lucide-react";
 import { Document, Topic } from "@/app/types";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/lib/format";
+
+const actionButtonClass =
+  "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150";
 
 interface DocumentListItemProps {
   doc: Document;
@@ -95,44 +91,36 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
+            title={doc.isStarred ? "Unstar" : "Star"}
             className={cn(
-              "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150",
+              actionButtonClass,
               doc.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
             )}
           >
             <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />
           </button>
-          <div className="opacity-0 transition-opacity group-hover:opacity-100">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="press-feedback h-7 w-7"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenuItem>
-                  <a href={`/document/${doc.id}`} className="flex w-full items-center">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Ver
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="flex w-full items-center">
-                    <Download className="mr-2 h-4 w-4" />
-                    Descargar
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <DeleteConfirmationDialog onConfirm={() => deleteDocument(doc.id)} />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <a
+            href={doc.filePath}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Descargar"
+            onClick={(e) => e.stopPropagation()}
+            className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground")}
+          >
+            <Download className="h-3.5 w-3.5" />
+          </a>
+          <DeleteConfirmationDialog
+            onConfirm={() => deleteDocument(doc.id)}
+            trigger={(open) => (
+              <button
+                onClick={open}
+                title="Eliminar"
+                className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive")}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          />
         </div>
       </div>
     </div>

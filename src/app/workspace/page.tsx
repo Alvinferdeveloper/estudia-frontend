@@ -294,6 +294,7 @@ const DashboardPage = () => {
               viewMode={viewMode}
               searchQuery={searchQuery}
               deleteDocument={deleteDocument}
+              deleteFolder={deleteFolder}
               hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}

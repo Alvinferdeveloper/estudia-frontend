@@ -2,13 +2,15 @@ import React from "react";
 import { format } from "date-fns";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/lib/format";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface FolderCardProps {
   folder: Folder;
   onClick: () => void;
+  deleteFolder?: (folderId: string) => void;
   className?: string;
   index?: number;
   isSelected?: boolean;
@@ -16,9 +18,13 @@ interface FolderCardProps {
   onToggleStar?: () => void;
 }
 
+const actionButtonClass =
+  "press-feedback flex h-6 w-6 items-center justify-center rounded-full bg-card/90 shadow-sm transition-opacity duration-150";
+
 export const FolderCard: React.FC<FolderCardProps> = ({
   folder,
   onClick,
+  deleteFolder,
   className,
   index = 0,
   isSelected = false,
@@ -32,7 +38,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
       onClick={onClick}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
       className={cn(
-        "group relative flex cursor-pointer flex-col gap-2 rounded-xl p-2 transition-colors duration-150 ease-[var(--ease-out)] animate-in fade-in slide-in-from-bottom-1",
+        "group relative flex cursor-pointer flex-col gap-2 rounded-lg p-2 transition-colors duration-150 ease-[var(--ease-out)] animate-in fade-in slide-in-from-bottom-1",
         isSelected ? "bg-primary/[0.06]" : "hover:bg-accent/60",
         className
       )}
@@ -63,19 +69,34 @@ export const FolderCard: React.FC<FolderCardProps> = ({
           {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
         </button>
 
-        {/* Favorito */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleStar?.();
-          }}
-          className={cn(
-            "press-feedback absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-card/90 shadow-sm transition-opacity duration-150",
-            folder.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
-          )}
-        >
-          <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
-        </button>
+        {/* Acciones en línea */}
+        <div className="absolute right-2 top-2 flex items-center gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStar?.();
+            }}
+            title={folder.isStarred ? "Unstar" : "Star"}
+            className={cn(
+              actionButtonClass,
+              folder.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
+          </button>
+          <DeleteConfirmationDialog
+            onConfirm={() => deleteFolder?.(folder.id)}
+            trigger={(open) => (
+              <button
+                onClick={open}
+                title="Delete"
+                className={cn(actionButtonClass, "text-foreground opacity-0 hover:text-destructive group-hover:opacity-100")}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          />
+        </div>
       </div>
 
       {/* Metadatos */}

@@ -98,7 +98,7 @@ export const SavedExamsDialog: React.FC<SavedExamsDialogProps> = ({
                         className="press-feedback group flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors duration-150 hover:bg-accent/60"
                       >
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          <FlaskConical className="h-4 w-4" />
+                          <img src="/svg/crayon.svg" alt="Crayon" className="h-5 w-5 object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)] dark:brightness-110" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-foreground">{exam.title}</p>
