@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { BookOpen, Loader2, Download, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,9 +65,9 @@ export const Header: React.FC<HeaderProps> = ({
                     <Separator orientation="vertical" className="h-6" />
                     <p className="text-sm text-muted-foreground truncate max-w-md">{fileName}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <ExamMode 
-                        document={document} 
+                <div className="flex items-center gap-1">
+                    <ExamMode
+                        document={document}
                         numPages={numPages}
                         examMode={examMode}
                         selectedPages={selectedPages}
@@ -76,12 +75,16 @@ export const Header: React.FC<HeaderProps> = ({
                         onEnableExamMode={onEnableExamMode || (() => {})}
                         onDisableExamMode={onDisableExamMode || (() => {})}
                     />
+                    <Separator orientation="vertical" className="mx-1 h-5" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="press-feedback" disabled={isPending}>
-                                {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
-                                Export Notes
-                            </Button>
+                            <button
+                                title="Export notes"
+                                disabled={isPending}
+                                className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+                            >
+                                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                            </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleExport("markdown")}>

@@ -8,7 +8,14 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Inbox } from "lucide-react";
+import { Inbox, FlaskConical, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const difficultyStyles: Record<string, string> = {
+  easy: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  hard: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+};
 
 interface SavedExamsDialogProps {
   documentId: string;
@@ -46,18 +53,33 @@ export const SavedExamsDialog: React.FC<SavedExamsDialogProps> = ({
           )}
 
           {!isLoading && exams && exams.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {exams.map((exam) => (
                 <button
                   key={exam.id}
                   onClick={() => onSelect(exam.id)}
-                  className="press-feedback w-full rounded-lg border border-border p-3 text-left transition-colors duration-150 hover:border-primary/40"
+                  className="press-feedback group flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors duration-150 hover:bg-accent/60"
                 >
-                  <div className="font-medium">{exam.title}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {exam.totalQuestions} questions · {exam.difficulty} ·{" "}
-                    {new Date(exam.createdAt).toLocaleDateString()}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <FlaskConical className="h-4 w-4" />
                   </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-foreground">{exam.title}</p>
+                    <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span
+                        className={cn(
+                          "rounded-full px-1.5 py-0.5 font-medium capitalize",
+                          difficultyStyles[exam.difficulty] ?? "bg-secondary text-secondary-foreground"
+                        )}
+                      >
+                        {exam.difficulty}
+                      </span>
+                      <span>{exam.totalQuestions} questions</span>
+                      <span>·</span>
+                      <span>{new Date(exam.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />
                 </button>
               ))}
             </div>

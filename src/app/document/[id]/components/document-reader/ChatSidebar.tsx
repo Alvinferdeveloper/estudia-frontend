@@ -67,24 +67,26 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         </div>
                         <h3 className="font-semibold tracking-tight">Asistente IA</h3>
                     </div>
-                    <Button variant="ghost" size="sm" className="press-feedback" onClick={onClose}>
+                    <button
+                        onClick={onClose}
+                        title="Cerrar"
+                        className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+                    >
                         <X className="h-4 w-4" />
-                    </Button>
+                    </button>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs font-medium text-muted-foreground">
                         Conversaciones
                     </span>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="press-feedback h-7 px-2 text-xs"
+                    <button
                         onClick={onNewConversation}
+                        title="Nueva conversación"
+                        className="press-feedback flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
                     >
-                        <Plus className="h-3.5 w-3.5 mr-1" />
-                        Nueva
-                    </Button>
+                        <Plus className="h-4 w-4" />
+                    </button>
                 </div>
 
                 <div className="mt-2 max-h-44 overflow-y-auto flex flex-col gap-1">
