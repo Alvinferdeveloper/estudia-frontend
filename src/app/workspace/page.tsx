@@ -30,7 +30,7 @@ const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [folderPath, setFolderPath] = useState<Folder[]>([]);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);

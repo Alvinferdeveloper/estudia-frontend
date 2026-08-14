@@ -1,4 +1,5 @@
 import React from "react";
+import { format } from "date-fns";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
 import { Check, Star } from "lucide-react";
@@ -82,7 +83,11 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         <h4 className="truncate text-sm font-medium text-foreground">{folder.name}</h4>
         <p className="truncate text-xs text-muted-foreground">
           {folder.count} {folder.count === 1 ? 'archivo' : 'archivos'}
+          {folder.subfoldersCount > 0 ? ` · ${folder.subfoldersCount} carpetas` : ""}
           {Number(folder.totalSize) > 0 ? ` · ${formatBytes(folder.totalSize)}` : ""}
+        </p>
+        <p className="truncate text-[11px] text-muted-foreground/70">
+          {folder.updatedAt ? format(new Date(folder.updatedAt), "MMM d, yyyy") : "—"}
         </p>
       </div>
     </div>

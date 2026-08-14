@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { FileText, MoreHorizontal, Download, Eye, Check, Star } from "lucide-react";
 import { Document } from "@/app/types";
@@ -110,6 +111,9 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           {topic ? `${topic.name} · ` : ""}
           {formatBytes(doc.fileSize)}
           {doc.pageCount ? ` · ${doc.pageCount}p` : ""}
+        </p>
+        <p className="truncate text-[11px] text-muted-foreground/70">
+          {doc.updatedAt ? format(new Date(doc.updatedAt), "MMM d, yyyy") : "—"}
         </p>
       </div>
     </div>
