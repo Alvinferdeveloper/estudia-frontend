@@ -1,5 +1,5 @@
 
-import { ZoomIn, ZoomOut, Sparkles } from "lucide-react";
+import { ZoomIn, ZoomOut, Sparkles, ScanSearch } from "lucide-react";
 
 interface PdfControlsProps {
     pageNumber: number;
@@ -13,6 +13,8 @@ interface PdfControlsProps {
     examMode?: boolean;
     selectedPages?: number[];
     onPageSelect?: (page: number) => void;
+    regionMode?: boolean;
+    onRegionModeToggle?: () => void;
 }
 
 export const PdfControls: React.FC<PdfControlsProps> = ({
@@ -24,6 +26,9 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
     onChatToggle,
     onZoomIn,
     onZoomOut,
+    examMode = false,
+    regionMode = false,
+    onRegionModeToggle,
 }) => (
     <>
         {/* Floating toolbar: page indicator + zoom */}
@@ -50,6 +55,24 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                 </button>
             </div>
         </div>
+
+        {/* Floating region-selection toggle: images/formulas visual query */}
+        {!examMode && onRegionModeToggle && (
+            <div className="absolute right-40 top-4 z-20">
+                <button
+                    onClick={onRegionModeToggle}
+                    title="Preguntar sobre una imagen o fórmula"
+                    className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
+                        regionMode
+                            ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
+                            : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
+                    }`}
+                >
+                    <ScanSearch className="h-4 w-4" />
+                    Imagen o fórmula
+                </button>
+            </div>
+        )}
 
         {/* Floating "Ask AI" trigger */}
         <div className="absolute right-4 top-4 z-20">

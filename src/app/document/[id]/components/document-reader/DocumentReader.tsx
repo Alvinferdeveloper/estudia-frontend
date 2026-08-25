@@ -9,6 +9,9 @@ import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
 import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
 import { useConversations } from "@/app/document/[id]/hooks/useConversations";
 import { useAnnotationActions } from "@/app/document/[id]/hooks/useAnnotationActions";
+import { useDocumentImages } from "@/app/document/[id]/hooks/useDocumentImages";
+import { useVisualQuery } from "@/app/document/[id]/hooks/useVisualQuery";
+import { findOverlappingImage } from "@/app/document/[id]/lib/region-overlap";
 import { UIMessage } from "ai";
 
 import { Header } from "@/app/document/[id]/components/document-reader/Header";
@@ -17,6 +20,7 @@ import { PdfViewer } from "@/app/document/[id]/components/document-reader/PdfVie
 import { ChatSidebar } from "@/app/document/[id]/components/document-reader/ChatSidebar";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
 import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
+import { VisualQueryPanel } from "@/app/document/[id]/components/document-reader/VisualQueryPanel";
 import { DocumentFile } from "@/app/document/[id]/page";
 import { Annotation } from "@/app/types";
 
@@ -179,6 +183,61 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         clearSelection();
     };
 
+    // ─── Visual query (images/formulas on-demand) ──────────────────────
+    const [regionMode, setRegionMode] = useState(false);
+    const [isVisualQueryOpen, setIsVisualQueryOpen] = useState(false);
+    const [pendingRegion, setPendingRegion] = useState<{
+        pageNumber: number;
+        imageBase64?: string;
+        imageXref?: number;
+    } | null>(null);
+
+    const { data: documentImages = [] } = useDocumentImages(document.id);
+    const visualQuery = useVisualQuery(document.id);
+
+    const handleToggleRegionMode = () => setRegionMode((prev) => !prev);
+
+    const handleRegionSelection = (region: {
+        imageBase64: string;
+        pageNumber: number;
+        boundingRect: { x1: number; y1: number; x2: number; y2: number };
+    }) => {
+        const matchedImage = findOverlappingImage(
+            region.boundingRect,
+            region.pageNumber,
+            documentImages
+        );
+
+        setPendingRegion({
+            pageNumber: region.pageNumber,
+            imageBase64: region.imageBase64,
+            imageXref: matchedImage?.xref,
+        });
+        setIsVisualQueryOpen(true);
+        visualQuery.reset();
+    };
+
+    const handleAskVisualQuery = (question: string) => {
+        if (!pendingRegion) return;
+        visualQuery.mutate({
+            question,
+            imageXref: pendingRegion.imageXref,
+            pageNumber: pendingRegion.pageNumber,
+            // Always send the canvas crop too when there's no xref match;
+            // when there is a match, the backend re-extracts the original
+            // binary from the PDF via the xref instead of using this.
+            imageBase64: pendingRegion.imageXref
+                ? undefined
+                : pendingRegion.imageBase64,
+        });
+    };
+
+    const handleVisualQueryClose = () => {
+        setIsVisualQueryOpen(false);
+        setPendingRegion(null);
+        visualQuery.reset();
+    };
+
     return (
         <div className="h-screen bg-background flex flex-col">
             <Header
@@ -208,6 +267,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             examMode={examMode}
                             selectedPages={selectedPages}
                             onPageSelect={handleTogglePage}
+                            regionMode={regionMode}
+                            onRegionModeToggle={handleToggleRegionMode}
                         />
                         <PdfViewer
                             publicUrl={document.publicUrl}
@@ -217,6 +278,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             onTextSelection={handleTextSelection}
                             onPageChange={setCurrentPage}
                             onAnnotationClick={handleAnnotationClick}
+                            regionMode={regionMode}
+                            onRegionSelection={handleRegionSelection}
                             selectionTip={
                                 selectedText && !examMode && (
                                     <SelectionPopup
@@ -289,6 +352,16 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 }
                 onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
+            />
+
+            <VisualQueryPanel
+                isOpen={isVisualQueryOpen}
+                onClose={handleVisualQueryClose}
+                previewImage={pendingRegion?.imageBase64 ?? null}
+                isLoading={visualQuery.isPending}
+                answer={visualQuery.data ?? null}
+                error={visualQuery.error?.message ?? null}
+                onAsk={handleAskVisualQuery}
             />
         </div>
     );

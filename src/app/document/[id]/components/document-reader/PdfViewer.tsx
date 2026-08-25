@@ -7,6 +7,12 @@ import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
 import { Annotation } from "@/app/types";
 import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 
+interface RegionSelection {
+    imageBase64: string;
+    pageNumber: number;
+    boundingRect: { x1: number; y1: number; x2: number; y2: number };
+}
+
 interface PdfViewerProps {
     publicUrl: string;
     scale: number;
@@ -20,10 +26,13 @@ interface PdfViewerProps {
     selectedPages?: number[];
     onPageSelect?: (page: number) => void;
     onPdfLoad?: (pdfDoc: any) => void;
+    regionMode?: boolean;
+    onRegionSelection?: (region: RegionSelection) => void;
 }
 
 interface SelectionEvent {
-    content?: { text?: string };
+    type?: "text" | "area";
+    content?: { text?: string; image?: string };
     position?: {
         boundingRect: { x1: number; y1: number; x2: number; y2: number; width: number; height: number; pageNumber: number };
         rects?: Array<{ x1: number; y1: number; x2: number; y2: number; width: number; height: number }>;
@@ -63,6 +72,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     selectedPages = [],
     onPageSelect,
     onPdfLoad,
+    regionMode = false,
+    onRegionSelection,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
@@ -102,9 +113,24 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     }, [annotations]);
 
     const handleSelection = useCallback((selection: SelectionEvent) => {
-        const text = selection?.content?.text || "";
         const position = selection?.position;
-        if (text.length > 0 && position) {
+        if (!position) return;
+
+        if (selection.type === "area") {
+            const image = selection.content?.image;
+            if (image && onRegionSelection) {
+                const { x1, y1, x2, y2, pageNumber } = position.boundingRect;
+                onRegionSelection({
+                    imageBase64: image,
+                    pageNumber,
+                    boundingRect: { x1, y1, x2, y2 },
+                });
+            }
+            return;
+        }
+
+        const text = selection?.content?.text || "";
+        if (text.length > 0) {
             const rects = position.rects || [position.boundingRect];
             onTextSelection({
                 text,
@@ -119,7 +145,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                 pageNumber: position.boundingRect.pageNumber,
             });
         }
-    }, [onTextSelection]);
+    }, [onTextSelection, onRegionSelection]);
 
     return (
         <div className="flex-1 overflow-hidden bg-muted/30 relative">
@@ -140,7 +166,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                         <PdfHighlighter
                             pdfScaleValue={scale}
                             pdfDocument={pdfDoc}
-                            enableAreaSelection={(event) => event.altKey}
+                            enableAreaSelection={(event) => regionMode || event.altKey}
                             highlights={highlights}
                             onSelection={handleSelection}
                             selectionTip={selectionTip}
