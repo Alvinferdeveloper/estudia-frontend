@@ -3,6 +3,27 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Cap `.container` at 1280px instead of Tailwind's default growth to 1536px at very
+   wide viewports, so the landing page reads the same on any wide screen/window
+   instead of getting noticeably roomier past 1536px. */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+
+  @media (min-width: 640px) {
+    max-width: 640px;
+  }
+  @media (min-width: 768px) {
+    max-width: 768px;
+  }
+  @media (min-width: 1024px) {
+    max-width: 1024px;
+  }
+  @media (min-width: 1280px) {
+    max-width: 1280px;
+  }
+}
+
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -29,6 +50,8 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-marketing-accent: var(--marketing-accent);
+  --font-serif: var(--font-instrument-serif);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -119,6 +142,9 @@
   --info-foreground: oklch(0.99 0.002 230);
   --danger: var(--destructive);
   --danger-foreground: var(--destructive-foreground);
+
+  /* Marketing accent (landing page): reuses the chart-3 amber already in the palette */
+  --marketing-accent: var(--chart-3);
 }
 
 .dark {
@@ -319,6 +345,13 @@
 
 .press-feedback:active {
   transform: scale(0.97);
+}
+
+/* Marketing landing page: atmospheric backdrop used behind the hero and closing CTA panels. */
+.bg-atmosphere {
+  background:
+    radial-gradient(circle at 14% 18%, color-mix(in oklch, var(--primary) 35%, transparent), transparent 55%),
+    radial-gradient(circle at 86% 82%, color-mix(in oklch, var(--marketing-accent) 28%, transparent), transparent 50%);
 }
 
 @media (prefers-reduced-motion: reduce) {
