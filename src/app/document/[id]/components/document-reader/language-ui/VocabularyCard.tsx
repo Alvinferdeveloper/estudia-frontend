@@ -1,0 +1,247 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { X } from "lucide-react";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import {
+  LanguageCode,
+  SUPPORTED_LANGUAGES,
+  VocabularyEntry,
+  VocabularyExplanation,
+} from "@/app/types";
+import { useVocabularyExplanation } from "@/app/document/[id]/hooks/useVocabularyExplanation";
+import { useVocabularyDialog } from "@/app/document/[id]/hooks/useVocabularyDialog";
+import { CardFront } from "./CardFront";
+import { CardBack } from "./CardBack";
+
+const flagFor = (code: LanguageCode) =>
+  SUPPORTED_LANGUAGES.find((l) => l.code === code)?.flag ?? code;
+
+interface SaveEntryData {
+  selectedText: string;
+  wordLanguage: string;
+  explanationLanguage: string;
+  explanation: VocabularyExplanation;
+  color: string;
+}
+
+interface AnchorRect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+interface VocabularyCardProps {
+  isOpen: boolean;
+  onClose: () => void;
+  anchorRect: AnchorRect | null;
+  selectedText: string;
+  wordLanguage: LanguageCode;
+  explanationLanguage: LanguageCode;
+  documentFileName: string;
+  onSaveEntry: (
+    data: SaveEntryData,
+    editingEntry: VocabularyEntry | null
+  ) => Promise<VocabularyEntry>;
+  onDeleteEntry?: (id: string) => Promise<void>;
+  onColorChange: (id: string, color: string) => Promise<void>;
+  onEntryUpdated?: (entry: VocabularyEntry) => void;
+  existingEntry?: VocabularyEntry | null;
+}
+
+const flipTransition = { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const };
+
+export const VocabularyCard: React.FC<VocabularyCardProps> = ({
+  isOpen,
+  onClose,
+  anchorRect,
+  selectedText,
+  wordLanguage,
+  explanationLanguage,
+  documentFileName,
+  onSaveEntry,
+  onDeleteEntry,
+  onColorChange,
+  onEntryUpdated,
+  existingEntry,
+}) => {
+  const dialog = useVocabularyDialog({ isOpen, existingEntry });
+  const explanationMutation = useVocabularyExplanation();
+
+  const [localEntry, setLocalEntry] = useState<VocabularyEntry | null>(existingEntry ?? null);
+  const [displayExplanation, setDisplayExplanation] = useState<VocabularyExplanation | null>(
+    existingEntry?.explanation ?? null
+  );
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLocalEntry(existingEntry ?? null);
+      setDisplayExplanation(existingEntry?.explanation ?? null);
+      explanationMutation.reset();
+    }
+  }, [isOpen, existingEntry]);
+
+  const handleClose = () => {
+    dialog.handleReset();
+    setLocalEntry(null);
+    setDisplayExplanation(null);
+    explanationMutation.reset();
+    onClose();
+  };
+
+  const conjure = async (editingEntry: VocabularyEntry | null) => {
+    try {
+      const result = await explanationMutation.mutateAsync({
+        selectedText,
+        wordLanguage,
+        explanationLanguage,
+        documentContext: `Documento: ${documentFileName}`,
+      });
+      setDisplayExplanation(result);
+      dialog.setIsFlipped(true);
+
+      const saved = await onSaveEntry(
+        {
+          selectedText,
+          wordLanguage,
+          explanationLanguage,
+          explanation: result,
+          color: dialog.selectedColor,
+        },
+        editingEntry
+      );
+      setLocalEntry(saved);
+      onEntryUpdated?.(saved);
+    } catch {
+      // error state is surfaced via explanationMutation.error
+    }
+  };
+
+  const handleConjure = () => conjure(null);
+  const handleRegenerate = () => conjure(localEntry);
+
+  const handleChangeColor = async (color: string) => {
+    dialog.setSelectedColor(color);
+    if (localEntry) {
+      await onColorChange(localEntry.id, color);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!localEntry || !onDeleteEntry) return;
+    setIsDeleting(true);
+    try {
+      await onDeleteEntry(localEntry.id);
+      handleClose();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <Popover open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <PopoverAnchor asChild>
+        <span
+          aria-hidden
+          className="pointer-events-none fixed"
+          style={{
+            top: anchorRect?.top ?? 0,
+            left: anchorRect?.left ?? 0,
+            width: anchorRect?.width ?? 0,
+            height: anchorRect?.height ?? 0,
+          }}
+        />
+      </PopoverAnchor>
+
+      <PopoverContent
+        side="bottom"
+        align="start"
+        sideOffset={10}
+        collisionPadding={16}
+        aria-label="Tarjeta de vocabulario"
+        className="w-auto border-none bg-transparent p-0 shadow-none"
+        style={{ perspective: 1200 }}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="relative">
+          <button
+            onClick={handleClose}
+            title="Cerrar"
+            className="press-feedback absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-violet-400/30 bg-[#1a1330] text-violet-200 shadow-lg transition-colors hover:bg-violet-500/20"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+
+          <AnimatePresence mode="wait" initial={false}>
+            {!dialog.isFlipped ? (
+              <motion.div
+                key="front"
+                initial={{ rotateY: -90, opacity: 0 }}
+                animate={{ rotateY: 0, opacity: 1 }}
+                exit={{ rotateY: 90, opacity: 0 }}
+                transition={flipTransition}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <CardFront
+                  word={selectedText}
+                  wordFlag={flagFor(wordLanguage)}
+                  explanationFlag={flagFor(explanationLanguage)}
+                  isLoading={explanationMutation.isPending}
+                  error={explanationMutation.error?.message}
+                  onConjure={handleConjure}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="back"
+                initial={{ rotateY: 90, opacity: 0 }}
+                animate={{ rotateY: 0, opacity: 1 }}
+                exit={{ rotateY: -90, opacity: 0 }}
+                transition={flipTransition}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {displayExplanation && (
+                  <CardBack
+                    explanation={displayExplanation}
+                    wordFlag={flagFor(wordLanguage)}
+                    explanationFlag={flagFor(explanationLanguage)}
+                    isRegenerating={explanationMutation.isPending}
+                    onRegenerate={handleRegenerate}
+                    isEditMode={!!localEntry}
+                    onDelete={
+                      localEntry && onDeleteEntry
+                        ? () => setIsDeleteConfirmOpen(true)
+                        : undefined
+                    }
+                    isDeleting={isDeleting}
+                    selectedColor={dialog.selectedColor}
+                    onColorChange={handleChangeColor}
+                  />
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <ConfirmDialog
+          isOpen={isDeleteConfirmOpen}
+          onOpenChange={setIsDeleteConfirmOpen}
+          onConfirm={handleDelete}
+          title="¿Eliminar esta palabra?"
+          description="Se eliminará de tu colección de vocabulario junto con su explicación. Esta acción no se puede deshacer."
+          confirmText="Eliminar"
+          isLoading={isDeleting}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+};

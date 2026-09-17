@@ -354,10 +354,86 @@
     radial-gradient(circle at 86% 82%, color-mix(in oklch, var(--marketing-accent) 28%, transparent), transparent 50%);
 }
 
+/* Perpetual micro-interactions (performance-safe: transform/opacity only). */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(24px, -28px, 0) scale(1.08); }
+  66% { transform: translate3d(-18px, 22px, 0) scale(0.95); }
+}
+.animate-blob {
+  animation: blob 16s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-blob-delayed {
+  animation: blob 16s ease-in-out infinite;
+  animation-delay: -8s;
+  will-change: transform;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.82); }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2.6s ease-in-out infinite;
+}
+
+/* Language Mode — arcane "magic card" vocabulary reveal. */
+@keyframes rune-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-rune-spin {
+  animation: rune-spin 5s linear infinite;
+  will-change: transform;
+}
+
+@keyframes rune-spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+.animate-rune-spin-reverse {
+  animation: rune-spin-reverse 3.4s linear infinite;
+  will-change: transform;
+}
+
+@keyframes arcane-glow {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+.animate-arcane-glow {
+  animation: arcane-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkle-flicker {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.animate-sparkle {
+  animation: sparkle-flicker 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   [class*="animate-in"],
-  [class*="animate-bounce"] {
+  [class*="animate-bounce"],
+  .animate-float,
+  .animate-blob,
+  .animate-blob-delayed,
+  .animate-pulse-soft,
+  .animate-rune-spin,
+  .animate-rune-spin-reverse,
+  .animate-arcane-glow,
+  .animate-sparkle {
     animation: none !important;
   }
 

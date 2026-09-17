@@ -1,19 +1,25 @@
 
 import { motion } from "motion/react";
-import { MessageSquare, StickyNote } from "lucide-react";
+import { MessageSquare, StickyNote, Languages } from "lucide-react";
 
 interface SelectionPopupProps {
     selectedText: string | null;
+    mode?: "notes" | "language";
     onChatClick: () => void;
     onCreateNoteClick: () => void;
+    onExplainClick?: (anchorRect: DOMRect) => void;
 }
 
 export const SelectionPopup: React.FC<SelectionPopupProps> = ({
     selectedText,
+    mode = "notes",
     onChatClick,
-    onCreateNoteClick
+    onCreateNoteClick,
+    onExplainClick,
 }) => {
     if (!selectedText) return null;
+
+    const isLanguageMode = mode === "language";
 
     return (
         <motion.div
@@ -31,13 +37,23 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
                 Chat
             </button>
             <div className="h-4 w-px bg-border" />
-            <button
-                onClick={onCreateNoteClick}
-                className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
-            >
-                <StickyNote className="h-3.5 w-3.5" />
-                Nota
-            </button>
+            {isLanguageMode ? (
+                <button
+                    onClick={(e) => onExplainClick?.(e.currentTarget.getBoundingClientRect())}
+                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-violet-500/10 hover:text-violet-500"
+                >
+                    <Languages className="h-3.5 w-3.5" />
+                    Explicar
+                </button>
+            ) : (
+                <button
+                    onClick={onCreateNoteClick}
+                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+                >
+                    <StickyNote className="h-3.5 w-3.5" />
+                    Nota
+                </button>
+            )}
         </motion.div>
     );
 }

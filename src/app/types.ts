@@ -89,3 +89,56 @@ export interface Annotation {
     createdAt: string;
     updatedAt: string;
 }
+
+// ─── Language Mode / Vocabulary ─────────────────────────────────────────
+
+export type LanguageCode = 'en' | 'es'; // extend here when adding more languages
+
+export interface LanguageOption {
+    code: LanguageCode;
+    label: string;
+    flag: string;
+}
+
+export const SUPPORTED_LANGUAGES: LanguageOption[] = [
+    { code: 'en', label: 'Inglés', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+];
+
+export interface VocabularyMeaning {
+    partOfSpeech?: string;
+    definition: string;
+    exampleSentence: string;
+    exampleTranslation?: string;
+}
+
+export interface VocabularyConfusable {
+    word: string;
+    explanation: string;
+}
+
+export interface VocabularyExplanation {
+    word: string;
+    wordLanguage: string;
+    explanationLanguage: string;
+    phonetic?: string;
+    meanings: VocabularyMeaning[];
+    confusables?: VocabularyConfusable[];
+    tip?: string;
+    synonyms?: string[];
+}
+
+export interface VocabularyEntry {
+    id: string;
+    selectedText: string;
+    wordLanguage: string;
+    explanationLanguage: string;
+    color: string;
+    pageNumber: number;
+    boundingRect: BoundingRect;
+    rects: AnnotationRect[];
+    explanation: VocabularyExplanation | null;
+    documentId: string;
+    createdAt: string;
+    updatedAt: string;
+}

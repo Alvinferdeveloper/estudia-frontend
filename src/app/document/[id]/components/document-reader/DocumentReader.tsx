@@ -9,6 +9,8 @@ import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
 import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
 import { useConversations } from "@/app/document/[id]/hooks/useConversations";
 import { useAnnotationActions } from "@/app/document/[id]/hooks/useAnnotationActions";
+import { useVocabularyActions } from "@/app/document/[id]/hooks/useVocabularyActions";
+import { useLanguageMode } from "@/app/document/[id]/hooks/useLanguageMode";
 import { useDocumentImages } from "@/app/document/[id]/hooks/useDocumentImages";
 import { useVisualQuery } from "@/app/document/[id]/hooks/useVisualQuery";
 import { findOverlappingImage } from "@/app/document/[id]/lib/region-overlap";
@@ -16,13 +18,14 @@ import { UIMessage } from "ai";
 
 import { Header } from "@/app/document/[id]/components/document-reader/Header";
 import { PdfControls } from "@/app/document/[id]/components/document-reader/PdfControls";
-import { PdfViewer } from "@/app/document/[id]/components/document-reader/PdfViewer";
+import { PdfViewer, PdfHighlightItem } from "@/app/document/[id]/components/document-reader/PdfViewer";
 import { ChatSidebar } from "@/app/document/[id]/components/document-reader/ChatSidebar";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
 import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
+import { VocabularyCard } from "@/app/document/[id]/components/document-reader/language-ui";
 import { VisualQueryPanel } from "@/app/document/[id]/components/document-reader/VisualQueryPanel";
 import { DocumentFile } from "@/app/document/[id]/page";
-import { Annotation } from "@/app/types";
+import { Annotation, VocabularyEntry } from "@/app/types";
 
 interface DocumentReaderProps {
     document: DocumentFile;
@@ -183,6 +186,78 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         clearSelection();
     };
 
+    // ─── Language Mode (vocabulary study) ───────────────────────────────
+    const languageMode = useLanguageMode(document.id);
+
+    const {
+        vocabularyEntries,
+        handleColorChange: handleVocabularyColorChange,
+        handleSaveEntry,
+        handleDeleteEntry,
+    } = useVocabularyActions({
+        documentId: document.id,
+        currentPage,
+        selectionRects,
+        selectedPage,
+    });
+
+    const [isVocabularyCardOpen, setIsVocabularyCardOpen] = useState(false);
+    const [editingVocabularyEntry, setEditingVocabularyEntry] = useState<VocabularyEntry | null>(null);
+    const [vocabularyAnchorRect, setVocabularyAnchorRect] = useState<DOMRect | null>(null);
+
+    const handleExplainClick = (anchorRect: DOMRect) => {
+        setEditingVocabularyEntry(null);
+        setVocabularyAnchorRect(anchorRect);
+        setIsVocabularyCardOpen(true);
+    };
+
+    const handleVocabularyEntryClick = (entry: VocabularyEntry, anchorRect: DOMRect) => {
+        setEditingVocabularyEntry(entry);
+        setVocabularyAnchorRect(anchorRect);
+        setIsVocabularyCardOpen(true);
+    };
+
+    const handleVocabularyCardClose = () => {
+        setIsVocabularyCardOpen(false);
+        setEditingVocabularyEntry(null);
+        setVocabularyAnchorRect(null);
+        clearSelection();
+    };
+
+    // A page change invalidates the anchored position, so close the card rather than leave it floating over stale content.
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        if (isVocabularyCardOpen) handleVocabularyCardClose();
+    };
+
+    const activeHighlights: PdfHighlightItem[] = languageMode.enabled
+        ? vocabularyEntries.map((entry) => ({
+              id: entry.id,
+              color: entry.color,
+              selectedText: entry.selectedText,
+              pageNumber: entry.pageNumber,
+              boundingRect: entry.boundingRect,
+              rects: entry.rects,
+          }))
+        : annotations.map((annotation) => ({
+              id: annotation.id,
+              color: annotation.color,
+              selectedText: annotation.selectedText,
+              pageNumber: annotation.pageNumber,
+              boundingRect: annotation.boundingRect,
+              rects: annotation.rects,
+          }));
+
+    const handleHighlightClick = (id: string, anchorRect: DOMRect) => {
+        if (languageMode.enabled) {
+            const entry = vocabularyEntries.find((e) => e.id === id);
+            if (entry) handleVocabularyEntryClick(entry, anchorRect);
+        } else {
+            const annotation = annotations.find((a) => a.id === id);
+            if (annotation) handleAnnotationClick(annotation);
+        }
+    };
+
     // ─── Visual query (images/formulas on-demand) ──────────────────────
     const [regionMode, setRegionMode] = useState(false);
     const [isVisualQueryOpen, setIsVisualQueryOpen] = useState(false);
@@ -250,6 +325,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 pdfDoc={pdfDoc}
                 onEnableExamMode={handleEnableExamMode}
                 onDisableExamMode={handleDisableExamMode}
+                languageModeEnabled={languageMode.enabled}
+                wordLanguage={languageMode.wordLanguage}
+                explanationLanguage={languageMode.explanationLanguage}
+                onToggleLanguageMode={languageMode.toggle}
+                onFlipLanguageDirection={languageMode.flipDirection}
             />
 
             <div className="flex-1 overflow-hidden">
@@ -273,19 +353,21 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         <PdfViewer
                             publicUrl={document.publicUrl}
                             scale={scale}
-                            annotations={annotations}
+                            highlights={activeHighlights}
                             setNumPages={setNumPages}
                             onTextSelection={handleTextSelection}
-                            onPageChange={setCurrentPage}
-                            onAnnotationClick={handleAnnotationClick}
+                            onPageChange={handlePageChange}
+                            onHighlightClick={handleHighlightClick}
                             regionMode={regionMode}
                             onRegionSelection={handleRegionSelection}
                             selectionTip={
                                 selectedText && !examMode && (
                                     <SelectionPopup
                                         selectedText={selectedText}
+                                        mode={languageMode.enabled ? "language" : "notes"}
                                         onChatClick={handleChatToggle}
                                         onCreateNoteClick={handleNoteDialogOpen}
+                                        onExplainClick={handleExplainClick}
                                     />
                                 )
                             }
@@ -352,6 +434,21 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 }
                 onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
+            />
+
+            <VocabularyCard
+                isOpen={isVocabularyCardOpen}
+                onClose={handleVocabularyCardClose}
+                anchorRect={vocabularyAnchorRect}
+                selectedText={editingVocabularyEntry?.selectedText || selectedText || ""}
+                wordLanguage={languageMode.wordLanguage}
+                explanationLanguage={languageMode.explanationLanguage}
+                documentFileName={document.fileName}
+                onSaveEntry={handleSaveEntry}
+                onDeleteEntry={handleDeleteEntry}
+                onColorChange={handleVocabularyColorChange}
+                onEntryUpdated={setEditingVocabularyEntry}
+                existingEntry={editingVocabularyEntry}
             />
 
             <VisualQueryPanel

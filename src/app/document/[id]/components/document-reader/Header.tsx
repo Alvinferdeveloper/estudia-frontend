@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Loader2, Download, ArrowLeft } from "lucide-react";
+import { BookOpen, Loader2, Download, ArrowLeft, Languages } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/document/[id]/hooks/useExportAnnotations";
 import { ExamMode } from "@/app/document/[id]/components/exam/ExamMode";
 import { DocumentFile } from "@/app/document/[id]/page";
+import { SUPPORTED_LANGUAGES, LanguageCode } from "@/app/types";
 
 interface HeaderProps {
     fileName: string;
@@ -24,18 +25,31 @@ interface HeaderProps {
     pdfDoc?: any;
     onEnableExamMode?: () => void;
     onDisableExamMode?: () => void;
+    languageModeEnabled?: boolean;
+    wordLanguage?: LanguageCode;
+    explanationLanguage?: LanguageCode;
+    onToggleLanguageMode?: () => void;
+    onFlipLanguageDirection?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-    fileName, 
-    documentId, 
-    numPages, 
+const flagFor = (code: LanguageCode) =>
+    SUPPORTED_LANGUAGES.find((l) => l.code === code)?.flag ?? code;
+
+export const Header: React.FC<HeaderProps> = ({
+    fileName,
+    documentId,
+    numPages,
     document,
     examMode = false,
     selectedPages = [],
     pdfDoc,
     onEnableExamMode,
     onDisableExamMode,
+    languageModeEnabled = false,
+    wordLanguage = "en",
+    explanationLanguage = "es",
+    onToggleLanguageMode,
+    onFlipLanguageDirection,
 }) => {
     const { mutate: exportNotes, isPending } = useExportAnnotations(documentId);
 
@@ -75,6 +89,34 @@ export const Header: React.FC<HeaderProps> = ({
                         onEnableExamMode={onEnableExamMode || (() => {})}
                         onDisableExamMode={onDisableExamMode || (() => {})}
                     />
+                    {!examMode && onToggleLanguageMode && (
+                        <>
+                            <Separator orientation="vertical" className="mx-1 h-5" />
+                            <button
+                                onClick={onToggleLanguageMode}
+                                title="Modo Idioma: estudia palabras y frases"
+                                className={`press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                                    languageModeEnabled
+                                        ? "bg-violet-500/15 text-violet-500"
+                                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                }`}
+                            >
+                                <Languages className="h-4 w-4" />
+                                Modo Idioma
+                            </button>
+                            {languageModeEnabled && onFlipLanguageDirection && (
+                                <button
+                                    onClick={onFlipLanguageDirection}
+                                    title="Invertir dirección de estudio"
+                                    className="press-feedback flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500 transition-colors duration-150 hover:bg-violet-500/20"
+                                >
+                                    <span>{flagFor(wordLanguage)}</span>
+                                    <span>→</span>
+                                    <span>{flagFor(explanationLanguage)}</span>
+                                </button>
+                            )}
+                        </>
+                    )}
                     <Separator orientation="vertical" className="mx-1 h-5" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

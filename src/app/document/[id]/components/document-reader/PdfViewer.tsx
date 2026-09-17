@@ -4,7 +4,7 @@ import { useRef, useMemo, useCallback, useEffect } from "react";
 import { PdfLoader, PdfHighlighter, TextHighlight, useHighlightContainerContext, ViewportHighlight } from "react-pdf-highlighter-extended";
 import "react-pdf-highlighter-extended/dist/esm/style/PdfHighlighter.css";
 import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
-import { Annotation } from "@/app/types";
+import { AnnotationRect, BoundingRect } from "@/app/types";
 import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 
 interface RegionSelection {
@@ -13,14 +13,23 @@ interface RegionSelection {
     boundingRect: { x1: number; y1: number; x2: number; y2: number };
 }
 
+export interface PdfHighlightItem {
+    id: string;
+    color: string;
+    selectedText: string;
+    pageNumber: number;
+    boundingRect: BoundingRect;
+    rects: AnnotationRect[];
+}
+
 interface PdfViewerProps {
     publicUrl: string;
     scale: number;
-    annotations: Annotation[];
+    highlights: PdfHighlightItem[];
     selectionTip: React.ReactNode;
     onTextSelection: (selection: { text: string; rects: { top: number; left: number; width: number; height: number; pageWidth?: number; pageHeight?: number }[]; pageNumber: number }) => void;
     onPageChange: (page: number) => void;
-    onAnnotationClick: (annotation: Annotation) => void;
+    onHighlightClick: (id: string, anchorRect: DOMRect) => void;
     setNumPages: (numPages: number) => void;
     examMode?: boolean;
     selectedPages?: number[];
@@ -48,12 +57,12 @@ interface HighlightRect {
     height: number;
 }
 
-const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight) => void }) => {
+const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight, anchorRect: DOMRect) => void }) => {
     const { highlight, isScrolledTo } = useHighlightContainerContext();
     const highlightWithColor = highlight as ViewportHighlight & { color?: string };
 
     return (
-        <div onClick={() => onClick(highlight)}>
+        <div onClick={(e) => onClick(highlight, e.currentTarget.getBoundingClientRect())}>
             <TextHighlight isScrolledTo={isScrolledTo} highlight={highlight} style={{ background: highlightWithColor.color }} />
         </div>
     );
@@ -61,13 +70,13 @@ const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighligh
 
 export const PdfViewer: React.FC<PdfViewerProps> = ({
     publicUrl,
-    annotations,
+    highlights: highlightItems,
     scale,
     setNumPages,
     selectionTip,
     onPageChange,
     onTextSelection,
-    onAnnotationClick,
+    onHighlightClick,
     examMode = false,
     selectedPages = [],
     onPageSelect,
@@ -100,17 +109,17 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     }, [scale]);
 
     const highlights = useMemo(() => {
-        return annotations.map((annotation) => ({
-            id: annotation.id,
-            color: annotation.color,
-            content: { text: annotation.selectedText },
+        return highlightItems.map((item) => ({
+            id: item.id,
+            color: item.color,
+            content: { text: item.selectedText },
             position: {
-                boundingRect: annotation.boundingRect,
-                rects: annotation.rects,
-                pageNumber: annotation.pageNumber,
+                boundingRect: item.boundingRect,
+                rects: item.rects,
+                pageNumber: item.pageNumber,
             }
         }));
-    }, [annotations]);
+    }, [highlightItems]);
 
     const handleSelection = useCallback((selection: SelectionEvent) => {
         const position = selection?.position;
@@ -182,9 +191,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                                 }
                             }}
                         >
-                            <HighlightContainer onClick={(highlight: ViewportHighlight) => {
-                                const annotation = annotations.find(a => a.id === highlight.id);
-                                if (annotation) onAnnotationClick(annotation);
+                            <HighlightContainer onClick={(highlight: ViewportHighlight, anchorRect: DOMRect) => {
+                                onHighlightClick(highlight.id, anchorRect);
                             }} />
                         </PdfHighlighter>
                     );
