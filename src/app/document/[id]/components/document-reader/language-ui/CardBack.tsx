@@ -1,12 +1,13 @@
 import { AlertTriangle, RotateCcw, Trash2, Loader2 } from "lucide-react";
-import { VocabularyExplanation } from "@/app/types";
+import { LanguageCode, VocabularyExplanation } from "@/app/types";
 import { NoteColorPicker } from "@/app/document/[id]/components/document-reader/note-ui";
 import { RuneLoader } from "./RuneLoader";
+import { LanguageFlag } from "./LanguageFlag";
 
 interface CardBackProps {
   explanation: VocabularyExplanation;
-  wordFlag: string;
-  explanationFlag: string;
+  wordLanguage: LanguageCode;
+  explanationLanguage: LanguageCode;
   isRegenerating: boolean;
   onRegenerate: () => void;
   isEditMode: boolean;
@@ -18,8 +19,8 @@ interface CardBackProps {
 
 export const CardBack: React.FC<CardBackProps> = ({
   explanation,
-  wordFlag,
-  explanationFlag,
+  wordLanguage,
+  explanationLanguage,
   isRegenerating,
   onRegenerate,
   isEditMode,
@@ -33,9 +34,11 @@ export const CardBack: React.FC<CardBackProps> = ({
       <div className="flex max-h-[min(70vh,480px)] flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#1a1330] to-[#0e0a1c]">
         {/* Header */}
         <div className="shrink-0 border-b border-violet-400/20 px-5 py-3.5 text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-violet-300/60">
-            {wordFlag} &rarr; {explanationFlag}
-          </p>
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-violet-300/60">
+            <LanguageFlag code={wordLanguage} />
+            <span>&rarr;</span>
+            <LanguageFlag code={explanationLanguage} />
+          </div>
           <h2 className="mt-1 break-words font-serif text-xl text-white">
             {explanation.word}
           </h2>

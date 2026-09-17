@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/document/[id]/hooks/useExportAnnotations";
 import { ExamMode } from "@/app/document/[id]/components/exam/ExamMode";
+import { LanguageFlag } from "@/app/document/[id]/components/document-reader/language-ui";
 import { DocumentFile } from "@/app/document/[id]/page";
-import { SUPPORTED_LANGUAGES, LanguageCode } from "@/app/types";
+import { LanguageCode } from "@/app/types";
 
 interface HeaderProps {
     fileName: string;
@@ -31,9 +32,6 @@ interface HeaderProps {
     onToggleLanguageMode?: () => void;
     onFlipLanguageDirection?: () => void;
 }
-
-const flagFor = (code: LanguageCode) =>
-    SUPPORTED_LANGUAGES.find((l) => l.code === code)?.flag ?? code;
 
 export const Header: React.FC<HeaderProps> = ({
     fileName,
@@ -110,9 +108,9 @@ export const Header: React.FC<HeaderProps> = ({
                                     title="Invertir dirección de estudio"
                                     className="press-feedback flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500 transition-colors duration-150 hover:bg-violet-500/20"
                                 >
-                                    <span>{flagFor(wordLanguage)}</span>
+                                    <LanguageFlag code={wordLanguage} />
                                     <span>→</span>
-                                    <span>{flagFor(explanationLanguage)}</span>
+                                    <LanguageFlag code={explanationLanguage} />
                                 </button>
                             )}
                         </>

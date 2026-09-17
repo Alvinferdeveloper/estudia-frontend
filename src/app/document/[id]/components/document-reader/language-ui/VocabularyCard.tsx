@@ -11,7 +11,6 @@ import {
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import {
   LanguageCode,
-  SUPPORTED_LANGUAGES,
   VocabularyEntry,
   VocabularyExplanation,
 } from "@/app/types";
@@ -19,9 +18,6 @@ import { useVocabularyExplanation } from "@/app/document/[id]/hooks/useVocabular
 import { useVocabularyDialog } from "@/app/document/[id]/hooks/useVocabularyDialog";
 import { CardFront } from "./CardFront";
 import { CardBack } from "./CardBack";
-
-const flagFor = (code: LanguageCode) =>
-  SUPPORTED_LANGUAGES.find((l) => l.code === code)?.flag ?? code;
 
 interface SaveEntryData {
   selectedText: string;
@@ -193,8 +189,8 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
               >
                 <CardFront
                   word={selectedText}
-                  wordFlag={flagFor(wordLanguage)}
-                  explanationFlag={flagFor(explanationLanguage)}
+                  wordLanguage={wordLanguage}
+                  explanationLanguage={explanationLanguage}
                   isLoading={explanationMutation.isPending}
                   error={explanationMutation.error?.message}
                   onConjure={handleConjure}
@@ -212,8 +208,8 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
                 {displayExplanation && (
                   <CardBack
                     explanation={displayExplanation}
-                    wordFlag={flagFor(wordLanguage)}
-                    explanationFlag={flagFor(explanationLanguage)}
+                    wordLanguage={wordLanguage}
+                    explanationLanguage={explanationLanguage}
                     isRegenerating={explanationMutation.isPending}
                     onRegenerate={handleRegenerate}
                     isEditMode={!!localEntry}
