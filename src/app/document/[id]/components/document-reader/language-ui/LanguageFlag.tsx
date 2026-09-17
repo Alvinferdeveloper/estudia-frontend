@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { LanguageCode, SUPPORTED_LANGUAGES } from "@/app/types";
+import { getLanguageOption, LanguageCode } from "@/app/types";
+import { FlagImage } from "./FlagImage";
 
 interface LanguageFlagProps {
   code: LanguageCode;
@@ -7,16 +7,8 @@ interface LanguageFlagProps {
 }
 
 export const LanguageFlag: React.FC<LanguageFlagProps> = ({ code, className }) => {
-  const option = SUPPORTED_LANGUAGES.find((l) => l.code === code);
+  const option = getLanguageOption(code);
   if (!option) return null;
 
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`https://flagcdn.com/${option.countryCode.toLowerCase()}.svg`}
-      alt={option.label}
-      title={option.label}
-      className={cn("inline-block h-3 w-4 rounded-[2px] object-cover align-[-1px]", className)}
-    />
-  );
+  return <FlagImage countryCode={option.countryCode} label={option.label} className={className} />;
 };

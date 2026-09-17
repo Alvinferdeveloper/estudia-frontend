@@ -106,6 +106,9 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     { code: 'es', label: 'Español', countryCode: 'ES' },
 ];
 
+export const getLanguageOption = (code: LanguageCode): LanguageOption | undefined =>
+    SUPPORTED_LANGUAGES.find((l) => l.code === code);
+
 export interface VocabularyMeaning {
     partOfSpeech?: string;
     definition: string;

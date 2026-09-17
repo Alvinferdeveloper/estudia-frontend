@@ -1,6 +1,6 @@
-import { Sparkles, Wand2 } from "lucide-react";
+import { Languages, Wand2 } from "lucide-react";
 import { LanguageCode } from "@/app/types";
-import { RuneLoader } from "./RuneLoader";
+import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
 
 interface CardFrontProps {
@@ -30,7 +30,7 @@ export const CardFront: React.FC<CardFrontProps> = ({
         <span className="absolute bottom-3 right-3 text-xs text-violet-300/50">✦</span>
 
         <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-violet-500/15 ring-1 ring-violet-400/40">
-          <Sparkles className="h-5 w-5 text-violet-300" />
+          <Languages className="h-5 w-5 text-violet-300" />
         </div>
 
         <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-violet-300/70">
@@ -45,7 +45,7 @@ export const CardFront: React.FC<CardFrontProps> = ({
 
         <div className="mt-6 min-h-[68px]">
           {isLoading ? (
-            <RuneLoader />
+            <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
           ) : (
             <button
               onClick={onConjure}

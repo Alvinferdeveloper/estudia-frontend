@@ -1,7 +1,7 @@
 import { AlertTriangle, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { LanguageCode, VocabularyExplanation } from "@/app/types";
 import { NoteColorPicker } from "@/app/document/[id]/components/document-reader/note-ui";
-import { RuneLoader } from "./RuneLoader";
+import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
 
 interface CardBackProps {
@@ -50,7 +50,7 @@ export const CardBack: React.FC<CardBackProps> = ({
         {/* Scrollable body */}
         {isRegenerating ? (
           <div className="flex flex-1 items-center justify-center py-10">
-            <RuneLoader label="Reconjurando…" />
+            <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">

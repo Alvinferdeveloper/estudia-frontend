@@ -387,41 +387,6 @@
   animation: pulse-soft 2.6s ease-in-out infinite;
 }
 
-/* Language Mode — arcane "magic card" vocabulary reveal. */
-@keyframes rune-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.animate-rune-spin {
-  animation: rune-spin 5s linear infinite;
-  will-change: transform;
-}
-
-@keyframes rune-spin-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-.animate-rune-spin-reverse {
-  animation: rune-spin-reverse 3.4s linear infinite;
-  will-change: transform;
-}
-
-@keyframes arcane-glow {
-  0%, 100% { opacity: 0.55; transform: scale(0.96); }
-  50% { opacity: 1; transform: scale(1.04); }
-}
-.animate-arcane-glow {
-  animation: arcane-glow 2.4s ease-in-out infinite;
-}
-
-@keyframes sparkle-flicker {
-  0%, 100% { opacity: 0.15; transform: scale(0.7); }
-  50% { opacity: 1; transform: scale(1); }
-}
-.animate-sparkle {
-  animation: sparkle-flicker 1.8s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
 
   [class*="animate-in"],
@@ -429,11 +394,7 @@
   .animate-float,
   .animate-blob,
   .animate-blob-delayed,
-  .animate-pulse-soft,
-  .animate-rune-spin,
-  .animate-rune-spin-reverse,
-  .animate-arcane-glow,
-  .animate-sparkle {
+  .animate-pulse-soft {
     animation: none !important;
   }
 
