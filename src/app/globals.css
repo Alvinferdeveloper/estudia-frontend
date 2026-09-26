@@ -73,6 +73,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-reader-canvas: var(--reader-canvas);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -145,6 +146,9 @@
 
   /* Marketing accent (landing page): reuses the chart-3 amber already in the palette */
   --marketing-accent: var(--chart-3);
+
+  /* Document reader tray behind PDF pages — needs real contrast against a white page, unlike --muted */
+  --reader-canvas: oklch(0.89 0.004 255);
 }
 
 .dark {
@@ -209,6 +213,8 @@
   --info-foreground: oklch(0.16 0.01 230);
   --danger: var(--destructive);
   --danger-foreground: var(--destructive-foreground);
+
+  --reader-canvas: oklch(0.10 0.006 255);
 }
 
 @layer base {
@@ -230,9 +236,9 @@
   user-select: text !important;
 }
 
-/* react-pdf-highlighter-extended ships a hardcoded dark background that flashes against our PdfSkeleton */
+/* react-pdf-highlighter-extended ships a hardcoded dark background that ignores our theme */
 .PdfHighlighter {
-  background-color: transparent !important;
+  background-color: var(--reader-canvas) !important;
 }
 
 /* Syntax highlighting for code blocks */

@@ -167,7 +167,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     }, [onTextSelection, onRegionSelection]);
 
     return (
-        <div className="flex-1 overflow-hidden bg-muted/30 relative">
+        <div className="flex-1 overflow-hidden bg-reader-canvas relative">
             <PdfLoader
                 document={publicUrl}
                 beforeLoad={() => <PdfSkeleton />}
