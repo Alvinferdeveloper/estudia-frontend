@@ -230,6 +230,11 @@
   user-select: text !important;
 }
 
+/* react-pdf-highlighter-extended ships a hardcoded dark background that flashes against our PdfSkeleton */
+.PdfHighlighter {
+  background-color: transparent !important;
+}
+
 /* Syntax highlighting for code blocks */
 .hljs {
   background: transparent !important;
