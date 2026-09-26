@@ -6,6 +6,7 @@ import "react-pdf-highlighter-extended/dist/esm/style/PdfHighlighter.css";
 import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
 import { AnnotationRect, BoundingRect } from "@/app/types";
 import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
+import { PdfSkeleton } from "./PdfSkeleton";
 
 interface RegionSelection {
     imageBase64: string;
@@ -169,7 +170,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
         <div className="flex-1 overflow-hidden bg-muted/30 relative">
             <PdfLoader
                 document={publicUrl}
-                beforeLoad={() => <div className="p-8">Loading PDF...</div>}
+                beforeLoad={() => <PdfSkeleton />}
                 workerSrc="https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"
             >
                 {(pdfDoc) => {
