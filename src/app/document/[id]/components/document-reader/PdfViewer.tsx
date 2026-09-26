@@ -108,6 +108,15 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
         }
     }, [scale]);
 
+    // The library snapshots selectionTip synchronously on mouseup, before our state catches up — push fresh content into the tip once it does.
+    useEffect(() => {
+        const utils = utilsRef.current;
+        const currentTip = utils?.getTip?.();
+        if (currentTip) {
+            utils.setTip({ ...currentTip, content: selectionTip });
+        }
+    }, [selectionTip]);
+
     const highlights = useMemo(() => {
         return highlightItems.map((item) => ({
             id: item.id,

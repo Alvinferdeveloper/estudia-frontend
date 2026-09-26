@@ -23,9 +23,11 @@ export const useQuickTranslate = (): UseQuickTranslateReturn => {
   const [detectedSourceLanguage, setDetectedSourceLanguage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const requestIdRef = useRef(0);
 
   const clear = useCallback(() => {
     abortRef.current?.abort();
+    requestIdRef.current += 1;
     setTranslation(null);
     setDetectedSourceLanguage(null);
     setIsLoading(false);
@@ -33,6 +35,7 @@ export const useQuickTranslate = (): UseQuickTranslateReturn => {
 
   const translate = useCallback((rawText: string, targetLanguage = "es") => {
     abortRef.current?.abort();
+    const requestId = ++requestIdRef.current;
 
     const text = rawText.trim();
     if (!text) {
@@ -63,18 +66,19 @@ export const useQuickTranslate = (): UseQuickTranslateReturn => {
         { withCredentials: true, signal: controller.signal }
       )
       .then(({ data }) => {
+        if (requestIdRef.current !== requestId) return;
         const detected = data.detectedSourceLanguage ?? null;
         translationCache.set(key, { translatedText: data.translatedText, detectedSourceLanguage: detected });
         setTranslation(data.translatedText);
         setDetectedSourceLanguage(detected);
       })
       .catch((err) => {
-        if (axios.isCancel(err)) return;
+        if (axios.isCancel(err) || requestIdRef.current !== requestId) return;
         // Silent failure: the bubble just doesn't appear, reading isn't interrupted.
         setTranslation(null);
       })
       .finally(() => {
-        if (abortRef.current === controller) setIsLoading(false);
+        if (requestIdRef.current === requestId) setIsLoading(false);
       });
   }, []);
 

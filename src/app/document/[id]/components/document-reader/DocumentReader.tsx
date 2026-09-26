@@ -380,21 +380,23 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             regionMode={regionMode}
                             onRegionSelection={handleRegionSelection}
                             selectionTip={
-                                selectedText && !examMode && (
-                                    <div className="flex flex-col items-center gap-1.5">
-                                        <QuickTranslateBubble
-                                            translation={quickTranslate.translation}
-                                            isLoading={quickTranslate.isLoading}
-                                        />
-                                        <SelectionPopup
-                                            selectedText={selectedText}
-                                            mode={languageMode.enabled ? "language" : "notes"}
-                                            onChatClick={handleChatToggle}
-                                            onCreateNoteClick={handleNoteDialogOpen}
-                                            onExplainClick={handleExplainClick}
-                                        />
-                                    </div>
-                                )
+                                <div>
+                                    {selectedText && !examMode && (
+                                        <div key={selectedText} className="flex flex-col items-center gap-1.5">
+                                            <QuickTranslateBubble
+                                                translation={quickTranslate.translation}
+                                                isLoading={quickTranslate.isLoading}
+                                            />
+                                            <SelectionPopup
+                                                selectedText={selectedText}
+                                                mode={languageMode.enabled ? "language" : "notes"}
+                                                onChatClick={handleChatToggle}
+                                                onCreateNoteClick={handleNoteDialogOpen}
+                                                onExplainClick={handleExplainClick}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             }
                             examMode={examMode}
                             selectedPages={selectedPages}
