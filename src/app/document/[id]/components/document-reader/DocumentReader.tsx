@@ -13,6 +13,8 @@ import { useVocabularyActions } from "@/app/document/[id]/hooks/useVocabularyAct
 import { useLanguageMode } from "@/app/document/[id]/hooks/useLanguageMode";
 import { useDocumentImages } from "@/app/document/[id]/hooks/useDocumentImages";
 import { useVisualQuery } from "@/app/document/[id]/hooks/useVisualQuery";
+import { useQuickTranslate } from "@/app/document/[id]/hooks/useQuickTranslate";
+import { useDocumentLanguages } from "@/app/document/[id]/hooks/useDocumentLanguages";
 import { findOverlappingImage } from "@/app/document/[id]/lib/region-overlap";
 import { UIMessage } from "ai";
 
@@ -21,6 +23,7 @@ import { PdfControls } from "@/app/document/[id]/components/document-reader/PdfC
 import { PdfViewer, PdfHighlightItem } from "@/app/document/[id]/components/document-reader/PdfViewer";
 import { ChatSidebar } from "@/app/document/[id]/components/document-reader/ChatSidebar";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
+import { QuickTranslateBubble } from "@/app/document/[id]/components/document-reader/QuickTranslateBubble";
 import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
 import { VocabularyCard } from "@/app/document/[id]/components/document-reader/language-ui";
 import { VisualQueryPanel } from "@/app/document/[id]/components/document-reader/VisualQueryPanel";
@@ -151,6 +154,22 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         clearSelection,
     } = useTextSelection({ onTextSelected: addContextMessage });
 
+    const languageMode = useLanguageMode(document.id);
+
+    // Instant translation popup on any selection, any mode.
+    const quickTranslate = useQuickTranslate();
+    const lang = useDocumentLanguages(selectedText, quickTranslate);
+
+    useEffect(() => {
+        if (selectedText) {
+            quickTranslate.translate(selectedText, lang.target);
+        } else {
+            quickTranslate.clear();
+        }
+        // Only the selected text / target should re-trigger a translation.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedText, lang.target]);
+
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
     const [editingAnnotation, setEditingAnnotation] = useState<Annotation | null>(null);
@@ -187,8 +206,6 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     };
 
     // ─── Language Mode (vocabulary study) ───────────────────────────────
-    const languageMode = useLanguageMode(document.id);
-
     const {
         vocabularyEntries,
         handleColorChange: handleVocabularyColorChange,
@@ -326,10 +343,12 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 onEnableExamMode={handleEnableExamMode}
                 onDisableExamMode={handleDisableExamMode}
                 languageModeEnabled={languageMode.enabled}
-                wordLanguage={languageMode.wordLanguage}
-                explanationLanguage={languageMode.explanationLanguage}
+                wordLanguage={lang.documentLanguage}
+                explanationLanguage={lang.target}
                 onToggleLanguageMode={languageMode.toggle}
-                onFlipLanguageDirection={languageMode.flipDirection}
+                isTargetEditable={lang.isFallbackActive}
+                availableTargets={lang.availableFallbackTargets}
+                onTargetChange={lang.setFallbackTarget}
             />
 
             <div className="flex-1 overflow-hidden">
@@ -362,13 +381,19 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             onRegionSelection={handleRegionSelection}
                             selectionTip={
                                 selectedText && !examMode && (
-                                    <SelectionPopup
-                                        selectedText={selectedText}
-                                        mode={languageMode.enabled ? "language" : "notes"}
-                                        onChatClick={handleChatToggle}
-                                        onCreateNoteClick={handleNoteDialogOpen}
-                                        onExplainClick={handleExplainClick}
-                                    />
+                                    <div className="flex flex-col items-center gap-1.5">
+                                        <QuickTranslateBubble
+                                            translation={quickTranslate.translation}
+                                            isLoading={quickTranslate.isLoading}
+                                        />
+                                        <SelectionPopup
+                                            selectedText={selectedText}
+                                            mode={languageMode.enabled ? "language" : "notes"}
+                                            onChatClick={handleChatToggle}
+                                            onCreateNoteClick={handleNoteDialogOpen}
+                                            onExplainClick={handleExplainClick}
+                                        />
+                                    </div>
                                 )
                             }
                             examMode={examMode}
@@ -441,8 +466,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 onClose={handleVocabularyCardClose}
                 anchorRect={vocabularyAnchorRect}
                 selectedText={editingVocabularyEntry?.selectedText || selectedText || ""}
-                wordLanguage={languageMode.wordLanguage}
-                explanationLanguage={languageMode.explanationLanguage}
+                wordLanguage={lang.explainWordLanguage}
+                explanationLanguage={lang.readerLanguage}
                 documentFileName={document.fileName}
                 onSaveEntry={handleSaveEntry}
                 onDeleteEntry={handleDeleteEntry}

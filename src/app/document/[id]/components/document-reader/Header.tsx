@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { BookOpen, Loader2, Download, ArrowLeft, Languages } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -14,7 +15,7 @@ import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/docume
 import { ExamMode } from "@/app/document/[id]/components/exam/ExamMode";
 import { LanguageFlag } from "@/app/document/[id]/components/document-reader/language-ui";
 import { DocumentFile } from "@/app/document/[id]/page";
-import { LanguageCode } from "@/app/types";
+import { LanguageCode, LanguageOption } from "@/app/types";
 
 interface HeaderProps {
     fileName: string;
@@ -30,7 +31,9 @@ interface HeaderProps {
     wordLanguage?: LanguageCode;
     explanationLanguage?: LanguageCode;
     onToggleLanguageMode?: () => void;
-    onFlipLanguageDirection?: () => void;
+    isTargetEditable?: boolean;
+    availableTargets?: LanguageOption[];
+    onTargetChange?: (code: LanguageCode) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -47,8 +50,11 @@ export const Header: React.FC<HeaderProps> = ({
     wordLanguage = "en",
     explanationLanguage = "es",
     onToggleLanguageMode,
-    onFlipLanguageDirection,
+    isTargetEditable = false,
+    availableTargets = [],
+    onTargetChange,
 }) => {
+    const [isTargetPickerOpen, setIsTargetPickerOpen] = useState(false);
     const { mutate: exportNotes, isPending } = useExportAnnotations(documentId);
 
     const handleExport = (format: ExportFormat) => {
@@ -102,17 +108,38 @@ export const Header: React.FC<HeaderProps> = ({
                                 <Languages className="h-4 w-4" />
                                 Modo Idioma
                             </button>
-                            {languageModeEnabled && onFlipLanguageDirection && (
-                                <button
-                                    onClick={onFlipLanguageDirection}
-                                    title="Invertir dirección de estudio"
-                                    className="press-feedback flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500 transition-colors duration-150 hover:bg-violet-500/20"
-                                >
-                                    <LanguageFlag code={wordLanguage} />
-                                    <span>→</span>
+                            <div className="relative flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500">
+                                <LanguageFlag code={wordLanguage} />
+                                <span>→</span>
+                                {isTargetEditable ? (
+                                    <button
+                                        onClick={() => setIsTargetPickerOpen((open) => !open)}
+                                        title="Cambiar idioma de traducción"
+                                        className="press-feedback"
+                                    >
+                                        <LanguageFlag code={explanationLanguage} />
+                                    </button>
+                                ) : (
                                     <LanguageFlag code={explanationLanguage} />
-                                </button>
-                            )}
+                                )}
+                                {isTargetPickerOpen && isTargetEditable && (
+                                    <div className="absolute right-0 top-full z-20 mt-1 flex gap-1 rounded-full border border-violet-500/30 bg-card p-1 shadow-lg">
+                                        {availableTargets.map((option) => (
+                                            <button
+                                                key={option.code}
+                                                onClick={() => {
+                                                    onTargetChange?.(option.code);
+                                                    setIsTargetPickerOpen(false);
+                                                }}
+                                                title={option.label}
+                                                className="press-feedback flex h-6 w-8 items-center justify-center rounded-full hover:bg-accent"
+                                            >
+                                                <LanguageFlag code={option.code} className="h-full w-full" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </>
                     )}
                     <Separator orientation="vertical" className="mx-1 h-5" />

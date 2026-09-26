@@ -1,65 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
-import { LanguageCode } from "@/app/types";
-
-interface LanguageModeState {
-  enabled: boolean;
-  wordLanguage: LanguageCode;
-  explanationLanguage: LanguageCode;
-}
-
-const DEFAULT_STATE: LanguageModeState = {
-  enabled: false,
-  wordLanguage: "en",
-  explanationLanguage: "es",
-};
 
 const storageKey = (documentId: string) => `languageMode:${documentId}`;
 
+// The only real per-document preference is whether Language Mode is on —
+// word/explanation language are derived live (detected document language,
+// reader's own language), not chosen or persisted.
 export const useLanguageMode = (documentId: string) => {
-  const [state, setState] = useState<LanguageModeState>(DEFAULT_STATE);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(storageKey(documentId));
-      if (raw) {
-        setState({ ...DEFAULT_STATE, ...JSON.parse(raw) });
-      }
+      setEnabled(window.localStorage.getItem(storageKey(documentId)) === "true");
     } catch {
-      // ignore malformed/local storage access errors, fall back to defaults
+      setEnabled(false);
     }
   }, [documentId]);
 
-  const persist = useCallback(
-    (next: LanguageModeState) => {
-      setState(next);
+  const toggle = useCallback(() => {
+    setEnabled((prev) => {
+      const next = !prev;
       try {
-        window.localStorage.setItem(storageKey(documentId), JSON.stringify(next));
+        window.localStorage.setItem(storageKey(documentId), String(next));
       } catch {
         // ignore storage errors (e.g. private browsing quota)
       }
-    },
-    [documentId]
-  );
-
-  const toggle = useCallback(() => {
-    persist({ ...state, enabled: !state.enabled });
-  }, [persist, state]);
-
-  const flipDirection = useCallback(() => {
-    persist({
-      ...state,
-      wordLanguage: state.explanationLanguage,
-      explanationLanguage: state.wordLanguage,
+      return next;
     });
-  }, [persist, state]);
+  }, [documentId]);
 
-  return {
-    enabled: state.enabled,
-    wordLanguage: state.wordLanguage,
-    explanationLanguage: state.explanationLanguage,
-    toggle,
-    flipDirection,
-  };
+  return { enabled, toggle };
 };
 
 export type UseLanguageModeReturn = ReturnType<typeof useLanguageMode>;

@@ -109,6 +109,9 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
 export const getLanguageOption = (code: LanguageCode): LanguageOption | undefined =>
     SUPPORTED_LANGUAGES.find((l) => l.code === code);
 
+export const isSupportedLanguage = (code: string): code is LanguageCode =>
+    SUPPORTED_LANGUAGES.some((l) => l.code === code);
+
 export interface VocabularyMeaning {
     partOfSpeech?: string;
     definition: string;
