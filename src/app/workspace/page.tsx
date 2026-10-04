@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { UploadCloud } from "lucide-react";
 import { authClient } from "@/app/lib/auth-client";
+import { ROUTES } from "@/config/routes";
 import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
 import { useFetchItems } from "@/app/workspace/hooks/useFetchItems";
 import { useFetchRecentDocuments } from "@/app/workspace/hooks/useFetchRecentDocuments";
@@ -41,7 +42,7 @@ const DashboardPage = () => {
     const checkAuth = async () => {
       const session = await authClient.getSession();
       if (!session || !session.data || !session.data.user) {
-        router.push("/login");
+        router.push(ROUTES.login);
       }
     };
     checkAuth();

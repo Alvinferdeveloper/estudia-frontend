@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Inbox, ChevronRight, Upload, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/config/routes";
 import { DocumentCard } from "@/app/workspace/components/DocumentCard";
 import { DocumentListItem } from "@/app/workspace/components/DocumentListItem";
 import { FolderListItem } from "@/app/workspace/components/FolderListItem";
@@ -111,7 +112,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   }
 
   const handleDocumentClick = (docId: string) => {
-    router.push(`/document/${docId}`);
+    router.push(ROUTES.document(docId));
   };
 
   return (

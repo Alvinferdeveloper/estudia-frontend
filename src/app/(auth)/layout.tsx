@@ -2,6 +2,7 @@ import { Instrument_Serif } from "next/font/google";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { ROUTES } from "@/config/routes";
 import { AuthEditorialPanel } from "./components/AuthEditorialPanel";
 
 const instrumentSerif = Instrument_Serif({
@@ -17,11 +18,11 @@ export default function AuthLayout({ children }: Readonly<{ children: React.Reac
       <div className="flex flex-col px-6 py-6 sm:px-10">
         <header className="flex items-center justify-between gap-4">
           {/* On large screens the editorial panel carries the brand. */}
-          <Link href="/" className="text-foreground lg:hidden">
+          <Link href={ROUTES.home} className="text-foreground lg:hidden">
             <BrandLogo />
           </Link>
           <Link
-            href="/"
+            href={ROUTES.home}
             className="ml-auto inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ArrowLeft className="size-4" />

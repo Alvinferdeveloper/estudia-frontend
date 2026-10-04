@@ -1,8 +1,9 @@
 import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/config/routes";
 
 export type AuthMode = "login" | "register";
 
-export const AFTER_AUTH_PATH = "/workspace";
+export const AFTER_AUTH_PATH = ROUTES.workspace;
 export const MIN_PASSWORD_LENGTH = 8;
 
 // Login and register share one screen; everything that differs lives here.
@@ -16,7 +17,7 @@ export const AUTH_MODES = {
     passwordHint: undefined,
     switchPrompt: "¿Aún no tienes cuenta?",
     switchLabel: "Crear cuenta",
-    switchHref: "/register",
+    switchHref: ROUTES.register,
   },
   register: {
     title: "Crea tu cuenta",
@@ -27,6 +28,6 @@ export const AUTH_MODES = {
     passwordHint: `Mínimo ${MIN_PASSWORD_LENGTH} caracteres.`,
     switchPrompt: "¿Ya tienes cuenta?",
     switchLabel: "Entrar",
-    switchHref: "/login",
+    switchHref: ROUTES.login,
   },
 } as const;

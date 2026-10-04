@@ -2,6 +2,7 @@ import { Github, Twitter } from "lucide-react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { ROUTES } from "@/config/routes";
 
 export function Footer() {
   return (
@@ -9,7 +10,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="mb-4 inline-flex text-base">
+            <Link href={ROUTES.home} className="mb-4 inline-flex text-base">
               <BrandLogo />
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs">

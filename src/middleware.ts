@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { AUTH_ROUTES, PROTECTED_ROUTE_PREFIXES, ROUTES } from "@/config/routes";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -21,23 +22,23 @@ export async function middleware(request: NextRequest) {
     console.error("Middleware Auth Error:", error);
   }
 
-  if (pathname === "/") {
+  if (pathname === ROUTES.home) {
     if (session) {
-      return NextResponse.redirect(new URL("/workspace", request.url));
+      return NextResponse.redirect(new URL(ROUTES.workspace, request.url));
     }
     return NextResponse.next();
   }
 
   //if we try to access protected routes without a session
-  const isProtectedRoute = pathname.startsWith("/workspace") || pathname.startsWith("/document");
+  const isProtectedRoute = PROTECTED_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   if (isProtectedRoute && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL(ROUTES.login, request.url));
   }
 
   // if we try to access login or register pages with an active session
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAuthPage = AUTH_ROUTES.includes(pathname);
   if (isAuthPage && session) {
-    return NextResponse.redirect(new URL("/workspace", request.url));
+    return NextResponse.redirect(new URL(ROUTES.workspace, request.url));
   }
 
   return NextResponse.next();

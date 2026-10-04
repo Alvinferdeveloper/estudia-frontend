@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { ROUTES } from "@/config/routes";
 
 export function Header() {
   return (
     <header className="absolute top-0 inset-x-0 z-40">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-base text-foreground">
+          <Link href={ROUTES.home} className="text-base text-foreground">
             <BrandLogo />
           </Link>
           <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-foreground">
@@ -17,12 +18,12 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/login">
+          <Link href={ROUTES.login}>
             <Button variant="ghost" size="sm" className="press-feedback text-foreground/80 hover:text-foreground hover:bg-foreground/10">
               Iniciar sesión
             </Button>
           </Link>
-          <Link href="/login">
+          <Link href={ROUTES.login}>
             <Button size="sm" className="press-feedback rounded-full px-4">
               Empieza gratis
             </Button>

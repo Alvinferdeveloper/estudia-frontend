@@ -11,6 +11,7 @@ import Link from "next/link";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/config/routes";
 
 export default function SubscriptionPage() {
   const { data, isLoading, error } = usePlans();
@@ -41,7 +42,7 @@ export default function SubscriptionPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-destructive mb-4">Failed to load subscription plans</p>
-          <Link href="/workspace" className="text-primary hover:underline">
+          <Link href={ROUTES.workspace} className="text-primary hover:underline">
             Back to workspace
           </Link>
         </div>
@@ -63,7 +64,7 @@ export default function SubscriptionPage() {
             Your payment was successful and your plan has been updated. You now have access to all the features of your new plan.
           </p>
           <Button asChild className="w-full py-6 text-lg font-semibold rounded-xl">
-            <Link href="/workspace">Go to Workspace</Link>
+            <Link href={ROUTES.workspace}>Go to Workspace</Link>
           </Button>
         </div>
       </div>
@@ -91,7 +92,7 @@ export default function SubscriptionPage() {
             )}
             <div className="flex-1" />
             <Link
-              href="/workspace"
+              href={ROUTES.workspace}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all duration-200"
               aria-label="Close pricing"
             >

@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { LanguageFlag } from "@/app/document/[id]/components/document-reader/language-ui";
 import { DocumentFile } from "@/app/document/[id]/page";
 import { LanguageCode, LanguageOption } from "@/app/types";
+import { ROUTES } from "@/config/routes";
 
 interface HeaderProps {
     fileName: string;
@@ -71,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link
-                        href="/workspace"
+                        href={ROUTES.workspace}
                         className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
                         title="Volver al workspace"
                     >

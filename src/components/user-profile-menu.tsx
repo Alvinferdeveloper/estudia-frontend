@@ -23,6 +23,7 @@ import { authClient } from "@/app/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { useUsage } from "@/app/subscription/hooks/useSubscription"
 import { cn } from "@/lib/utils"
+import { ROUTES } from "@/config/routes"
 
 export function UserProfileMenu() {
     const { setTheme } = useTheme();
@@ -38,7 +39,7 @@ export function UserProfileMenu() {
         authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    router.push("/");
+                    router.push(ROUTES.home);
                 }
             }
         });
@@ -118,7 +119,7 @@ export function UserProfileMenu() {
                 )}
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/subscription")}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push(ROUTES.subscription)}>
                     <CreditCard className="mr-2 h-4 w-4" />
                     <span>Upgrade Plan</span>
                 </DropdownMenuItem>
