@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/document/[id]/hooks/useExportAnnotations";
 import { ExamMode } from "@/app/document/[id]/components/exam/ExamMode";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LanguageFlag } from "@/app/document/[id]/components/document-reader/language-ui";
 import { DocumentFile } from "@/app/document/[id]/page";
 import { LanguageCode, LanguageOption } from "@/app/types";
@@ -108,36 +109,37 @@ export const Header: React.FC<HeaderProps> = ({
                                 <Languages className="h-4 w-4" />
                                 Modo Idioma
                             </button>
-                            <div className="relative flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500">
+                            <div className="flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500">
                                 <LanguageFlag code={wordLanguage} />
                                 <span>→</span>
                                 {isTargetEditable ? (
-                                    <button
-                                        onClick={() => setIsTargetPickerOpen((open) => !open)}
-                                        title="Cambiar idioma de traducción"
-                                        className="press-feedback"
-                                    >
-                                        <LanguageFlag code={explanationLanguage} />
-                                    </button>
+                                    <Popover open={isTargetPickerOpen} onOpenChange={setIsTargetPickerOpen}>
+                                        <PopoverTrigger asChild>
+                                            <button title="Cambiar idioma de traducción" className="press-feedback">
+                                                <LanguageFlag code={explanationLanguage} />
+                                            </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            align="end"
+                                            className="flex w-auto gap-1 rounded-full border border-violet-500/30 bg-card p-1 shadow-lg"
+                                        >
+                                            {availableTargets.map((option) => (
+                                                <button
+                                                    key={option.code}
+                                                    onClick={() => {
+                                                        onTargetChange?.(option.code);
+                                                        setIsTargetPickerOpen(false);
+                                                    }}
+                                                    title={option.label}
+                                                    className="press-feedback flex h-6 w-8 items-center justify-center rounded-full hover:bg-accent"
+                                                >
+                                                    <LanguageFlag code={option.code} className="h-full w-full" />
+                                                </button>
+                                            ))}
+                                        </PopoverContent>
+                                    </Popover>
                                 ) : (
                                     <LanguageFlag code={explanationLanguage} />
-                                )}
-                                {isTargetPickerOpen && isTargetEditable && (
-                                    <div className="absolute right-0 top-full z-20 mt-1 flex gap-1 rounded-full border border-violet-500/30 bg-card p-1 shadow-lg">
-                                        {availableTargets.map((option) => (
-                                            <button
-                                                key={option.code}
-                                                onClick={() => {
-                                                    onTargetChange?.(option.code);
-                                                    setIsTargetPickerOpen(false);
-                                                }}
-                                                title={option.label}
-                                                className="press-feedback flex h-6 w-8 items-center justify-center rounded-full hover:bg-accent"
-                                            >
-                                                <LanguageFlag code={option.code} className="h-full w-full" />
-                                            </button>
-                                        ))}
-                                    </div>
                                 )}
                             </div>
                         </>
