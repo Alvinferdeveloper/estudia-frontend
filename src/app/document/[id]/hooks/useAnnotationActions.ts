@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import {
   useFetchAnnotations,
   useCreateAnnotation,
@@ -26,27 +26,6 @@ export const useAnnotationActions = ({
   const { mutate: createAnnotationMutation } = useCreateAnnotation(documentId);
   const { mutate: updateAnnotationMutation } = useUpdateAnnotation(documentId);
   const { mutate: deleteAnnotationMutation } = useDeleteAnnotation(documentId);
-
-  const [localAnnotations, setLocalAnnotations] = useState<Annotation[]>([]);
-
-  useEffect(() => {
-    setLocalAnnotations(annotations);
-  }, [annotations]);
-
-  const handleAnnotationUpdated = useCallback(
-    (updatedAnnotation: Annotation) => {
-      setLocalAnnotations((prev) =>
-        prev.length === 0
-          ? annotations.map((a) =>
-              a.id === updatedAnnotation.id ? updatedAnnotation : a
-            )
-          : prev.map((a) =>
-              a.id === updatedAnnotation.id ? updatedAnnotation : a
-            )
-      );
-    },
-    [annotations]
-  );
 
   const handleColorChange = useCallback(
     async (annotationId: string, color: string) => {
@@ -163,8 +142,7 @@ export const useAnnotationActions = ({
   );
 
   return {
-    annotations: localAnnotations,
-    handleAnnotationUpdated,
+    annotations,
     handleColorChange,
     handleSaveNote,
     handleDeleteNote,

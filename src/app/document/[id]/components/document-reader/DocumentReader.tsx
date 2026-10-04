@@ -22,7 +22,7 @@ import { PdfViewer, PdfHighlightItem } from "@/app/document/[id]/components/docu
 import { ChatPanel } from "@/app/document/[id]/components/document-reader/chat";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
 import { QuickTranslateBubble } from "@/app/document/[id]/components/document-reader/QuickTranslateBubble";
-import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
+import { NoteDialog } from "@/app/document/[id]/components/document-reader/note-ui";
 import { VocabularyCard } from "@/app/document/[id]/components/document-reader/language-ui";
 import { VisualQueryPanel } from "@/app/document/[id]/components/document-reader/VisualQueryPanel";
 import { DocumentFile } from "@/app/document/[id]/page";
@@ -100,7 +100,6 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     const {
         annotations,
-        handleAnnotationUpdated,
         handleColorChange,
         handleSaveNote,
         handleDeleteNote,
@@ -346,7 +345,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 </Group>
             </div>
 
-            <StreamingNoteDialog
+            <NoteDialog
                 isOpen={isNoteDialogOpen}
                 onClose={handleNoteDialogClose}
                 selectedText={editingAnnotation?.selectedText || selectedText || ""}
@@ -362,7 +361,6 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         ? handleColorChange(editingAnnotation.id, color)
                         : Promise.resolve()
                 }
-                onAnnotationUpdated={handleAnnotationUpdated}
                 existingAnnotation={editingAnnotation}
             />
 

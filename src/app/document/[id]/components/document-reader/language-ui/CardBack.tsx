@@ -145,7 +145,7 @@ export const CardBack: React.FC<CardBackProps> = ({
           <NoteColorPicker
             selectedColor={selectedColor}
             onColorChange={onColorChange}
-            size="sm"
+            className="text-violet-200"
           />
           <div className="flex items-center gap-1">
             {isEditMode && onDelete && (
