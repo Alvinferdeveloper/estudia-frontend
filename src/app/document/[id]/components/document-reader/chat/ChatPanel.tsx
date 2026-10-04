@@ -4,11 +4,12 @@ import { useState } from "react";
 import { ArrowLeft, History, SquarePen, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UseChatSessionReturn } from "@/app/document/[id]/hooks/useChatSession";
-import { ChatIconButton } from "./ChatIconButton";
+import { IconButton } from "@/components/ui/icon-button";
+import { TextQuote } from "@/app/document/[id]/components/document-reader/shared/TextQuote";
+import { PromptComposer } from "@/app/document/[id]/components/document-reader/shared/PromptComposer";
 import { ChatPanelHeader } from "./ChatPanelHeader";
 import { ChatMessageList } from "./ChatMessageList";
 import { ChatEmptyState } from "./ChatEmptyState";
-import { ChatComposer } from "./ChatComposer";
 import { ConversationHistory } from "./ConversationHistory";
 
 interface ChatPanelProps {
@@ -32,12 +33,12 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
 
   const headerActions = (
     <>
-      <ChatIconButton label="Nueva conversación" onClick={startNewConversation} disabled={isEmptyDraft && view === "chat"}>
+      <IconButton label="Nueva conversación" onClick={startNewConversation} disabled={isEmptyDraft && view === "chat"}>
         <SquarePen />
-      </ChatIconButton>
-      <ChatIconButton label="Cerrar asistente" onClick={onClose}>
+      </IconButton>
+      <IconButton label="Cerrar asistente" onClick={onClose}>
         <X />
-      </ChatIconButton>
+      </IconButton>
     </>
   );
 
@@ -47,9 +48,9 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
         <div key="history" className={cn(viewTransition, "slide-in-from-left-2")}>
           <ChatPanelHeader
             leading={
-              <ChatIconButton label="Volver al chat" onClick={() => setView("chat")}>
+              <IconButton label="Volver al chat" onClick={() => setView("chat")}>
                 <ArrowLeft />
-              </ChatIconButton>
+              </IconButton>
             }
             title="Conversaciones"
             actions={headerActions}
@@ -70,9 +71,9 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
         <div key="chat" className={cn(viewTransition, "slide-in-from-right-2")}>
           <ChatPanelHeader
             leading={
-              <ChatIconButton label="Ver conversaciones" onClick={() => setView("history")}>
+              <IconButton label="Ver conversaciones" onClick={() => setView("history")}>
                 <History />
-              </ChatIconButton>
+              </IconButton>
             }
             title={session.activeConversation?.title ?? "Nueva conversación"}
             actions={headerActions}
@@ -86,13 +87,26 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
             onRetry={session.retry}
             onSuggestionSelect={session.send}
           />
-          <ChatComposer
-            isBusy={isBusy}
-            context={session.context}
-            onSend={session.send}
-            onStop={session.stop}
-            onClearContext={session.clearContext}
-          />
+          <div className="shrink-0 px-3 pb-3">
+            <PromptComposer
+              label="Mensaje para el asistente"
+              placeholder={session.context ? "Pregunta sobre este fragmento…" : "Pregunta sobre el documento…"}
+              isBusy={isBusy}
+              onSubmit={session.send}
+              onStop={session.stop}
+              focusKey={session.context}
+              header={
+                session.context && (
+                  <TextQuote
+                    text={session.context.text}
+                    caption={`Pág. ${session.context.page}`}
+                    onRemove={session.clearContext}
+                  />
+                )
+              }
+              className="mx-auto max-w-[68ch]"
+            />
+          </div>
         </div>
       )}
     </section>

@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChatIconButton } from "./ChatIconButton";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -93,12 +93,12 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <ChatIconButton
+          <IconButton
             label="Opciones de la conversación"
             className="absolute inset-y-0 right-1 my-auto size-7 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 [@media(hover:none)]:opacity-100"
           >
             <Ellipsis />
-          </ChatIconButton>
+          </IconButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
