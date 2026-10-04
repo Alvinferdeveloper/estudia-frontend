@@ -2,17 +2,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Message } from '@/app/types';
 
-const createMessage = async ({
-  documentId,
-  conversationId,
-  role,
-  content,
-}: {
-  documentId: string;
+interface CreateMessageInput {
   conversationId: string;
   role: 'user' | 'assistant';
   content: string;
-}): Promise<Message> => {
+}
+
+const createMessage = async (
+  documentId: string,
+  { conversationId, role, content }: CreateMessageInput
+): Promise<Message> => {
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/conversations/${conversationId}/messages`,
     { role, content },
@@ -21,15 +20,12 @@ const createMessage = async ({
   return data;
 };
 
-export const useCreateMessage = (documentId: string, conversationId: string | null) => {
+// The conversation is part of each call so a reply can't be saved into a conversation the user switched to mid-stream.
+export const useCreateMessage = (documentId: string) => {
   const queryClient = useQueryClient();
-  return useMutation<Message, Error, {
-    role: 'user' | 'assistant';
-    content: string;
-  }>({
-    mutationFn: (newMessage) =>
-      createMessage({ documentId, conversationId: conversationId as string, ...newMessage }),
-    onSuccess: () => {
+  return useMutation<Message, Error, CreateMessageInput>({
+    mutationFn: (input) => createMessage(documentId, input),
+    onSuccess: (_, { conversationId }) => {
       queryClient.invalidateQueries({
         queryKey: ['messages', documentId, conversationId],
       });

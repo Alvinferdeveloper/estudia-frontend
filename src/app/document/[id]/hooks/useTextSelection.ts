@@ -15,10 +15,6 @@ export interface TextSelection {
   pageNumber: number;
 }
 
-export interface UseTextSelectionOptions {
-  onTextSelected?: (text: string, page: number) => void;
-}
-
 export interface UseTextSelectionReturn {
   selectedText: string | null;
   selectionRects: SelectionRect[];
@@ -28,7 +24,7 @@ export interface UseTextSelectionReturn {
   clearSelection: () => void;
 }
 
-export const useTextSelection = (options?: UseTextSelectionOptions): UseTextSelectionReturn => {
+export const useTextSelection = (): UseTextSelectionReturn => {
   const [selectedText, setSelectedText] = useState<string | null>(null);
   const [selectionRects, setSelectionRects] = useState<SelectionRect[]>([]);
   const [selectedPage, setSelectedPage] = useState<number>(1);
@@ -37,8 +33,7 @@ export const useTextSelection = (options?: UseTextSelectionOptions): UseTextSele
     setSelectedText(selection.text);
     setSelectionRects(selection.rects);
     setSelectedPage(selection.pageNumber);
-    options?.onTextSelected?.(selection.text, selection.pageNumber);
-  }, [options]);
+  }, []);
 
   const clearSelection = useCallback(() => {
     setSelectedText(null);

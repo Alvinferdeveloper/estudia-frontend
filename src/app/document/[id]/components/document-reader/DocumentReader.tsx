@@ -1,13 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Group, Panel, Separator } from "react-resizable-panels";
+import { Group, Panel } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/document/[id]/hooks/useDocumentViewer";
 import { useTextSelection } from "@/app/document/[id]/hooks/useTextSelection";
-import { useChatAssistant } from "@/app/document/[id]/hooks/useChatAssistant";
-import { useCreateMessage } from "@/app/document/[id]/hooks/useCreateMessage";
-import { useConversations } from "@/app/document/[id]/hooks/useConversations";
+import { useChatSession } from "@/app/document/[id]/hooks/useChatSession";
 import { useAnnotationActions } from "@/app/document/[id]/hooks/useAnnotationActions";
 import { useVocabularyActions } from "@/app/document/[id]/hooks/useVocabularyActions";
 import { useLanguageMode } from "@/app/document/[id]/hooks/useLanguageMode";
@@ -17,12 +14,12 @@ import { useQuickTranslate } from "@/app/document/[id]/hooks/useQuickTranslate";
 import { useDocumentLanguages } from "@/app/document/[id]/hooks/useDocumentLanguages";
 import { LiveAnchorTarget } from "@/app/document/[id]/hooks/useLiveAnchor";
 import { findOverlappingImage } from "@/app/document/[id]/lib/region-overlap";
-import { UIMessage } from "ai";
+import { ResizeHandle } from "@/components/ui/resize-handle";
 
 import { Header } from "@/app/document/[id]/components/document-reader/Header";
 import { PdfControls } from "@/app/document/[id]/components/document-reader/PdfControls";
 import { PdfViewer, PdfHighlightItem } from "@/app/document/[id]/components/document-reader/PdfViewer";
-import { ChatSidebar } from "@/app/document/[id]/components/document-reader/ChatSidebar";
+import { ChatPanel } from "@/app/document/[id]/components/document-reader/chat";
 import { SelectionPopup } from "@/app/document/[id]/components/document-reader/SelectionPopup";
 import { QuickTranslateBubble } from "@/app/document/[id]/components/document-reader/QuickTranslateBubble";
 import { StreamingNoteDialog } from "@/app/document/[id]/components/document-reader/StreamingNoteDialog";
@@ -49,55 +46,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [examMode, setExamMode] = useState(false);
     const [selectedPages, setSelectedPages] = useState<number[]>([]);
     const [pdfDoc, setPdfDoc] = useState<any>(null);
-    const [conversationId, setConversationId] = useState<string | null>(null);
 
-    const {
-        list: conversations,
-        create: createConversation,
-        remove: deleteConversation,
-        rename: renameConversation,
-    } = useConversations(document.id);
-
-    const { mutate: createMessage } = useCreateMessage(document.id, conversationId);
-
-    const {
-        messages,
-        input,
-        isLoading: isChatLoading,
-        handleInputChange,
-        handleFormSubmit,
-        setMessages,
-        setInput,
-    } = useChatAssistant({
+    const chat = useChatSession({
         documentId: document.id,
         documentName: document.fileName,
-        conversationId,
     });
-
-    useEffect(() => {
-        if (
-            !conversationId &&
-            conversations.data &&
-            conversations.data.length > 0
-        ) {
-            setConversationId(conversations.data[0].id);
-        }
-    }, [conversations.data, conversationId]);
-
-    const handleNewConversation = async () => {
-        const conv = await createConversation.mutateAsync({});
-        setConversationId(conv.id);
-    };
-
-    const handleSelectConversation = (id: string) => setConversationId(id);
-
-    const handleDeleteConversation = async (id: string) => {
-        await deleteConversation.mutateAsync(id);
-        if (id === conversationId) setConversationId(null);
-    };
-
-    const handleRenameConversation = (id: string, title: string) =>
-        renameConversation.mutateAsync({ id, title });
 
     const handleTogglePage = (pageNumber: number) => {
         setSelectedPages(prev => {
@@ -117,43 +70,13 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         setSelectedPages([]);
     };
 
-    const handleSuggestionSubmit = (suggestion: string) => {
-        setInput(suggestion);
-        setIsChatOpen(true);
-        setTimeout(() => {
-            const form = window.document.querySelector('form') as HTMLFormElement;
-            if (form) {
-                form.requestSubmit();
-            }
-        }, 100);
-    };
-
-    const addContextMessage = (text: string, page: number) => {
-        const content = `📌 Texto seleccionado (pág. ${page}):\n\n"${text}"\n\nPregunta lo que quieras sobre este fragmento.`;
-        const contextMessage: UIMessage = {
-            id: `context-${Date.now()}`,
-            role: "assistant",
-            parts: [{ type: "text" as const, text: content }],
-        };
-        setMessages((msgs) => {
-            const lastMsg = msgs[msgs.length - 1];
-            if (lastMsg?.role === "assistant" && lastMsg.id.startsWith("context-")) {
-                return msgs;
-            }
-            return [...msgs, contextMessage];
-        });
-        if (conversationId) {
-            createMessage({ role: "assistant", content });
-        }
-    };
-
     const {
         selectedText,
         selectionRects,
         selectedPage,
         handleTextSelection,
         clearSelection,
-    } = useTextSelection({ onTextSelected: addContextMessage });
+    } = useTextSelection();
 
     const languageMode = useLanguageMode(document.id);
 
@@ -189,6 +112,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     });
 
     const handleChatToggle = () => setIsChatOpen((prev) => !prev);
+
+    const handleAskAboutSelection = () => {
+        if (selectedText) chat.attachContext({ text: selectedText, page: selectedPage });
+        setIsChatOpen(true);
+    };
 
     const handleNoteDialogOpen = () => {
         setEditingAnnotation(null);
@@ -390,7 +318,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                             <SelectionPopup
                                                 selectedText={selectedText}
                                                 mode={languageMode.enabled ? "language" : "notes"}
-                                                onChatClick={handleChatToggle}
+                                                onChatClick={handleAskAboutSelection}
                                                 onCreateNoteClick={handleNoteDialogOpen}
                                                 onExplainClick={handleExplainClick}
                                             />
@@ -405,41 +333,16 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                         />
                     </Panel>
 
-                    <AnimatePresence>
-                        {isChatOpen && (
-                            <>
-                                <Separator className="group relative w-2.5 shrink-0 cursor-col-resize outline-none">
-                                    <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors duration-150 group-hover:bg-primary/50 group-active:bg-primary" />
-                                </Separator>
-                                <Panel defaultSize="30" minSize="22" maxSize="45">
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 24 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 24 }}
-                                        transition={{ type: "spring", stiffness: 340, damping: 38 }}
-                                        className="h-full"
-                                    >
-                                        <ChatSidebar
-                                            onClose={() => setIsChatOpen(false)}
-                                            conversations={conversations.data ?? []}
-                                            activeConversationId={conversationId}
-                                            onSelectConversation={handleSelectConversation}
-                                            onNewConversation={handleNewConversation}
-                                            onDeleteConversation={handleDeleteConversation}
-                                            onRenameConversation={handleRenameConversation}
-                                            messages={messages}
-                                            isLoading={isChatLoading}
-                                            selectedText={selectedText || ''}
-                                            input={input}
-                                            onInputChange={handleInputChange}
-                                            onFormSubmit={handleFormSubmit}
-                                            onSuggestionSubmit={handleSuggestionSubmit}
-                                        />
-                                    </motion.div>
-                                </Panel>
-                            </>
-                        )}
-                    </AnimatePresence>
+                    {isChatOpen && (
+                        <>
+                            <ResizeHandle />
+                            <Panel defaultSize="30" minSize="22" maxSize="45">
+                                <div className="h-full animate-in fade-in slide-in-from-right-4 duration-200 ease-[var(--ease-out)]">
+                                    <ChatPanel session={chat} onClose={() => setIsChatOpen(false)} />
+                                </div>
+                            </Panel>
+                        </>
+                    )}
                 </Group>
             </div>
 
