@@ -38,6 +38,8 @@ interface VocabularyCardProps {
   selectedText: string;
   wordLanguage: LanguageCode;
   explanationLanguage: LanguageCode;
+  // The selected text's own language; differs from wordLanguage when studying its equivalent.
+  sourceLanguage: LanguageCode;
   documentFileName: string;
   onSaveEntry: (
     data: SaveEntryData,
@@ -59,6 +61,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
   selectedText,
   wordLanguage,
   explanationLanguage,
+  sourceLanguage,
   documentFileName,
   onSaveEntry,
   onDeleteEntry,
@@ -100,6 +103,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
         selectedText,
         wordLanguage,
         explanationLanguage,
+        sourceLanguage,
         documentContext: `Documento: ${documentFileName}`,
       });
       setDisplayExplanation(result);
@@ -189,6 +193,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
                   word={selectedText}
                   wordLanguage={wordLanguage}
                   explanationLanguage={explanationLanguage}
+                  sourceLanguage={sourceLanguage}
                   isLoading={explanationMutation.isPending}
                   error={explanationMutation.error?.message}
                   onConjure={handleConjure}

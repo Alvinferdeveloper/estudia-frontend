@@ -1,5 +1,5 @@
 import { Languages, Wand2 } from "lucide-react";
-import { LanguageCode } from "@/app/types";
+import { LanguageCode, getLanguageOption } from "@/app/types";
 import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
 
@@ -7,6 +7,7 @@ interface CardFrontProps {
   word: string;
   wordLanguage: LanguageCode;
   explanationLanguage: LanguageCode;
+  sourceLanguage: LanguageCode;
   isLoading: boolean;
   error?: string | null;
   onConjure: () => void;
@@ -16,10 +17,14 @@ export const CardFront: React.FC<CardFrontProps> = ({
   word,
   wordLanguage,
   explanationLanguage,
+  sourceLanguage,
   isLoading,
   error,
   onConjure,
 }) => {
+  const isEquivalent = sourceLanguage !== wordLanguage;
+  const targetLabel = getLanguageOption(wordLanguage)?.label.toLowerCase();
+
   return (
     <div className="relative w-[300px] max-w-[88vw] rounded-2xl p-[1px] bg-gradient-to-br from-violet-400/60 via-indigo-500/40 to-fuchsia-400/60 shadow-[0_20px_50px_-16px_rgba(109,40,217,0.55)]">
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1a1330] to-[#0e0a1c] px-6 py-7 text-center">
@@ -34,14 +39,17 @@ export const CardFront: React.FC<CardFrontProps> = ({
         </div>
 
         <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-violet-300/70">
-          <LanguageFlag code={wordLanguage} />
+          <LanguageFlag code={isEquivalent ? sourceLanguage : wordLanguage} />
           <span>&rarr;</span>
-          <LanguageFlag code={explanationLanguage} />
+          <LanguageFlag code={isEquivalent ? wordLanguage : explanationLanguage} />
         </div>
 
         <h2 className="mt-2 break-words font-serif text-3xl leading-tight text-white">
           {word}
         </h2>
+        {isEquivalent && targetLabel && (
+          <p className="mt-1.5 text-xs text-violet-200/60">Aprende cómo se dice en {targetLabel}</p>
+        )}
 
         <div className="mt-6 min-h-[68px]">
           {isLoading ? (

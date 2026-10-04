@@ -6,6 +6,7 @@ export interface VocabularyExplainRequest {
   selectedText: string;
   wordLanguage: string;
   explanationLanguage: string;
+  sourceLanguage?: string;
   documentContext?: string;
 }
 

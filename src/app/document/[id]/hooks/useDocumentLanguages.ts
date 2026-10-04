@@ -68,8 +68,8 @@ export const useDocumentLanguages = (
   // becomes the editable fallback once the document is confirmed to be the reader's own language.
   const target: LanguageCode = isFallbackActive ? fallbackTarget : readerLanguage;
 
-  // What Explicar tells the AI the selected word's language is: the real document language normally,
-  // or the target when studying "the target-language equivalent" of a same-language word (backend prompt for this is a follow-up).
+  // The language Explicar teaches: the document's own normally, or the target when studying
+  // the target-language equivalent of a word written in the reader's language.
   const explainWordLanguage: LanguageCode = isFallbackActive ? target : documentLanguage;
 
   const availableFallbackTargets: LanguageOption[] = SUPPORTED_LANGUAGES.filter(

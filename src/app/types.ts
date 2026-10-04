@@ -126,6 +126,8 @@ export interface VocabularyConfusable {
 
 export interface VocabularyExplanation {
     word: string;
+    // The selected text, when the card explains its equivalent in another language.
+    sourceText?: string;
     wordLanguage: string;
     explanationLanguage: string;
     phonetic?: string;

@@ -42,6 +42,9 @@ export const CardBack: React.FC<CardBackProps> = ({
           <h2 className="mt-1 break-words font-serif text-xl text-white">
             {explanation.word}
           </h2>
+          {explanation.sourceText && (
+            <p className="mt-0.5 text-xs text-violet-200/60">de «{explanation.sourceText}»</p>
+          )}
           {explanation.phonetic && (
             <p className="mt-0.5 text-sm italic text-violet-200/60">/{explanation.phonetic}/</p>
           )}

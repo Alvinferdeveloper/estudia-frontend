@@ -374,6 +374,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 selectedText={editingVocabularyEntry?.selectedText || selectedText || ""}
                 wordLanguage={lang.explainWordLanguage}
                 explanationLanguage={lang.readerLanguage}
+                sourceLanguage={lang.documentLanguage}
                 documentFileName={document.fileName}
                 onSaveEntry={handleSaveEntry}
                 onDeleteEntry={handleDeleteEntry}
