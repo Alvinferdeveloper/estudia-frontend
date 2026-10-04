@@ -1,5 +1,6 @@
 
-import { ZoomIn, ZoomOut, Sparkles, ScanSearch } from "lucide-react";
+import { ZoomIn, ZoomOut, ScanSearch } from "lucide-react";
+import { ZocratisMark } from "@/components/brand/ZocratisMark";
 
 interface PdfControlsProps {
     pageNumber: number;
@@ -84,7 +85,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                         : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
                 }`}
             >
-                <Sparkles className="h-4 w-4" />
+                <ZocratisMark className="size-[18px]" />
                 Asistente IA
                 {selectedText && !isChatOpen && (
                     <span className="relative flex h-2 w-2">

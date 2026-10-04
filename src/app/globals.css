@@ -93,8 +93,9 @@
   --popover-foreground: oklch(0.22 0.01 255);
 
   /* Brand */
-  --primary: oklch(0.62 0.19 248);
-  --primary-foreground: oklch(0.99 0.002 255);
+  /* Zocratis ink: the logo's own color */
+  --primary: oklch(0.36 0.05 254);
+  --primary-foreground: oklch(0.985 0.006 80);
 
   /* Secondary */
   --secondary: oklch(0.955 0.004 255);
@@ -105,7 +106,7 @@
   --muted-foreground: oklch(0.52 0.012 255);
 
   /* Accent */
-  --accent: oklch(0.94 0.01 248);
+  --accent: oklch(0.94 0.008 254);
   --accent-foreground: oklch(0.28 0.01 255);
 
   /* Destructive */
@@ -115,7 +116,7 @@
   /* Borders & Inputs */
   --border: oklch(0.90 0.006 255);
   --input: oklch(0.90 0.006 255);
-  --ring: oklch(0.62 0.19 248 / 0.35);
+  --ring: oklch(0.36 0.05 254 / 0.3);
 
   /* Charts */
   --chart-1: oklch(0.62 0.19 248);
@@ -163,8 +164,9 @@
   --popover-foreground: oklch(0.935 0.008 255);
 
   /* Brand */
-  --primary: oklch(0.64 0.19 248);
-  --primary-foreground: oklch(0.99 0.002 255);
+  /* Ink inverts to ivory so the brand keeps its contrast on dark surfaces */
+  --primary: oklch(0.925 0.008 85);
+  --primary-foreground: oklch(0.25 0.03 254);
 
   /* Secondary */
   --secondary: oklch(0.225 0.008 255);
@@ -175,7 +177,7 @@
   --muted-foreground: oklch(0.70 0.01 255);
 
   /* Accent */
-  --accent: oklch(0.255 0.015 248);
+  --accent: oklch(0.26 0.008 254);
   --accent-foreground: oklch(0.94 0.008 255);
 
   /* Destructive */
@@ -185,7 +187,7 @@
   /* Borders & Inputs */
   --border: oklch(0.29 0.012 255 / 0.45);
   --input: oklch(0.24 0.01 255);
-  --ring: oklch(0.64 0.19 248 / 0.45);
+  --ring: oklch(0.925 0.008 85 / 0.35);
 
   /* Charts */
   --chart-1: oklch(0.70 0.18 248);
@@ -372,6 +374,17 @@
   transform: scale(0.97);
 }
 
+/* Zocratis "working": the chisel lifts along its own axis and strikes the book. */
+.zocratis-carve {
+  animation: zocratis-carve 1s infinite;
+}
+
+@keyframes zocratis-carve {
+  0% { transform: translate(0, 0); animation-timing-function: var(--ease-out); }
+  45% { transform: translate(2.2px, -4.2px); animation-timing-function: cubic-bezier(0.6, 0, 1, 1); }
+  60%, 100% { transform: translate(0, 0); }
+}
+
 /* Marketing landing page: atmospheric backdrop used behind the hero and closing CTA panels. */
 .bg-atmosphere {
   background:
@@ -419,7 +432,8 @@
   .animate-float,
   .animate-blob,
   .animate-blob-delayed,
-  .animate-pulse-soft {
+  .animate-pulse-soft,
+  .zocratis-carve {
     animation: none !important;
   }
 
