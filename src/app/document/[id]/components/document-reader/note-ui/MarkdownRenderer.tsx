@@ -3,20 +3,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { Check, Copy } from "lucide-react";
-import { JetBrains_Mono, Inter } from "next/font/google";
 import type { Components } from "react-markdown";
 import type { ClassAttributes, HTMLAttributes, ReactNode } from "react";
 import type { ExtraProps } from "react-markdown";
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
+import { cn } from "@/lib/utils";
 
 type CodeProps = ClassAttributes<HTMLElement> &
   HTMLAttributes<HTMLElement> &
@@ -38,21 +28,21 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
 
   if (!inline) {
     return (
-      <div className="relative rounded-lg overflow-hidden my-6 border border-zinc-800 bg-[#1a1b26]">
-        <div className="flex items-center justify-between px-4 py-2 bg-[#1f2335] text-zinc-400 text-xs font-sans">
+      <div className="relative rounded-lg overflow-hidden my-5 border border-border bg-muted/40">
+        <div className="flex items-center justify-between px-4 py-2 bg-muted text-muted-foreground text-xs font-sans">
           <span className="uppercase tracking-wider font-semibold">
             {language}
           </span>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 hover:text-zinc-100 transition-colors"
+            className="flex items-center gap-1.5 hover:text-foreground transition-colors"
             aria-label="Copiar código"
           >
             {isCopied ? <Check size={14} /> : <Copy size={14} />}
             {isCopied ? "Copiado" : "Copiar"}
           </button>
         </div>
-        <pre className={`overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-zinc-50 ${jetbrainsMono.className}`}>
+        <pre className="overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">
           <code className={`${className ?? ""} !p-0`} {...props}>
             {children}
           </code>
@@ -63,7 +53,7 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
 
   return (
     <code
-      className={`bg-zinc-800/60 text-zinc-200 px-1.5 py-0.5 rounded-md text-[0.85em] border border-zinc-700 ${jetbrainsMono.className}`}
+      className="bg-muted text-foreground px-1.5 py-0.5 rounded-md text-[0.85em] border border-border/60 font-mono"
       {...props}
     >
       {children}
@@ -80,38 +70,38 @@ const MarkdownComponents: Components = {
   code: CodeBlock,
 
   h1: ({ children }: WithChildren) => (
-    <h1 className="text-xl font-bold text-zinc-100 mt-5 mb-5 border-b border-zinc-700/50 pb-3">
+    <h1 className="text-xl font-bold text-foreground mt-5 mb-4 border-b border-border pb-3">
       {children}
     </h1>
   ),
   h2: ({ children }: WithChildren) => (
-    <h2 className="text-md font-bold text-zinc-100 mt-4 mb-2">
+    <h2 className="text-base font-bold text-foreground mt-5 mb-2">
       {children}
     </h2>
   ),
   h3: ({ children }: WithChildren) => (
-    <h3 className="text-sm font-semibold text-zinc-200 mt-4 mb-2">
+    <h3 className="text-sm font-semibold text-foreground mt-4 mb-2">
       {children}
     </h3>
   ),
   h4: ({ children }: WithChildren) => (
-    <h4 className="text-base font-semibold text-zinc-300 mt-5 mb-2">
+    <h4 className="text-sm font-semibold text-muted-foreground mt-4 mb-2">
       {children}
     </h4>
   ),
 
   p: ({ children }: WithChildren) => (
-    <p className="text-zinc-300 my-4 leading-7">
+    <p className="text-foreground/90 my-3 leading-7">
       {children}
     </p>
   ),
 
   strong: ({ children }: WithChildren) => (
-    <strong className="text-zinc-100 font-semibold">{children}</strong>
+    <strong className="text-foreground font-semibold">{children}</strong>
   ),
 
   em: ({ children }: WithChildren) => (
-    <em className="text-zinc-400 italic">{children}</em>
+    <em className="italic">{children}</em>
   ),
 
   a: ({ children, href }: AnchorProps) => (
@@ -119,58 +109,58 @@ const MarkdownComponents: Components = {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-blue-400 hover:text-blue-300 underline underline-offset-2 font-medium"
+      className="text-primary underline underline-offset-2 decoration-primary/40 hover:decoration-primary font-medium"
     >
       {children}
     </a>
   ),
 
   ul: ({ children }: WithChildren) => (
-    <ul className="list-disc list-inside my-4 space-y-2 text-zinc-300 marker:text-zinc-500">
+    <ul className="list-disc pl-5 my-3 space-y-1.5 text-foreground/90 marker:text-muted-foreground">
       {children}
     </ul>
   ),
   ol: ({ children }: WithChildren) => (
-    <ol className="list-decimal list-inside my-4 space-y-2 text-zinc-300 marker:text-zinc-500">
+    <ol className="list-decimal pl-5 my-3 space-y-1.5 text-foreground/90 marker:text-muted-foreground">
       {children}
     </ol>
   ),
   li: ({ children }: WithChildren) => (
-    <li className="leading-7 text-zinc-300 ml-2">
+    <li className="leading-7 pl-1">
       {children}
     </li>
   ),
 
   blockquote: ({ children }: WithChildren) => (
-    <blockquote className="border-l-4 border-blue-500/60 pl-4 py-2 my-5 italic text-zinc-400 bg-zinc-800/30 rounded-r-lg">
+    <blockquote className="my-4 rounded-lg bg-muted/60 px-4 py-2 text-muted-foreground">
       {children}
     </blockquote>
   ),
 
-  hr: () => <hr className="my-6 border-zinc-700" />,
+  hr: () => <hr className="my-6 border-border" />,
 
   table: ({ children }: WithChildren) => (
-    <div className="overflow-x-auto my-6 rounded-lg border border-zinc-700">
-      <table className="min-w-full divide-y divide-zinc-700">
+    <div className="overflow-x-auto my-5 rounded-lg border border-border">
+      <table className="min-w-full divide-y divide-border">
         {children}
       </table>
     </div>
   ),
   thead: ({ children }: WithChildren) => (
-    <thead className="bg-zinc-800/60">{children}</thead>
+    <thead className="bg-muted">{children}</thead>
   ),
   th: ({ children }: WithChildren) => (
-    <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-200 border-b border-zinc-700">
+    <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground border-b border-border">
       {children}
     </th>
   ),
   td: ({ children }: WithChildren) => (
-    <td className="px-4 py-3 text-sm text-zinc-400 border-b border-zinc-800">
+    <td className="px-4 py-2.5 text-sm text-muted-foreground border-b border-border">
       {children}
     </td>
   ),
   tbody: ({ children }: WithChildren) => (
-    <tbody className="divide-y divide-zinc-800">{children}</tbody>
+    <tbody className="divide-y divide-border">{children}</tbody>
   ),
 };
 
@@ -186,12 +176,11 @@ export const MarkdownRenderer = memo(({
   compact = false
 }: MarkdownRendererProps) => {
   return (
-    <div className={`
-      w-full text-[15px] px-4 leading-relaxed 
-      ${inter.className} 
-      ${compact ? "[&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_h1]:my-0 [&_h2]:my-0 [&_h3]:my-0 [&_h4]:my-0 [&_blockquote]:my-0 [&_pre]:my-0 [&_hr]:my-2" : ""}
-      ${className ?? ""}
-    `}>
+    <div className={cn(
+      "w-full text-[15px] px-4 leading-relaxed text-foreground [&>:first-child]:mt-0 [&>:last-child]:mb-0",
+      compact && "[&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_h1]:my-0 [&_h2]:my-0 [&_h3]:my-0 [&_h4]:my-0 [&_blockquote]:my-0 [&_pre]:my-0 [&_hr]:my-2",
+      className
+    )}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
