@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/config/routes";
 import { AuthForm } from "../components/AuthForm";
 
 export const metadata: Metadata = {
-  title: `Entrar · ${siteConfig.name}`,
+  title: "Entrar",
+  alternates: { canonical: ROUTES.login },
 };
 
 export default function LoginPage() {

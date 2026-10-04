@@ -2,6 +2,9 @@ import { QueryProvider } from "@/app/providers/QueryProvider";
 import { getDocument, touchDocumentAccess } from "./actions";
 import DocumentClient from "./components/DocumentClient";
 import { Document } from "@/app/types";
+import { privatePageMetadata } from "@/config/seo";
+
+export const metadata = privatePageMetadata("Documento");
 
 export interface DocumentFile extends Document {
   publicUrl: string;

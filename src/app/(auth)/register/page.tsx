@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/config/routes";
 import { AuthForm } from "../components/AuthForm";
 
 export const metadata: Metadata = {
-  title: `Crear cuenta · ${siteConfig.name}`,
+  title: "Crear cuenta",
+  alternates: { canonical: ROUTES.register },
 };
 
 export default function RegisterPage() {
