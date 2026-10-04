@@ -227,6 +227,26 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Browsers and Tailwind v4 preflight leave controls on the default cursor; anything clickable gets the pointer. */
+  :is(
+      button,
+      select,
+      summary,
+      label:has(> input:is([type="checkbox"], [type="radio"])),
+      input:is([type="checkbox"], [type="radio"], [type="file"], [type="color"], [type="range"]),
+      [role="button"],
+      [role="menuitem"],
+      [role="menuitemcheckbox"],
+      [role="menuitemradio"],
+      [role="option"],
+      [role="tab"],
+      [role="switch"],
+      [role="checkbox"],
+      [role="radio"]
+    ):not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    cursor: pointer;
+  }
 }
 
 .react-pdf__Page__textContent span {
