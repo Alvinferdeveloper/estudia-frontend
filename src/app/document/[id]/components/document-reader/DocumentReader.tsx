@@ -15,6 +15,7 @@ import { useDocumentImages } from "@/app/document/[id]/hooks/useDocumentImages";
 import { useVisualQuery } from "@/app/document/[id]/hooks/useVisualQuery";
 import { useQuickTranslate } from "@/app/document/[id]/hooks/useQuickTranslate";
 import { useDocumentLanguages } from "@/app/document/[id]/hooks/useDocumentLanguages";
+import { LiveAnchorTarget } from "@/app/document/[id]/hooks/useLiveAnchor";
 import { findOverlappingImage } from "@/app/document/[id]/lib/region-overlap";
 import { UIMessage } from "ai";
 
@@ -220,31 +221,29 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
     const [isVocabularyCardOpen, setIsVocabularyCardOpen] = useState(false);
     const [editingVocabularyEntry, setEditingVocabularyEntry] = useState<VocabularyEntry | null>(null);
-    const [vocabularyAnchorRect, setVocabularyAnchorRect] = useState<DOMRect | null>(null);
+    const [vocabularyAnchor, setVocabularyAnchor] = useState<LiveAnchorTarget | null>(null);
+    const [readerViewport, setReaderViewport] = useState<HTMLDivElement | null>(null);
 
-    const handleExplainClick = (anchorRect: DOMRect) => {
+    // Anchor to the selected word itself; the popup button is only a fallback if the selection is gone.
+    const handleExplainClick = (fallbackAnchor: Element) => {
+        const selection = window.getSelection();
+        const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0).cloneRange() : null;
         setEditingVocabularyEntry(null);
-        setVocabularyAnchorRect(anchorRect);
+        setVocabularyAnchor(range ?? fallbackAnchor);
         setIsVocabularyCardOpen(true);
     };
 
-    const handleVocabularyEntryClick = (entry: VocabularyEntry, anchorRect: DOMRect) => {
+    const handleVocabularyEntryClick = (entry: VocabularyEntry, anchor: Element) => {
         setEditingVocabularyEntry(entry);
-        setVocabularyAnchorRect(anchorRect);
+        setVocabularyAnchor(anchor);
         setIsVocabularyCardOpen(true);
     };
 
     const handleVocabularyCardClose = () => {
         setIsVocabularyCardOpen(false);
         setEditingVocabularyEntry(null);
-        setVocabularyAnchorRect(null);
+        setVocabularyAnchor(null);
         clearSelection();
-    };
-
-    // A page change invalidates the anchored position, so close the card rather than leave it floating over stale content.
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        if (isVocabularyCardOpen) handleVocabularyCardClose();
     };
 
     const activeHighlights: PdfHighlightItem[] = languageMode.enabled
@@ -265,10 +264,10 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
               rects: annotation.rects,
           }));
 
-    const handleHighlightClick = (id: string, anchorRect: DOMRect) => {
+    const handleHighlightClick = (id: string, anchor: Element) => {
         if (languageMode.enabled) {
             const entry = vocabularyEntries.find((e) => e.id === id);
-            if (entry) handleVocabularyEntryClick(entry, anchorRect);
+            if (entry) handleVocabularyEntryClick(entry, anchor);
         } else {
             const annotation = annotations.find((a) => a.id === id);
             if (annotation) handleAnnotationClick(annotation);
@@ -375,10 +374,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             highlights={activeHighlights}
                             setNumPages={setNumPages}
                             onTextSelection={handleTextSelection}
-                            onPageChange={handlePageChange}
+                            onPageChange={setCurrentPage}
                             onHighlightClick={handleHighlightClick}
                             regionMode={regionMode}
                             onRegionSelection={handleRegionSelection}
+                            viewportRef={setReaderViewport}
                             selectionTip={
                                 <div>
                                     {selectedText && !examMode && (
@@ -466,7 +466,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
             <VocabularyCard
                 isOpen={isVocabularyCardOpen}
                 onClose={handleVocabularyCardClose}
-                anchorRect={vocabularyAnchorRect}
+                anchor={vocabularyAnchor}
+                portalContainer={readerViewport}
                 selectedText={editingVocabularyEntry?.selectedText || selectedText || ""}
                 wordLanguage={lang.explainWordLanguage}
                 explanationLanguage={lang.readerLanguage}

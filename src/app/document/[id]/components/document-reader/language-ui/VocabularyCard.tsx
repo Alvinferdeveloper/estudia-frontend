@@ -16,6 +16,8 @@ import {
 } from "@/app/types";
 import { useVocabularyExplanation } from "@/app/document/[id]/hooks/useVocabularyExplanation";
 import { useVocabularyDialog } from "@/app/document/[id]/hooks/useVocabularyDialog";
+import { LiveAnchorTarget, useLiveAnchor } from "@/app/document/[id]/hooks/useLiveAnchor";
+import { isScrollbarPointerDown } from "@/app/document/[id]/lib/scrollbar";
 import { CardFront } from "./CardFront";
 import { CardBack } from "./CardBack";
 
@@ -27,17 +29,12 @@ interface SaveEntryData {
   color: string;
 }
 
-interface AnchorRect {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
-
 interface VocabularyCardProps {
   isOpen: boolean;
   onClose: () => void;
-  anchorRect: AnchorRect | null;
+  anchor: LiveAnchorTarget | null;
+  // Rendering inside the reader keeps the card clipped under the Header instead of floating over it.
+  portalContainer?: HTMLElement | null;
   selectedText: string;
   wordLanguage: LanguageCode;
   explanationLanguage: LanguageCode;
@@ -57,7 +54,8 @@ const flipTransition = { duration: 0.4, ease: [0.23, 1, 0.32, 1] as const };
 export const VocabularyCard: React.FC<VocabularyCardProps> = ({
   isOpen,
   onClose,
-  anchorRect,
+  anchor,
+  portalContainer,
   selectedText,
   wordLanguage,
   explanationLanguage,
@@ -93,6 +91,8 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
     explanationMutation.reset();
     onClose();
   };
+
+  const { virtualRef, boundary } = useLiveAnchor(anchor, handleClose);
 
   const conjure = async (editingEntry: VocabularyEntry | null) => {
     try {
@@ -145,24 +145,22 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
 
   return (
     <Popover open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <PopoverAnchor asChild>
-        <span
-          aria-hidden
-          className="pointer-events-none fixed"
-          style={{
-            top: anchorRect?.top ?? 0,
-            left: anchorRect?.left ?? 0,
-            width: anchorRect?.width ?? 0,
-            height: anchorRect?.height ?? 0,
-          }}
-        />
-      </PopoverAnchor>
+      {virtualRef && <PopoverAnchor virtualRef={virtualRef} />}
 
       <PopoverContent
+        container={portalContainer}
         side="bottom"
         align="start"
         sideOffset={10}
         collisionPadding={16}
+        collisionBoundary={boundary ?? []}
+        onPointerDownOutside={(e) => {
+          if (isScrollbarPointerDown(e.detail.originalEvent)) e.preventDefault();
+        }}
+        // Grabbing the PDF scrollbar can move focus into the viewer; only real clicks outside should close it.
+        onFocusOutside={(e) => {
+          if (boundary?.contains(e.detail.originalEvent.target as Node)) e.preventDefault();
+        }}
         aria-label="Tarjeta de vocabulario"
         className="w-auto border-none bg-transparent p-0 shadow-none"
         style={{ perspective: 1200 }}

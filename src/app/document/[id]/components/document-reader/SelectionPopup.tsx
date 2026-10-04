@@ -7,7 +7,7 @@ interface SelectionPopupProps {
     mode?: "notes" | "language";
     onChatClick: () => void;
     onCreateNoteClick: () => void;
-    onExplainClick?: (anchorRect: DOMRect) => void;
+    onExplainClick?: (anchor: Element) => void;
 }
 
 export const SelectionPopup: React.FC<SelectionPopupProps> = ({
@@ -39,7 +39,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
             <div className="h-4 w-px bg-border" />
             {isLanguageMode ? (
                 <button
-                    onClick={(e) => onExplainClick?.(e.currentTarget.getBoundingClientRect())}
+                    onClick={(e) => onExplainClick?.(e.currentTarget)}
                     className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-violet-500/10 hover:text-violet-500"
                 >
                     <Languages className="h-3.5 w-3.5" />

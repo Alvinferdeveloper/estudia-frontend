@@ -30,7 +30,7 @@ interface PdfViewerProps {
     selectionTip: React.ReactNode;
     onTextSelection: (selection: { text: string; rects: { top: number; left: number; width: number; height: number; pageWidth?: number; pageHeight?: number }[]; pageNumber: number }) => void;
     onPageChange: (page: number) => void;
-    onHighlightClick: (id: string, anchorRect: DOMRect) => void;
+    onHighlightClick: (id: string, anchor: Element) => void;
     setNumPages: (numPages: number) => void;
     examMode?: boolean;
     selectedPages?: number[];
@@ -38,6 +38,7 @@ interface PdfViewerProps {
     onPdfLoad?: (pdfDoc: any) => void;
     regionMode?: boolean;
     onRegionSelection?: (region: RegionSelection) => void;
+    viewportRef?: React.Ref<HTMLDivElement>;
 }
 
 interface SelectionEvent {
@@ -58,12 +59,22 @@ interface HighlightRect {
     height: number;
 }
 
-const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight, anchorRect: DOMRect) => void }) => {
+// Only .TextHighlight__part elements have a real box, and the click target isn't always one, so pick by position.
+const getClickedPart = (container: Element, x: number, y: number): Element => {
+    const parts = Array.from(container.querySelectorAll(".TextHighlight__part"));
+    const hit = parts.find((part) => {
+        const rect = part.getBoundingClientRect();
+        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    });
+    return hit ?? parts[0] ?? container;
+};
+
+const HighlightContainer = ({ onClick }: { onClick: (highlight: ViewportHighlight, anchor: Element) => void }) => {
     const { highlight, isScrolledTo } = useHighlightContainerContext();
     const highlightWithColor = highlight as ViewportHighlight & { color?: string };
 
     return (
-        <div onClick={(e) => onClick(highlight, e.currentTarget.getBoundingClientRect())}>
+        <div onClick={(e) => onClick(highlight, getClickedPart(e.currentTarget, e.clientX, e.clientY))}>
             <TextHighlight isScrolledTo={isScrolledTo} highlight={highlight} style={{ background: highlightWithColor.color }} />
         </div>
     );
@@ -84,6 +95,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     onPdfLoad,
     regionMode = false,
     onRegionSelection,
+    viewportRef,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
@@ -167,7 +179,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     }, [onTextSelection, onRegionSelection]);
 
     return (
-        <div className="flex-1 overflow-hidden bg-reader-canvas relative">
+        // contain:paint also clips position:fixed descendants (popovers portaled here), which overflow-hidden alone doesn't.
+        <div ref={viewportRef} className="flex-1 overflow-hidden bg-reader-canvas relative [contain:paint]">
             <PdfLoader
                 document={publicUrl}
                 beforeLoad={() => <PdfSkeleton />}
@@ -201,8 +214,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                                 }
                             }}
                         >
-                            <HighlightContainer onClick={(highlight: ViewportHighlight, anchorRect: DOMRect) => {
-                                onHighlightClick(highlight.id, anchorRect);
+                            <HighlightContainer onClick={(highlight: ViewportHighlight, anchor: Element) => {
+                                onHighlightClick(highlight.id, anchor);
                             }} />
                         </PdfHighlighter>
                     );
