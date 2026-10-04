@@ -1,8 +1,7 @@
 import { Instrument_Serif } from "next/font/google";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { BRAND_NAME } from "@/lib/brand";
-import { ZocratisMark } from "@/components/brand/ZocratisMark";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { AuthEditorialPanel } from "./components/AuthEditorialPanel";
 
 const instrumentSerif = Instrument_Serif({
@@ -18,9 +17,8 @@ export default function AuthLayout({ children }: Readonly<{ children: React.Reac
       <div className="flex flex-col px-6 py-6 sm:px-10">
         <header className="flex items-center justify-between gap-4">
           {/* On large screens the editorial panel carries the brand. */}
-          <Link href="/" className="flex items-center gap-2 text-foreground lg:hidden">
-            <ZocratisMark className="size-6 text-primary" />
-            <span className="font-semibold tracking-tight">{BRAND_NAME}</span>
+          <Link href="/" className="text-foreground lg:hidden">
+            <BrandLogo />
           </Link>
           <Link
             href="/"

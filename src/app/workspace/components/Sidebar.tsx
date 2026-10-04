@@ -7,6 +7,7 @@ import { NewMenu } from "@/app/workspace/components/NewMenu";
 import { useFetchTopics } from "@/app/workspace/hooks/useFetchTopics";
 import { useCreateTopic } from "@/app/workspace/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Folder, Topic } from "@/app/types";
 
 interface SidebarProps {
@@ -38,11 +39,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border/60 bg-secondary/60">
       {/* --- BRANDING --- */}
-      <div className="flex items-center gap-2 px-5 pt-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <span className="text-sm font-bold">e</span>
-        </div>
-        <h2 className="text-base font-semibold tracking-tight text-foreground">estudiIA</h2>
+      <div className="px-5 pt-5">
+        <BrandLogo className="text-base text-foreground" />
       </div>
 
       {/* --- NEW BUTTON --- */}

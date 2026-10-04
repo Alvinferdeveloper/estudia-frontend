@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { siteConfig } from "@/config/site";
 
 const faqs = [
   {
@@ -12,7 +13,7 @@ const faqs = [
   },
   {
     q: "¿Es realmente gratuito?",
-    a: "estudiIA ofrece un plan gratuito generoso que incluye procesamiento de documentos y notas con IA. También tenemos un plan Pro para usuarios intensivos."
+    a: `${siteConfig.name} ofrece un plan gratuito generoso que incluye procesamiento de documentos y notas con IA. También tenemos un plan Pro para usuarios intensivos.`
   },
   {
     q: "¿Cómo funciona la IA para las notas?",

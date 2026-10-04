@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { siteConfig } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,12 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "estudiIA | Tu Compañero de Estudio con Inteligencia Artificial",
-  description: "Potencia tu aprendizaje con estudiIA. Sube documentos, genera notas automáticas con IA y organiza tu estudio de forma inteligente.",
-  keywords: ["IA", "estudio", "estudiantes", "notas automáticas", "resumen de documentos", "estudiIA"],
+  title: `${siteConfig.name} | ${siteConfig.tagline}`,
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
   openGraph: {
-    title: "estudiIA | Tu Compañero de Estudio con Inteligencia Artificial",
-    description: "Transforma tus documentos en conocimiento. Notas, resúmenes y organización con IA.",
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
+    description: siteConfig.shareDescription,
     type: "website",
   },
 };

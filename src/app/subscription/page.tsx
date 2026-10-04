@@ -10,6 +10,7 @@ import { X, Loader2, ArrowLeft, CheckCircle2, Lock, ShieldCheck } from "lucide-r
 import Link from "next/link";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 
 export default function SubscriptionPage() {
   const { data, isLoading, error } = usePlans();
@@ -122,7 +123,7 @@ export default function SubscriptionPage() {
 
                 {/* Subtitle improved with emphasis on keywords */}
                 <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                  Unlock the full potential of <strong className="text-foreground font-semibold">studiIA</strong> with our subscription plans.
+                  Unlock the full potential of <strong className="text-foreground font-semibold">{siteConfig.name}</strong> with our subscription plans.
                   Upgrade anytime to get more <span className="text-primary font-medium">AI-powered features</span>.
                 </p>
               </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { BRAND_NAME } from "@/lib/brand";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { useRotatingIndex } from "../hooks/useRotatingIndex";
 
 const QUOTES = [
@@ -22,10 +22,7 @@ export const AuthEditorialPanel: React.FC = () => {
     <aside className="relative hidden overflow-hidden bg-primary p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
       <ZocratisMark className="pointer-events-none absolute -bottom-24 -right-20 size-[520px] opacity-[0.06]" />
 
-      <div className="relative flex items-center gap-2.5">
-        <ZocratisMark className="size-7" />
-        <span className="text-lg font-semibold tracking-tight">{BRAND_NAME}</span>
-      </div>
+      <BrandLogo className="relative gap-2.5 text-lg" markClassName="size-7 text-current" />
 
       {/* Remounted on each change so the enter animation replays; blur masks the crossfade. */}
       <figure

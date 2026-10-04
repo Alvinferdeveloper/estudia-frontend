@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { BRAND_NAME } from "@/lib/brand";
+import { siteConfig } from "@/config/site";
 import { AuthForm } from "../components/AuthForm";
 
 export const metadata: Metadata = {
-  title: `Entrar · ${BRAND_NAME}`,
+  title: `Entrar · ${siteConfig.name}`,
 };
 
 export default function LoginPage() {
