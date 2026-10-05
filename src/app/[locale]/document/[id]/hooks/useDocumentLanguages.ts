@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 import { isSupportedLanguage, LanguageCode, LanguageOption, SUPPORTED_LANGUAGES } from "@/app/types";
-import { getBrowserLanguage } from "@/app/[locale]/document/[id]/lib/browser-language";
 import { UseQuickTranslateReturn } from "@/app/[locale]/document/[id]/hooks/useQuickTranslate";
 
 const MIN_SELECTION_LENGTH_FOR_LOCK = 4;
 const FALLBACK_STORAGE_KEY = "quickTranslate:fallbackLanguage";
+// Used when the UI language isn't (yet) one of the translation languages, which grow independently.
+const DEFAULT_READER_LANGUAGE: LanguageCode = "en";
 
 /**
  * Single source of truth for the two languages in play: the reader's own
- * (browser locale) and the document's (locked from Quick Translate's first
+ * (the UI language the user chose) and the document's (locked from Quick Translate's first
  * trustworthy detection). Also owns the global fallback-target preference
  * used when the two happen to coincide.
  */
@@ -16,10 +18,8 @@ export const useDocumentLanguages = (
   selectedText: string | null,
   quickTranslate: UseQuickTranslateReturn
 ) => {
-  const readerLanguage: LanguageCode = (() => {
-    const lang = getBrowserLanguage();
-    return isSupportedLanguage(lang) ? lang : "es";
-  })();
+  const uiLocale = useLocale();
+  const readerLanguage: LanguageCode = isSupportedLanguage(uiLocale) ? uiLocale : DEFAULT_READER_LANGUAGE;
 
   const [lockedDocumentLanguage, setLockedDocumentLanguage] = useState<LanguageCode | null>(null);
   const lastSelectionLengthRef = useRef(0);

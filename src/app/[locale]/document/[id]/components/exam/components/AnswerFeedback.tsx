@@ -62,14 +62,17 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
           >
             {isCorrect ? t("correct") : t("incorrect")}
           </p>
-          <p
-            className={cn(
-              "text-sm leading-relaxed",
-              isCorrect ? "text-emerald-800 dark:text-emerald-200" : "text-amber-800 dark:text-amber-200"
-            )}
-          >
-            {currentAnswerData.feedback}
-          </p>
+          {/* Closed questions carry no feedback: the verdict and the right answer already say it all. */}
+          {currentAnswerData.feedback && (
+            <p
+              className={cn(
+                "text-sm leading-relaxed",
+                isCorrect ? "text-emerald-800 dark:text-emerald-200" : "text-amber-800 dark:text-amber-200"
+              )}
+            >
+              {currentAnswerData.feedback}
+            </p>
+          )}
         </div>
       </div>
 
