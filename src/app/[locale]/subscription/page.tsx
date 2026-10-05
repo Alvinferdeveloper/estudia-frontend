@@ -14,6 +14,7 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { ROUTES } from "@/config/routes";
+import { env } from "@/config/env";
 import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 
@@ -85,7 +86,7 @@ export default function SubscriptionPage() {
 
   return (
     <PayPalScriptProvider options={{
-      clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb",
+      clientId: env.paypalClientId,
       currency: CURRENCY,
       intent: "capture",
       vault: true
