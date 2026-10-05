@@ -1,0 +1,44 @@
+{
+  "documentNotFound": "Documento no encontrado",
+  "header": {
+    "title": "Lector PDF con IA",
+    "backToWorkspace": "Volver al workspace",
+    "languageMode": "Modo Idioma",
+    "languageModeHint": "Modo Idioma: estudia palabras y frases",
+    "changeTargetLanguage": "Cambiar idioma de traducción",
+    "export": {
+      "trigger": "Exportar notas",
+      "anki": "Tarjetas de Anki (.apkg)",
+      "importToAnki": "Importar a la app de Anki"
+    }
+  },
+  "controls": {
+    "regionQuery": "Imagen o fórmula",
+    "regionQueryHint": "Preguntar sobre una imagen o fórmula",
+    "assistant": "Asistente IA"
+  },
+  "selectionPopup": {
+    "chat": "Chat",
+    "explain": "Explicar",
+    "note": "Nota"
+  },
+  "visualQuery": {
+    "title": "Preguntar sobre imagen o fórmula",
+    "description": "Haz una pregunta sobre la imagen o fórmula seleccionada en el documento.",
+    "selectedRegion": "Región seleccionada",
+    "previewAlt": "Región seleccionada del documento",
+    "defaultQuestion": "¿Qué significa esto?",
+    "ask": "Preguntar",
+    "analyzing": "Analizando...",
+    "generating": "Generando explicación..."
+  },
+  "composer": {
+    "send": "Enviar",
+    "stop": "Detener"
+  },
+  "quote": {
+    "remove": "Quitar fragmento",
+    "showMore": "Ver todo",
+    "showLess": "Ver menos"
+  }
+}

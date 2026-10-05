@@ -4,6 +4,7 @@ import metadata from "./metadata.json";
 import auth from "./auth.json";
 import chat from "./chat.json";
 import vocabulary from "./vocabulary.json";
+import reader from "./reader.json";
 import subscription from "./subscription.json";
 import landing from "./landing.json";
 
@@ -14,6 +15,7 @@ const messages: typeof referenceMessages = {
   auth,
   chat,
   vocabulary,
+  reader,
   subscription,
   landing,
 };

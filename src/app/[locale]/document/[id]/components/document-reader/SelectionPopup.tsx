@@ -1,6 +1,7 @@
 
 import { motion } from "motion/react";
 import { MessageSquare, StickyNote, Languages } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface SelectionPopupProps {
     selectedText: string | null;
@@ -17,6 +18,8 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
     onCreateNoteClick,
     onExplainClick,
 }) => {
+    const t = useTranslations("reader.selectionPopup");
+
     if (!selectedText) return null;
 
     const isLanguageMode = mode === "language";
@@ -34,7 +37,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
                 className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
             >
                 <MessageSquare className="h-3.5 w-3.5" />
-                Chat
+                {t("chat")}
             </button>
             <div className="h-4 w-px bg-border" />
             {isLanguageMode ? (
@@ -43,7 +46,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
                     className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-violet-500/10 hover:text-violet-500"
                 >
                     <Languages className="h-3.5 w-3.5" />
-                    Explicar
+                    {t("explain")}
                 </button>
             ) : (
                 <button
@@ -51,7 +54,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
                     className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
                 >
                     <StickyNote className="h-3.5 w-3.5" />
-                    Nota
+                    {t("note")}
                 </button>
             )}
         </motion.div>

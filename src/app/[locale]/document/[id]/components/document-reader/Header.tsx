@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BookOpen, Loader2, Download, ArrowLeft, Languages } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -56,6 +57,8 @@ export const Header: React.FC<HeaderProps> = ({
     availableTargets = [],
     onTargetChange,
 }) => {
+    const t = useTranslations("reader.header");
+    const tLanguages = useTranslations("vocabulary.languages");
     const [isTargetPickerOpen, setIsTargetPickerOpen] = useState(false);
     const { mutate: exportNotes, isPending } = useExportAnnotations(documentId);
 
@@ -74,13 +77,13 @@ export const Header: React.FC<HeaderProps> = ({
                     <Link
                         href={ROUTES.workspace}
                         className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-                        title="Volver al workspace"
+                        title={t("backToWorkspace")}
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                     <div className="flex items-center gap-2">
                         <BookOpen className="h-6 w-6 text-accent" />
-                        <h1 className="text-xl font-bold tracking-tight text-foreground">AI PDF Reader</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-foreground">{t("title")}</h1>
                     </div>
                     <Separator orientation="vertical" className="h-6" />
                     <p className="text-sm text-muted-foreground truncate max-w-md">{fileName}</p>
@@ -100,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
                             <Separator orientation="vertical" className="mx-1 h-5" />
                             <button
                                 onClick={onToggleLanguageMode}
-                                title="Modo Idioma: estudia palabras y frases"
+                                title={t("languageModeHint")}
                                 className={`press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
                                     languageModeEnabled
                                         ? "bg-violet-500/15 text-violet-500"
@@ -108,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 }`}
                             >
                                 <Languages className="h-4 w-4" />
-                                Modo Idioma
+                                {t("languageMode")}
                             </button>
                             <div className="flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500">
                                 <LanguageFlag code={wordLanguage} />
@@ -116,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 {isTargetEditable ? (
                                     <Popover open={isTargetPickerOpen} onOpenChange={setIsTargetPickerOpen}>
                                         <PopoverTrigger asChild>
-                                            <button title="Cambiar idioma de traducción" className="press-feedback">
+                                            <button title={t("changeTargetLanguage")} className="press-feedback">
                                                 <LanguageFlag code={explanationLanguage} />
                                             </button>
                                         </PopoverTrigger>
@@ -131,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
                                                         onTargetChange?.(option.code);
                                                         setIsTargetPickerOpen(false);
                                                     }}
-                                                    title={option.label}
+                                                    title={tLanguages(option.code)}
                                                     className="press-feedback flex h-6 w-8 items-center justify-center rounded-full hover:bg-accent"
                                                 >
                                                     <LanguageFlag code={option.code} className="h-full w-full" />
@@ -149,7 +152,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button
-                                title="Export notes"
+                                title={t("export.trigger")}
                                 disabled={isPending}
                                 className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
                             >
@@ -170,11 +173,11 @@ export const Header: React.FC<HeaderProps> = ({
                                 CSV (.csv)
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleExport("anki")}>
-                                Anki Flashcards (.apkg)
+                                {t("export.anki")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleExport("anki")} className="text-xs text-muted-foreground">
-                                Import to Anki app
+                                {t("export.importToAnki")}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

@@ -96,14 +96,14 @@ export type LanguageCode = 'en' | 'es'; // extend here when adding more language
 
 export interface LanguageOption {
     code: LanguageCode;
-    label: string;
     /** ISO 3166-1 alpha-2 country code, used to build the flagcdn.com flag image URL. */
     countryCode: string;
 }
 
+// Display names live in the "vocabulary.languages" messages.
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
-    { code: 'en', label: 'Inglés', countryCode: 'GB' },
-    { code: 'es', label: 'Español', countryCode: 'ES' },
+    { code: 'en', countryCode: 'GB' },
+    { code: 'es', countryCode: 'ES' },
 ];
 
 export const getLanguageOption = (code: LanguageCode): LanguageOption | undefined =>

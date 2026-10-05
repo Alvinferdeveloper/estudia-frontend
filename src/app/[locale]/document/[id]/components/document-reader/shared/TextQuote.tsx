@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TextQuote as TextQuoteIcon, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface TextQuoteProps {
@@ -16,6 +17,7 @@ interface TextQuoteProps {
 const LONG_QUOTE_LENGTH = 220;
 
 export const TextQuote: React.FC<TextQuoteProps> = ({ text, caption, onRemove, expandable = false, className }) => {
+  const t = useTranslations("reader.quote");
   const [isExpanded, setIsExpanded] = useState(false);
   const canExpand = expandable && text.length > LONG_QUOTE_LENGTH;
 
@@ -41,7 +43,7 @@ export const TextQuote: React.FC<TextQuoteProps> = ({ text, caption, onRemove, e
                 onClick={() => setIsExpanded((open) => !open)}
                 className="font-medium text-foreground/70 underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
               >
-                {isExpanded ? "Ver menos" : "Ver todo"}
+                {isExpanded ? t("showLess") : t("showMore")}
               </button>
             )}
           </figcaption>
@@ -51,8 +53,8 @@ export const TextQuote: React.FC<TextQuoteProps> = ({ text, caption, onRemove, e
         <button
           type="button"
           onClick={onRemove}
-          aria-label="Quitar fragmento"
-          title="Quitar fragmento"
+          aria-label={t("remove")}
+          title={t("remove")}
           className="-m-1 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <X className="size-3.5" />

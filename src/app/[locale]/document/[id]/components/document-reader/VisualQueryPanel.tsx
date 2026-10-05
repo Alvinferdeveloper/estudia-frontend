@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +23,6 @@ interface VisualQueryPanelProps {
   onAsk: (question: string) => void;
 }
 
-const DEFAULT_QUESTION = "¿Qué significa esto?";
-
 export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
   isOpen,
   onClose,
@@ -33,11 +32,13 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
   error,
   onAsk,
 }) => {
-  const [question, setQuestion] = useState(DEFAULT_QUESTION);
+  const t = useTranslations("reader.visualQuery");
+  const defaultQuestion = t("defaultQuestion");
+  const [question, setQuestion] = useState(defaultQuestion);
 
   useEffect(() => {
-    if (isOpen) setQuestion(DEFAULT_QUESTION);
-  }, [isOpen]);
+    if (isOpen) setQuestion(defaultQuestion);
+  }, [isOpen, defaultQuestion]);
 
   const handleSubmit = () => {
     if (!question.trim() || isLoading) return;
@@ -47,14 +48,12 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[600px] max-w-[90vw] flex flex-col gap-0 p-0">
-        <DialogTitle className="sr-only">Preguntar sobre imagen o fórmula</DialogTitle>
-        <DialogDescription className="sr-only">
-          Hacé una pregunta sobre la imagen o fórmula seleccionada en el documento.
-        </DialogDescription>
+        <DialogTitle className="sr-only">{t("title")}</DialogTitle>
+        <DialogDescription className="sr-only">{t("description")}</DialogDescription>
 
         <div className="p-4 border-b bg-muted/30 flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <ImageIcon className="w-4 h-4" />
-          Región seleccionada
+          {t("selectedRegion")}
         </div>
 
         {previewImage && (
@@ -62,7 +61,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={previewImage}
-              alt="Región seleccionada del documento"
+              alt={t("previewAlt")}
               className="max-w-full max-h-56 object-contain rounded-md border"
             />
           </div>
@@ -72,7 +71,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
           <Textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder={DEFAULT_QUESTION}
+            placeholder={defaultQuestion}
             rows={2}
             disabled={isLoading}
           />
@@ -85,12 +84,12 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analizando...
+                  {t("analyzing")}
                 </>
               ) : (
                 <>
                   <Send className="mr-2 h-4 w-4" />
-                  Preguntar
+                  {t("ask")}
                 </>
               )}
             </Button>
@@ -102,7 +101,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
             {isLoading && !answer && (
               <div className="p-6 flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Generando explicación...
+                {t("generating")}
               </div>
             )}
             {error && (

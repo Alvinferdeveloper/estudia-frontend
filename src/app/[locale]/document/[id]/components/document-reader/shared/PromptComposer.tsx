@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, Square } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAutoResizeTextarea } from "@/app/[locale]/document/[id]/hooks/useAutoResizeTextarea";
 
@@ -29,6 +30,7 @@ export const PromptComposer: React.FC<PromptComposerProps> = ({
   focusKey,
   className,
 }) => {
+  const t = useTranslations("reader.composer");
   const [value, setValue] = useState("");
   const textareaRef = useAutoResizeTextarea(value);
   const canSubmit = value.trim().length > 0 && !isBusy;
@@ -79,8 +81,8 @@ export const PromptComposer: React.FC<PromptComposerProps> = ({
           <button
             type="button"
             onClick={onStop}
-            aria-label="Detener"
-            title="Detener"
+            aria-label={t("stop")}
+            title={t("stop")}
             className="press-feedback flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground text-background hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Square className="size-3 fill-current" />
@@ -89,8 +91,8 @@ export const PromptComposer: React.FC<PromptComposerProps> = ({
           <button
             type="submit"
             disabled={!canSubmit}
-            aria-label="Enviar"
-            title="Enviar"
+            aria-label={t("send")}
+            title={t("send")}
             className="press-feedback flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-muted disabled:text-muted-foreground"
           >
             <ArrowUp className="size-4" />

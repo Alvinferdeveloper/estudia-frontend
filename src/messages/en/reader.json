@@ -1,0 +1,44 @@
+{
+  "documentNotFound": "Document not found",
+  "header": {
+    "title": "AI PDF Reader",
+    "backToWorkspace": "Back to workspace",
+    "languageMode": "Language Mode",
+    "languageModeHint": "Language Mode: study words and phrases",
+    "changeTargetLanguage": "Change translation language",
+    "export": {
+      "trigger": "Export notes",
+      "anki": "Anki flashcards (.apkg)",
+      "importToAnki": "Import into the Anki app"
+    }
+  },
+  "controls": {
+    "regionQuery": "Image or formula",
+    "regionQueryHint": "Ask about an image or formula",
+    "assistant": "AI Assistant"
+  },
+  "selectionPopup": {
+    "chat": "Chat",
+    "explain": "Explain",
+    "note": "Note"
+  },
+  "visualQuery": {
+    "title": "Ask about an image or formula",
+    "description": "Ask a question about the image or formula selected in the document.",
+    "selectedRegion": "Selected region",
+    "previewAlt": "Selected region of the document",
+    "defaultQuestion": "What does this mean?",
+    "ask": "Ask",
+    "analyzing": "Analyzing...",
+    "generating": "Generating explanation..."
+  },
+  "composer": {
+    "send": "Send",
+    "stop": "Stop"
+  },
+  "quote": {
+    "remove": "Remove excerpt",
+    "showMore": "Show all",
+    "showLess": "Show less"
+  }
+}
