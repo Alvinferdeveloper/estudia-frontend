@@ -4,6 +4,7 @@ import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { SubscriptionPlan, useCreateSubscription, useCapturePayment } from "../hooks/useSubscription";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface PayPalButtonProps {
   plan: SubscriptionPlan;
@@ -13,6 +14,7 @@ interface PayPalButtonProps {
 }
 
 export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButtonProps) {
+  const t = useTranslations("subscription.checkout");
   const [{ isPending }] = usePayPalScriptReducer();
   const createSubscriptionMutation = useCreateSubscription();
   const capturePaymentMutation = useCapturePayment();
@@ -22,7 +24,7 @@ export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButto
     return (
       <div className="flex flex-col items-center justify-center py-6 gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-        <span className="text-sm text-muted-foreground font-medium animate-pulse">Conectando con PayPal...</span>
+        <span className="text-sm text-muted-foreground font-medium animate-pulse">{t("connectingPayPal")}</span>
       </div>
     );
   }

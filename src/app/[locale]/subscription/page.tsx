@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import { usePlans, SubscriptionPlan } from "./hooks/useSubscription";
 import { PricingCard } from "@/app/[locale]/subscription/components/PricingCard";
 import { PayPalButton } from "@/app/[locale]/subscription/components/PayPalButton";
@@ -13,7 +14,12 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { ROUTES } from "@/config/routes";
 
+const CURRENCY = "USD";
+
 export default function SubscriptionPage() {
+  const t = useTranslations("subscription");
+  const tPlans = useTranslations("common.plans");
+  const format = useFormatter();
   const { data, isLoading, error } = usePlans();
 
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
@@ -41,9 +47,9 @@ export default function SubscriptionPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive mb-4">Failed to load subscription plans</p>
+          <p className="text-destructive mb-4">{t("loadError")}</p>
           <Link href={ROUTES.workspace} className="text-primary hover:underline">
-            Back to workspace
+            {t("backToWorkspace")}
           </Link>
         </div>
       </div>
@@ -59,12 +65,12 @@ export default function SubscriptionPage() {
           <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
             <CheckCircle2 className="w-10 h-10 text-primary" />
           </div>
-          <h2 className="text-3xl font-bold">Subscription Updated!</h2>
+          <h2 className="text-3xl font-bold">{t("success.title")}</h2>
           <p className="text-muted-foreground text-lg">
-            Your payment was successful and your plan has been updated. You now have access to all the features of your new plan.
+            {t("success.description")}
           </p>
           <Button asChild className="w-full py-6 text-lg font-semibold rounded-xl">
-            <Link href={ROUTES.workspace}>Go to Workspace</Link>
+            <Link href={ROUTES.workspace}>{t("success.goToWorkspace")}</Link>
           </Button>
         </div>
       </div>
@@ -74,7 +80,7 @@ export default function SubscriptionPage() {
   return (
     <PayPalScriptProvider options={{
       clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb",
-      currency: "USD",
+      currency: CURRENCY,
       intent: "capture",
       vault: true
     }}>
@@ -87,14 +93,14 @@ export default function SubscriptionPage() {
                 className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to plans
+                {t("backToPlans")}
               </button>
             )}
             <div className="flex-1" />
             <Link
               href={ROUTES.workspace}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all duration-200"
-              aria-label="Close pricing"
+              aria-label={t("closePricing")}
             >
               <X className="w-6 h-6" />
             </Link>
@@ -114,18 +120,25 @@ export default function SubscriptionPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                   </span>
-                  Pricing Plans
+                  {t("hero.badge")}
                 </div>
 
                 {/* Main title with gradient text */}
                 <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-                  Choose Your <span className="bg-gradient-to-r from-primary via-green-400 to-green-600 bg-clip-text text-transparent">Perfect Plan</span>
+                  {t.rich("hero.title", {
+                    highlight: (chunks) => (
+                      <span className="bg-gradient-to-r from-primary via-green-400 to-green-600 bg-clip-text text-transparent">{chunks}</span>
+                    ),
+                  })}
                 </h1>
 
                 {/* Subtitle improved with emphasis on keywords */}
                 <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                  Unlock the full potential of <strong className="text-foreground font-semibold">{siteConfig.name}</strong> with our subscription plans.
-                  Upgrade anytime to get more <span className="text-primary font-medium">AI-powered features</span>.
+                  {t.rich("hero.subtitle", {
+                    brand: siteConfig.name,
+                    strong: (chunks) => <strong className="text-foreground font-semibold">{chunks}</strong>,
+                    highlight: (chunks) => <span className="text-primary font-medium">{chunks}</span>,
+                  })}
                 </p>
               </div>
 
@@ -138,8 +151,9 @@ export default function SubscriptionPage() {
                   >
                     <PricingCard
                       plan={plan.plan}
-                      name={plan.name}
-                      price={plan.price === 0 ? "Free" : `$${plan.price}`}
+                      name={tPlans(plan.plan)}
+                      price={plan.price}
+                      currency={CURRENCY}
                       description={plan.description}
                       features={plan.features}
                       isPopular={plan.isPopular}
@@ -158,12 +172,16 @@ export default function SubscriptionPage() {
                   <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Lock className="w-6 h-6 text-primary" />
                   </div>
-                  <h2 className="text-2xl font-extrabold tracking-tight mb-2">Complete Payment</h2>
+                  <h2 className="text-2xl font-extrabold tracking-tight mb-2">{t("checkout.title")}</h2>
                   <p className="text-muted-foreground text-sm">
-                    You are subscribing to the plan{" "}
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1">
-                      {plans.find(p => p.plan === selectedPlan)?.name}
-                    </span>
+                    {t.rich("checkout.subscribingTo", {
+                      plan: tPlans(selectedPlan),
+                      badge: (chunks) => (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1">
+                          {chunks}
+                        </span>
+                      ),
+                    })}
                   </p>
                 </div>
 
@@ -175,15 +193,17 @@ export default function SubscriptionPage() {
 
                     <div className="flex justify-between items-end relative z-10">
                       <div>
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Total to pay</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">{t("checkout.totalToPay")}</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-4xl font-black">${plans.find(p => p.plan === selectedPlan)?.price}</span>
-                          <span className="text-muted-foreground font-medium">/ month</span>
+                          <span className="text-4xl font-black">
+                            {format.number(plans.find(p => p.plan === selectedPlan)?.price ?? 0, { style: "currency", currency: CURRENCY })}
+                          </span>
+                          <span className="text-muted-foreground font-medium">{t("checkout.perMonth")}</span>
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-bold bg-muted px-2 py-1 rounded text-foreground uppercase tracking-widest">
-                          USD
+                          {CURRENCY}
                         </span>
                       </div>
                     </div>
@@ -192,7 +212,7 @@ export default function SubscriptionPage() {
                   <div className="space-y-5">
                     <div className="flex items-center justify-center gap-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-2 rounded-lg">
                       <ShieldCheck className="w-4 h-4" />
-                      <span>100% secure and encrypted payment</span>
+                      <span>{t("checkout.securePayment")}</span>
                     </div>
 
                     {/* PayPal Component */}
@@ -209,7 +229,7 @@ export default function SubscriptionPage() {
                       className="w-full cursor-pointer flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4"
                     >
                       <ArrowLeft className="w-4 h-4" />
-                      Cancel and return
+                      {t("checkout.cancelAndReturn")}
                     </button>
                   </div>
                 </div>

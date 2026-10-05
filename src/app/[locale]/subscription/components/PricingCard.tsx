@@ -2,13 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Check, Sparkles } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { SubscriptionPlan } from "../hooks/useSubscription";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {
   plan: SubscriptionPlan;
   name: string;
-  price: string;
+  price: number;
+  currency: string;
   description: string;
   features: string[];
   isPopular?: boolean;
@@ -21,6 +23,7 @@ export function PricingCard({
   plan,
   name,
   price,
+  currency,
   description,
   features,
   isPopular,
@@ -28,6 +31,10 @@ export function PricingCard({
   onSelect,
   isLoading,
 }: PricingCardProps) {
+  const t = useTranslations("subscription.card");
+  const format = useFormatter();
+  const isFree = price === 0;
+
   return (
     <div
       className={cn(
@@ -39,7 +46,7 @@ export function PricingCard({
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            Most Popular
+            {t("mostPopular")}
           </span>
         </div>
       )}
@@ -50,8 +57,10 @@ export function PricingCard({
       </div>
 
       <div className="mb-6 flex items-baseline gap-1">
-        <span className="text-4xl font-extrabold tracking-tight">{price}</span>
-        {price !== "Free" && <span className="text-muted-foreground font-medium">/month</span>}
+        <span className="text-4xl font-extrabold tracking-tight">
+          {isFree ? t("free") : format.number(price, { style: "currency", currency })}
+        </span>
+        {!isFree && <span className="text-muted-foreground font-medium">{t("perMonth")}</span>}
       </div>
 
       <ul className="flex-1 space-y-3 mb-8">
@@ -72,7 +81,7 @@ export function PricingCard({
           currentPlan && "bg-secondary text-secondary-foreground hover:bg-secondary border-none"
         )}
       >
-        {currentPlan ? "Current Plan" : isLoading ? "Processing..." : plan === "free" ? "Get Started" : "Subscribe"}
+        {currentPlan ? t("currentPlan") : isLoading ? t("processing") : plan === "free" ? t("getStarted") : t("subscribe")}
       </Button>
     </div>
   );

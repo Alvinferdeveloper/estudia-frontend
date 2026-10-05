@@ -1,0 +1,34 @@
+{
+  "loadError": "Failed to load subscription plans",
+  "backToWorkspace": "Back to workspace",
+  "closePricing": "Close pricing",
+  "backToPlans": "Back to plans",
+  "hero": {
+    "badge": "Pricing plans",
+    "title": "Choose your <highlight>perfect plan</highlight>",
+    "subtitle": "Unlock the full potential of <strong>{brand}</strong> with our subscription plans. Upgrade anytime to get more <highlight>AI-powered features</highlight>."
+  },
+  "card": {
+    "mostPopular": "Most popular",
+    "free": "Free",
+    "perMonth": "/month",
+    "currentPlan": "Current plan",
+    "processing": "Processing…",
+    "getStarted": "Get started",
+    "subscribe": "Subscribe"
+  },
+  "checkout": {
+    "title": "Complete payment",
+    "subscribingTo": "You are subscribing to the <badge>{plan}</badge> plan",
+    "totalToPay": "Total to pay",
+    "perMonth": "/ month",
+    "securePayment": "100% secure and encrypted payment",
+    "cancelAndReturn": "Cancel and return",
+    "connectingPayPal": "Connecting to PayPal..."
+  },
+  "success": {
+    "title": "Subscription updated!",
+    "description": "Your payment was successful and your plan has been updated. You now have access to all the features of your new plan.",
+    "goToWorkspace": "Go to workspace"
+  }
+}
