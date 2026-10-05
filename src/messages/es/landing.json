@@ -1,0 +1,72 @@
+{
+  "nav": {
+    "features": "Funcionalidades",
+    "examMode": "Modo Examen",
+    "faq": "FAQ",
+    "pricing": "Precios"
+  },
+  "header": {
+    "login": "Iniciar sesión",
+    "getStarted": "Empieza gratis"
+  },
+  "deepDive": {
+    "eyebrow": "Se adapta a ti",
+    "title": "Se adapta a como ya estudias",
+    "columns": {
+      "workflow": {
+        "title": "No cambia tu flujo",
+        "body": "Sigues subiendo los PDFs de siempre. Sin plantillas nuevas, sin reaprender nada."
+      },
+      "tutor": {
+        "title": "Un tutor que te examina",
+        "body": "El Modo Examen genera pruebas de práctica desde tus propios documentos, con retroalimentación al instante."
+      },
+      "search": {
+        "title": "Busca por significado",
+        "body": "Encuentra respuestas en todos tus documentos aunque no recuerdes la palabra exacta."
+      }
+    },
+    "compat": {
+      "pdf": "PDF · disponible",
+      "word": "Word · próximamente",
+      "powerpoint": "PowerPoint · próximamente"
+    }
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "items": {
+      "fileTypes": {
+        "question": "¿Qué tipo de archivos puedo subir?",
+        "answer": "Actualmente soportamos PDFs de cualquier tamaño. Próximamente añadiremos soporte para documentos de Word y presentaciones."
+      },
+      "pricing": {
+        "question": "¿Es realmente gratuito?",
+        "answer": "{brand} ofrece un plan gratuito generoso que incluye procesamiento de documentos y notas con IA. También tenemos un plan Pro para usuarios intensivos."
+      },
+      "aiNotes": {
+        "question": "¿Cómo funciona la IA para las notas?",
+        "answer": "Utilizamos modelos avanzados que analizan el texto seleccionado junto con el contexto de tu documento para ofrecer explicaciones precisas y coherentes."
+      },
+      "images": {
+        "question": "¿Puedo preguntar sobre imágenes y fórmulas?",
+        "answer": "Sí. Selecciona cualquier imagen, diagrama o ecuación de tu PDF y pregúntale directamente: la IA responde usando esa imagen como contexto."
+      },
+      "examMode": {
+        "question": "¿Qué es el Modo Examen?",
+        "answer": "Genera exámenes de práctica personalizados a partir de tus propios documentos, con una mascota que te acompaña y retroalimentación al instante."
+      },
+      "security": {
+        "question": "¿Mis documentos están seguros?",
+        "answer": "Sí, la privacidad es nuestra prioridad. Tus documentos están encriptados y solo tú tienes acceso a ellos y a tus anotaciones."
+      }
+    }
+  },
+  "footer": {
+    "tagline": "La plataforma de estudio potenciada por inteligencia artificial. Hecha para estudiantes, por estudiantes.",
+    "product": "Producto",
+    "legal": "Legal",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "copyright": "© {year} {brand}. Todos los derechos reservados."
+  }
+}

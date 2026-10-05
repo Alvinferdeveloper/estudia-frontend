@@ -1,0 +1,72 @@
+{
+  "nav": {
+    "features": "Features",
+    "examMode": "Exam Mode",
+    "faq": "FAQ",
+    "pricing": "Pricing"
+  },
+  "header": {
+    "login": "Log in",
+    "getStarted": "Start for free"
+  },
+  "deepDive": {
+    "eyebrow": "Built around you",
+    "title": "Fits the way you already study",
+    "columns": {
+      "workflow": {
+        "title": "Keep your workflow",
+        "body": "Keep uploading the same PDFs you always do. No new templates, nothing to relearn."
+      },
+      "tutor": {
+        "title": "A tutor that quizzes you",
+        "body": "Exam Mode builds practice tests from your own documents, with instant feedback."
+      },
+      "search": {
+        "title": "Search by meaning",
+        "body": "Find answers across all your documents, even when you can't remember the exact word."
+      }
+    },
+    "compat": {
+      "pdf": "PDF · available",
+      "word": "Word · coming soon",
+      "powerpoint": "PowerPoint · coming soon"
+    }
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": {
+      "fileTypes": {
+        "question": "What kind of files can I upload?",
+        "answer": "Right now we support PDFs of any size. Support for Word documents and presentations is coming soon."
+      },
+      "pricing": {
+        "question": "Is it really free?",
+        "answer": "{brand} offers a generous free plan that includes document processing and AI notes. We also have a Pro plan for power users."
+      },
+      "aiNotes": {
+        "question": "How does the AI work for notes?",
+        "answer": "We use advanced models that analyze the text you select together with the context of your document to give you accurate, coherent explanations."
+      },
+      "images": {
+        "question": "Can I ask about images and formulas?",
+        "answer": "Yes. Select any image, diagram or equation in your PDF and ask about it directly: the AI answers using that image as context."
+      },
+      "examMode": {
+        "question": "What is Exam Mode?",
+        "answer": "It creates personalized practice exams from your own documents, with a mascot that keeps you company and instant feedback."
+      },
+      "security": {
+        "question": "Are my documents secure?",
+        "answer": "Yes, privacy is our priority. Your documents are encrypted and only you can access them and your annotations."
+      }
+    }
+  },
+  "footer": {
+    "tagline": "The AI-powered study platform. Made for students, by students.",
+    "product": "Product",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© {year} {brand}. All rights reserved."
+  }
+}

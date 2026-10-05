@@ -1,10 +1,13 @@
 import { Github, Twitter } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { ROUTES } from "@/config/routes";
 
 export function Footer() {
+  const t = useTranslations("landing");
+
   return (
     <footer className="border-t border-border/60 py-16">
       <div className="container mx-auto px-4">
@@ -14,28 +17,28 @@ export function Footer() {
               <BrandLogo />
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs">
-              La plataforma de estudio potenciada por inteligencia artificial. Hecha para estudiantes, por estudiantes.
+              {t("footer.tagline")}
             </p>
           </div>
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Producto</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">{t("footer.product")}</h4>
             <ul className="space-y-2.5 text-sm text-muted-foreground">
-              <li><Link href="#features" className="hover:text-foreground transition-colors">Funcionalidades</Link></li>
-              <li><Link href="#examen" className="hover:text-foreground transition-colors">Modo Examen</Link></li>
-              <li><Link href="#" className="hover:text-foreground transition-colors">Precios</Link></li>
+              <li><Link href="#features" className="hover:text-foreground transition-colors">{t("nav.features")}</Link></li>
+              <li><Link href="#examen" className="hover:text-foreground transition-colors">{t("nav.examMode")}</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">{t("nav.pricing")}</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Legal</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">{t("footer.legal")}</h4>
             <ul className="space-y-2.5 text-sm text-muted-foreground">
-              <li><Link href="#" className="hover:text-foreground transition-colors">Privacidad</Link></li>
-              <li><Link href="#" className="hover:text-foreground transition-colors">Términos</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">{t("footer.privacy")}</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">{t("footer.terms")}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border/60 text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} {siteConfig.name}. Todos los derechos reservados.</p>
+          <p>{t("footer.copyright", { year: new Date().getFullYear(), brand: siteConfig.name })}</p>
           <div className="flex items-center gap-4">
             <Link href="#" className="hover:text-foreground transition-colors"><Twitter className="w-5 h-5" /></Link>
             <Link href="#" className="hover:text-foreground transition-colors"><Github className="w-5 h-5" /></Link>
