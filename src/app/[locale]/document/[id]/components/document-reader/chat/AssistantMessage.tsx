@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import { MarkdownRenderer } from "@/app/[locale]/document/[id]/components/document-reader/note-ui/MarkdownRenderer";
 import { splitAssistantText } from "@/app/[locale]/document/[id]/lib/chat-message";
@@ -19,6 +20,7 @@ export const AssistantMessage: React.FC<AssistantMessageProps> = ({
   showSuggestions,
   onSuggestionSelect,
 }) => {
+  const t = useTranslations("chat.assistantMessage");
   const { content, suggestions } = splitAssistantText(text);
 
   return (
@@ -29,7 +31,7 @@ export const AssistantMessage: React.FC<AssistantMessageProps> = ({
       )}
       {showSuggestions && suggestions.length > 0 && (
         <PromptList
-          label="Preguntas sugeridas"
+          label={t("suggestionsLabel")}
           prompts={suggestions}
           onSelect={onSuggestionSelect}
           className="-mx-2 mt-4 border-t border-sidebar-border pt-3"

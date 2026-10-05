@@ -1,0 +1,56 @@
+{
+  "pageCaption": "Pág. {page}",
+  "panel": {
+    "label": "Asistente IA",
+    "newConversation": "Nueva conversación",
+    "close": "Cerrar asistente",
+    "backToChat": "Volver al chat",
+    "viewConversations": "Ver conversaciones",
+    "conversationsTitle": "Conversaciones"
+  },
+  "composer": {
+    "label": "Mensaje para el asistente",
+    "documentPlaceholder": "Pregunta sobre el documento…",
+    "selectionPlaceholder": "Pregunta sobre este fragmento…"
+  },
+  "emptyState": {
+    "title": "¿Qué quieres saber de este documento?",
+    "description": "Pregunta lo que quieras, o selecciona un fragmento del PDF y pulsa Chat para preguntar sobre él.",
+    "promptsLabel": "Sugerencias para empezar",
+    "prompts": {
+      "summarize": "Resume las ideas principales",
+      "explainConcepts": "Explícame los conceptos clave",
+      "quizMe": "Hazme preguntas para repasar"
+    }
+  },
+  "assistantMessage": {
+    "suggestionsLabel": "Preguntas sugeridas"
+  },
+  "status": {
+    "thinking": "Zocratis está pensando",
+    "errorTitle": "No pude responder esta vez.",
+    "errorDescription": "Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar"
+  },
+  "history": {
+    "groups": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "last7Days": "Últimos 7 días",
+      "older": "Anteriores"
+    },
+    "emptyTitle": "Aún no tienes conversaciones",
+    "emptyDescription": "Tu primera pregunta sobre el documento empezará una."
+  },
+  "conversationItem": {
+    "titleInputLabel": "Nombre de la conversación",
+    "optionsLabel": "Opciones de la conversación",
+    "rename": "Renombrar",
+    "delete": "Eliminar",
+    "deleteDialog": {
+      "title": "¿Eliminar esta conversación?",
+      "description": "Se eliminarán todos sus mensajes. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    }
+  }
+}

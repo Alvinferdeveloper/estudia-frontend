@@ -1,0 +1,56 @@
+{
+  "pageCaption": "p. {page}",
+  "panel": {
+    "label": "AI assistant",
+    "newConversation": "New conversation",
+    "close": "Close assistant",
+    "backToChat": "Back to chat",
+    "viewConversations": "View conversations",
+    "conversationsTitle": "Conversations"
+  },
+  "composer": {
+    "label": "Message to the assistant",
+    "documentPlaceholder": "Ask about the document…",
+    "selectionPlaceholder": "Ask about this excerpt…"
+  },
+  "emptyState": {
+    "title": "What would you like to know about this document?",
+    "description": "Ask anything, or select a passage in the PDF and press Chat to ask about it.",
+    "promptsLabel": "Suggestions to get started",
+    "prompts": {
+      "summarize": "Summarize the main ideas",
+      "explainConcepts": "Explain the key concepts to me",
+      "quizMe": "Ask me questions to review"
+    }
+  },
+  "assistantMessage": {
+    "suggestionsLabel": "Suggested questions"
+  },
+  "status": {
+    "thinking": "Zocratis is thinking",
+    "errorTitle": "I couldn't answer this time.",
+    "errorDescription": "Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "history": {
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last7Days": "Last 7 days",
+      "older": "Older"
+    },
+    "emptyTitle": "You don't have any conversations yet",
+    "emptyDescription": "Your first question about the document will start one."
+  },
+  "conversationItem": {
+    "titleInputLabel": "Conversation name",
+    "optionsLabel": "Conversation options",
+    "rename": "Rename",
+    "delete": "Delete",
+    "deleteDialog": {
+      "title": "Delete this conversation?",
+      "description": "All of its messages will be deleted. This action can't be undone.",
+      "confirm": "Delete"
+    }
+  }
+}

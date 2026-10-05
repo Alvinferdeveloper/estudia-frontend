@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, History, SquarePen, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UseChatSessionReturn } from "@/app/[locale]/document/[id]/hooks/useChatSession";
@@ -22,6 +23,7 @@ type PanelView = "chat" | "history";
 const viewTransition = "flex min-h-0 flex-1 flex-col animate-in fade-in duration-200 ease-[var(--ease-out)]";
 
 export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
+  const t = useTranslations("chat");
   const [view, setView] = useState<PanelView>("chat");
   const isBusy = session.status === "submitted" || session.status === "streaming";
   const isEmptyDraft = !session.activeConversation && session.messages.length === 0;
@@ -33,26 +35,26 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
 
   const headerActions = (
     <>
-      <IconButton label="Nueva conversación" onClick={startNewConversation} disabled={isEmptyDraft && view === "chat"}>
+      <IconButton label={t("panel.newConversation")} onClick={startNewConversation} disabled={isEmptyDraft && view === "chat"}>
         <SquarePen />
       </IconButton>
-      <IconButton label="Cerrar asistente" onClick={onClose}>
+      <IconButton label={t("panel.close")} onClick={onClose}>
         <X />
       </IconButton>
     </>
   );
 
   return (
-    <section aria-label="Asistente IA" className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
+    <section aria-label={t("panel.label")} className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       {view === "history" ? (
         <div key="history" className={cn(viewTransition, "slide-in-from-left-2")}>
           <ChatPanelHeader
             leading={
-              <IconButton label="Volver al chat" onClick={() => setView("chat")}>
+              <IconButton label={t("panel.backToChat")} onClick={() => setView("chat")}>
                 <ArrowLeft />
               </IconButton>
             }
-            title="Conversaciones"
+            title={t("panel.conversationsTitle")}
             actions={headerActions}
           />
           <ConversationHistory
@@ -71,11 +73,11 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
         <div key="chat" className={cn(viewTransition, "slide-in-from-right-2")}>
           <ChatPanelHeader
             leading={
-              <IconButton label="Ver conversaciones" onClick={() => setView("history")}>
+              <IconButton label={t("panel.viewConversations")} onClick={() => setView("history")}>
                 <History />
               </IconButton>
             }
-            title={session.activeConversation?.title ?? "Nueva conversación"}
+            title={session.activeConversation?.title ?? t("panel.newConversation")}
             actions={headerActions}
           />
           <ChatMessageList
@@ -89,8 +91,8 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
           />
           <div className="shrink-0 px-3 pb-3">
             <PromptComposer
-              label="Mensaje para el asistente"
-              placeholder={session.context ? "Pregunta sobre este fragmento…" : "Pregunta sobre el documento…"}
+              label={t("composer.label")}
+              placeholder={t(session.context ? "composer.selectionPlaceholder" : "composer.documentPlaceholder")}
               isBusy={isBusy}
               onSubmit={session.send}
               onStop={session.stop}
@@ -99,7 +101,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
                 session.context && (
                   <TextQuote
                     text={session.context.text}
-                    caption={`Pág. ${session.context.page}`}
+                    caption={t("pageCaption", { page: session.context.page })}
                     onRemove={session.clearContext}
                   />
                 )

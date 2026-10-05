@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { MessagesSquare } from "lucide-react";
 import { Conversation } from "@/app/types";
 import { groupConversationsByDate } from "@/app/[locale]/document/[id]/lib/conversation-groups";
@@ -23,6 +24,7 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
   onRename,
   onDelete,
 }) => {
+  const t = useTranslations("chat.history");
   const groups = useMemo(() => groupConversationsByDate(conversations), [conversations]);
 
   if (isLoading) {
@@ -39,8 +41,8 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
         <MessagesSquare className="size-5 text-muted-foreground" />
-        <p className="text-sm font-medium text-foreground">Aún no tienes conversaciones</p>
-        <p className="text-sm text-muted-foreground text-pretty">Tu primera pregunta sobre el documento empezará una.</p>
+        <p className="text-sm font-medium text-foreground">{t("emptyTitle")}</p>
+        <p className="text-sm text-muted-foreground text-pretty">{t("emptyDescription")}</p>
       </div>
     );
   }
@@ -48,8 +50,8 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-4">
       {groups.map((group) => (
-        <section key={group.label} aria-label={group.label}>
-          <h3 className="px-3 pb-1 pt-4 text-xs font-medium text-muted-foreground">{group.label}</h3>
+        <section key={group.key} aria-label={t(`groups.${group.key}`)}>
+          <h3 className="px-3 pb-1 pt-4 text-xs font-medium text-muted-foreground">{t(`groups.${group.key}`)}</h3>
           <ul className="flex flex-col gap-0.5">
             {group.conversations.map((conversation) => (
               <ConversationItem

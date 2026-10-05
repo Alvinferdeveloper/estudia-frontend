@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Ellipsis, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Conversation } from "@/app/types";
@@ -26,6 +27,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   onRename,
   onDelete,
 }) => {
+  const t = useTranslations("chat.conversationItem");
   const [isEditing, setIsEditing] = useState(false);
   const [draftTitle, setDraftTitle] = useState(conversation.title);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
@@ -67,7 +69,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             if (event.key === "Enter") commitRename();
             if (event.key === "Escape") setIsEditing(false);
           }}
-          aria-label="Nombre de la conversación"
+          aria-label={t("titleInputLabel")}
           className="w-full rounded-lg border border-primary/50 bg-background px-3 py-1.5 text-sm text-foreground outline-none ring-2 ring-ring"
         />
       </li>
@@ -94,7 +96,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <IconButton
-            label="Opciones de la conversación"
+            label={t("optionsLabel")}
             className="absolute inset-y-0 right-1 my-auto size-7 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 [@media(hover:none)]:opacity-100"
           >
             <Ellipsis />
@@ -110,11 +112,11 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         >
           <DropdownMenuItem onSelect={startRename}>
             <Pencil />
-            Renombrar
+            {t("rename")}
           </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onSelect={() => setIsConfirmingDelete(true)}>
             <Trash2 />
-            Eliminar
+            {t("delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -123,9 +125,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         isOpen={isConfirmingDelete}
         onOpenChange={setIsConfirmingDelete}
         onConfirm={handleDelete}
-        title="¿Eliminar esta conversación?"
-        description="Se eliminarán todos sus mensajes. Esta acción no se puede deshacer."
-        confirmText="Eliminar"
+        title={t("deleteDialog.title")}
+        description={t("deleteDialog.description")}
+        confirmText={t("deleteDialog.confirm")}
         variant="destructive"
         isLoading={isDeleting}
       />

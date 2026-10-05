@@ -1,19 +1,21 @@
 import { Conversation } from "@/app/types";
 
+export type ConversationGroupKey = "today" | "yesterday" | "last7Days" | "older";
+
 export interface ConversationGroup {
-  label: string;
+  key: ConversationGroupKey;
   conversations: Conversation[];
 }
 
 const DAY_MS = 86_400_000;
 const MAX_TITLE_LENGTH = 60;
 
-const getGroupLabel = (date: string, startOfToday: number): string => {
+const getGroupKey = (date: string, startOfToday: number): ConversationGroupKey => {
   const time = new Date(date).getTime();
-  if (time >= startOfToday) return "Hoy";
-  if (time >= startOfToday - DAY_MS) return "Ayer";
-  if (time >= startOfToday - 7 * DAY_MS) return "Últimos 7 días";
-  return "Anteriores";
+  if (time >= startOfToday) return "today";
+  if (time >= startOfToday - DAY_MS) return "yesterday";
+  if (time >= startOfToday - 7 * DAY_MS) return "last7Days";
+  return "older";
 };
 
 export const groupConversationsByDate = (
@@ -23,13 +25,13 @@ export const groupConversationsByDate = (
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const sorted = [...conversations].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-  const groups = new Map<string, Conversation[]>();
+  const groups = new Map<ConversationGroupKey, Conversation[]>();
   for (const conversation of sorted) {
-    const label = getGroupLabel(conversation.updatedAt, startOfToday);
-    groups.set(label, [...(groups.get(label) ?? []), conversation]);
+    const key = getGroupKey(conversation.updatedAt, startOfToday);
+    groups.set(key, [...(groups.get(key) ?? []), conversation]);
   }
 
-  return Array.from(groups, ([label, items]) => ({ label, conversations: items }));
+  return Array.from(groups, ([key, items]) => ({ key, conversations: items }));
 };
 
 export const toConversationTitle = (text: string): string => {
