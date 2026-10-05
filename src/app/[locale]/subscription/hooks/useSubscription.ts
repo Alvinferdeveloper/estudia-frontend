@@ -188,6 +188,7 @@ export const useCreateSubscription = () => {
 
   return useMutation({
     mutationFn: createSubscription,
+    meta: { inlineError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
@@ -201,6 +202,7 @@ export const useCapturePayment = () => {
 
   return useMutation({
     mutationFn: capturePayment,
+    meta: { inlineError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] });
       queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });

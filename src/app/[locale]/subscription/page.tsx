@@ -14,6 +14,8 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { ROUTES } from "@/config/routes";
+import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
+import { ApiErrorMessage } from "@/components/api-error-message";
 
 const CURRENCY = "USD";
 
@@ -26,9 +28,11 @@ export default function SubscriptionPage() {
 
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [paymentErrorKey, setPaymentErrorKey] = useState<ApiErrorKey | null>(null);
 
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (plan === data?.currentPlan) return;
+    setPaymentErrorKey(null);
     setSelectedPlan(plan);
   };
 
@@ -223,8 +227,11 @@ export default function SubscriptionPage() {
                         plan={selectedPlan}
                         onSuccess={handlePaymentSuccess}
                         onCancel={() => setSelectedPlan(null)}
+                        onError={(paymentError) => setPaymentErrorKey(getApiErrorKey(paymentError))}
                       />
                     </div>
+
+                    <ApiErrorMessage errorKey={paymentErrorKey} className="text-center" />
 
                     <button
                       onClick={() => setSelectedPlan(null)}

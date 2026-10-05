@@ -10,7 +10,7 @@ interface PayPalButtonProps {
   plan: SubscriptionPlan;
   onSuccess: () => void;
   onCancel?: () => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
 }
 
 export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButtonProps) {
