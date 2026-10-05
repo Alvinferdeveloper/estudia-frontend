@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Moon, Sun, User, Settings, LogOut, CreditCard, Zap } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +28,7 @@ import { ROUTES } from "@/config/routes"
 import { LocaleSubmenu } from "@/components/locale/LocaleSubmenu"
 
 export function UserProfileMenu() {
+    const t = useTranslations("common");
     const { setTheme } = useTheme();
     const { data: session, } = useAuth();
     const { data: usage } = useUsage();
@@ -53,19 +55,12 @@ export function UserProfileMenu() {
         enterprise: "bg-warning text-warning-foreground",
     };
 
-    const planNames: Record<string, string> = {
-        free: "Free",
-        basic: "Basic",
-        pro: "Pro",
-        enterprise: "Enterprise",
-    };
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="press-feedback relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={session?.user?.image || undefined} alt="Usuario" />
+                        <AvatarImage src={session?.user?.image || undefined} alt={t("userMenu.avatarAlt")} />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">{getInitials(session?.user?.name)}</AvatarFallback>
                     </Avatar>
                 </Button>
@@ -87,15 +82,15 @@ export function UserProfileMenu() {
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-medium flex items-center gap-1">
                                     <Zap className="w-3 h-3" />
-                                    Current Plan
+                                    {t("userMenu.currentPlan")}
                                 </span>
                                 <span className={cn("text-xs px-2 py-0.5 rounded-full", planColors[usage.plan])}>
-                                    {planNames[usage.plan]}
+                                    {t(`plans.${usage.plan}`)}
                                 </span>
                             </div>
                             <div className="space-y-1.5">
                                 <div className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">AI Chat</span>
+                                    <span className="text-muted-foreground">{t("userMenu.aiChat")}</span>
                                     <span>{usage.chat.used}/{usage.chat.limit}</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -105,7 +100,7 @@ export function UserProfileMenu() {
                                     />
                                 </div>
                                 <div className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">AI Notes</span>
+                                    <span className="text-muted-foreground">{t("userMenu.aiNotes")}</span>
                                     <span>{usage.aiNotes.used}/{usage.aiNotes.limit}</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -122,33 +117,33 @@ export function UserProfileMenu() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer" onClick={() => router.push(ROUTES.subscription)}>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    <span>Upgrade Plan</span>
+                    <span>{t("userMenu.upgradePlan")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <span>{t("userMenu.profile")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>{t("userMenu.settings")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="cursor-pointer">
                         <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                         <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        <span>Theme</span>
+                        <span>{t("theme.label")}</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuSubContent>
                             <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
-                                Light
+                                {t("theme.light")}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
-                                Dark
+                                {t("theme.dark")}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
-                                System
+                                {t("theme.system")}
                             </DropdownMenuItem>
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
@@ -157,7 +152,7 @@ export function UserProfileMenu() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={handleLogOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log Out</span>
+                    <span>{t("userMenu.logOut")}</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

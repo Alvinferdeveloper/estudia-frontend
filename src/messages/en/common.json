@@ -1,5 +1,32 @@
 {
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
   "localeSwitcher": {
     "label": "Language"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "plans": {
+    "free": "Free",
+    "basic": "Basic",
+    "pro": "Pro",
+    "enterprise": "Enterprise"
+  },
+  "userMenu": {
+    "avatarAlt": "Your profile picture",
+    "currentPlan": "Current plan",
+    "aiChat": "AI chat",
+    "aiNotes": "AI notes",
+    "upgradePlan": "Upgrade plan",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logOut": "Log out"
   }
 }

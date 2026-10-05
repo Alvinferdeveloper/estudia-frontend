@@ -10,7 +10,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface ConfirmDialogProps {
@@ -31,11 +32,12 @@ export function ConfirmDialog({
   onConfirm,
   title,
   description,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText,
+  cancelText,
   variant = "destructive",
   isLoading = false,
 }: ConfirmDialogProps) {
+  const t = useTranslations("common.actions");
   const handleConfirm = async () => {
     await onConfirm();
     onOpenChange(false);
@@ -60,7 +62,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             className="press-feedback flex-1 cursor-pointer transition-colors"
           >
-            {cancelText}
+            {cancelText ?? t("cancel")}
           </Button>
           <Button
             onClick={handleConfirm}
@@ -75,7 +77,7 @@ export function ConfirmDialog({
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : null}
-            {confirmText}
+            {confirmText ?? t("confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>
