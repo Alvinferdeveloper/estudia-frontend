@@ -1,0 +1,98 @@
+{
+  "modeButton": "Exam mode",
+  "myExams": "My exams",
+  "defaultTitle": "Exam - {count, plural, one {# page} other {# pages}}",
+  "generating": "Generating questions with AI...",
+  "pagesSelected": "{count, plural, one {# page selected} other {# pages selected}}",
+  "startExam": "Start exam",
+  "selectionHint": "Click on the pages you want to include in your exam",
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "questionTypes": {
+    "open": "Open answer",
+    "multiple_choice": "Multiple choice",
+    "true_false": "True / False",
+    "fill_blank": "Fill in the blank",
+    "mixed": "Mixed"
+  },
+  "questionCount": "{count, plural, one {# question} other {# questions}}",
+  "setup": {
+    "title": "Exam setup",
+    "modeLabel": "Exam mode",
+    "questionTypeLabel": "Question type",
+    "difficultyLabel": "Difficulty",
+    "modes": {
+      "quick_review": {
+        "title": "Quick review",
+        "description": "5 questions to test your understanding"
+      },
+      "exam_simulation": {
+        "title": "Exam simulation",
+        "description": "Realistic test conditions with time pressure"
+      },
+      "custom": {
+        "title": "Custom",
+        "description": "Configure your own exam settings"
+      }
+    }
+  },
+  "pageSelector": {
+    "title": "Select pages for the exam",
+    "description": "Click on pages to select them. Selected: {count}",
+    "continue": "Continue ({count, plural, one {# page} other {# pages}})"
+  },
+  "session": {
+    "keyboardHint": "to continue",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "processing": "Processing...",
+    "seeResults": "See results",
+    "next": "Next",
+    "evaluate": "Check",
+    "correctAnswer": "Correct answer",
+    "true": "True",
+    "false": "False",
+    "fillBlankPlaceholder": "Type your answer...",
+    "openPlaceholder": "Write out your answer...",
+    "characterCount": "{count, plural, one {# character} other {# characters}}"
+  },
+  "mascot": {
+    "idle": "Come on, you've got this!",
+    "submitting": "Analyzing your answer...",
+    "positive1": "Impressive!",
+    "positive2": "Spot on, nice one!",
+    "positive3": "You're on fire!",
+    "learning1": "Almost! Check the explanation.",
+    "learning2": "Mistakes are how we learn.",
+    "learning3": "You'll nail the next one."
+  },
+  "results": {
+    "finished": "Exam complete",
+    "questions": "{count, plural, one {question} other {questions}}",
+    "pages": "{count, plural, one {page} other {pages}}",
+    "breakdown": "Breakdown",
+    "questionNumber": "Question {number}",
+    "retry": "Try again"
+  },
+  "savedExams": {
+    "description": "View history or retake a previously saved exam",
+    "historyDescription": "Exam history and stats",
+    "loading": "Loading...",
+    "empty": "No saved exams yet. Create one first.",
+    "iconAlt": "Crayon"
+  },
+  "history": {
+    "back": "Back",
+    "createdAt": "Created {date}",
+    "empty": "You haven't finished this exam yet.",
+    "attempts": "{count, plural, one {attempt} other {attempts}}",
+    "best": "best",
+    "lowest": "lowest",
+    "last": "last",
+    "title": "History",
+    "retake": "Retake exam"
+  }
+}

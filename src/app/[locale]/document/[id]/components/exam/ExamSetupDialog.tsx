@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,32 +30,17 @@ interface ExamSetupDialogProps {
 }
 
 const modes = [
-  {
-    id: EXAM_MODES.QUICK_REVIEW,
-    title: 'Quick Review',
-    description: '5 questions to test your understanding',
-    defaultType: QUESTION_TYPES.OPEN,
-  },
-  {
-    id: EXAM_MODES.EXAM_SIMULATION,
-    title: 'Exam Simulation',
-    description: 'Realistic test conditions with time pressure',
-    defaultType: QUESTION_TYPES.MULTIPLE_CHOICE,
-  },
-  {
-    id: EXAM_MODES.CUSTOM,
-    title: 'Custom',
-    description: 'Configure your own exam settings',
-    defaultType: QUESTION_TYPES.OPEN,
-  },
+  { id: EXAM_MODES.QUICK_REVIEW, defaultType: QUESTION_TYPES.OPEN },
+  { id: EXAM_MODES.EXAM_SIMULATION, defaultType: QUESTION_TYPES.MULTIPLE_CHOICE },
+  { id: EXAM_MODES.CUSTOM, defaultType: QUESTION_TYPES.OPEN },
 ];
 
-const questionTypes: { id: QuestionType; label: string; icon: React.ElementType }[] = [
-  { id: QUESTION_TYPES.OPEN, label: 'Open Answer', icon: PenLine },
-  { id: QUESTION_TYPES.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: CircleDot },
-  { id: QUESTION_TYPES.TRUE_FALSE, label: 'True/False', icon: CheckCheck },
-  { id: QUESTION_TYPES.FILL_BLANK, label: 'Fill in Blank', icon: Underline },
-  { id: QUESTION_TYPES.MIXED, label: 'Mixed', icon: Shuffle },
+const questionTypes: { id: QuestionType; icon: React.ElementType }[] = [
+  { id: QUESTION_TYPES.OPEN, icon: PenLine },
+  { id: QUESTION_TYPES.MULTIPLE_CHOICE, icon: CircleDot },
+  { id: QUESTION_TYPES.TRUE_FALSE, icon: CheckCheck },
+  { id: QUESTION_TYPES.FILL_BLANK, icon: Underline },
+  { id: QUESTION_TYPES.MIXED, icon: Shuffle },
 ];
 
 export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
@@ -62,6 +48,8 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   onStartExam,
   onCancel,
 }) => {
+  const t = useTranslations("exam");
+  const tCommon = useTranslations("common");
   const [selectedMode, setSelectedMode] = useState<string>(EXAM_MODES.QUICK_REVIEW);
   const [difficulty, setDifficulty] = useState<string>(DIFFICULTY_LEVELS.MEDIUM);
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
@@ -79,7 +67,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
       mode: selectedMode,
       difficulty,
       questionType,
-      title: `Exam - ${selectedPages.length} pages`,
+      title: t("defaultTitle", { count: selectedPages.length }),
     });
   };
 
@@ -87,15 +75,15 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
       <DialogContent className="max-w-lg gap-0 p-0">
         <DialogHeader className="p-4 pb-3">
-          <DialogTitle>Exam Setup</DialogTitle>
+          <DialogTitle>{t("setup.title")}</DialogTitle>
           <DialogDescription>
-            {selectedPages.length} pages selected
+            {t("pagesSelected", { count: selectedPages.length })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="max-h-[60vh] space-y-4 overflow-y-auto p-4 pt-0">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Exam Mode</label>
+            <label className="text-sm font-medium">{t("setup.modeLabel")}</label>
             <div className="grid gap-2">
               {modes.map((mode) => (
                 <button
@@ -108,15 +96,15 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
                       : "border-border hover:border-primary/40"
                   )}
                 >
-                  <div className="font-medium">{mode.title}</div>
-                  <div className="text-sm text-muted-foreground">{mode.description}</div>
+                  <div className="font-medium">{t(`setup.modes.${mode.id}.title`)}</div>
+                  <div className="text-sm text-muted-foreground">{t(`setup.modes.${mode.id}.description`)}</div>
                 </button>
               ))}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Question Type</label>
+            <label className="text-sm font-medium">{t("setup.questionTypeLabel")}</label>
             <div className="grid grid-cols-2 gap-2">
               {questionTypes.map((type) => {
                 const Icon = type.icon;
@@ -132,7 +120,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
                     )}
                   >
                     <Icon className={cn("h-4 w-4", questionType === type.id ? "text-primary" : "text-muted-foreground")} />
-                    {type.label}
+                    {t(`questionTypes.${type.id}`)}
                   </button>
                 );
               })}
@@ -140,7 +128,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Difficulty</label>
+            <label className="text-sm font-medium">{t("setup.difficultyLabel")}</label>
             <div className="flex gap-2">
               {[DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD].map((d) => (
                 <Button
@@ -150,7 +138,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
                   className="press-feedback"
                   onClick={() => setDifficulty(d)}
                 >
-                  {d.charAt(0).toUpperCase() + d.slice(1)}
+                  {t(`difficulty.${d}`)}
                 </Button>
               ))}
             </div>
@@ -159,10 +147,10 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
 
         <DialogFooter className="border-t border-border p-4">
           <Button variant="ghost" className="press-feedback" onClick={onCancel}>
-            Cancel
+            {tCommon("actions.cancel")}
           </Button>
           <Button className="press-feedback" onClick={handleStart}>
-            Start Exam
+            {t("startExam")}
           </Button>
         </DialogFooter>
       </DialogContent>

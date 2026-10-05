@@ -1,0 +1,98 @@
+{
+  "modeButton": "Modo examen",
+  "myExams": "Mis exámenes",
+  "defaultTitle": "Examen - {count, plural, one {# página} other {# páginas}}",
+  "generating": "Generando preguntas con IA...",
+  "pagesSelected": "{count, plural, one {# página seleccionada} other {# páginas seleccionadas}}",
+  "startExam": "Empezar examen",
+  "selectionHint": "Haz clic en las páginas que quieres incluir en tu examen",
+  "difficulty": {
+    "easy": "Fácil",
+    "medium": "Media",
+    "hard": "Difícil"
+  },
+  "questionTypes": {
+    "open": "Respuesta abierta",
+    "multiple_choice": "Opción múltiple",
+    "true_false": "Verdadero / Falso",
+    "fill_blank": "Completar espacio",
+    "mixed": "Mixto"
+  },
+  "questionCount": "{count, plural, one {# pregunta} other {# preguntas}}",
+  "setup": {
+    "title": "Configurar examen",
+    "modeLabel": "Modo de examen",
+    "questionTypeLabel": "Tipo de pregunta",
+    "difficultyLabel": "Dificultad",
+    "modes": {
+      "quick_review": {
+        "title": "Repaso rápido",
+        "description": "5 preguntas para comprobar lo que has entendido"
+      },
+      "exam_simulation": {
+        "title": "Simulacro de examen",
+        "description": "Condiciones reales de examen, con presión de tiempo"
+      },
+      "custom": {
+        "title": "Personalizado",
+        "description": "Configura tu examen a tu manera"
+      }
+    }
+  },
+  "pageSelector": {
+    "title": "Selecciona las páginas del examen",
+    "description": "Haz clic en las páginas para seleccionarlas. Seleccionadas: {count}",
+    "continue": "Continuar ({count, plural, one {# página} other {# páginas}})"
+  },
+  "session": {
+    "keyboardHint": "para continuar",
+    "correct": "Correcto",
+    "incorrect": "Incorrecto",
+    "processing": "Procesando...",
+    "seeResults": "Ver resultados",
+    "next": "Siguiente",
+    "evaluate": "Evaluar",
+    "correctAnswer": "Respuesta correcta",
+    "true": "Verdadero",
+    "false": "Falso",
+    "fillBlankPlaceholder": "Escribe tu respuesta...",
+    "openPlaceholder": "Desarrolla tu respuesta...",
+    "characterCount": "{count, plural, one {# carácter} other {# caracteres}}"
+  },
+  "mascot": {
+    "idle": "¡Vamos, tú puedes con esto!",
+    "submitting": "Analizando tu respuesta...",
+    "positive1": "¡Impresionante!",
+    "positive2": "¡Exacto, bien ahí!",
+    "positive3": "¡Vas encendido!",
+    "learning1": "¡Casi! Revisa la explicación.",
+    "learning2": "De los errores se aprende.",
+    "learning3": "La próxima seguro la sacas."
+  },
+  "results": {
+    "finished": "Examen finalizado",
+    "questions": "{count, plural, one {pregunta} other {preguntas}}",
+    "pages": "{count, plural, one {página} other {páginas}}",
+    "breakdown": "Desglose",
+    "questionNumber": "Pregunta {number}",
+    "retry": "Reintentar"
+  },
+  "savedExams": {
+    "description": "Consulta el historial o repite un examen guardado",
+    "historyDescription": "Historial y estadísticas del examen",
+    "loading": "Cargando...",
+    "empty": "Aún no tienes exámenes guardados. Crea uno primero.",
+    "iconAlt": "Lápiz de cera"
+  },
+  "history": {
+    "back": "Volver",
+    "createdAt": "Creado el {date}",
+    "empty": "Aún no has terminado este examen.",
+    "attempts": "{count, plural, one {intento} other {intentos}}",
+    "best": "mejor",
+    "lowest": "más baja",
+    "last": "última",
+    "title": "Historial",
+    "retake": "Repetir examen"
+  }
+}

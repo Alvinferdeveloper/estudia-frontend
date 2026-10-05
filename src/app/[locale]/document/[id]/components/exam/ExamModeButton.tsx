@@ -1,4 +1,5 @@
 import { FlaskConical } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface ExamModeButtonProps {
@@ -7,10 +8,11 @@ interface ExamModeButtonProps {
 }
 
 export const ExamModeButton: React.FC<ExamModeButtonProps> = ({ onClick, isActive }) => {
+  const t = useTranslations("exam");
   return (
     <button
       onClick={onClick}
-      title="Exam mode"
+      title={t("modeButton")}
       className={cn(
         "press-feedback flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150",
         isActive

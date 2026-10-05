@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, RotateCcw, FileText } from "lucide-react";
-import { ExamResults } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { useFormatter, useTranslations } from "next-intl";
+import { ExamResults, isDifficultyLevel } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
 
 interface ExamResultsScreenProps {
@@ -14,6 +15,9 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
   onRetry,
   onClose,
 }) => {
+  const t = useTranslations("exam");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { exam, questions, answers, averageScore } = results;
 
   const getScoreColor = (score: number | null) => {
@@ -30,7 +34,7 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
         <div className="flex animate-in fade-in slide-in-from-bottom-2 items-end justify-between gap-6 border-b border-border pb-6 duration-500">
           <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              Examen finalizado
+              {t("results.finished")}
             </p>
             <h1 className="mt-1 truncate text-2xl font-bold tracking-tight text-foreground">
               {exam.title}
@@ -42,7 +46,7 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
               getScoreColor(averageScore)
             )}
           >
-            {averageScore.toFixed(1)}
+            {format.number(averageScore, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
             <span className="text-xl text-muted-foreground">/10</span>
           </p>
         </div>
@@ -54,21 +58,23 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
         >
           <span className="text-foreground">
             <span className="font-mono font-semibold tabular-nums">{questions.length}</span>{" "}
-            <span className="text-muted-foreground">preguntas</span>
+            <span className="text-muted-foreground">{t("results.questions", { count: questions.length })}</span>
           </span>
           <span className="h-3 w-px bg-border" />
           <span className="text-foreground">
             <span className="font-mono font-semibold tabular-nums">{exam.pages.length}</span>{" "}
-            <span className="text-muted-foreground">páginas</span>
+            <span className="text-muted-foreground">{t("results.pages", { count: exam.pages.length })}</span>
           </span>
           <span className="h-3 w-px bg-border" />
-          <span className="text-foreground capitalize">{exam.difficulty}</span>
+          <span className="text-foreground">
+            {isDifficultyLevel(exam.difficulty) ? t(`difficulty.${exam.difficulty}`) : exam.difficulty}
+          </span>
         </div>
 
         {/* Desglose por pregunta */}
         <div className="mt-10">
           <p className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Desglose
+            {t("results.breakdown")}
           </p>
           <div className="divide-y divide-border/60">
             {questions.map((question, index) => {
@@ -89,7 +95,7 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
                       <XCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">Pregunta {index + 1}</p>
+                      <p className="text-sm font-medium text-foreground">{t("results.questionNumber", { number: index + 1 })}</p>
                       <p className="truncate text-xs text-muted-foreground">
                         {question.text}
                       </p>
@@ -107,11 +113,11 @@ export const ExamResultsScreen: React.FC<ExamResultsScreenProps> = ({
         <div className="mt-10 flex justify-end gap-2">
           <Button variant="outline" className="press-feedback" onClick={onClose}>
             <FileText className="mr-2 h-4 w-4" />
-            Cerrar
+            {tCommon("actions.close")}
           </Button>
           <Button className="press-feedback" onClick={onRetry}>
             <RotateCcw className="mr-2 h-4 w-4" />
-            Reintentar
+            {t("results.retry")}
           </Button>
         </div>
       </div>

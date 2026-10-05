@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Question, Answer, QuestionType, QUESTION_TYPES } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { ExamHeader } from "@/app/[locale]/document/[id]/components/exam/components/ExamHeader";
 import { AnswerInput } from "@/app/[locale]/document/[id]/components/exam/components/AnswerInput";
@@ -21,16 +22,10 @@ interface ExamUIProps {
 
 // Badge del tipo de pregunta
 const QuestionTypeBadge: React.FC<{ type: QuestionType }> = ({ type }) => {
-  const labels: Record<QuestionType, string> = {
-    [QUESTION_TYPES.MULTIPLE_CHOICE]: "Opción múltiple",
-    [QUESTION_TYPES.TRUE_FALSE]: "Verdadero / Falso",
-    [QUESTION_TYPES.FILL_BLANK]: "Completar espacio",
-    [QUESTION_TYPES.OPEN]: "Respuesta abierta",
-    [QUESTION_TYPES.MIXED]: "Mixto",
-  };
+  const t = useTranslations("exam.questionTypes");
   return (
     <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60 bg-primary/[0.06] px-5 py-1 rounded-full border border-primary/10">
-      {labels[type] ?? type}
+      {t(type)}
     </span>
   );
 };

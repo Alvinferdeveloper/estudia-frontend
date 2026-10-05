@@ -1,8 +1,13 @@
 import { Brain, Loader2, PartyPopper, Lightbulb } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
+const POSITIVE_KEYS = ["positive1", "positive2", "positive3"] as const;
+const LEARNING_KEYS = ["learning1", "learning2", "learning3"] as const;
+
 export const MascotCompanion = ({ state, isCorrect }: { state: 'idle' | 'submitting' | 'answered', isCorrect?: boolean }) => {
-    let message = "¡Vamos, tú puedes con esto!";
+    const t = useTranslations("exam.mascot");
+    let message = t("idle");
     let Icon = Brain;
     let spinIcon = false;
     let iconColor = "text-primary";
@@ -11,21 +16,19 @@ export const MascotCompanion = ({ state, isCorrect }: { state: 'idle' | 'submitt
     let textColor = "text-foreground";
 
     if (state === 'submitting') {
-        message = "Analizando tu respuesta...";
+        message = t("submitting");
         Icon = Loader2;
         spinIcon = true;
     } else if (state === 'answered') {
         if (isCorrect) {
-            const positiveMsgs = ["¡Impresionante!", "¡Exacto, bien ahí!", "¡Vas encendido!"];
-            message = positiveMsgs[Math.floor(Math.random() * positiveMsgs.length)];
+            message = t(POSITIVE_KEYS[Math.floor(Math.random() * POSITIVE_KEYS.length)]);
             Icon = PartyPopper;
             iconColor = "text-emerald-600 dark:text-emerald-400";
             iconBg = "bg-emerald-500/10";
             bubbleColor = "border-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-950/20";
             textColor = "text-emerald-700 dark:text-emerald-300";
         } else {
-            const learningMsgs = ["¡Casi! Revisa la explicación.", "De los errores se aprende.", "La próxima seguro la sacas."];
-            message = learningMsgs[Math.floor(Math.random() * learningMsgs.length)];
+            message = t(LEARNING_KEYS[Math.floor(Math.random() * LEARNING_KEYS.length)]);
             Icon = Lightbulb;
             iconColor = "text-amber-600 dark:text-amber-400";
             iconBg = "bg-amber-500/10";

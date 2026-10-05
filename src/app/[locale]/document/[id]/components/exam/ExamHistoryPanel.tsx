@@ -1,8 +1,10 @@
 import { ArrowLeft, RotateCcw, ListX } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   Exam,
+  isDifficultyLevel,
   useExamResults,
   computeExamStats,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
@@ -31,6 +33,8 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
   onBack,
   onRetake,
 }) => {
+  const t = useTranslations("exam");
+  const format = useFormatter();
   const { data: results, isLoading } = useExamResults(exam.id);
   const stats = computeExamStats(results ?? []);
 
@@ -39,7 +43,7 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
       <div className="flex items-center gap-2 p-4 pb-3">
         <button
           onClick={onBack}
-          title="Back"
+          title={t("history.back")}
           className="press-feedback flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -49,15 +53,19 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
           <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
             <span
               className={cn(
-                "rounded-full px-1.5 py-0.5 font-medium capitalize",
+                "rounded-full px-1.5 py-0.5 font-medium",
                 difficultyStyles[exam.difficulty] ?? "bg-secondary text-secondary-foreground"
               )}
             >
-              {exam.difficulty}
+              {isDifficultyLevel(exam.difficulty) ? t(`difficulty.${exam.difficulty}`) : exam.difficulty}
             </span>
-            <span>{exam.totalQuestions} questions</span>
+            <span>{t("questionCount", { count: exam.totalQuestions })}</span>
             <span>·</span>
-            <span>Created {new Date(exam.createdAt).toLocaleDateString()}</span>
+            <span>
+              {t("history.createdAt", {
+                date: format.dateTime(new Date(exam.createdAt), { day: "numeric", month: "numeric", year: "numeric" }),
+              })}
+            </span>
           </div>
         </div>
       </div>
@@ -70,40 +78,40 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
         ) : stats.attemptCount === 0 ? (
           <div className="flex flex-col items-center gap-2 py-8 text-center">
             <ListX className="h-8 w-8 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">You haven&apos;t finished this exam yet.</p>
+            <p className="text-sm text-muted-foreground">{t("history.empty")}</p>
           </div>
         ) : (
           <>
             <div className="flex items-center gap-4 rounded-lg bg-muted/40 px-4 py-3 text-sm animate-in fade-in duration-300">
               <div>
                 <span className="font-mono font-semibold tabular-nums text-foreground">{stats.attemptCount}</span>{" "}
-                <span className="text-muted-foreground">attempt{stats.attemptCount === 1 ? "" : "s"}</span>
+                <span className="text-muted-foreground">{t("history.attempts", { count: stats.attemptCount })}</span>
               </div>
               <span className="h-3 w-px bg-border" />
               <div>
                 <span className={cn("font-mono font-semibold tabular-nums", getScoreColor(stats.highestScore))}>
                   {stats.highestScore !== null ? `${stats.highestScore}/10` : "—"}
                 </span>{" "}
-                <span className="text-muted-foreground">best</span>
+                <span className="text-muted-foreground">{t("history.best")}</span>
               </div>
               <span className="h-3 w-px bg-border" />
               <div>
                 <span className={cn("font-mono font-semibold tabular-nums", getScoreColor(stats.lowestScore))}>
                   {stats.lowestScore !== null ? `${stats.lowestScore}/10` : "—"}
                 </span>{" "}
-                <span className="text-muted-foreground">lowest</span>
+                <span className="text-muted-foreground">{t("history.lowest")}</span>
               </div>
               <span className="h-3 w-px bg-border" />
               <div>
                 <span className={cn("font-mono font-semibold tabular-nums", getScoreColor(stats.lastScore))}>
                   {stats.lastScore !== null ? `${stats.lastScore}/10` : "—"}
                 </span>{" "}
-                <span className="text-muted-foreground">last</span>
+                <span className="text-muted-foreground">{t("history.last")}</span>
               </div>
             </div>
 
             <p className="mb-2 mt-5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              History
+              {t("history.title")}
             </p>
             <div className="divide-y divide-border/60">
               {results?.map((result, index) => (
@@ -113,7 +121,7 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
                   className="flex animate-in fade-in slide-in-from-bottom-1 items-center justify-between py-2.5 text-sm duration-300"
                 >
                   <span className="text-muted-foreground">
-                    {new Date(result.createdAt).toLocaleDateString(undefined, {
+                    {format.dateTime(new Date(result.createdAt), {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
@@ -133,11 +141,11 @@ export const ExamHistoryPanel: React.FC<ExamHistoryPanelProps> = ({
 
       <div className="flex justify-end gap-2 border-t border-border p-4">
         <Button variant="outline" className="press-feedback" onClick={onBack}>
-          Back
+          {t("history.back")}
         </Button>
         <Button className="press-feedback gap-2" onClick={onRetake}>
           <RotateCcw className="h-4 w-4" />
-          Retake exam
+          {t("history.retake")}
         </Button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Check, Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Answer, Question, QuestionType, QUESTION_TYPES } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
   currentQuestionType,
   isCorrect,
 }) => {
+  const t = useTranslations("exam.session");
   const showCorrectAnswer = (
     [QUESTION_TYPES.MULTIPLE_CHOICE, QUESTION_TYPES.TRUE_FALSE, QUESTION_TYPES.FILL_BLANK] as QuestionType[]
   ).includes(currentQuestionType);
@@ -26,7 +28,7 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
     }
     if (currentQuestionType === QUESTION_TYPES.TRUE_FALSE) {
       const isTrue = ['true', 'verdadero', 'v', '1'].includes(String(currentQuestion.idealAnswer).toLowerCase().trim());
-      return isTrue ? 'Verdadero' : 'Falso';
+      return isTrue ? t("true") : t("false");
     }
     return currentQuestion.idealAnswer;
   })();
@@ -58,7 +60,7 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
               isCorrect ? "text-emerald-600/70 dark:text-emerald-400/70" : "text-amber-600/70 dark:text-amber-400/70"
             )}
           >
-            {isCorrect ? "Correcto" : "Incorrecto"}
+            {isCorrect ? t("correct") : t("incorrect")}
           </p>
           <p
             className={cn(
@@ -83,7 +85,7 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
             <Check size={12} />
           </div>
           <div className="min-w-0">
-            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/50">Respuesta correcta</p>
+            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/50">{t("correctAnswer")}</p>
             <p className="truncate text-sm font-medium text-foreground">{correctAnswerLabel}</p>
           </div>
         </div>

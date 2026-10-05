@@ -29,6 +29,9 @@ export const DIFFICULTY_LEVELS = {
 
 export type DifficultyLevel = typeof DIFFICULTY_LEVELS[keyof typeof DIFFICULTY_LEVELS];
 
+export const isDifficultyLevel = (value: string): value is DifficultyLevel =>
+  (Object.values(DIFFICULTY_LEVELS) as string[]).includes(value);
+
 export const EXAM_MODES = {
   QUICK_REVIEW: 'quick_review',
   EXAM_SIMULATION: 'exam_simulation',

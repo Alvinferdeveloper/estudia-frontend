@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, CornerDownLeft, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export const ExamFooter: React.FC<ExamFooterProps> = ({
   onNext,
   onFinish,
 }) => {
+  const t = useTranslations("exam.session");
   const isDisabled = (!currentAnswer.trim() && !hasAnswered) || isSubmitting;
 
   return (
@@ -30,7 +32,7 @@ export const ExamFooter: React.FC<ExamFooterProps> = ({
         {/* Hint de teclado */}
         <div className="hidden md:flex items-center gap-1.5 text-[0.8rem] font-medium uppercase tracking-widest text-muted-foreground/30">
           <kbd className="px-1 py-0.5 rounded border border-border/50 bg-muted/20 font-sans text-[9px]">Enter</kbd>
-          <span>para continuar</span>
+          <span>{t("keyboardHint")}</span>
         </div>
 
         {/* Indicador de resultado (cuando ya respondió) */}
@@ -43,7 +45,7 @@ export const ExamFooter: React.FC<ExamFooterProps> = ({
               ? <CheckCircle2 size={13} />
               : <XCircle size={13} />
             }
-            <span>{isCorrect ? "Correcto" : "Incorrecto"}</span>
+            <span>{isCorrect ? t("correct") : t("incorrect")}</span>
           </div>
         )}
 
@@ -63,15 +65,15 @@ export const ExamFooter: React.FC<ExamFooterProps> = ({
           {isSubmitting ? (
             <>
               <Loader2 className="animate-spin mr-1.5" size={13} />
-              <span>Procesando...</span>
+              <span>{t("processing")}</span>
             </>
           ) : hasAnswered ? (
             <>
-              <span>{isLastQuestion ? "Ver resultados" : "Siguiente"}</span>
+              <span>{isLastQuestion ? t("seeResults") : t("next")}</span>
             </>
           ) : (
             <>
-              <span>Evaluar</span>
+              <span>{t("evaluate")}</span>
             </>
           )}
         </Button>

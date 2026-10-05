@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,13 +25,15 @@ export const PageSelector: React.FC<PageSelectorProps> = ({
   onContinue,
   onCancel,
 }) => {
+  const t = useTranslations("exam");
+  const tCommon = useTranslations("common");
   return (
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
       <DialogContent className="flex max-h-[80vh] max-w-2xl flex-col gap-0 p-0">
         <DialogHeader className="p-4 pb-3">
-          <DialogTitle>Select Pages for Exam</DialogTitle>
+          <DialogTitle>{t("pageSelector.title")}</DialogTitle>
           <DialogDescription>
-            Click on pages to select. Selected: {selectedPages.length} page(s)
+            {t("pageSelector.description", { count: selectedPages.length })}
           </DialogDescription>
         </DialogHeader>
 
@@ -65,14 +68,14 @@ export const PageSelector: React.FC<PageSelectorProps> = ({
 
         <DialogFooter className="border-t border-border p-4">
           <Button variant="ghost" className="press-feedback" onClick={onCancel}>
-            Cancel
+            {tCommon("actions.cancel")}
           </Button>
           <Button
             className="press-feedback"
             onClick={onContinue}
             disabled={selectedPages.length === 0}
           >
-            Continue ({selectedPages.length} pages)
+            {t("pageSelector.continue", { count: selectedPages.length })}
           </Button>
         </DialogFooter>
       </DialogContent>

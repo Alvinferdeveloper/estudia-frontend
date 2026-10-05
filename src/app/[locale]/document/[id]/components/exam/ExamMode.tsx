@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { ClipboardList, MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExamSession } from "@/app/[locale]/document/[id]/components/exam/hooks/useExamSession";
@@ -32,6 +33,8 @@ export const ExamMode: React.FC<ExamModeProps> = ({
   onEnableExamMode,
   onDisableExamMode,
 }) => {
+  const t = useTranslations("exam");
+  const tCommon = useTranslations("common");
   const [showSavedExams, setShowSavedExams] = useState(false);
   const { data: userExams } = useUserExams(document.id);
 
@@ -77,7 +80,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
             <div className="space-y-4 text-center">
               <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
-              <p className="text-sm text-muted-foreground">Generating questions with AI...</p>
+              <p className="text-sm text-muted-foreground">{t("generating")}</p>
             </div>
           </div>
         );
@@ -109,7 +112,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           pages: selectedPages,
           mode: 'custom' as const,
           totalQuestions: questions.length,
-          title: `Exam - ${selectedPages.length} pages`,
+          title: t("defaultTitle", { count: selectedPages.length }),
           difficulty: 'medium',
           questionType,
           createdAt: new Date().toISOString(),
@@ -158,7 +161,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
         />
         <button
           onClick={() => setShowSavedExams(true)}
-          title="My exams"
+          title={t("myExams")}
           className="press-feedback relative flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
         >
           <ClipboardList className="h-4 w-4" />
@@ -185,12 +188,12 @@ export const ExamMode: React.FC<ExamModeProps> = ({
           >
             {selectedPages.length > 0 ? (
               <span className="text-sm font-medium tabular-nums">
-                {selectedPages.length} page{selectedPages.length !== 1 ? 's' : ''} selected
+                {t("pagesSelected", { count: selectedPages.length })}
               </span>
             ) : (
               <span className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MousePointerClick className="h-4 w-4 animate-pulse text-primary" />
-                Click on the pages you want to include in your exam
+                {t("selectionHint")}
               </span>
             )}
             {selectedPages.length > 0 && (
@@ -198,14 +201,14 @@ export const ExamMode: React.FC<ExamModeProps> = ({
                 onClick={handleContinueFromSelection}
                 className="press-feedback rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
               >
-                Start Exam
+                {t("startExam")}
               </button>
             )}
             <button
               onClick={disableExamMode}
               className="press-feedback px-2 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
             >
-              Cancel
+              {tCommon("actions.cancel")}
             </button>
           </div>
         </motion.div>
