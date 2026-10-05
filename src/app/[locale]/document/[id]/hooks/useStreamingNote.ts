@@ -1,5 +1,5 @@
 import { useCompletion } from "@ai-sdk/react";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 interface UseStreamingNoteOptions {
   apiEndpoint?: string;
@@ -16,6 +16,7 @@ interface UseStreamingNoteReturn {
   completion: string;
   isLoading: boolean;
   error: Error | undefined;
+  // Rejects with the request error; resolves empty when stopped by the user.
   complete: (prompt: string, body: UseStreamingNoteBody) => Promise<string | null | undefined>;
   stop: () => void;
   setCompletion: (completion: string) => void;
@@ -23,6 +24,7 @@ interface UseStreamingNoteReturn {
 
 export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStreamingNoteReturn => {
   const { apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/stream` } = options;
+  const lastError = useRef<Error | null>(null);
 
   const {
     completion,
@@ -35,12 +37,19 @@ export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStre
     api: apiEndpoint,
     streamProtocol: "text",
     body: {},
-    credentials: 'include'
+    credentials: 'include',
+    // useCompletion resolves null on failure; keep the error so complete() can reject with it.
+    onError: (requestError) => {
+      lastError.current = requestError;
+    },
   });
 
   const wrappedComplete = useCallback(
     async (prompt: string, body: UseStreamingNoteBody) => {
-      return await complete(prompt, { body });
+      lastError.current = null;
+      const result = await complete(prompt, { body });
+      if (lastError.current) throw lastError.current;
+      return result;
     },
     [complete]
   );

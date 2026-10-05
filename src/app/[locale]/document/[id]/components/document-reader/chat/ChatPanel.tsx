@@ -84,6 +84,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
             key={session.activeConversation?.id ?? "draft"}
             messages={session.messages}
             status={session.status}
+            errorKey={session.errorKey}
             isLoadingHistory={session.isLoadingHistory}
             emptyState={<ChatEmptyState onPromptSelect={session.send} />}
             onRetry={session.retry}

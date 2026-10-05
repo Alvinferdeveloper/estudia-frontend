@@ -32,7 +32,7 @@ export const NoteReader: React.FC<{ session: NoteSession }> = ({ session }) => {
       </NoteScrollArea>
 
       <NoteFooter>
-        <NoteError message={session.error && t(`errors.${session.error}`)} className="mb-2 px-1 text-xs" />
+        <NoteError error={session.error} className="mb-2 px-1 text-xs" />
         <PromptComposer
           label={t("reader.changeLabel")}
           placeholder={t("reader.changePlaceholder")}

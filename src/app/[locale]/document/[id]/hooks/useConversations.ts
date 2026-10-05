@@ -31,6 +31,8 @@ export const useConversations = (documentId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversations', documentId] });
     },
+    // Starting a chat shows its failure in the message list.
+    meta: { inlineError: true },
   });
 
   const rename = useMutation<Conversation, Error, { id: string; title: string }>({

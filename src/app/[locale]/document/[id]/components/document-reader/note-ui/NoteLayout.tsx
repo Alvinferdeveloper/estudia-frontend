@@ -1,4 +1,7 @@
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { useApiErrorText } from "@/components/api-error-message";
+import type { NoteSessionError } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import { useStickToBottom } from "@/app/[locale]/document/[id]/hooks/useStickToBottom";
 
@@ -31,9 +34,14 @@ export const NoteStatus: React.FC<{ label: string; className?: string }> = ({ la
   </div>
 );
 
-export const NoteError: React.FC<{ message: string | null; className?: string }> = ({ message, className }) =>
-  message ? (
+export const NoteError: React.FC<{ error: NoteSessionError | null; className?: string }> = ({ error, className }) => {
+  const t = useTranslations("notes.errors");
+  const errorText = useApiErrorText();
+  if (!error) return null;
+
+  return (
     <p role="alert" className={cn("text-sm text-destructive", className)}>
-      {message}
+      {errorText(error.reason, t(error.key))}
     </p>
-  ) : null;
+  );
+};

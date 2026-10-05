@@ -4,6 +4,7 @@ import type referenceMessages from "@/messages/es";
 import { Annotation } from "@/app/types";
 import { useStreamingNote } from "@/app/[locale]/document/[id]/hooks/useStreamingNote";
 import { DEFAULT_NOTE_COLOR } from "@/app/[locale]/document/[id]/lib/note-colors";
+import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 
 // compose → generating → viewing ⇄ revising → reviewing → viewing
 export type NotePhase = "compose" | "generating" | "viewing" | "revising" | "reviewing";
@@ -26,6 +27,14 @@ interface UseNoteSessionOptions {
 
 export type NoteErrorKey = keyof typeof referenceMessages.notes.errors;
 
+// What failed (generation, save, color) plus the API reason, shown when it is specific.
+export interface NoteSessionError {
+  key: NoteErrorKey;
+  reason: ApiErrorKey;
+}
+
+const toNoteError = (key: NoteErrorKey, error: unknown): NoteSessionError => ({ key, reason: getApiErrorKey(error) });
+
 export const useNoteSession = ({
   selectedText,
   documentFileName,
@@ -41,7 +50,7 @@ export const useNoteSession = ({
   const [color, setColor] = useState(annotation?.color ?? DEFAULT_NOTE_COLOR);
   // Saves started before a color change (e.g. while generating) must still use the latest one.
   const colorRef = useRef(color);
-  const [error, setError] = useState<NoteErrorKey | null>(null);
+  const [error, setError] = useState<NoteSessionError | null>(null);
 
   const { completion, complete, stop: stopStream } = useStreamingNote();
   const stoppedByUser = useRef(false);
@@ -57,14 +66,19 @@ export const useNoteSession = ({
     async (prompt: string, originalNote?: string): Promise<string | null> => {
       stoppedByUser.current = false;
       setError(null);
-      const result = await complete(prompt, {
-        selectedText,
-        prompt,
-        documentContext: `Documento: ${documentFileName}`,
-        originalNote,
-      });
-      if (!result && !stoppedByUser.current) setError("generation");
-      return result || null;
+      try {
+        const result = await complete(prompt, {
+          selectedText,
+          prompt,
+          documentContext: `Documento: ${documentFileName}`,
+          originalNote,
+        });
+        if (!result && !stoppedByUser.current) setError({ key: "generation", reason: "unknown" });
+        return result || null;
+      } catch (requestError) {
+        setError(toNoteError("generation", requestError));
+        return null;
+      }
     },
     [complete, selectedText, documentFileName]
   );
@@ -73,8 +87,8 @@ export const useNoteSession = ({
     async (aiResponse: string, comment: string) => {
       try {
         await onSave({ selectedText, comment, aiResponse, color: colorRef.current });
-      } catch {
-        setError("save");
+      } catch (saveError) {
+        setError(toNoteError("save", saveError));
       }
     },
     [onSave, selectedText]
@@ -134,7 +148,7 @@ export const useNoteSession = ({
       colorRef.current = nextColor;
       // A note that isn't saved yet takes the color with it on its first save.
       if (phase !== "compose" && phase !== "generating") {
-        onColorChange(nextColor).catch(() => setError("color"));
+        onColorChange(nextColor).catch((colorError) => setError(toNoteError("color", colorError)));
       }
     },
     [phase, onColorChange]

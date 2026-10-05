@@ -4,11 +4,13 @@ import { useStickToBottom } from "@/app/[locale]/document/[id]/hooks/useStickToB
 import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { AssistantMessage, AssistantMarkState } from "./AssistantMessage";
 import { UserMessage } from "./UserMessage";
+import type { ApiErrorKey } from "@/lib/api-errors";
 import { ChatError, MessagesSkeleton, PendingReply } from "./ChatStatus";
 
 interface ChatMessageListProps {
   messages: UIMessage[];
   status: ChatStatus;
+  errorKey: ApiErrorKey | null;
   isLoadingHistory: boolean;
   emptyState: React.ReactNode;
   onRetry: () => void;
@@ -18,6 +20,7 @@ interface ChatMessageListProps {
 export const ChatMessageList: React.FC<ChatMessageListProps> = ({
   messages,
   status,
+  errorKey,
   isLoadingHistory,
   emptyState,
   onRetry,
@@ -63,7 +66,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
       <div ref={contentRef} className="mx-auto flex min-h-full w-full max-w-[68ch] flex-col gap-6 px-4 py-6">
         {renderMessages()}
         {isAwaitingReply && <PendingReply />}
-        {status === "error" && <ChatError onRetry={onRetry} />}
+        {status === "error" && <ChatError errorKey={errorKey} onRetry={onRetry} />}
       </div>
     </div>
   );

@@ -51,6 +51,8 @@ export const useCreateAnnotation = (documentId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['annotations', documentId] });
     },
+    // The note dialog shows save failures itself.
+    meta: { inlineError: true },
   });
 };
 
@@ -90,5 +92,6 @@ export const useUpdateAnnotation = (documentId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['annotations', documentId] });
     },
+    meta: { inlineError: true },
   });
 };

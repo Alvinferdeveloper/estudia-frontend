@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { CircleAlert, RotateCcw } from "lucide-react";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
+import type { ApiErrorKey } from "@/lib/api-errors";
+import { useApiErrorText } from "@/components/api-error-message";
 
 export const PendingReply: React.FC = () => {
   const t = useTranslations("chat.status");
@@ -13,8 +15,9 @@ export const PendingReply: React.FC = () => {
   );
 };
 
-export const ChatError: React.FC<{ onRetry: () => void }> = ({ onRetry }) => {
+export const ChatError: React.FC<{ errorKey: ApiErrorKey | null; onRetry: () => void }> = ({ errorKey, onRetry }) => {
   const t = useTranslations("chat.status");
+  const errorText = useApiErrorText();
 
   return (
     <div role="alert" className="flex gap-3">
@@ -23,7 +26,7 @@ export const ChatError: React.FC<{ onRetry: () => void }> = ({ onRetry }) => {
       </div>
       <div className="flex flex-col items-start gap-1 pt-1 text-sm">
         <p className="font-medium text-foreground">{t("errorTitle")}</p>
-        <p className="text-muted-foreground">{t("errorDescription")}</p>
+        <p className="text-muted-foreground">{errorText(errorKey, t("errorDescription"))}</p>
         <button
           type="button"
           onClick={onRetry}

@@ -5,6 +5,7 @@ import { useConversations } from "@/app/[locale]/document/[id]/hooks/useConversa
 import { useChatAssistant } from "@/app/[locale]/document/[id]/hooks/useChatAssistant";
 import { ChatContext, composeChatMessage } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { toConversationTitle } from "@/app/[locale]/document/[id]/lib/conversation-groups";
+import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 
 interface UseChatSessionOptions {
   documentId: string;
@@ -22,7 +23,7 @@ export interface UseChatSessionReturn {
   activeConversation: Conversation | null;
   messages: UIMessage[];
   status: ChatStatus;
-  error: Error | undefined;
+  errorKey: ApiErrorKey | null;
   isLoadingHistory: boolean;
   context: ChatContext | null;
   attachContext: (context: ChatContext) => void;
@@ -132,13 +133,15 @@ export const useChatSession = ({ documentId, documentName }: UseChatSessionOptio
     return assistant.status;
   };
 
+  const error = draftError ?? assistant.error;
+
   return {
     conversations,
     isLoadingConversations: list.isLoading,
     activeConversation: conversations.find((c) => c.id === conversationId) ?? null,
     messages: assistant.messages,
     status: getStatus(),
-    error: draftError ?? assistant.error,
+    errorKey: error ? getApiErrorKey(error) : null,
     isLoadingHistory: assistant.isLoadingHistory,
     context,
     attachContext: setContext,

@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import { useAutoResizeTextarea } from "@/app/[locale]/document/[id]/hooks/useAutoResizeTextarea";
-import type { NoteErrorKey } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
+import type { NoteSessionError } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
 import { NoteColorPicker } from "./NoteColorPicker";
 import { NoteError, NoteFooter, NoteScrollArea } from "./NoteLayout";
 
@@ -12,7 +12,7 @@ const QUICK_PROMPTS = ["summarize", "simplify", "keyPoints", "reviewQuestions"] 
 interface NoteComposeFormProps {
   defaultPrompt: string;
   color: string;
-  error: NoteErrorKey | null;
+  error: NoteSessionError | null;
   onColorChange: (color: string) => void;
   onSubmit: (prompt: string) => void;
   onCancel: () => void;
@@ -27,7 +27,6 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
   onCancel,
 }) => {
   const t = useTranslations("notes.compose");
-  const tErrors = useTranslations("notes.errors");
   const tCommon = useTranslations("common");
   const [prompt, setPrompt] = useState(defaultPrompt);
   const textareaRef = useAutoResizeTextarea(prompt);
@@ -88,7 +87,7 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
           ))}
         </div>
 
-        <NoteError message={error && tErrors(error)} className="mt-3" />
+        <NoteError error={error} className="mt-3" />
       </NoteScrollArea>
 
       <NoteFooter className="flex items-center gap-3 px-6">
