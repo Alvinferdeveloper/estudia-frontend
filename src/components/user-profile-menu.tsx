@@ -21,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import useAuth from "@/app/hooks/useAuth"
 import { authClient } from "@/app/lib/auth-client"
 import { useRouter } from "next/navigation"
-import { useUsage } from "@/app/subscription/hooks/useSubscription"
+import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 import { ROUTES } from "@/config/routes"
 
