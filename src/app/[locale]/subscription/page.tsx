@@ -7,7 +7,7 @@ import { usePlans, SubscriptionPlan } from "./hooks/useSubscription";
 import { PricingCard } from "@/app/[locale]/subscription/components/PricingCard";
 import { PayPalButton } from "@/app/[locale]/subscription/components/PayPalButton";
 import { X, Loader2, ArrowLeft, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";

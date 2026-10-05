@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { BookOpen, Loader2, Download, ArrowLeft, Languages } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {

@@ -1,7 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import "../globals.css";
 import { siteConfig } from "@/config/site";
+import { LocaleParams, OPEN_GRAPH_LOCALES, routing } from "@/i18n/routing";
+import { isLocale, resolveLocale } from "@/i18n/paths";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,31 +19,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const defaultTitle = `${siteConfig.name} | ${siteConfig.tagline}`;
+export const generateStaticParams = () => routing.locales.map((locale) => ({ locale }));
 
 // Canonical URLs are set per public page: a root canonical would be inherited by every route.
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  applicationName: siteConfig.name,
-  title: {
-    default: defaultTitle,
-    template: `%s · ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  keywords: [...siteConfig.keywords],
-  openGraph: {
-    type: "website",
-    locale: siteConfig.openGraphLocale,
-    siteName: siteConfig.name,
-    title: defaultTitle,
-    description: siteConfig.shareDescription,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: defaultTitle,
-    description: siteConfig.shareDescription,
-  },
-};
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const locale = resolveLocale((await params).locale);
+  const t = await getTranslations({ locale, namespace: "metadata" });
+  const defaultTitle = `${siteConfig.name} | ${t("tagline")}`;
+  const shareDescription = t("shareDescription");
+
+  return {
+    metadataBase: new URL(siteConfig.url),
+    applicationName: siteConfig.name,
+    title: {
+      default: defaultTitle,
+      template: `%s · ${siteConfig.name}`,
+    },
+    description: t("description", { brand: siteConfig.name }),
+    keywords: [...(t.raw("keywords") as string[]), siteConfig.name],
+    openGraph: {
+      type: "website",
+      locale: OPEN_GRAPH_LOCALES[locale],
+      siteName: siteConfig.name,
+      title: defaultTitle,
+      description: shareDescription,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: defaultTitle,
+      description: shareDescription,
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -46,26 +59,20 @@ export const viewport: Viewport = {
   ],
 };
 
-import { ThemeProvider } from "@/components/theme-provider";
+export default async function LocaleLayout({ children, params }: LocaleParams & { children: React.ReactNode }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  // Lets pages below render statically instead of reading the locale from the request.
+  setRequestLocale(locale);
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
   return (
-    <html lang={siteConfig.locale} suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <NextIntlClientProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

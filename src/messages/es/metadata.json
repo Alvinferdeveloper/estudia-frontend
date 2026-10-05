@@ -1,0 +1,14 @@
+{
+  "tagline": "Tu compañero de estudio con inteligencia artificial",
+  "description": "Potencia tu aprendizaje con {brand}. Sube documentos, genera notas automáticas con IA y organiza tu estudio de forma inteligente.",
+  "shareDescription": "Transforma tus documentos en conocimiento. Notas, resúmenes y organización con IA.",
+  "keywords": ["IA", "estudio", "estudiantes", "notas automáticas", "resumen de documentos"],
+  "pages": {
+    "login": "Entrar",
+    "register": "Crear cuenta",
+    "workspace": "Mis documentos",
+    "document": "Documento",
+    "upload": "Subir documento",
+    "subscription": "Planes"
+  }
+}

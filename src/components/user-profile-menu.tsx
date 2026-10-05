@@ -20,10 +20,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import useAuth from "@/app/hooks/useAuth"
 import { authClient } from "@/app/lib/auth-client"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 import { ROUTES } from "@/config/routes"
+import { LocaleSubmenu } from "@/components/locale/LocaleSubmenu"
 
 export function UserProfileMenu() {
     const { setTheme } = useTheme();
@@ -152,6 +153,7 @@ export function UserProfileMenu() {
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
+                <LocaleSubmenu />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={handleLogOut}>
                     <LogOut className="mr-2 h-4 w-4" />

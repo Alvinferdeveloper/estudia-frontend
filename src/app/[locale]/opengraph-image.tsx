@@ -1,8 +1,11 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 import { siteConfig } from "@/config/site";
+import { LocaleParams } from "@/i18n/routing";
+import { resolveLocale } from "@/i18n/paths";
 import { MARK_BOOK_PATH, MARK_CHISEL_PATHS } from "@/components/brand/mark-paths";
 
-export const alt = `${siteConfig.name} · ${siteConfig.tagline}`;
+export const alt = siteConfig.name;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,8 +17,10 @@ const Mark = ({ size: markSize, opacity = 1 }: { size: number; opacity?: number 
   </svg>
 );
 
-// Share card for every route that doesn't define its own: ink background, ivory type, the mark as watermark.
-export default function OpengraphImage() {
+// Share card per language for every route that doesn't define its own: ink background, ivory type, mark watermark.
+export default async function OpengraphImage({ params }: LocaleParams) {
+  const locale = resolveLocale((await params).locale);
+  const t = await getTranslations({ locale, namespace: "metadata" });
   const { colors } = siteConfig;
 
   return new ImageResponse(
@@ -43,8 +48,8 @@ export default function OpengraphImage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 860 }}>
-          <span style={{ fontSize: 68, fontWeight: 600, lineHeight: 1.05, letterSpacing: -2 }}>{siteConfig.tagline}</span>
-          <span style={{ fontSize: 30, lineHeight: 1.35, opacity: 0.72 }}>{siteConfig.shareDescription}</span>
+          <span style={{ fontSize: 68, fontWeight: 600, lineHeight: 1.05, letterSpacing: -2 }}>{t("tagline")}</span>
+          <span style={{ fontSize: 30, lineHeight: 1.35, opacity: 0.72 }}>{t("shareDescription")}</span>
         </div>
       </div>
     ),

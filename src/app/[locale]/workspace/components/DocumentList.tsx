@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Inbox, ChevronRight, Upload, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/config/routes";

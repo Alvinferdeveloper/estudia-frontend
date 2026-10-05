@@ -1,0 +1,14 @@
+{
+  "tagline": "Your AI-powered study companion",
+  "description": "Boost your learning with {brand}. Upload documents, generate AI notes automatically and organize your studies intelligently.",
+  "shareDescription": "Turn your documents into knowledge. Notes, summaries and organization with AI.",
+  "keywords": ["AI", "study", "students", "AI notes", "document summaries"],
+  "pages": {
+    "login": "Sign in",
+    "register": "Create account",
+    "workspace": "My documents",
+    "document": "Document",
+    "upload": "Upload document",
+    "subscription": "Plans"
+  }
+}

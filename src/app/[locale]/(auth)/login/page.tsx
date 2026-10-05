@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { ROUTES } from "@/config/routes";
+import { publicPageMetadata } from "@/config/seo";
+import { LocaleParams } from "@/i18n/routing";
+import { resolveLocale } from "@/i18n/paths";
 import { AuthForm } from "../components/AuthForm";
 
-export const metadata: Metadata = {
-  title: "Entrar",
-  alternates: { canonical: ROUTES.login },
-};
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  return publicPageMetadata(resolveLocale((await params).locale), ROUTES.login, "login");
+}
 
-export default function LoginPage() {
+export default async function LoginPage({ params }: LocaleParams) {
+  setRequestLocale(resolveLocale((await params).locale));
   return <AuthForm mode="login" />;
 }

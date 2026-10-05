@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { UploadCloud } from "lucide-react";
 import { authClient } from "@/app/lib/auth-client";

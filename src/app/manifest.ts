@@ -1,13 +1,19 @@
 import type { MetadataRoute } from "next";
+import { getTranslations } from "next-intl/server";
 import { siteConfig } from "@/config/site";
 import { ROUTES } from "@/config/routes";
+import { routing } from "@/i18n/routing";
 
-export default function manifest(): MetadataRoute.Manifest {
+// A manifest has a single language, so it uses the default one.
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const locale = routing.defaultLocale;
+  const t = await getTranslations({ locale, namespace: "metadata" });
+
   return {
-    name: `${siteConfig.name} · ${siteConfig.tagline}`,
+    name: `${siteConfig.name} · ${t("tagline")}`,
     short_name: siteConfig.name,
-    description: siteConfig.description,
-    lang: siteConfig.locale,
+    description: t("description", { brand: siteConfig.name }),
+    lang: locale,
     start_url: ROUTES.workspace,
     display: "standalone",
     background_color: siteConfig.colors.backgroundLight,
