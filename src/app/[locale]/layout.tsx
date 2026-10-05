@@ -8,6 +8,7 @@ import { siteConfig } from "@/config/site";
 import { LocaleParams, OPEN_GRAPH_LOCALES, routing } from "@/i18n/routing";
 import { isLocale, resolveLocale } from "@/i18n/paths";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,6 +72,7 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
         <NextIntlClientProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             {children}
+            <Toaster />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

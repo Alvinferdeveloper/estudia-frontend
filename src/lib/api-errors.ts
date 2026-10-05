@@ -43,8 +43,21 @@ export const getApiErrorKeyFromBody = (body: unknown): ApiErrorKey => {
   return (typeof code === "string" && ERROR_CODE_KEYS[code]) || "unknown";
 };
 
+// AI SDK streams put the API's JSON body (or the chat's bare code) in `error.message`.
+const parseStreamError = (message: string): unknown => {
+  try {
+    return JSON.parse(message);
+  } catch {
+    return { code: message };
+  }
+};
+
 export const getApiErrorKey = (error: unknown): ApiErrorKey => {
-  if (!axios.isAxiosError(error)) return "unknown";
-  if (!error.response) return "network";
-  return getApiErrorKeyFromBody(error.response.data);
+  if (axios.isAxiosError(error)) {
+    return error.response ? getApiErrorKeyFromBody(error.response.data) : "network";
+  }
+  // fetch rejects with a TypeError when the server can't be reached.
+  if (error instanceof TypeError) return "network";
+  if (error instanceof Error) return getApiErrorKeyFromBody(parseStreamError(error.message));
+  return "unknown";
 };

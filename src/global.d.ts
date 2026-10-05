@@ -8,3 +8,12 @@ declare module "next-intl" {
     Messages: typeof messages;
   }
 }
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    mutationMeta: {
+      // Set when the component shows the error itself, so the global toast stays quiet.
+      inlineError?: boolean;
+    };
+  }
+}

@@ -23,5 +23,6 @@ const postVisualQuery = async (
 export const useVisualQuery = (documentId: string) => {
   return useMutation<string, Error, VisualQueryRequest>({
     mutationFn: (request) => postVisualQuery(documentId, request),
+    meta: { inlineError: true },
   });
 };

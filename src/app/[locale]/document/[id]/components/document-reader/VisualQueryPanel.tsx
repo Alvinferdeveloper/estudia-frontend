@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Send, ImageIcon } from "lucide-react";
 import { MarkdownRenderer } from "@/app/[locale]/document/[id]/components/document-reader/note-ui";
 import type { ApiErrorKey } from "@/lib/api-errors";
+import { ApiErrorMessage } from "@/components/api-error-message";
 
 interface VisualQueryPanelProps {
   isOpen: boolean;
@@ -34,7 +35,6 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
   onAsk,
 }) => {
   const t = useTranslations("reader.visualQuery");
-  const tErrors = useTranslations("errors");
   const defaultQuestion = t("defaultQuestion");
   const [question, setQuestion] = useState(defaultQuestion);
 
@@ -106,9 +106,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
                 {t("generating")}
               </div>
             )}
-            {errorKey && (
-              <p className="p-4 text-sm text-destructive">{tErrors(errorKey)}</p>
-            )}
+            <ApiErrorMessage errorKey={errorKey} className="p-4" />
             {answer && <MarkdownRenderer content={answer} compact />}
           </div>
         )}

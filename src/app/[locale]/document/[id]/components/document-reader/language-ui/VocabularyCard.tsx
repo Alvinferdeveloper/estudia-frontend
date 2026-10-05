@@ -126,7 +126,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
       setLocalEntry(saved);
       onEntryUpdated?.(saved);
     } catch {
-      // error state is surfaced via explanationMutation.error
+      // Explanation errors show on the card; save errors through the global mutation toast.
     }
   };
 

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,7 +45,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.type !== "application/pdf") {
-      alert(t("newMenu.pdfOnly"));
+      toast.error(t("newMenu.pdfOnly"));
       return;
     }
     setPendingFile(file);
