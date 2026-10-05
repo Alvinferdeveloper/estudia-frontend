@@ -21,6 +21,7 @@ import { LiveAnchorTarget, useLiveAnchor } from "@/app/[locale]/document/[id]/ho
 import { isScrollbarPointerDown } from "@/app/[locale]/document/[id]/lib/scrollbar";
 import { CardFront } from "./CardFront";
 import { CardBack } from "./CardBack";
+import { getApiErrorKey } from "@/lib/api-errors";
 
 interface SaveEntryData {
   selectedText: string;
@@ -198,7 +199,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
                   explanationLanguage={explanationLanguage}
                   sourceLanguage={sourceLanguage}
                   isLoading={explanationMutation.isPending}
-                  error={explanationMutation.error?.message}
+                  errorKey={explanationMutation.error && getApiErrorKey(explanationMutation.error)}
                   onConjure={handleConjure}
                 />
               </motion.div>

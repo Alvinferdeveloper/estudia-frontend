@@ -1,6 +1,7 @@
 import { Languages, Wand2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LanguageCode } from "@/app/types";
+import type { ApiErrorKey } from "@/lib/api-errors";
 import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
 
@@ -10,7 +11,7 @@ interface CardFrontProps {
   explanationLanguage: LanguageCode;
   sourceLanguage: LanguageCode;
   isLoading: boolean;
-  error?: string | null;
+  errorKey?: ApiErrorKey | null;
   onConjure: () => void;
 }
 
@@ -20,11 +21,12 @@ export const CardFront: React.FC<CardFrontProps> = ({
   explanationLanguage,
   sourceLanguage,
   isLoading,
-  error,
+  errorKey,
   onConjure,
 }) => {
   const isEquivalent = sourceLanguage !== wordLanguage;
   const t = useTranslations("vocabulary.cardFront");
+  const tErrors = useTranslations("errors");
 
   return (
     <div className="relative w-[300px] max-w-[88vw] rounded-2xl p-[1px] bg-gradient-to-br from-violet-400/60 via-indigo-500/40 to-fuchsia-400/60 shadow-[0_20px_50px_-16px_rgba(109,40,217,0.55)]">
@@ -68,8 +70,8 @@ export const CardFront: React.FC<CardFrontProps> = ({
           )}
         </div>
 
-        {error && (
-          <p className="mt-3 text-xs text-red-300/90">{error}</p>
+        {errorKey && (
+          <p className="mt-3 text-xs text-red-300/90">{tErrors(errorKey)}</p>
         )}
       </div>
     </div>

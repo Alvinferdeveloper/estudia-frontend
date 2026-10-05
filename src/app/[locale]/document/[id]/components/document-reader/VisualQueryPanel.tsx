@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Send, ImageIcon } from "lucide-react";
 import { MarkdownRenderer } from "@/app/[locale]/document/[id]/components/document-reader/note-ui";
+import type { ApiErrorKey } from "@/lib/api-errors";
 
 interface VisualQueryPanelProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface VisualQueryPanelProps {
   previewImage: string | null;
   isLoading: boolean;
   answer: string | null;
-  error: string | null;
+  errorKey: ApiErrorKey | null;
   onAsk: (question: string) => void;
 }
 
@@ -29,10 +30,11 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
   previewImage,
   isLoading,
   answer,
-  error,
+  errorKey,
   onAsk,
 }) => {
   const t = useTranslations("reader.visualQuery");
+  const tErrors = useTranslations("errors");
   const defaultQuestion = t("defaultQuestion");
   const [question, setQuestion] = useState(defaultQuestion);
 
@@ -96,7 +98,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
           </div>
         </div>
 
-        {(answer || error || isLoading) && (
+        {(answer || errorKey || isLoading) && (
           <div className="border-t max-h-80 overflow-y-auto">
             {isLoading && !answer && (
               <div className="p-6 flex items-center gap-2 text-sm text-muted-foreground">
@@ -104,8 +106,8 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
                 {t("generating")}
               </div>
             )}
-            {error && (
-              <p className="p-4 text-sm text-destructive">{error}</p>
+            {errorKey && (
+              <p className="p-4 text-sm text-destructive">{tErrors(errorKey)}</p>
             )}
             {answer && <MarkdownRenderer content={answer} compact />}
           </div>

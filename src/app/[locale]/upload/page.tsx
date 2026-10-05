@@ -4,13 +4,15 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type referenceMessages from "@/messages/es";
+import { type ApiErrorKey, getApiErrorKeyFromBody } from "@/lib/api-errors";
 
 type UploadStatusKey = keyof typeof referenceMessages.workspace.upload.status;
 
-type UploadStatus = { key: UploadStatusKey; reason?: string };
+type UploadStatus = { key: UploadStatusKey; reason?: ApiErrorKey };
 
 export default function UploadDocument() {
   const t = useTranslations("workspace.upload");
+  const tErrors = useTranslations("errors");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<UploadStatus | null>(null);
@@ -55,8 +57,8 @@ export default function UploadDocument() {
         // Optionally redirect or update UI
         // router.push("/dashboard");
       } else {
-        const errorData = await response.json();
-        setStatus({ key: "failed", reason: errorData.message || response.statusText });
+        const errorBody = await response.json().catch(() => null);
+        setStatus({ key: "failed", reason: getApiErrorKeyFromBody(errorBody) });
       }
     } catch (error) {
       console.error("Error during upload:", error);
@@ -92,7 +94,7 @@ export default function UploadDocument() {
         </button>
         {status && (
           <p className="mt-4 text-center text-sm font-medium text-gray-700">
-            {t(`status.${status.key}`, { reason: status.reason ?? "" })}
+            {t(`status.${status.key}`, { reason: status.reason ? tErrors(status.reason) : "" })}
           </p>
         )}
       </div>

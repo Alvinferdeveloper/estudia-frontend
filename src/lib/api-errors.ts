@@ -1,0 +1,50 @@
+import axios from "axios";
+import type referenceMessages from "@/messages/es";
+
+export type ApiErrorKey = keyof typeof referenceMessages.errors;
+
+// API error codes (estudia-api `ErrorCode`) mapped to message keys; codes not listed fall back to "unknown".
+const ERROR_CODE_KEYS: Record<string, ApiErrorKey> = {
+  UNAUTHENTICATED: "unauthenticated",
+  FORBIDDEN: "forbidden",
+  NOT_FOUND: "notFound",
+  TOO_MANY_REQUESTS: "tooManyRequests",
+  DOCUMENT_NOT_FOUND: "documentNotFound",
+  DOCUMENT_ACCESS_DENIED: "documentAccessDenied",
+  NO_FILE_UPLOADED: "noFileUploaded",
+  ONLY_PDF_ALLOWED: "onlyPdfAllowed",
+  DOCUMENT_UPLOAD_FAILED: "documentUploadFailed",
+  DOCUMENT_DELETE_FAILED: "documentDeleteFailed",
+  DOCUMENT_FILE_UNAVAILABLE: "documentFileUnavailable",
+  DOCUMENT_NO_READABLE_TEXT: "documentNoReadableText",
+  VECTORIZATION_FAILED: "vectorizationFailed",
+  IMAGE_EXTRACTION_FAILED: "imageExtractionFailed",
+  FOLDER_NOT_FOUND: "folderNotFound",
+  TOPIC_NOT_FOUND: "topicNotFound",
+  CONVERSATION_NOT_FOUND: "conversationNotFound",
+  AI_PROVIDER_ERROR: "aiUnavailable",
+  TRANSLATION_FAILED: "translationFailed",
+  CHAT_LIMIT_REACHED: "chatLimitReached",
+  AI_NOTES_LIMIT_REACHED: "aiNotesLimitReached",
+  FEATURE_NOT_AVAILABLE: "featureNotAvailable",
+  SUBSCRIPTION_INACTIVE: "subscriptionInactive",
+  NO_ACTIVE_SUBSCRIPTION: "noActiveSubscription",
+  INVALID_PLAN: "invalidPlan",
+  PAYMENT_NOT_FOUND: "paymentNotFound",
+  PAYMENT_APPROVAL_PENDING: "paymentApprovalPending",
+  PAYMENT_EXPIRED: "paymentExpired",
+  PAYMENT_CAPTURE_FAILED: "paymentCaptureFailed",
+  PAYMENT_CREATION_FAILED: "paymentCreationFailed",
+  SUBSCRIPTION_ACTIVATION_FAILED: "subscriptionActivationFailed",
+};
+
+export const getApiErrorKeyFromBody = (body: unknown): ApiErrorKey => {
+  const code = body && typeof body === "object" ? (body as { code?: unknown }).code : undefined;
+  return (typeof code === "string" && ERROR_CODE_KEYS[code]) || "unknown";
+};
+
+export const getApiErrorKey = (error: unknown): ApiErrorKey => {
+  if (!axios.isAxiosError(error)) return "unknown";
+  if (!error.response) return "network";
+  return getApiErrorKeyFromBody(error.response.data);
+};

@@ -27,6 +27,7 @@ import { VocabularyCard } from "@/app/[locale]/document/[id]/components/document
 import { VisualQueryPanel } from "@/app/[locale]/document/[id]/components/document-reader/VisualQueryPanel";
 import { DocumentFile } from "@/app/[locale]/document/[id]/page";
 import { Annotation, VocabularyEntry } from "@/app/types";
+import { getApiErrorKey } from "@/lib/api-errors";
 
 interface DocumentReaderProps {
     document: DocumentFile;
@@ -387,7 +388,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 previewImage={pendingRegion?.imageBase64 ?? null}
                 isLoading={visualQuery.isPending}
                 answer={visualQuery.data ?? null}
-                error={visualQuery.error?.message ?? null}
+                errorKey={visualQuery.error && getApiErrorKey(visualQuery.error)}
                 onAsk={handleAskVisualQuery}
             />
         </div>
