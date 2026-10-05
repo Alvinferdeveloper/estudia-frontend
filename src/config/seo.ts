@@ -8,8 +8,8 @@ import { siteConfig } from "./site";
 export type PageTitleKey = keyof typeof referenceMessages.metadata.pages;
 
 const pageTitle = async (locale: Locale, page: PageTitleKey) => {
-  const t = await getTranslations({ locale, namespace: "metadata.pages" });
-  return t(page);
+  const t = await getTranslations({ locale, namespace: "metadata" });
+  return t(`pages.${page}`);
 };
 
 // Indexable page: canonical to itself plus hreflang links to every language version.
