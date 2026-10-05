@@ -1,5 +1,6 @@
 import { Languages, Wand2 } from "lucide-react";
-import { LanguageCode, getLanguageOption } from "@/app/types";
+import { useTranslations } from "next-intl";
+import { LanguageCode } from "@/app/types";
 import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
 
@@ -23,7 +24,7 @@ export const CardFront: React.FC<CardFrontProps> = ({
   onConjure,
 }) => {
   const isEquivalent = sourceLanguage !== wordLanguage;
-  const targetLabel = getLanguageOption(wordLanguage)?.label.toLowerCase();
+  const t = useTranslations("vocabulary.cardFront");
 
   return (
     <div className="relative w-[300px] max-w-[88vw] rounded-2xl p-[1px] bg-gradient-to-br from-violet-400/60 via-indigo-500/40 to-fuchsia-400/60 shadow-[0_20px_50px_-16px_rgba(109,40,217,0.55)]">
@@ -47,8 +48,10 @@ export const CardFront: React.FC<CardFrontProps> = ({
         <h2 className="mt-2 break-words font-serif text-3xl leading-tight text-white">
           {word}
         </h2>
-        {isEquivalent && targetLabel && (
-          <p className="mt-1.5 text-xs text-violet-200/60">Aprende cómo se dice en {targetLabel}</p>
+        {isEquivalent && (
+          <p className="mt-1.5 text-xs text-violet-200/60">
+            {t("learnHowToSay", { language: wordLanguage })}
+          </p>
         )}
 
         <div className="mt-6 min-h-[68px]">
@@ -60,7 +63,7 @@ export const CardFront: React.FC<CardFrontProps> = ({
               className="press-feedback inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition-colors duration-150 hover:bg-violet-400"
             >
               <Wand2 className="h-4 w-4" />
-              Conjurar
+              {t("conjure")}
             </button>
           )}
         </div>

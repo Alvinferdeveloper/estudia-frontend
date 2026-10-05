@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Popover,
   PopoverAnchor,
@@ -69,6 +70,8 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
   onEntryUpdated,
   existingEntry,
 }) => {
+  const t = useTranslations("vocabulary.card");
+  const tActions = useTranslations("common.actions");
   const dialog = useVocabularyDialog({ isOpen, existingEntry });
   const explanationMutation = useVocabularyExplanation();
 
@@ -165,7 +168,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
         onFocusOutside={(e) => {
           if (boundary?.contains(e.detail.originalEvent.target as Node)) e.preventDefault();
         }}
-        aria-label="Tarjeta de vocabulario"
+        aria-label={t("ariaLabel")}
         className="w-auto border-none bg-transparent p-0 shadow-none"
         style={{ perspective: 1200 }}
         onOpenAutoFocus={(e) => e.preventDefault()}
@@ -173,7 +176,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
         <div className="relative">
           <button
             onClick={handleClose}
-            title="Cerrar"
+            title={tActions("close")}
             className="press-feedback absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-violet-400/30 bg-[#1a1330] text-violet-200 shadow-lg transition-colors hover:bg-violet-500/20"
           >
             <X className="h-3.5 w-3.5" />
@@ -235,9 +238,9 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
           isOpen={isDeleteConfirmOpen}
           onOpenChange={setIsDeleteConfirmOpen}
           onConfirm={handleDelete}
-          title="¿Eliminar esta palabra?"
-          description="Se eliminará de tu colección de vocabulario junto con su explicación. Esta acción no se puede deshacer."
-          confirmText="Eliminar"
+          title={t("deleteConfirm.title")}
+          description={t("deleteConfirm.description")}
+          confirmText={t("deleteConfirm.confirm")}
           isLoading={isDeleting}
         />
       </PopoverContent>

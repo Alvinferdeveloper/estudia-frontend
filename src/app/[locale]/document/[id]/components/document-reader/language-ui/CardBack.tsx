@@ -1,4 +1,5 @@
 import { AlertTriangle, RotateCcw, Trash2, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { LanguageCode, VocabularyExplanation } from "@/app/types";
 import { NoteColorPicker } from "@/app/[locale]/document/[id]/components/document-reader/note-ui";
 import { TranslationLoader } from "./TranslationLoader";
@@ -29,6 +30,8 @@ export const CardBack: React.FC<CardBackProps> = ({
   selectedColor,
   onColorChange,
 }) => {
+  const t = useTranslations("vocabulary.cardBack");
+
   return (
     <div className="relative flex max-h-[min(70vh,480px)] w-[340px] max-w-[92vw] flex-col rounded-2xl p-[1px] bg-gradient-to-br from-violet-400/60 via-indigo-500/40 to-fuchsia-400/60 shadow-[0_20px_50px_-16px_rgba(109,40,217,0.55)]">
       <div className="flex max-h-[min(70vh,480px)] flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#1a1330] to-[#0e0a1c]">
@@ -43,7 +46,9 @@ export const CardBack: React.FC<CardBackProps> = ({
             {explanation.word}
           </h2>
           {explanation.sourceText && (
-            <p className="mt-0.5 text-xs text-violet-200/60">de «{explanation.sourceText}»</p>
+            <p className="mt-0.5 text-xs text-violet-200/60">
+              {t("fromSource", { text: explanation.sourceText })}
+            </p>
           )}
           {explanation.phonetic && (
             <p className="mt-0.5 text-sm italic text-violet-200/60">/{explanation.phonetic}/</p>
@@ -60,7 +65,7 @@ export const CardBack: React.FC<CardBackProps> = ({
             {/* Meanings */}
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300/70">
-                Significados
+                {t("meanings")}
               </p>
               {explanation.meanings.map((meaning, i) => (
                 <div
@@ -96,7 +101,7 @@ export const CardBack: React.FC<CardBackProps> = ({
               <div className="space-y-2">
                 <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-amber-300/80">
                   <AlertTriangle className="h-3.5 w-3.5" />
-                  No confundir con
+                  {t("confusables")}
                 </p>
                 {explanation.confusables.map((c, i) => (
                   <div
@@ -116,7 +121,7 @@ export const CardBack: React.FC<CardBackProps> = ({
             {explanation.tip && (
               <div className="rounded-xl border border-dashed border-violet-400/30 bg-black/20 p-3">
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300/60">
-                  Dato útil
+                  {t("tip")}
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-violet-100/80">
                   {explanation.tip}
@@ -152,7 +157,7 @@ export const CardBack: React.FC<CardBackProps> = ({
               <button
                 onClick={onDelete}
                 disabled={isDeleting}
-                title="Eliminar"
+                title={t("delete")}
                 className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-red-300/80 transition-colors hover:bg-red-500/15 hover:text-red-200 disabled:opacity-50"
               >
                 {isDeleting ? (
@@ -165,7 +170,7 @@ export const CardBack: React.FC<CardBackProps> = ({
             <button
               onClick={onRegenerate}
               disabled={isRegenerating}
-              title="Volver a conjurar"
+              title={t("regenerate")}
               className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-violet-300/80 transition-colors hover:bg-violet-500/15 hover:text-violet-200 disabled:opacity-50"
             >
               <RotateCcw className="h-4 w-4" />

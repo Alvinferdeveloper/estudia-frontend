@@ -1,0 +1,32 @@
+{
+  "languages": {
+    "en": "English",
+    "es": "Spanish"
+  },
+  "card": {
+    "ariaLabel": "Vocabulary card",
+    "deleteConfirm": {
+      "title": "Delete this word?",
+      "description": "It will be removed from your vocabulary collection along with its explanation. This can't be undone.",
+      "confirm": "Delete"
+    }
+  },
+  "cardFront": {
+    "learnHowToSay": "Learn how to say it in {language, select, en {English} es {Spanish} other {{language}}}",
+    "conjure": "Conjure"
+  },
+  "cardBack": {
+    "fromSource": "from “{text}”",
+    "meanings": "Meanings",
+    "confusables": "Don't confuse with",
+    "tip": "Good to know",
+    "delete": "Delete",
+    "regenerate": "Conjure again"
+  },
+  "loader": {
+    "analyzingMeaning": "Analyzing meaning",
+    "findingExamples": "Finding examples",
+    "checkingFalseFriends": "Checking false friends",
+    "polishingExplanation": "Polishing the explanation"
+  }
+}

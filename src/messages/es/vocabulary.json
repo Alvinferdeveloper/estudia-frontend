@@ -1,0 +1,32 @@
+{
+  "languages": {
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "card": {
+    "ariaLabel": "Tarjeta de vocabulario",
+    "deleteConfirm": {
+      "title": "¿Eliminar esta palabra?",
+      "description": "Se eliminará de tu colección de vocabulario junto con su explicación. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    }
+  },
+  "cardFront": {
+    "learnHowToSay": "Aprende cómo se dice en {language, select, en {inglés} es {español} other {{language}}}",
+    "conjure": "Conjurar"
+  },
+  "cardBack": {
+    "fromSource": "de «{text}»",
+    "meanings": "Significados",
+    "confusables": "No confundir con",
+    "tip": "Dato útil",
+    "delete": "Eliminar",
+    "regenerate": "Volver a conjurar"
+  },
+  "loader": {
+    "analyzingMeaning": "Analizando significado",
+    "findingExamples": "Buscando ejemplos",
+    "checkingFalseFriends": "Revisando falsos amigos",
+    "polishingExplanation": "Puliendo la explicación"
+  }
+}

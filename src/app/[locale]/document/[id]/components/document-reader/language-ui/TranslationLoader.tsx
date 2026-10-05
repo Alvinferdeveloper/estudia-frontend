@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { getLanguageOption, LanguageCode } from "@/app/types";
 import { FlagReel } from "./FlagReel";
 import { DecodingText } from "./DecodingText";
@@ -12,12 +13,12 @@ const DECORATIVE_PAIRS: [string, string][] = [
   ["JP", "IT"],
 ];
 
-const PHRASES = [
-  "Analizando significado",
-  "Buscando ejemplos",
-  "Revisando falsos amigos",
-  "Puliendo la explicación",
-];
+const PHRASE_KEYS = [
+  "analyzingMeaning",
+  "findingExamples",
+  "checkingFalseFriends",
+  "polishingExplanation",
+] as const;
 
 const PAIR_INTERVAL_MS = 1900;
 
@@ -30,6 +31,9 @@ export const TranslationLoader: React.FC<TranslationLoaderProps> = ({
   wordLanguage,
   explanationLanguage,
 }) => {
+  const t = useTranslations("vocabulary.loader");
+  // Stable reference: DecodingText restarts its cycle whenever `phrases` changes identity.
+  const phrases = useMemo(() => PHRASE_KEYS.map((key) => t(key)), [t]);
   const wordCode = getLanguageOption(wordLanguage)?.countryCode ?? "GB";
   const explanationCode = getLanguageOption(explanationLanguage)?.countryCode ?? "ES";
   const pairs: [string, string][] = [[wordCode, explanationCode], ...DECORATIVE_PAIRS];
@@ -56,7 +60,7 @@ export const TranslationLoader: React.FC<TranslationLoaderProps> = ({
         <FlagReel countryCode={right} direction="down" />
       </div>
       <DecodingText
-        phrases={PHRASES}
+        phrases={phrases}
         className="text-[11px] text-violet-200/70"
       />
     </div>

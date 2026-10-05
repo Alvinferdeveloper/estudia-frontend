@@ -1,6 +1,7 @@
 import common from "./common.json";
 import metadata from "./metadata.json";
 import auth from "./auth.json";
+import vocabulary from "./vocabulary.json";
 import subscription from "./subscription.json";
 import landing from "./landing.json";
 
@@ -9,6 +10,7 @@ const messages = {
   common,
   metadata,
   auth,
+  vocabulary,
   subscription,
   landing,
 };
