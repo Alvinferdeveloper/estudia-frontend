@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Sparkles } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { SubscriptionPlan } from "../hooks/useSubscription";
+import { PlanFeatureItem, toStorageSize } from "../lib/plan-features";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {
@@ -12,7 +13,7 @@ interface PricingCardProps {
   price: number;
   currency: string;
   description: string;
-  features: string[];
+  features: PlanFeatureItem[];
   isPopular?: boolean;
   currentPlan: boolean;
   onSelect: (plan: SubscriptionPlan) => void;
@@ -32,8 +33,17 @@ export function PricingCard({
   isLoading,
 }: PricingCardProps) {
   const t = useTranslations("subscription.card");
+  const tFeatures = useTranslations("subscription.features");
   const format = useFormatter();
   const isFree = price === 0;
+
+  const featureLabel = ({ key, count, storageBytes }: PlanFeatureItem): string => {
+    if (storageBytes !== undefined) {
+      const { value, unit } = toStorageSize(storageBytes);
+      return tFeatures(key, { size: format.number(value, { style: "unit", unit, maximumFractionDigits: 1 }) });
+    }
+    return count === undefined ? tFeatures(key) : tFeatures(key, { count });
+  };
 
   return (
     <div
@@ -64,12 +74,12 @@ export function PricingCard({
       </div>
 
       <ul className="flex-1 space-y-3 mb-8">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-start gap-3 text-sm">
+        {features.map((feature) => (
+          <li key={feature.key} className="flex items-start gap-3 text-sm">
             <div className="mt-0.5 rounded-full bg-primary/10 p-1">
               <Check className="w-3 h-3 text-primary shrink-0" />
             </div>
-            <span className="text-foreground/80 leading-tight">{feature}</span>
+            <span className="text-foreground/80 leading-tight">{featureLabel(feature)}</span>
           </li>
         ))}
       </ul>

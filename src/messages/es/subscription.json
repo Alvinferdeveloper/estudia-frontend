@@ -17,6 +17,27 @@
     "getStarted": "Empezar",
     "subscribe": "Suscribirme"
   },
+  "planDescriptions": {
+    "free": "Perfecto para probar la plataforma",
+    "basic": "Para estudiantes que necesitan más funciones con IA",
+    "pro": "Para usuarios avanzados e investigadores",
+    "enterprise": "Para equipos y organizaciones"
+  },
+  "features": {
+    "documents": "{count, plural, one {# documento} other {# documentos}}",
+    "documentsUnlimited": "Documentos ilimitados",
+    "chatMessages": "{count, plural, one {# mensaje} other {# mensajes}} de chat con IA al mes",
+    "chatMessagesUnlimited": "Mensajes de chat con IA ilimitados",
+    "aiNotes": "{count, plural, one {# nota} other {# notas}} con IA al mes",
+    "aiNotesUnlimited": "Notas con IA ilimitadas",
+    "storage": "{size} de almacenamiento",
+    "semanticSearch": "Búsqueda semántica",
+    "vectorization": "Vectorización de documentos",
+    "advancedModels": "Modelos de IA avanzados",
+    "exportNotes": "Exportación de notas",
+    "apiAccess": "Acceso a la API",
+    "prioritySupport": "Soporte prioritario"
+  },
   "checkout": {
     "title": "Completa el pago",
     "subscribingTo": "Te estás suscribiendo al plan <badge>{plan}</badge>",

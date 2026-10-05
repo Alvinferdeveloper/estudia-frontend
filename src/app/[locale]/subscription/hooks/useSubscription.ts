@@ -42,22 +42,31 @@ export interface UsageStats {
   storage: {
     limit: number;
   };
-  features: {
-    semanticSearch: boolean;
-    vectorization: boolean;
-    advancedModels: boolean;
-    exportNotes: boolean;
-    apiAccess: boolean;
-  };
+  features: PlanFeatures;
+}
+
+export interface PlanFeatures {
+  semanticSearch: boolean;
+  vectorization: boolean;
+  advancedModels: boolean;
+  exportNotes: boolean;
+  apiAccess: boolean;
+}
+
+// A limit of -1 means unlimited.
+export interface PlanLimits {
+  chatMessages: number;
+  aiNotes: number;
+  documents: number;
+  storageBytes: number;
 }
 
 export interface Plan {
   plan: SubscriptionPlan;
-  name: string;
   price: number;
-  description: string;
-  features: string[];
   isPopular?: boolean;
+  limits: PlanLimits;
+  features: PlanFeatures;
 }
 
 export interface PlansResponse {

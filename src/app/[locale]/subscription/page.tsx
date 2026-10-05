@@ -7,6 +7,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { usePlans, SubscriptionPlan } from "./hooks/useSubscription";
 import { PricingCard } from "@/app/[locale]/subscription/components/PricingCard";
 import { PayPalButton } from "@/app/[locale]/subscription/components/PayPalButton";
+import { getPlanFeatureItems } from "@/app/[locale]/subscription/lib/plan-features";
 import { X, Loader2, ArrowLeft, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -19,6 +20,7 @@ const CURRENCY = "USD";
 export default function SubscriptionPage() {
   const t = useTranslations("subscription");
   const tPlans = useTranslations("common.plans");
+  const tPlanDescriptions = useTranslations("subscription.planDescriptions");
   const format = useFormatter();
   const { data, isLoading, error } = usePlans();
 
@@ -154,8 +156,8 @@ export default function SubscriptionPage() {
                       name={tPlans(plan.plan)}
                       price={plan.price}
                       currency={CURRENCY}
-                      description={plan.description}
-                      features={plan.features}
+                      description={tPlanDescriptions(plan.plan)}
+                      features={getPlanFeatureItems(plan)}
                       isPopular={plan.isPopular}
                       currentPlan={currentPlan === plan.plan}
                       onSelect={handleSelectPlan}

@@ -17,6 +17,27 @@
     "getStarted": "Get started",
     "subscribe": "Subscribe"
   },
+  "planDescriptions": {
+    "free": "Perfect for trying out the platform",
+    "basic": "For students who need more AI features",
+    "pro": "For power users and researchers",
+    "enterprise": "For teams and organizations"
+  },
+  "features": {
+    "documents": "{count, plural, one {# document} other {# documents}}",
+    "documentsUnlimited": "Unlimited documents",
+    "chatMessages": "{count, plural, one {# AI chat message} other {# AI chat messages}} per month",
+    "chatMessagesUnlimited": "Unlimited AI chat messages",
+    "aiNotes": "{count, plural, one {# AI note} other {# AI notes}} per month",
+    "aiNotesUnlimited": "Unlimited AI notes",
+    "storage": "{size} of storage",
+    "semanticSearch": "Semantic search",
+    "vectorization": "Document vectorization",
+    "advancedModels": "Advanced AI models",
+    "exportNotes": "Note export",
+    "apiAccess": "API access",
+    "prioritySupport": "Priority support"
+  },
   "checkout": {
     "title": "Complete payment",
     "subscribingTo": "You are subscribing to the <badge>{plan}</badge> plan",
