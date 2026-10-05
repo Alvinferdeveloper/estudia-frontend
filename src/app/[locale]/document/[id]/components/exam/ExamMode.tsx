@@ -55,6 +55,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
     handleContinueFromSelection,
     handleLoadExam,
     disableExamMode,
+    errorKey,
     isSubmitting
   } = useExamSession({
     documentName: document.fileName,
@@ -72,6 +73,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
             selectedPages={selectedPages}
             onStartExam={handleStartExam}
             onCancel={disableExamMode}
+            errorKey={errorKey}
           />
         );
 
@@ -99,6 +101,7 @@ export const ExamMode: React.FC<ExamModeProps> = ({
             isSubmitting={isSubmitting}
             onFinish={handleFinish}
             currentQuestionType={questionType}
+            errorKey={errorKey}
           />
         );
 

@@ -17,6 +17,8 @@ import {
   DIFFICULTY_LEVELS
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
+import type { ApiErrorKey } from "@/lib/api-errors";
+import { ApiErrorMessage } from "@/components/api-error-message";
 
 interface ExamSetupDialogProps {
   selectedPages: number[];
@@ -27,6 +29,7 @@ interface ExamSetupDialogProps {
     title: string;
   }) => void;
   onCancel: () => void;
+  errorKey: ApiErrorKey | null;
 }
 
 const modes = [
@@ -47,6 +50,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   selectedPages,
   onStartExam,
   onCancel,
+  errorKey,
 }) => {
   const t = useTranslations("exam");
   const tCommon = useTranslations("common");
@@ -144,6 +148,8 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
             </div>
           </div>
         </div>
+
+        <ApiErrorMessage errorKey={errorKey} className="px-4 pb-3" />
 
         <DialogFooter className="border-t border-border p-4">
           <Button variant="ghost" className="press-feedback" onClick={onCancel}>

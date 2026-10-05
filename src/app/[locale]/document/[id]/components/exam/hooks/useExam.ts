@@ -102,6 +102,7 @@ export const useGenerateQuestions = () => {
       );
       return result.questions;
     },
+    meta: { inlineError: true },
   });
 };
 
@@ -120,6 +121,7 @@ export const useEvaluateAnswer = () => {
       );
       return result;
     },
+    meta: { inlineError: true },
   });
 };
 
@@ -141,6 +143,7 @@ export const useCreateExam = () => {
       );
       return result;
     },
+    meta: { inlineError: true },
   });
 };
 
@@ -222,6 +225,7 @@ export const useSaveExamQuestions = () => {
       );
       return result;
     },
+    meta: { inlineError: true },
   });
 };
 

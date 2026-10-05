@@ -7,6 +7,8 @@ import { AnswerFeedback } from "@/app/[locale]/document/[id]/components/exam/com
 import { ExamFooter } from "@/app/[locale]/document/[id]/components/exam/components/ExamFooter";
 import { MascotCompanion } from "@/app/[locale]/document/[id]/components/exam/components/MascotCompanion";
 import { cn } from "@/lib/utils";
+import type { ApiErrorKey } from "@/lib/api-errors";
+import { ApiErrorMessage } from "@/components/api-error-message";
 
 interface ExamUIProps {
   questions: Question[];
@@ -18,6 +20,7 @@ interface ExamUIProps {
   isSubmitting: boolean;
   onFinish: () => void;
   currentQuestionType: QuestionType;
+  errorKey: ApiErrorKey | null;
 }
 
 // Badge del tipo de pregunta
@@ -42,6 +45,7 @@ export const ExamUI: React.FC<ExamUIProps> = ({
   isSubmitting,
   onFinish,
   currentQuestionType: defaultQuestionType,
+  errorKey,
 }) => {
   const currentQuestion = questions[currentIndex];
   const currentAnswerData = answers.find((a) => a.questionId === currentQuestion?.id);
@@ -134,13 +138,16 @@ export const ExamUI: React.FC<ExamUIProps> = ({
                   />
                 )
               ) : (
-                <AnswerInput
-                  currentQuestion={currentQuestion}
-                  currentAnswer={currentAnswer}
-                  currentQuestionType={currentQuestionType}
-                  isSubmitting={isSubmitting}
-                  onAnswerChange={onAnswerChange}
-                />
+                <>
+                  <AnswerInput
+                    currentQuestion={currentQuestion}
+                    currentAnswer={currentAnswer}
+                    currentQuestionType={currentQuestionType}
+                    isSubmitting={isSubmitting}
+                    onAnswerChange={onAnswerChange}
+                  />
+                  <ApiErrorMessage errorKey={errorKey} className="mt-4" />
+                </>
               )}
             </div>
           </article>

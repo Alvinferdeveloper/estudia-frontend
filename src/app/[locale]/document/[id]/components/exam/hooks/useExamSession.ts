@@ -14,6 +14,8 @@ import {
   Answer,
   Exam
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
+import { showApiErrorToast } from "@/components/api-error-toast";
 
 interface UseExamSessionProps {
   documentName: string;
@@ -32,6 +34,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
   const [examId, setExamId] = useState<string | null>(null);
   const [examMeta, setExamMeta] = useState<Exam | null>(null);
+  const [errorKey, setErrorKey] = useState<ApiErrorKey | null>(null);
 
   const generateQuestionsMutation = useGenerateQuestions();
   const evaluateAnswerMutation = useEvaluateAnswer();
@@ -47,6 +50,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     setCurrentAnswer('');
     setExamId(null);
     setExamMeta(null);
+    setErrorKey(null);
     onDisableExamMode();
   }, [onDisableExamMode]);
 
@@ -68,12 +72,14 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
       setCurrentAnswer('');
       setExamPhase(EXAM_PHASES.EXAM);
     } catch (error) {
-      console.error('Failed to load exam:', error);
+      // The saved-exams dialog is already closed, so there is no inline spot for it.
+      showApiErrorToast(error);
     }
   }, []);
 
   const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; questionType: QuestionType; title: string }) => {
     try {
+      setErrorKey(null);
       setExamPhase(EXAM_PHASES.GENERATING);
       setQuestionType(config.questionType);
 
@@ -133,15 +139,16 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
 
       setExamPhase(EXAM_PHASES.EXAM);
     } catch (error) {
-      console.error('Failed to generate questions:', error);
-      disableExamMode();
+      setErrorKey(getApiErrorKey(error));
+      setExamPhase(EXAM_PHASES.SETUP);
     }
-  }, [selectedPages, documentName, documentId, pdfDoc, generateQuestionsMutation, createExamMutation, saveQuestionsMutation, disableExamMode]);
+  }, [selectedPages, documentName, documentId, pdfDoc, generateQuestionsMutation, createExamMutation, saveQuestionsMutation]);
 
   const handleSubmitAnswer = useCallback(async () => {
     const currentQuestion = questions[currentIndex];
     if (!currentQuestion) return;
 
+    setErrorKey(null);
     try {
       const evaluation = await evaluateAnswerMutation.mutateAsync({
         userAnswer: currentAnswer,
@@ -158,7 +165,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
       }]);
       setCurrentAnswer('');
     } catch (error) {
-      console.error('Failed to evaluate answer:', error);
+      setErrorKey(getApiErrorKey(error));
     }
   }, [questions, currentIndex, currentAnswer, evaluateAnswerMutation, questionType]);
 
@@ -181,8 +188,8 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
           correctAnswers,
           totalQuestions: answers.length,
         });
-      } catch (error) {
-        console.error('Failed to save exam result:', error);
+      } catch {
+        // The global mutation toast reports it; the results still show.
       }
     }
 
@@ -219,6 +226,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     handleLoadExam,
     disableExamMode,
     examMeta,
+    errorKey,
     isSubmitting: evaluateAnswerMutation.isPending
   };
 };
