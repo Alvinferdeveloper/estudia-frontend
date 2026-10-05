@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api-client";
 
 export type ExportFormat = "markdown" | "json" | "csv" | "pdf" | "anki";
 
@@ -12,12 +12,9 @@ interface ExportResponse {
 export const useExportAnnotations = (documentId: string) => {
   return useMutation({
     mutationFn: async (format: ExportFormat) => {
-      const { data } = await axios.get<ExportResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/annotations/export`,
-        {
-          params: { format },
-          withCredentials: true,
-        }
+      const { data } = await api.get<ExportResponse>(
+        `/documents/${documentId}/annotations/export`,
+        { params: { format } }
       );
       return data;
     },

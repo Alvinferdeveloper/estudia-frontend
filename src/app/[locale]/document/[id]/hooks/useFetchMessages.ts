@@ -1,15 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Message } from '@/app/types';
 
 const fetchMessages = async (
   documentId: string,
   conversationId: string,
 ): Promise<Message[]> => {
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/conversations/${conversationId}/messages`,
-    { withCredentials: true },
-  );
+  const { data } = await api.get(`/documents/${documentId}/conversations/${conversationId}/messages`);
   return data;
 };
 

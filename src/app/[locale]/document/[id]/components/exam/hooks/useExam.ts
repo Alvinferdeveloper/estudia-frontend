@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api-client";
 
 export const QUESTION_TYPES = {
   OPEN: 'open',
@@ -95,11 +95,7 @@ export const useGenerateQuestions = () => {
       questionType?: QuestionType;
       numQuestions?: number;
     }) => {
-      const { data: result } = await axios.post<{ questions: any[] }>(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/exam/generate`,
-        data,
-        { withCredentials: true }
-      );
+      const { data: result } = await api.post<{ questions: any[] }>("/ai/exam/generate", data);
       return result.questions;
     },
     meta: { inlineError: true },
@@ -114,10 +110,9 @@ export const useEvaluateAnswer = () => {
       question: string;
       questionType?: QuestionType;
     }) => {
-      const { data: result } = await axios.post<{ score: number; feedback: string }>(
-        `${process.env.NEXT_PUBLIC_API_URL}/ai/exam/evaluate`,
-        data,
-        { withCredentials: true }
+      const { data: result } = await api.post<{ score: number; feedback: string }>(
+        "/ai/exam/evaluate",
+        data
       );
       return result;
     },
@@ -136,11 +131,7 @@ export const useCreateExam = () => {
       questionType: QuestionType;
       totalQuestions: number;
     }) => {
-      const { data: result } = await axios.post<{ id: string }>(
-        `${process.env.NEXT_PUBLIC_API_URL}/exam`,
-        data,
-        { withCredentials: true }
-      );
+      const { data: result } = await api.post<{ id: string }>("/exam", data);
       return result;
     },
     meta: { inlineError: true },
@@ -155,11 +146,7 @@ export const useSaveExamResult = () => {
       correctAnswers: number;
       totalQuestions: number;
     }) => {
-      const { data: result } = await axios.post<ExamResult>(
-        `${process.env.NEXT_PUBLIC_API_URL}/exam/result`,
-        data,
-        { withCredentials: true }
-      );
+      const { data: result } = await api.post<ExamResult>("/exam/result", data);
       return result;
     },
   });
@@ -169,10 +156,7 @@ export const useExamResults = (examId: string) => {
   return useQuery({
     queryKey: ['examResults', examId],
     queryFn: async () => {
-      const { data } = await axios.get<ExamResult[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/exam/${examId}/results`,
-        { withCredentials: true }
-      );
+      const { data } = await api.get<ExamResult[]>(`/exam/${examId}/results`);
       return data;
     },
     enabled: !!examId,
@@ -218,11 +202,7 @@ export const useSaveExamQuestions = () => {
       examId: string;
       questions: { text: string; type: string; options?: string; idealAnswer: string; order: number }[];
     }) => {
-      const { data: result } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/exam/questions`,
-        data,
-        { withCredentials: true }
-      );
+      const { data: result } = await api.post("/exam/questions", data);
       return result;
     },
     meta: { inlineError: true },
@@ -240,10 +220,7 @@ interface RawExamQuestion {
 }
 
 export const fetchExamQuestions = async (examId: string): Promise<Question[]> => {
-  const { data } = await axios.get<RawExamQuestion[]>(
-    `${process.env.NEXT_PUBLIC_API_URL}/exam/${examId}/questions`,
-    { withCredentials: true }
-  );
+  const { data } = await api.get<RawExamQuestion[]>(`/exam/${examId}/questions`);
 
   return data.map((q) => ({
     id: q.id,
@@ -261,9 +238,9 @@ export const useUserExams = (documentId?: string) => {
     queryKey: ['exams', documentId],
     queryFn: async () => {
       const url = documentId
-        ? `${process.env.NEXT_PUBLIC_API_URL}/exam?documentId=${documentId}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/exam`;
-      const { data } = await axios.get<Exam[]>(url, { withCredentials: true });
+        ? `/exam?documentId=${documentId}`
+        : "/exam";
+      const { data } = await api.get<Exam[]>(url);
       return data;
     },
   });

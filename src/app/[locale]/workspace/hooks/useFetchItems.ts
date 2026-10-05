@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Document, Folder } from '@/app/types';
 
 interface PaginatedItems {
@@ -22,13 +22,13 @@ const fetchItems = async ({
   search?: string,
   sortBy?: 'date' | 'name',
 }): Promise<PaginatedItems> => {
-  let url = `${process.env.NEXT_PUBLIC_API_URL}/documents/items?page=${pageParam}&limit=12`;
+  let url = `/documents/items?page=${pageParam}&limit=12`;
   if (topicId) url += `&topicId=${topicId}`;
   if (folderId) url += `&folderId=${folderId}`;
   if (search) url += `&search=${encodeURIComponent(search)}`;
   if (sortBy) url += `&sortBy=${sortBy}`;
 
-  const { data } = await axios.get(url, { withCredentials: true });
+  const { data } = await api.get(url);
   return data;
 };
 

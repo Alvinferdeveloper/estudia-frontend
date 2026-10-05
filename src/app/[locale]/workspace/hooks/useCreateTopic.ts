@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Topic } from '@/app/types';
 
 const createTopic = async (newTopic: { name: string; color: string }): Promise<Topic> => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/topics`, newTopic, { withCredentials: true });
+  const { data } = await api.post('/topics', newTopic);
   return data;
 };
 

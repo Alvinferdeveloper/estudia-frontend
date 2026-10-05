@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api-client";
 import { VocabularyExplanation } from "@/app/types";
 
 export interface VocabularyExplainRequest {
@@ -13,11 +13,7 @@ export interface VocabularyExplainRequest {
 const postExplainVocabulary = async (
   request: VocabularyExplainRequest
 ): Promise<VocabularyExplanation> => {
-  const { data } = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/ai/vocabulary/explain`,
-    request,
-    { withCredentials: true }
-  );
+  const { data } = await api.post("/ai/vocabulary/explain", request);
   return data.explanation;
 };
 

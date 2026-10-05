@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Folder } from '@/app/types';
 
 const createFolder = async (newFolder: { name: string; color: string; topicId: string; parentId?: string }): Promise<Folder> => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/folders`, newFolder, { withCredentials: true });
+  const { data } = await api.post('/folders', newFolder);
   return data;
 };
 
@@ -19,7 +19,7 @@ export const useCreateFolder = () => {
 };
 
 const updateFolder = async ({ id, name, color }: { id: string; name: string; color: string }): Promise<Folder> => {
-  const { data } = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/folders/${id}`, { name, color }, { withCredentials: true });
+  const { data } = await api.put(`/folders/${id}`, { name, color });
   return data;
 };
 
@@ -35,7 +35,7 @@ export const useUpdateFolder = () => {
 };
 
 const deleteFolder = async (id: string): Promise<void> => {
-  await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/folders/${id}`, { withCredentials: true });
+  await api.delete(`/folders/${id}`);
 };
 
 export const useDeleteFolder = () => {

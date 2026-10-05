@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Document } from '@/app/types';
 
 const fetchRecent = async (search?: string): Promise<Document[]> => {
-  let url = `${process.env.NEXT_PUBLIC_API_URL}/documents/recent?limit=20`;
+  let url = '/documents/recent?limit=20';
   if (search) url += `&search=${encodeURIComponent(search)}`;
-  const { data } = await axios.get(url, { withCredentials: true });
+  const { data } = await api.get(url);
   return data;
 };
 

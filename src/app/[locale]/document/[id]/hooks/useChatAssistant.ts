@@ -5,6 +5,7 @@ import { Message } from "@/app/types";
 import { useFetchMessages } from "@/app/[locale]/document/[id]/hooks/useFetchMessages";
 import { useCreateMessage } from "@/app/[locale]/document/[id]/hooks/useCreateMessage";
 import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
+import { apiUrl } from "@/lib/api-client";
 
 interface UseChatAssistantOptions {
   documentId: string;
@@ -42,7 +43,7 @@ export const useChatAssistant = ({
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
-        api: `${process.env.NEXT_PUBLIC_API_URL}/ai/chat`,
+        api: apiUrl("/ai/chat"),
         credentials: "include",
         prepareSendMessagesRequest: ({ messages }) => ({
           body: { messages, documentId, documentName, conversationId },

@@ -1,10 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Document } from '@/app/types';
 
 const uploadDocument = async (formData: FormData): Promise<Document> => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents/upload`, formData, {
-    withCredentials: true,
+  const { data } = await api.post('/documents/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

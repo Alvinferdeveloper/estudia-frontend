@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 
 interface VectorizeResponse {
   success: boolean;
@@ -7,11 +7,7 @@ interface VectorizeResponse {
 }
 
 const vectorizeDocument = async (documentId: string): Promise<VectorizeResponse> => {
-  const { data } = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/vectorize`,
-    {},
-    { withCredentials: true }
-  );
+  const { data } = await api.post(`/documents/${documentId}/vectorize`, {});
   return data;
 };
 
@@ -22,10 +18,7 @@ export const useVectorizeDocument = (documentId: string) => {
 };
 
 const getVectorizeStatus = async (documentId: string): Promise<{ isVectorized: boolean }> => {
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/vectorize-status`,
-    { withCredentials: true }
-  );
+  const { data } = await api.get(`/documents/${documentId}/vectorize-status`);
   return data;
 };
 

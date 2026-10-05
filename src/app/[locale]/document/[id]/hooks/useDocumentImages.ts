@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api-client";
 
 export interface DocumentImageRef {
   id: string;
@@ -15,10 +15,7 @@ export interface DocumentImageRef {
 const fetchDocumentImages = async (
   documentId: string
 ): Promise<DocumentImageRef[]> => {
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/images`,
-    { withCredentials: true }
-  );
+  const { data } = await api.get(`/documents/${documentId}/images`);
   return data;
 };
 

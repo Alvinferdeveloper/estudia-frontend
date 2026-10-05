@@ -4,13 +4,13 @@ import createIntlMiddleware from "next-intl/middleware";
 import { AUTH_ROUTES, PROTECTED_ROUTE_PREFIXES, ROUTES } from "@/config/routes";
 import { routing } from "@/i18n/routing";
 import { localizePath, splitLocalePath } from "@/i18n/paths";
+import { apiUrl } from "@/lib/api-client";
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
 const hasActiveSession = async (request: NextRequest): Promise<boolean> => {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-    const response = await fetch(`${apiUrl}/api/auth/get-session`, {
+    const response = await fetch(apiUrl("/api/auth/get-session"), {
       headers: { cookie: request.headers.get("cookie") || "" },
     });
     return response.ok && (await response.json()) !== null;

@@ -1,5 +1,6 @@
 import { useCompletion } from "@ai-sdk/react";
 import { useCallback, useRef } from "react";
+import { apiUrl } from "@/lib/api-client";
 
 interface UseStreamingNoteOptions {
   apiEndpoint?: string;
@@ -23,7 +24,7 @@ interface UseStreamingNoteReturn {
 }
 
 export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStreamingNoteReturn => {
-  const { apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/ai/notes/stream` } = options;
+  const { apiEndpoint = apiUrl("/ai/notes/stream") } = options;
   const lastError = useRef<Error | null>(null);
 
   const {

@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { AnnotationRect, BoundingRect, VocabularyEntry, VocabularyExplanation } from '@/app/types';
 
 const fetchVocabulary = async (documentId: string): Promise<VocabularyEntry[]> => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/vocabulary`, { withCredentials: true });
+  const { data } = await api.get(`/documents/${documentId}/vocabulary`);
   return data;
 };
 
@@ -26,7 +26,7 @@ interface CreateVocabularyEntryRequest {
 }
 
 const createVocabularyEntry = async (documentId: string, entry: CreateVocabularyEntryRequest): Promise<VocabularyEntry> => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/vocabulary`, entry, { withCredentials: true });
+  const { data } = await api.post(`/documents/${documentId}/vocabulary`, entry);
   return data;
 };
 
@@ -42,7 +42,7 @@ export const useCreateVocabularyEntry = (documentId: string) => {
 };
 
 const deleteVocabularyEntry = async (id: string): Promise<void> => {
-  await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/vocabulary/${id}`, { withCredentials: true });
+  await api.delete(`/vocabulary/${id}`);
 };
 
 export const useDeleteVocabularyEntry = (documentId: string) => {
@@ -64,7 +64,7 @@ interface UpdateVocabularyEntryRequest {
 }
 
 const updateVocabularyEntry = async (id: string, update: UpdateVocabularyEntryRequest): Promise<VocabularyEntry> => {
-  const { data } = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/vocabulary/${id}`, update, { withCredentials: true });
+  const { data } = await api.patch(`/vocabulary/${id}`, update);
   return data;
 };
 

@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Topic } from '@/app/types';
 
 const fetchTopics = async (): Promise<Topic[]> => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/topics`, { withCredentials: true });
+  const { data } = await api.get('/topics');
   return data;
 };
 

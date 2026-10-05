@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import axios from "axios";
+import { api } from "@/lib/api-client";
 
 interface CachedTranslation {
   translatedText: string;
@@ -61,9 +62,9 @@ export const useQuickTranslate = (): UseQuickTranslateReturn => {
 
     axios
       .post(
-        `${process.env.NEXT_PUBLIC_API_URL}/translate`,
+        "/translate",
         { text, targetLanguage },
-        { withCredentials: true, signal: controller.signal }
+        { signal: controller.signal }
       )
       .then(({ data }) => {
         if (requestIdRef.current !== requestId) return;

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 
 const deleteDocument = async (documentId: string): Promise<void> => {
-  await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}`, { withCredentials: true });
+  await api.delete(`/documents/${documentId}`);
 };
 
 export const useDeleteDocument = (topicId?: string) => {

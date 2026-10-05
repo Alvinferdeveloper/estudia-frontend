@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api-client';
 import { Annotation } from '@/app/types';
 
 const fetchAnnotations = async (documentId: string): Promise<Annotation[]> => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/annotations`, { withCredentials: true });
+  const { data } = await api.get(`/documents/${documentId}/annotations`);
   return data;
 };
 
@@ -23,7 +23,7 @@ export const useFetchAnnotationsByPage = (documentId: string, pageNumber: number
 };
 
 const fetchAnnotationsByPage = async (documentId: string, pageNumber: number): Promise<Annotation[]> => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/annotations/page/${pageNumber}`, { withCredentials: true });
+  const { data } = await api.get(`/documents/${documentId}/annotations/page/${pageNumber}`);
   return data;
 };
 
@@ -39,7 +39,7 @@ interface CreateAnnotationRequest {
 }
 
 const createAnnotation = async (documentId: string, annotation: CreateAnnotationRequest): Promise<Annotation> => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/annotations`, annotation, { withCredentials: true });
+  const { data } = await api.post(`/documents/${documentId}/annotations`, annotation);
   return data;
 };
 
@@ -57,7 +57,7 @@ export const useCreateAnnotation = (documentId: string) => {
 };
 
 const deleteAnnotation = async (annotationId: string): Promise<void> => {
-  await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/annotations/${annotationId}`, { withCredentials: true });
+  await api.delete(`/annotations/${annotationId}`);
 };
 
 export const useDeleteAnnotation = (documentId: string) => {
@@ -80,7 +80,7 @@ interface UpdateAnnotationRequest {
 }
 
 const updateAnnotation = async (annotationId: string, update: UpdateAnnotationRequest): Promise<Annotation> => {
-  const { data } = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/annotations/${annotationId}`, update, { withCredentials: true });
+  const { data } = await api.patch(`/annotations/${annotationId}`, update);
   return data;
 };
 

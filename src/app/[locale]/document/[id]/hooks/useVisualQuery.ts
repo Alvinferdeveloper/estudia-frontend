@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api-client";
 
 export interface VisualQueryRequest {
   question: string;
@@ -12,11 +12,7 @@ const postVisualQuery = async (
   documentId: string,
   request: VisualQueryRequest
 ): Promise<string> => {
-  const { data } = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/documents/${documentId}/visual-query`,
-    request,
-    { withCredentials: true }
-  );
+  const { data } = await api.post(`/documents/${documentId}/visual-query`, request);
   return data.answer;
 };
 
