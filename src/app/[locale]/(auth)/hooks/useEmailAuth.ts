@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/app/lib/auth-client";
-import { AFTER_AUTH_PATH, AuthMode } from "../lib/auth-modes";
-import { NETWORK_ERROR, getAuthErrorMessage } from "../lib/auth-errors";
+import { AFTER_AUTH_PATH, AuthMode, afterAuthCallbackUrl } from "../lib/auth-modes";
+import { AuthErrorKey, getAuthErrorKey } from "../lib/auth-errors";
 
 export interface EmailAuthFields {
   name: string;
@@ -12,14 +13,14 @@ export interface EmailAuthFields {
 
 export const useEmailAuth = (mode: AuthMode) => {
   const router = useRouter();
+  const locale = useLocale();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthErrorKey | null>(null);
 
   const submit = async ({ name, email, password }: EmailAuthFields) => {
     setIsSubmitting(true);
     setError(null);
-    // Absolute: Better Auth resolves relative callbacks against the API origin, not this app.
-    const callbackURL = `${window.location.origin}${AFTER_AUTH_PATH}`;
+    const callbackURL = afterAuthCallbackUrl(locale);
 
     try {
       const { error: authError } =
@@ -28,14 +29,14 @@ export const useEmailAuth = (mode: AuthMode) => {
           : await authClient.signUp.email({ name, email, password, callbackURL });
 
       if (authError) {
-        setError(getAuthErrorMessage(authError));
+        setError(getAuthErrorKey(authError));
         setIsSubmitting(false);
         return;
       }
       // Keep the loading state while the workspace loads.
       router.push(AFTER_AUTH_PATH);
     } catch {
-      setError(NETWORK_ERROR);
+      setError("network");
       setIsSubmitting(false);
     }
   };

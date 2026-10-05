@@ -1,22 +1,24 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { useRotatingIndex } from "../hooks/useRotatingIndex";
 
-const QUOTES = [
-  { text: "Solo sé que no sé nada.", source: "Sócrates" },
-  { text: "Una vida sin examen no merece ser vivida.", source: "Sócrates, en la Apología de Platón" },
-  { text: "El asombro es el comienzo de la sabiduría.", source: "Sócrates, en el Teeteto de Platón" },
-];
+interface Quote {
+  text: string;
+  source: string;
+}
 
 const ROTATION_MS = 8000;
 
 // Uses the primary pair, so it reads as ink with ivory text in light mode and inverts in dark mode.
 export const AuthEditorialPanel: React.FC = () => {
-  const index = useRotatingIndex(QUOTES.length, ROTATION_MS);
-  const quote = QUOTES[index];
+  const t = useTranslations("auth.editorial");
+  const quotes = t.raw("quotes") as Quote[];
+  const index = useRotatingIndex(quotes.length, ROTATION_MS);
+  const quote = quotes[index];
 
   return (
     <aside className="relative hidden overflow-hidden bg-primary p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
@@ -36,9 +38,9 @@ export const AuthEditorialPanel: React.FC = () => {
       </figure>
 
       <div className="relative flex items-center justify-between text-sm text-primary-foreground/60">
-        <p>Aprende preguntando.</p>
+        <p>{t("motto")}</p>
         <div aria-hidden className="flex items-center gap-1.5">
-          {QUOTES.map((item, dotIndex) => (
+          {quotes.map((item, dotIndex) => (
             <span
               key={item.text}
               className={cn(

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { IconButton } from "@/components/ui/icon-button";
 
@@ -44,6 +45,7 @@ export const AuthField: React.FC<AuthFieldProps> = ({ id, label, hint, trailing,
 };
 
 export const PasswordField: React.FC<Omit<AuthFieldProps, "type" | "trailing">> = (props) => {
+  const t = useTranslations("auth.fields.password");
   const [isVisible, setIsVisible] = useState(false);
 
   return (
@@ -51,7 +53,7 @@ export const PasswordField: React.FC<Omit<AuthFieldProps, "type" | "trailing">> 
       {...props}
       type={isVisible ? "text" : "password"}
       trailing={
-        <IconButton label="Mostrar contraseña" aria-pressed={isVisible} onClick={() => setIsVisible((visible) => !visible)}>
+        <IconButton label={t("toggleVisibility")} aria-pressed={isVisible} onClick={() => setIsVisible((visible) => !visible)}>
           {isVisible ? <EyeOff /> : <Eye />}
         </IconButton>
       }

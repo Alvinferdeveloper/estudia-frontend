@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ArrowRight, CircleAlert, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
+import { Link } from "@/i18n/navigation";
 import { AUTH_MODES, AuthMode, MIN_PASSWORD_LENGTH } from "../lib/auth-modes";
 import { EmailAuthFields, useEmailAuth } from "../hooks/useEmailAuth";
 import { useSocialAuth } from "../hooks/useSocialAuth";
@@ -22,7 +24,8 @@ const Reveal: React.FC<{ step: number; className?: string; children: React.React
 );
 
 export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
-  const copy = AUTH_MODES[mode];
+  const t = useTranslations("auth");
+  const config = AUTH_MODES[mode];
   const emailAuth = useEmailAuth(mode);
   const social = useSocialAuth();
   const [fields, setFields] = useState<EmailAuthFields>({ name: "", email: "", password: "" });
@@ -38,8 +41,10 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
   return (
     <div className="flex w-full max-w-[380px] flex-col">
       <Reveal step={0}>
-        <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-foreground text-balance">{copy.title}</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground text-pretty">{copy.subtitle}</p>
+        <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-foreground text-balance">{t(`${mode}.title`)}</h1>
+        <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground text-pretty">
+          {t(`${mode}.subtitle`, { brand: siteConfig.name })}
+        </p>
       </Reveal>
 
       <Reveal step={1} className="mt-8">
@@ -48,7 +53,8 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
 
       <Reveal step={2} className="my-6">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span aria-hidden className="h-px flex-1 bg-border" />o con tu correo
+          <span aria-hidden className="h-px flex-1 bg-border" />
+          {t("orWithEmail")}
           <span aria-hidden className="h-px flex-1 bg-border" />
         </div>
       </Reveal>
@@ -64,9 +70,9 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
           {mode === "register" && (
             <AuthField
               id="name"
-              label="Nombre"
+              label={t("fields.name.label")}
               autoComplete="name"
-              placeholder="Cómo quieres que te llamemos"
+              placeholder={t("fields.name.placeholder")}
               required
               autoFocus
               value={fields.name}
@@ -76,9 +82,9 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
           <AuthField
             id="email"
             type="email"
-            label="Correo electrónico"
+            label={t("fields.email.label")}
             autoComplete="email"
-            placeholder="tu@correo.com"
+            placeholder={t("fields.email.placeholder")}
             required
             autoFocus={mode === "login"}
             value={fields.email}
@@ -86,11 +92,11 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
           />
           <PasswordField
             id="password"
-            label="Contraseña"
-            autoComplete={copy.passwordAutoComplete}
+            label={t("fields.password.label")}
+            autoComplete={config.passwordAutoComplete}
             required
-            minLength={mode === "register" ? MIN_PASSWORD_LENGTH : undefined}
-            hint={copy.passwordHint}
+            minLength={config.showPasswordHint ? MIN_PASSWORD_LENGTH : undefined}
+            hint={config.showPasswordHint ? t("fields.password.hint", { min: MIN_PASSWORD_LENGTH }) : undefined}
             value={fields.password}
             onChange={updateField("password")}
           />
@@ -98,7 +104,7 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
           {error && (
             <div role="alert" className="flex items-start gap-2 rounded-xl bg-destructive/10 px-3.5 py-3 text-sm text-destructive">
               <CircleAlert className="mt-0.5 size-4 shrink-0" />
-              {error}
+              {t(`errors.${error}`, { min: MIN_PASSWORD_LENGTH })}
             </div>
           )}
 
@@ -106,11 +112,11 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
             {emailAuth.isSubmitting ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                {copy.submittingLabel}
+                {t(`${mode}.submitting`)}
               </>
             ) : (
               <>
-                {copy.submitLabel}
+                {t(`${mode}.submit`)}
                 <ArrowRight className="size-4 transition-transform duration-200 ease-[var(--ease-out)] group-hover:translate-x-0.5" />
               </>
             )}
@@ -120,12 +126,12 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
 
       <Reveal step={4} className="mt-8">
         <p className="text-center text-sm text-muted-foreground">
-          {copy.switchPrompt}{" "}
+          {t(`${mode}.switchPrompt`)}{" "}
           <Link
-            href={copy.switchHref}
+            href={config.switchHref}
             className="rounded-sm font-medium text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {copy.switchLabel}
+            {t(`${mode}.switchLabel`)}
           </Link>
         </p>
       </Reveal>

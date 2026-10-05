@@ -1,4 +1,7 @@
+"use client";
+
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { SocialProvider } from "../hooks/useSocialAuth";
 import { FacebookIcon, GitHubIcon, GoogleIcon } from "./ProviderIcons";
@@ -9,6 +12,7 @@ interface SocialAuthButtonsProps {
   onSelect: (provider: SocialProvider) => void;
 }
 
+// Brand names, never translated.
 const SECONDARY_PROVIDERS = [
   { id: "github", label: "GitHub", Icon: GitHubIcon },
   { id: "facebook", label: "Facebook", Icon: FacebookIcon },
@@ -21,19 +25,23 @@ const ProviderIcon: React.FC<{ isPending: boolean; Icon: React.FC<React.Componen
   isPending ? <Loader2 className="size-4 animate-spin text-muted-foreground" /> : <Icon className="size-4" />;
 
 // Google gets the full row: it's how most students sign in.
-export const SocialAuthButtons: React.FC<SocialAuthButtonsProps> = ({ pendingProvider, disabled, onSelect }) => (
-  <div className="flex flex-col gap-2">
-    <button type="button" disabled={disabled} onClick={() => onSelect("google")} className={cn(providerButtonClass, "w-full")}>
-      <ProviderIcon isPending={pendingProvider === "google"} Icon={GoogleIcon} />
-      Continuar con Google
-    </button>
-    <div className="grid grid-cols-2 gap-2">
-      {SECONDARY_PROVIDERS.map(({ id, label, Icon }) => (
-        <button key={id} type="button" disabled={disabled} onClick={() => onSelect(id)} className={providerButtonClass}>
-          <ProviderIcon isPending={pendingProvider === id} Icon={Icon} />
-          {label}
-        </button>
-      ))}
+export const SocialAuthButtons: React.FC<SocialAuthButtonsProps> = ({ pendingProvider, disabled, onSelect }) => {
+  const t = useTranslations("auth");
+
+  return (
+    <div className="flex flex-col gap-2">
+      <button type="button" disabled={disabled} onClick={() => onSelect("google")} className={cn(providerButtonClass, "w-full")}>
+        <ProviderIcon isPending={pendingProvider === "google"} Icon={GoogleIcon} />
+        {t("continueWithGoogle")}
+      </button>
+      <div className="grid grid-cols-2 gap-2">
+        {SECONDARY_PROVIDERS.map(({ id, label, Icon }) => (
+          <button key={id} type="button" disabled={disabled} onClick={() => onSelect(id)} className={providerButtonClass}>
+            <ProviderIcon isPending={pendingProvider === id} Icon={Icon} />
+            {label}
+          </button>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
