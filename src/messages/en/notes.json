@@ -1,0 +1,80 @@
+{
+  "dialog": {
+    "title": "Note",
+    "description": "Create or edit an AI note from the selected text."
+  },
+  "header": {
+    "instructionLabel": "Request:",
+    "delete": "Delete note",
+    "confirmDelete": {
+      "title": "Delete this note?",
+      "description": "The highlight and its note will be removed. This can't be undone.",
+      "confirm": "Delete"
+    }
+  },
+  "compose": {
+    "label": "What should the AI do with this passage?",
+    "placeholder": "For example: summarize it in three points and add an example",
+    "quickPromptsLabel": "Quick requests",
+    "submit": "Create note",
+    "quickPrompts": {
+      "summarize": {
+        "label": "Summarize",
+        "prompt": "Summarize this passage in a few lines."
+      },
+      "simplify": {
+        "label": "Explain simply",
+        "prompt": "Explain it in simple words, as if to someone just getting started."
+      },
+      "keyPoints": {
+        "label": "Key points",
+        "prompt": "Pull out the key points as a list."
+      },
+      "reviewQuestions": {
+        "label": "Review questions",
+        "prompt": "Write review questions with their answers."
+      }
+    }
+  },
+  "reader": {
+    "rewriting": "Rewriting the note…",
+    "writing": "Writing your note…",
+    "changeLabel": "Ask for a change to the note",
+    "changePlaceholder": "Ask for a change: shorter, with an example…",
+    "regenerate": "Generate another version"
+  },
+  "review": {
+    "removed": "Previous text",
+    "added": "Proposed text",
+    "hunkLabel": "Proposed change",
+    "reject": "Discard",
+    "accept": "Accept",
+    "pending": "{count, plural, one {# change to review} other {# changes to review}}",
+    "rejectAll": "Discard all",
+    "acceptAll": "Accept all"
+  },
+  "markdown": {
+    "copyCode": "Copy code",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "colorPicker": {
+    "label": "Highlight color"
+  },
+  "colors": {
+    "yellow": "Yellow",
+    "green": "Green",
+    "blue": "Blue",
+    "pink": "Pink",
+    "orange": "Orange",
+    "purple": "Purple"
+  },
+  "prompts": {
+    "revise": "{instruction}. Also: {change}"
+  },
+  "errors": {
+    "generation": "Couldn't generate the note. Please try again.",
+    "save": "Couldn't save the note. Please try again.",
+    "color": "Couldn't change the color."
+  }
+}

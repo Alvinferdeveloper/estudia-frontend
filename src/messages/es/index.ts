@@ -1,6 +1,7 @@
 import common from "./common.json";
 import metadata from "./metadata.json";
 import auth from "./auth.json";
+import notes from "./notes.json";
 import chat from "./chat.json";
 import vocabulary from "./vocabulary.json";
 import reader from "./reader.json";
@@ -12,6 +13,7 @@ const messages = {
   common,
   metadata,
   auth,
+  notes,
   chat,
   vocabulary,
   reader,

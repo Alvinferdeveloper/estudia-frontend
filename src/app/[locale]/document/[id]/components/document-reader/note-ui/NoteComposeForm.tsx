@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import { useAutoResizeTextarea } from "@/app/[locale]/document/[id]/hooks/useAutoResizeTextarea";
+import type { NoteErrorKey } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
 import { NoteColorPicker } from "./NoteColorPicker";
 import { NoteError, NoteFooter, NoteScrollArea } from "./NoteLayout";
 
-const QUICK_PROMPTS = [
-  { label: "Resumir", prompt: "Resume este fragmento en pocas líneas." },
-  { label: "Explicar en simple", prompt: "Explícalo con palabras simples, como a alguien que recién empieza." },
-  { label: "Puntos clave", prompt: "Extrae los puntos clave en una lista." },
-  { label: "Preguntas de repaso", prompt: "Crea preguntas de repaso con sus respuestas." },
-];
+const QUICK_PROMPTS = ["summarize", "simplify", "keyPoints", "reviewQuestions"] as const;
 
 interface NoteComposeFormProps {
   defaultPrompt: string;
   color: string;
-  error: string | null;
+  error: NoteErrorKey | null;
   onColorChange: (color: string) => void;
   onSubmit: (prompt: string) => void;
   onCancel: () => void;
@@ -29,6 +26,9 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const t = useTranslations("notes.compose");
+  const tErrors = useTranslations("notes.errors");
+  const tCommon = useTranslations("common");
   const [prompt, setPrompt] = useState(defaultPrompt);
   const textareaRef = useAutoResizeTextarea(prompt);
   const canSubmit = prompt.trim().length > 0;
@@ -36,6 +36,12 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
   useEffect(() => {
     textareaRef.current?.focus();
   }, [textareaRef]);
+
+  const quickPrompts = QUICK_PROMPTS.map((id) => ({
+    id,
+    label: t(`quickPrompts.${id}.label`),
+    prompt: t(`quickPrompts.${id}.prompt`),
+  }));
 
   const submit = () => {
     if (canSubmit) onSubmit(prompt.trim());
@@ -50,7 +56,7 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
     <>
       <NoteScrollArea>
         <label htmlFor="note-prompt" className="text-sm font-medium text-foreground">
-          ¿Qué quieres que haga la IA con este fragmento?
+          {t("label")}
         </label>
         <textarea
           id="note-prompt"
@@ -64,14 +70,14 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
               submit();
             }
           }}
-          placeholder="Por ejemplo: resúmelo en tres puntos y agrega un ejemplo"
+          placeholder={t("placeholder")}
           className="mt-2 block max-h-48 w-full resize-none rounded-xl border border-border bg-background px-3.5 py-3 text-[15px] leading-relaxed text-foreground outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-ring"
         />
 
-        <div role="group" aria-label="Pedidos rápidos" className="mt-3 flex flex-wrap gap-1.5">
-          {QUICK_PROMPTS.map((quick) => (
+        <div role="group" aria-label={t("quickPromptsLabel")} className="mt-3 flex flex-wrap gap-1.5">
+          {quickPrompts.map((quick) => (
             <button
-              key={quick.label}
+              key={quick.id}
               type="button"
               aria-pressed={prompt === quick.prompt}
               onClick={() => pickQuickPrompt(quick.prompt)}
@@ -82,18 +88,18 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
           ))}
         </div>
 
-        <NoteError message={error} className="mt-3" />
+        <NoteError message={error && tErrors(error)} className="mt-3" />
       </NoteScrollArea>
 
       <NoteFooter className="flex items-center gap-3 px-6">
         <NoteColorPicker selectedColor={color} onColorChange={onColorChange} className="text-foreground" />
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={onCancel}>
-            Cancelar
+            {tCommon("actions.cancel")}
           </Button>
           <Button size="sm" onClick={submit} disabled={!canSubmit} className="press-feedback">
             <ZocratisMark className="size-4" />
-            Crear nota
+            {t("submit")}
           </Button>
         </div>
       </NoteFooter>

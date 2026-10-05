@@ -1,0 +1,80 @@
+{
+  "dialog": {
+    "title": "Nota",
+    "description": "Crea o edita una nota con IA a partir del texto seleccionado."
+  },
+  "header": {
+    "instructionLabel": "Pedido:",
+    "delete": "Eliminar nota",
+    "confirmDelete": {
+      "title": "¿Eliminar esta nota?",
+      "description": "Se quitarán el resaltado y su nota. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    }
+  },
+  "compose": {
+    "label": "¿Qué quieres que haga la IA con este fragmento?",
+    "placeholder": "Por ejemplo: resúmelo en tres puntos y agrega un ejemplo",
+    "quickPromptsLabel": "Pedidos rápidos",
+    "submit": "Crear nota",
+    "quickPrompts": {
+      "summarize": {
+        "label": "Resumir",
+        "prompt": "Resume este fragmento en pocas líneas."
+      },
+      "simplify": {
+        "label": "Explicar en simple",
+        "prompt": "Explícalo con palabras simples, como a alguien que recién empieza."
+      },
+      "keyPoints": {
+        "label": "Puntos clave",
+        "prompt": "Extrae los puntos clave en una lista."
+      },
+      "reviewQuestions": {
+        "label": "Preguntas de repaso",
+        "prompt": "Crea preguntas de repaso con sus respuestas."
+      }
+    }
+  },
+  "reader": {
+    "rewriting": "Reescribiendo la nota…",
+    "writing": "Escribiendo tu nota…",
+    "changeLabel": "Pedir un cambio a la nota",
+    "changePlaceholder": "Pide un cambio: más corta, con un ejemplo…",
+    "regenerate": "Generar otra versión"
+  },
+  "review": {
+    "removed": "Texto anterior",
+    "added": "Texto propuesto",
+    "hunkLabel": "Cambio propuesto",
+    "reject": "Descartar",
+    "accept": "Aceptar",
+    "pending": "{count, plural, one {# cambio por revisar} other {# cambios por revisar}}",
+    "rejectAll": "Descartar todo",
+    "acceptAll": "Aceptar todo"
+  },
+  "markdown": {
+    "copyCode": "Copiar código",
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "colorPicker": {
+    "label": "Color del resaltado"
+  },
+  "colors": {
+    "yellow": "Amarillo",
+    "green": "Verde",
+    "blue": "Azul",
+    "pink": "Rosa",
+    "orange": "Naranja",
+    "purple": "Morado"
+  },
+  "prompts": {
+    "revise": "{instruction}. Además: {change}"
+  },
+  "errors": {
+    "generation": "No se pudo generar la nota. Inténtalo de nuevo.",
+    "save": "No se pudo guardar la nota. Inténtalo de nuevo.",
+    "color": "No se pudo cambiar el color."
+  }
+}

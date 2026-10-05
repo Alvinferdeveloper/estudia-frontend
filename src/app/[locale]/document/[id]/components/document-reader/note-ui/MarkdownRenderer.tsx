@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { Check, Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Components } from "react-markdown";
 import type { ClassAttributes, HTMLAttributes, ReactNode } from "react";
 import type { ExtraProps } from "react-markdown";
@@ -18,6 +19,7 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
   const match = /language-(\w+)/.exec(className ?? "");
   const language = match ? match[1] : "text";
   const [isCopied, setIsCopied] = useState(false);
+  const t = useTranslations("notes.markdown");
 
   const handleCopy = () => {
     const codeText = String(children).replace(/\n$/, "");
@@ -36,10 +38,10 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
           <button
             onClick={handleCopy}
             className="flex items-center gap-1.5 hover:text-foreground transition-colors"
-            aria-label="Copiar código"
+            aria-label={t("copyCode")}
           >
             {isCopied ? <Check size={14} /> : <Copy size={14} />}
-            {isCopied ? "Copiado" : "Copiar"}
+            {isCopied ? t("copied") : t("copy")}
           </button>
         </div>
         <pre className="overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">

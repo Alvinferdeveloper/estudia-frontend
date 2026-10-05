@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Annotation } from "@/app/types";
 import { NoteDraft, NoteSession, useNoteSession } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
@@ -80,17 +81,19 @@ const NoteWorkspace: React.FC<NoteWorkspaceProps> = ({
   );
 };
 
-export const NoteDialog: React.FC<NoteDialogProps> = ({ isOpen, ...workspaceProps }) => (
-  <Dialog open={isOpen} onOpenChange={(open) => !open && workspaceProps.onClose()}>
-    <DialogContent
-      showCloseButton={false}
-      className="flex max-h-[85vh] w-[calc(100vw-2rem)] max-w-[720px] flex-col gap-0 overflow-hidden p-0 sm:max-w-[720px]"
-    >
-      <DialogTitle className="sr-only">Nota</DialogTitle>
-      <DialogDescription className="sr-only">
-        Crea o edita una nota con IA a partir del texto seleccionado.
-      </DialogDescription>
-      <NoteWorkspace {...workspaceProps} />
-    </DialogContent>
-  </Dialog>
-);
+export const NoteDialog: React.FC<NoteDialogProps> = ({ isOpen, ...workspaceProps }) => {
+  const t = useTranslations("notes.dialog");
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && workspaceProps.onClose()}>
+      <DialogContent
+        showCloseButton={false}
+        className="flex max-h-[85vh] w-[calc(100vw-2rem)] max-w-[720px] flex-col gap-0 overflow-hidden p-0 sm:max-w-[720px]"
+      >
+        <DialogTitle className="sr-only">{t("title")}</DialogTitle>
+        <DialogDescription className="sr-only">{t("description")}</DialogDescription>
+        <NoteWorkspace {...workspaceProps} />
+      </DialogContent>
+    </Dialog>
+  );
+};

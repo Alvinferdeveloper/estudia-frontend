@@ -1,4 +1,5 @@
 import { RefreshCw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { IconButton } from "@/components/ui/icon-button";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
@@ -10,6 +11,7 @@ import { NoteError, NoteFooter, NoteScrollArea, NoteStatus } from "./NoteLayout"
 
 // Generating, viewing and revising share one surface so the note never leaves the screen between them.
 export const NoteReader: React.FC<{ session: NoteSession }> = ({ session }) => {
+  const t = useTranslations("notes");
   const isGenerating = session.phase === "generating";
   const isRevising = session.phase === "revising";
   const text = isGenerating ? session.streamingText : session.note;
@@ -17,9 +19,9 @@ export const NoteReader: React.FC<{ session: NoteSession }> = ({ session }) => {
   return (
     <>
       <NoteScrollArea follow={isGenerating}>
-        {isRevising && <NoteStatus label="Reescribiendo la nota…" className="mb-4" />}
+        {isRevising && <NoteStatus label={t("reader.rewriting")} className="mb-4" />}
         {isGenerating && !text ? (
-          <NoteStatus label="Escribiendo tu nota…" />
+          <NoteStatus label={t("reader.writing")} />
         ) : (
           <article className={cn("transition-opacity duration-200 ease-[var(--ease-out)]", isRevising && "opacity-45")}>
             <MarkdownRenderer content={text} className="px-0" />
@@ -30,10 +32,10 @@ export const NoteReader: React.FC<{ session: NoteSession }> = ({ session }) => {
       </NoteScrollArea>
 
       <NoteFooter>
-        <NoteError message={session.error} className="mb-2 px-1 text-xs" />
+        <NoteError message={session.error && t(`errors.${session.error}`)} className="mb-2 px-1 text-xs" />
         <PromptComposer
-          label="Pedir un cambio a la nota"
-          placeholder="Pide un cambio: más corta, con un ejemplo…"
+          label={t("reader.changeLabel")}
+          placeholder={t("reader.changePlaceholder")}
           isBusy={session.isBusy}
           onSubmit={session.revise}
           onStop={session.stop}
@@ -45,7 +47,7 @@ export const NoteReader: React.FC<{ session: NoteSession }> = ({ session }) => {
                 className="px-1.5 text-foreground"
               />
               <span aria-hidden className="mx-1 h-4 w-px bg-border" />
-              <IconButton label="Generar otra versión" onClick={() => session.revise()} disabled={session.isBusy}>
+              <IconButton label={t("reader.regenerate")} onClick={() => session.revise()} disabled={session.isBusy}>
                 <RefreshCw />
               </IconButton>
             </>
