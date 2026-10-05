@@ -1,5 +1,5 @@
 import React from "react";
-import { format } from "date-fns";
+import { useFormatter, useTranslations } from "next-intl";
 import { FileText, Download, Check, Star, Trash2 } from "lucide-react";
 import { Document, Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
@@ -28,13 +28,14 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
   onToggleSelect,
   onToggleStar,
 }) => {
+  const t = useTranslations("workspace");
+  const format = useFormatter();
   // "Modificado" refleja el contenido/metadata del documento (updatedAt), no la última
   // vez que se abrió (lastAccessedAt) — son conceptos distintos.
-  const formattedDate = doc.updatedAt
-    ? format(new Date(doc.updatedAt), "MMM d, yyyy")
-    : doc.createdAt
-      ? format(new Date(doc.createdAt), "MMM d, yyyy")
-      : "Unknown";
+  const modifiedAt = doc.updatedAt ?? doc.createdAt;
+  const formattedDate = modifiedAt
+    ? format.dateTime(new Date(modifiedAt), { dateStyle: "medium" })
+    : t("items.unknownDate");
 
   const tint = topic?.color || "var(--muted-foreground)";
 
@@ -71,8 +72,8 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
               {doc.fileName}
             </span>
             <span className="truncate text-[11px] text-muted-foreground">
-              {topic?.name || "Sin colección"}
-              {doc.pageCount ? ` · ${doc.pageCount}p` : ""}
+              {topic?.name || t("items.noCollection")}
+              {doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
             </span>
           </div>
         </div>
@@ -91,7 +92,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={doc.isStarred ? "Unstar" : "Star"}
+            title={doc.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
               doc.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
@@ -103,7 +104,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             href={doc.filePath}
             target="_blank"
             rel="noopener noreferrer"
-            title="Descargar"
+            title={t("actions.download")}
             onClick={(e) => e.stopPropagation()}
             className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground")}
           >
@@ -114,7 +115,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             trigger={(open) => (
               <button
                 onClick={open}
-                title="Eliminar"
+                title={t("actions.delete")}
                 className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive")}
               >
                 <Trash2 className="h-3.5 w-3.5" />

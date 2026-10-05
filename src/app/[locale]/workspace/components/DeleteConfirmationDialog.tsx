@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface DeleteConfirmationDialogProps {
@@ -14,6 +15,7 @@ interface DeleteConfirmationDialogProps {
 }
 
 export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ onConfirm, trigger }) => {
+  const t = useTranslations("workspace");
   const [isOpen, setIsOpen] = useState(false);
 
   const openDialog = (e: React.MouseEvent) => {
@@ -31,7 +33,7 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
           className="flex items-center w-full text-destructive p-2 hover:bg-destructive/10 rounded-sm transition-colors text-sm font-medium cursor-pointer"
         >
           <Trash2 className="mr-2 h-4 w-4" />
-          Delete
+          {t("actions.delete")}
         </button>
       )}
 
@@ -39,9 +41,9 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         onConfirm={onConfirm}
-        title="Delete Document"
-        description="Are you sure you want to delete this document? This action cannot be undone and will permanently delete all associated data."
-        confirmText="Delete"
+        title={t("deleteDialog.title")}
+        description={t("deleteDialog.description")}
+        confirmText={t("actions.delete")}
         variant="destructive"
       />
     </>

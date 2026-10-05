@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clock, FolderOpen, Plus } from "lucide-react";
 import { TopicList } from "@/app/[locale]/workspace/components/TopicList";
@@ -33,6 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isUploading,
   totalDocuments,
 }) => {
+  const t = useTranslations("workspace");
   const { data: topics } = useFetchTopics();
   const { mutate: createTopic } = useCreateTopic();
 
@@ -69,13 +71,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               )}
             >
               <Clock className="h-4 w-4" />
-              Recientes
+              {t("sidebar.recent")}
             </button>
           </nav>
 
           <div className="mt-6 flex items-center justify-between px-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Colecciones
+              {t("sidebar.collections")}
             </h3>
             <CreateTopicDialog
               createTopic={createTopic}
@@ -96,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               />
             ) : (
               <p className="px-3 py-2 text-xs text-muted-foreground">
-                Aún no tienes colecciones.
+                {t("sidebar.noCollections")}
               </p>
             )}
           </div>
@@ -107,7 +109,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex items-center gap-2 border-t border-border/60 px-5 py-4 text-xs text-muted-foreground">
         <FolderOpen className="h-3.5 w-3.5" />
         <span>
-          <span className="font-medium tabular-nums text-foreground">{totalDocuments}</span> documento{totalDocuments === 1 ? "" : "s"} guardado{totalDocuments === 1 ? "" : "s"}
+          {t.rich("sidebar.savedDocuments", {
+            count: totalDocuments,
+            strong: (chunks) => <span className="font-medium tabular-nums text-foreground">{chunks}</span>,
+          })}
         </span>
       </div>
     </aside>

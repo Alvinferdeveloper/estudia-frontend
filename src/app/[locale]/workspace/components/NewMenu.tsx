@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,8 @@ export const NewMenu: React.FC<NewMenuProps> = ({
   isUploading,
   className,
 }) => {
+  const t = useTranslations("workspace");
+  const tCommon = useTranslations("common.actions");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showFolderDialog, setShowFolderDialog] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -41,7 +44,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.type !== "application/pdf") {
-      alert("Solo se permiten archivos PDF.");
+      alert(t("newMenu.pdfOnly"));
       return;
     }
     setPendingFile(file);
@@ -69,7 +72,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
         <DropdownMenuTrigger asChild>
           <Button className={cn("press-feedback gap-1.5 rounded-full shadow-sm", className)}>
             <Plus className="h-4 w-4" />
-            Nuevo
+            {t("newMenu.new")}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-52">
@@ -81,7 +84,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             }}
           >
             <FolderPlus className="mr-2 h-4 w-4" />
-            Carpeta nueva
+            {t("newMenu.newFolder")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={(e) => {
@@ -90,7 +93,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             }}
           >
             <Upload className="mr-2 h-4 w-4" />
-            Subir documento
+            {t("actions.uploadDocument")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -147,7 +150,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
               <Input
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                placeholder="Agregar etiquetas (opcional)"
+                placeholder={t("newMenu.tagsPlaceholder")}
                 className="h-9 pr-8 text-sm"
               />
               <Paperclip className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/50" />
@@ -160,7 +163,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
                 className="press-feedback"
                 onClick={() => setPendingFile(null)}
               >
-                Cancelar
+                {tCommon("cancel")}
               </Button>
               <Button
                 size="sm"
@@ -168,7 +171,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
                 disabled={isUploading}
                 onClick={handleConfirmUpload}
               >
-                {isUploading ? "Subiendo..." : "Subir"}
+                {isUploading ? t("newMenu.uploading") : t("newMenu.upload")}
               </Button>
             </div>
           </motion.div>

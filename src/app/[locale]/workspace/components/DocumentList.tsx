@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Inbox, ChevronRight, Upload, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   onToggleDocumentStar,
   onToggleFolderStar,
 }) => {
+  const t = useTranslations("workspace");
   const router = useRouter();
   const observerTarget = React.useRef(null);
 
@@ -91,11 +93,11 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         <div className="bg-muted/30 p-6 rounded-full mb-4">
           <Inbox className="h-10 w-10 text-muted-foreground/40" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground">No items found</h3>
+        <h3 className="text-lg font-semibold text-foreground">{t("list.emptyTitle")}</h3>
         <p className="text-sm text-muted-foreground max-w-xs mt-2">
           {searchQuery
-            ? "We couldn't find anything matching your search."
-            : "Upload your first document or create a folder to get started."}
+            ? t("list.emptySearch")
+            : t("list.emptyDefault")}
         </p>
         {!searchQuery && showUploadCta && (
           <Button
@@ -104,7 +106,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
             size="sm"
           >
             <Upload className="mr-2 h-4 w-4" />
-            Subir documento
+            {t("actions.uploadDocument")}
           </Button>
         )}
       </div>
@@ -139,7 +141,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                 {item.type === 'folder' && index < currentPath.length - 1 && (
                   <FolderIcon size="sm" color={(item.item as Folder).color} />
                 )}
-                {index === 0 ? 'Raíz' : (item.item as Folder).name}
+                {index === 0 ? t("list.root") : (item.item as Folder).name}
               </Button>
             </React.Fragment>
           ))}
@@ -160,10 +162,10 @@ export const DocumentList: React.FC<DocumentListProps> = ({
               {allSelected && <Check className="h-3 w-3" strokeWidth={3} />}
             </button>
           </div>
-          <div className="col-span-5">Nombre</div>
-          <div className="col-span-2">Modificado</div>
-          <div className="col-span-2">Tamaño</div>
-          <div className="col-span-2 text-right">Acciones</div>
+          <div className="col-span-5">{t("list.columns.name")}</div>
+          <div className="col-span-2">{t("list.columns.modified")}</div>
+          <div className="col-span-2">{t("list.columns.size")}</div>
+          <div className="col-span-2 text-right">{t("list.columns.actions")}</div>
         </div>
       )}
 
@@ -259,7 +261,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         {/* Intersection Observer Target */}
         <div ref={observerTarget} className="h-10 w-full flex items-center justify-center mt-4">
           {!hasNextPage && items.length > 0 && (
-            <span className="text-xs text-muted-foreground italic">No more items</span>
+            <span className="text-xs text-muted-foreground italic">{t("list.noMoreItems")}</span>
           )}
         </div>
       </div>

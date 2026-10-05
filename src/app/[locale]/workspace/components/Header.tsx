@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -59,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   onBulkDelete,
   onBulkDownload,
 }) => {
+  const t = useTranslations("workspace");
   const hasSelection = selectedCount > 0;
 
   return (
@@ -72,16 +74,16 @@ export const Header: React.FC<HeaderProps> = ({
             <X className="h-4 w-4" />
           </button>
           <span className="text-sm font-medium tabular-nums">
-            {selectedCount} seleccionado{selectedCount === 1 ? "" : "s"}
+            {t("header.selectedCount", { count: selectedCount })}
           </span>
           <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" size="sm" className="press-feedback gap-2" onClick={onBulkDownload}>
               <Download className="h-3.5 w-3.5" />
-              Descargar
+              {t("actions.download")}
             </Button>
             <Button variant="outline" size="sm" className="press-feedback gap-2 text-destructive hover:text-destructive" onClick={onBulkDelete}>
               <Trash2 className="h-3.5 w-3.5" />
-              Eliminar
+              {t("actions.delete")}
             </Button>
           </div>
         </div>
@@ -101,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {view === "recent" ? (
                   <>
                     <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    Recientes
+                    {t("header.recent")}
                   </>
                 ) : selectedFolder ? (
                   <>
@@ -116,12 +118,12 @@ export const Header: React.FC<HeaderProps> = ({
                 ) : (
                   <>
                     <LayoutGrid className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    Todos los documentos
+                    {t("header.allDocuments")}
                   </>
                 )}
               </h1>
               <p className="text-xs text-muted-foreground">
-                {totalDocuments} documento{totalDocuments === 1 ? "" : "s"}
+                {t("header.documentCount", { count: totalDocuments })}
               </p>
             </div>
           </div>
@@ -130,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative hidden sm:block">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/70" />
               <Input
-                placeholder="Buscar..."
+                placeholder={t("header.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-8 w-44 border-transparent bg-secondary/60 pl-8 text-sm transition-all focus-visible:w-64 focus-visible:bg-background focus-visible:ring-1"
@@ -145,10 +147,10 @@ export const Header: React.FC<HeaderProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setSortBy("name")} className={cn(sortBy === "name" && "font-medium text-primary")}>
-                  Ordenar por nombre
+                  {t("header.sortByName")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setSortBy("date")} className={cn(sortBy === "date" && "font-medium text-primary")}>
-                  Ordenar por fecha
+                  {t("header.sortByDate")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

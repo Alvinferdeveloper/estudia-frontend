@@ -6,6 +6,7 @@ import notes from "./notes.json";
 import chat from "./chat.json";
 import vocabulary from "./vocabulary.json";
 import reader from "./reader.json";
+import workspace from "./workspace.json";
 import subscription from "./subscription.json";
 import landing from "./landing.json";
 
@@ -19,6 +20,7 @@ const messages = {
   chat,
   vocabulary,
   reader,
+  workspace,
   subscription,
   landing,
 };

@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { useFormatter, useTranslations } from "next-intl";
 import { FileText, Download, Check, Star, Trash2 } from "lucide-react";
 import { Document } from "@/app/types";
 import { Topic } from "@/app/types";
@@ -30,6 +30,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   onToggleSelect,
   onToggleStar,
 }) => {
+  const t = useTranslations("workspace");
+  const format = useFormatter();
   const tint = topic?.color || "var(--muted-foreground)";
 
   return (
@@ -73,7 +75,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
             href={doc.filePath}
             target="_blank"
             rel="noopener noreferrer"
-            title="Download"
+            title={t("actions.download")}
             onClick={(e) => e.stopPropagation()}
             className={cn(actionButtonClass, "text-foreground opacity-0 group-hover:opacity-100")}
           >
@@ -84,7 +86,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={doc.isStarred ? "Unstar" : "Star"}
+            title={doc.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
               doc.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
@@ -97,7 +99,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
             trigger={(open) => (
               <button
                 onClick={open}
-                title="Delete"
+                title={t("actions.delete")}
                 className={cn(actionButtonClass, "text-foreground opacity-0 hover:text-destructive group-hover:opacity-100")}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -113,10 +115,10 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         <p className="truncate text-xs text-muted-foreground">
           {topic ? `${topic.name} · ` : ""}
           {formatBytes(doc.fileSize)}
-          {doc.pageCount ? ` · ${doc.pageCount}p` : ""}
+          {doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
         </p>
         <p className="truncate text-[11px] text-muted-foreground/70">
-          {doc.updatedAt ? format(new Date(doc.updatedAt), "MMM d, yyyy") : "—"}
+          {doc.updatedAt ? format.dateTime(new Date(doc.updatedAt), { dateStyle: "medium" }) : "—"}
         </p>
       </div>
     </div>

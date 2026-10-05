@@ -1,5 +1,5 @@
 import React from "react";
-import { format } from "date-fns";
+import { useFormatter, useTranslations } from "next-intl";
 import { Check, Star, Trash2 } from "lucide-react";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
@@ -27,6 +27,9 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
   onToggleSelect,
   onToggleStar,
 }) => {
+  const t = useTranslations("workspace");
+  const format = useFormatter();
+
   return (
     <div
       className={cn(
@@ -60,14 +63,14 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
               {folder.name}
             </span>
             <span className="truncate text-[11px] text-muted-foreground">
-              {folder.count} {folder.count === 1 ? 'archivo' : 'archivos'}
-              {folder.subfoldersCount > 0 && ` · ${folder.subfoldersCount} carpetas`}
+              {t("items.fileCount", { count: folder.count })}
+              {folder.subfoldersCount > 0 && ` · ${t("items.folderCount", { count: folder.subfoldersCount })}`}
             </span>
           </div>
         </div>
 
         <div className="col-span-2 text-xs text-muted-foreground">
-          {folder.updatedAt ? format(new Date(folder.updatedAt), "MMM d, yyyy") : "—"}
+          {folder.updatedAt ? format.dateTime(new Date(folder.updatedAt), { dateStyle: "medium" }) : "—"}
         </div>
 
         <div className="col-span-2 text-xs tabular-nums text-muted-foreground">
@@ -80,7 +83,7 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={folder.isStarred ? "Unstar" : "Star"}
+            title={folder.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
               folder.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
@@ -93,7 +96,7 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
             trigger={(open) => (
               <button
                 onClick={open}
-                title="Eliminar"
+                title={t("actions.delete")}
                 className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive")}
               >
                 <Trash2 className="h-3.5 w-3.5" />

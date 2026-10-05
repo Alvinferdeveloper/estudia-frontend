@@ -1,0 +1,97 @@
+{
+  "actions": {
+    "delete": "Delete",
+    "download": "Download",
+    "star": "Star",
+    "unstar": "Unstar",
+    "uploadDocument": "Upload document"
+  },
+  "dropOverlay": "Drop the PDF to upload it",
+  "bulkDelete": {
+    "title": "{count, plural, one {Delete # item?} other {Delete # items?}}",
+    "description": "This action can't be undone. If you selected a folder with content, empty it first to avoid leaving orphaned documents."
+  },
+  "header": {
+    "recent": "Recent",
+    "allDocuments": "All documents",
+    "documentCount": "{count, plural, one {# document} other {# documents}}",
+    "selectedCount": "{count, plural, one {# selected} other {# selected}}",
+    "searchPlaceholder": "Search...",
+    "sortByName": "Sort by name",
+    "sortByDate": "Sort by date"
+  },
+  "sidebar": {
+    "recent": "Recent",
+    "collections": "Collections",
+    "noCollections": "You don't have any collections yet.",
+    "savedDocuments": "{count, plural, one {<strong>#</strong> saved document} other {<strong>#</strong> saved documents}}"
+  },
+  "newMenu": {
+    "new": "New",
+    "newFolder": "New folder",
+    "pdfOnly": "Only PDF files are allowed.",
+    "tagsPlaceholder": "Add tags (optional)",
+    "upload": "Upload",
+    "uploading": "Uploading..."
+  },
+  "colorPicker": {
+    "label": "Color",
+    "hint": "(Pick a color)",
+    "select": "Select color {color}"
+  },
+  "folderDialog": {
+    "trigger": "New Folder",
+    "title": "Create Folder",
+    "description": "Create a new folder to organize your documents.",
+    "nameLabel": "Folder Name",
+    "namePlaceholder": "e.g. Notes, Exams...",
+    "submit": "Create Folder"
+  },
+  "topicDialog": {
+    "trigger": "Create new collection",
+    "title": "Create collection",
+    "description": "Organize your documents by creating a new collection.",
+    "nameLabel": "Collection name",
+    "namePlaceholder": "e.g. Physics, Project Alpha...",
+    "submit": "Create collection"
+  },
+  "deleteDialog": {
+    "title": "Delete document",
+    "description": "Are you sure you want to delete this document? This action can't be undone and will permanently delete all associated data."
+  },
+  "list": {
+    "emptyTitle": "No items found",
+    "emptySearch": "We couldn't find anything matching your search.",
+    "emptyDefault": "Upload your first document or create a folder to get started.",
+    "root": "Root",
+    "noMoreItems": "No more items",
+    "columns": {
+      "name": "Name",
+      "modified": "Modified",
+      "size": "Size",
+      "actions": "Actions"
+    }
+  },
+  "items": {
+    "fileCount": "{count, plural, one {# file} other {# files}}",
+    "folderCount": "{count, plural, one {# folder} other {# folders}}",
+    "pageCount": "{count}p",
+    "noCollection": "No collection",
+    "unknownDate": "Unknown"
+  },
+  "upload": {
+    "title": "Upload document",
+    "selectLabel": "Select a PDF file:",
+    "selectedFile": "Selected file: {name}",
+    "submit": "Upload",
+    "uploading": "Uploading...",
+    "status": {
+      "noFile": "Please select a file to upload.",
+      "pdfOnly": "Only PDF files are allowed.",
+      "uploading": "Uploading...",
+      "success": "File uploaded successfully!",
+      "failed": "Upload failed: {reason}",
+      "unexpected": "An error occurred during upload."
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "motion/react";
 import { UploadCloud } from "lucide-react";
 import { authClient } from "@/app/lib/auth-client";
@@ -24,6 +25,7 @@ import { Folder, Topic, Document } from "@/app/types";
 type PathItem = { type: 'topic' | 'folder'; item: Topic | Folder };
 
 const DashboardPage = () => {
+  const t = useTranslations("workspace");
   const router = useRouter();
   const [view, setView] = useState<"recent" | "topic">("recent");
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -318,9 +320,9 @@ const DashboardPage = () => {
         isOpen={showBulkDeleteConfirm}
         onOpenChange={setShowBulkDeleteConfirm}
         onConfirm={handleBulkDelete}
-        title={`¿Eliminar ${selectedIds.size} elemento${selectedIds.size === 1 ? "" : "s"}?`}
-        description="Esta acción no se puede deshacer. Si seleccionaste una carpeta con contenido, vacíala primero para evitar dejar documentos huérfanos."
-        confirmText="Eliminar"
+        title={t("bulkDelete.title", { count: selectedIds.size })}
+        description={t("bulkDelete.description")}
+        confirmText={t("actions.delete")}
         variant="destructive"
       />
 
@@ -336,7 +338,7 @@ const DashboardPage = () => {
           >
             <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-primary/50 bg-card px-16 py-12">
               <UploadCloud className="h-10 w-10 text-primary" />
-              <p className="text-base font-medium text-foreground">Suelta el PDF para subirlo</p>
+              <p className="text-base font-medium text-foreground">{t("dropOverlay")}</p>
             </div>
           </motion.div>
         )}

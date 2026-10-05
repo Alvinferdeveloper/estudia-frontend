@@ -1,5 +1,5 @@
 import React from "react";
-import { format } from "date-fns";
+import { useFormatter, useTranslations } from "next-intl";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
 import { Check, Star, Trash2 } from "lucide-react";
@@ -31,6 +31,8 @@ export const FolderCard: React.FC<FolderCardProps> = ({
   onToggleSelect,
   onToggleStar,
 }) => {
+  const t = useTranslations("workspace");
+  const format = useFormatter();
   const tint = folder.color || "var(--muted-foreground)";
 
   return (
@@ -76,7 +78,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={folder.isStarred ? "Unstar" : "Star"}
+            title={folder.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
               folder.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
@@ -89,7 +91,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             trigger={(open) => (
               <button
                 onClick={open}
-                title="Delete"
+                title={t("actions.delete")}
                 className={cn(actionButtonClass, "text-foreground opacity-0 hover:text-destructive group-hover:opacity-100")}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -103,12 +105,12 @@ export const FolderCard: React.FC<FolderCardProps> = ({
       <div className="min-w-0 px-1">
         <h4 className="truncate text-sm font-medium text-foreground">{folder.name}</h4>
         <p className="truncate text-xs text-muted-foreground">
-          {folder.count} {folder.count === 1 ? 'archivo' : 'archivos'}
-          {folder.subfoldersCount > 0 ? ` · ${folder.subfoldersCount} carpetas` : ""}
+          {t("items.fileCount", { count: folder.count })}
+          {folder.subfoldersCount > 0 ? ` · ${t("items.folderCount", { count: folder.subfoldersCount })}` : ""}
           {Number(folder.totalSize) > 0 ? ` · ${formatBytes(folder.totalSize)}` : ""}
         </p>
         <p className="truncate text-[11px] text-muted-foreground/70">
-          {folder.updatedAt ? format(new Date(folder.updatedAt), "MMM d, yyyy") : "—"}
+          {folder.updatedAt ? format.dateTime(new Date(folder.updatedAt), { dateStyle: "medium" }) : "—"}
         </p>
       </div>
     </div>

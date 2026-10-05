@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,6 +45,8 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
   open: openProp,
   onOpenChange: onOpenChangeProp,
 }) => {
+  const t = useTranslations("workspace");
+  const tCommon = useTranslations("common.actions");
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
   const [internalOpen, setInternalOpen] = useState(false);
@@ -75,29 +78,29 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
         {trigger ?? (
           <Button variant="ghost" size="sm" className="w-full justify-start h-9 px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50">
             <FolderPlus className="mr-2 h-4 w-4" />
-            <span>Nueva Carpeta</span>
+            <span>{t("folderDialog.trigger")}</span>
           </Button>
         )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Crear Carpeta</DialogTitle>
+          <DialogTitle>{t("folderDialog.title")}</DialogTitle>
           <DialogDescription>
-            Crea una nueva carpeta para organizar tus documentos.
+            {t("folderDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-6 py-4">
           <div className="space-y-2">
             <Label htmlFor="folderName" className="text-sm font-medium">
-              Nombre de la Carpeta
+              {t("folderDialog.nameLabel")}
             </Label>
             <Input
               id="folderName"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              placeholder="e.g. Apuntes, Exámenes..."
+              placeholder={t("folderDialog.namePlaceholder")}
               className="col-span-3"
               autoFocus
             />
@@ -105,7 +108,7 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
 
           <div className="space-y-3">
             <Label className="text-sm font-medium flex items-center gap-2">
-              Color <span className="text-xs text-muted-foreground font-normal">(Elige un color)</span>
+              {t("colorPicker.label")} <span className="text-xs text-muted-foreground font-normal">{t("colorPicker.hint")}</span>
             </Label>
 
             <div className="flex flex-wrap gap-3">
@@ -146,14 +149,14 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
 
         <DialogFooter className="gap-2 sm:gap-2">
           <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
-            Cancelar
+            {tCommon("cancel")}
           </Button>
           <Button
             onClick={handleCreate}
             disabled={!newFolderName.trim()}
             className="press-feedback h-8 cursor-pointer"
           >
-            Crear Carpeta
+            {t("folderDialog.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,6 +34,8 @@ const PRESET_COLORS = [
 ];
 
 export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopic, trigger }) => {
+  const t = useTranslations("workspace");
+  const tCommon = useTranslations("common.actions");
   const [newTopicName, setNewTopicName] = useState("");
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,16 +60,16 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
       <DialogTrigger asChild>
         {trigger ?? (
           <Button className="w-full shadow-sm cursor-pointer">
-            <PlusCircle className="mr-2 h-4 w-4" /> Create New Topic
+            <PlusCircle className="mr-2 h-4 w-4" /> {t("topicDialog.trigger")}
           </Button>
         )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Collection</DialogTitle>
+          <DialogTitle>{t("topicDialog.title")}</DialogTitle>
           <DialogDescription>
-            Organize your documents by creating a new topic collection.
+            {t("topicDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -74,13 +77,13 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
           {/* Input Nombre */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
-              Topic Name
+              {t("topicDialog.nameLabel")}
             </Label>
             <Input
               id="name"
               value={newTopicName}
               onChange={(e) => setNewTopicName(e.target.value)}
-              placeholder="e.g. Physics, Project Alpha..."
+              placeholder={t("topicDialog.namePlaceholder")}
               className="col-span-3"
               autoFocus
             />
@@ -89,7 +92,7 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
           {/* Color Picker */}
           <div className="space-y-3">
             <Label className="text-sm font-medium flex items-center gap-2">
-              Color Theme <span className="text-xs text-muted-foreground font-normal">(Pick a color)</span>
+              {t("colorPicker.label")} <span className="text-xs text-muted-foreground font-normal">{t("colorPicker.hint")}</span>
             </Label>
 
             <div className="flex flex-wrap gap-3">
@@ -103,7 +106,7 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
                     selectedColor === color ? "scale-110 shadow-md ring-2 ring-offset-2 ring-primary" : "hover:scale-105"
                   )}
                   style={{ backgroundColor: color }}
-                  aria-label={`Select color ${color}`}
+                  aria-label={t("colorPicker.select", { color })}
                 >
                   {selectedColor === color && (
                     <Check className="h-4 w-4 text-white drop-shadow-md" strokeWidth={3} />
@@ -132,14 +135,14 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
 
         <DialogFooter className="gap-2 sm:gap-2">
           <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             onClick={handleCreate}
             disabled={!newTopicName.trim()}
             className="press-feedback h-8 cursor-pointer"
           >
-            Create Collection
+            {t("topicDialog.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

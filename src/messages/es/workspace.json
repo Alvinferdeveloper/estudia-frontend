@@ -1,0 +1,97 @@
+{
+  "actions": {
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "star": "Destacar",
+    "unstar": "Quitar de destacados",
+    "uploadDocument": "Subir documento"
+  },
+  "dropOverlay": "Suelta el PDF para subirlo",
+  "bulkDelete": {
+    "title": "{count, plural, one {¿Eliminar # elemento?} other {¿Eliminar # elementos?}}",
+    "description": "Esta acción no se puede deshacer. Si seleccionaste una carpeta con contenido, vacíala primero para evitar dejar documentos huérfanos."
+  },
+  "header": {
+    "recent": "Recientes",
+    "allDocuments": "Todos los documentos",
+    "documentCount": "{count, plural, one {# documento} other {# documentos}}",
+    "selectedCount": "{count, plural, one {# seleccionado} other {# seleccionados}}",
+    "searchPlaceholder": "Buscar...",
+    "sortByName": "Ordenar por nombre",
+    "sortByDate": "Ordenar por fecha"
+  },
+  "sidebar": {
+    "recent": "Recientes",
+    "collections": "Colecciones",
+    "noCollections": "Aún no tienes colecciones.",
+    "savedDocuments": "{count, plural, one {<strong>#</strong> documento guardado} other {<strong>#</strong> documentos guardados}}"
+  },
+  "newMenu": {
+    "new": "Nuevo",
+    "newFolder": "Carpeta nueva",
+    "pdfOnly": "Solo se permiten archivos PDF.",
+    "tagsPlaceholder": "Agregar etiquetas (opcional)",
+    "upload": "Subir",
+    "uploading": "Subiendo..."
+  },
+  "colorPicker": {
+    "label": "Color",
+    "hint": "(Elige un color)",
+    "select": "Seleccionar color {color}"
+  },
+  "folderDialog": {
+    "trigger": "Nueva Carpeta",
+    "title": "Crear Carpeta",
+    "description": "Crea una nueva carpeta para organizar tus documentos.",
+    "nameLabel": "Nombre de la Carpeta",
+    "namePlaceholder": "p. ej. Apuntes, Exámenes...",
+    "submit": "Crear Carpeta"
+  },
+  "topicDialog": {
+    "trigger": "Crear nueva colección",
+    "title": "Crear colección",
+    "description": "Organiza tus documentos creando una nueva colección.",
+    "nameLabel": "Nombre de la colección",
+    "namePlaceholder": "p. ej. Física, Proyecto Alfa...",
+    "submit": "Crear colección"
+  },
+  "deleteDialog": {
+    "title": "Eliminar documento",
+    "description": "¿Seguro que quieres eliminar este documento? Esta acción no se puede deshacer y se eliminarán permanentemente todos sus datos asociados."
+  },
+  "list": {
+    "emptyTitle": "No se encontraron elementos",
+    "emptySearch": "No encontramos nada que coincida con tu búsqueda.",
+    "emptyDefault": "Sube tu primer documento o crea una carpeta para empezar.",
+    "root": "Raíz",
+    "noMoreItems": "No hay más elementos",
+    "columns": {
+      "name": "Nombre",
+      "modified": "Modificado",
+      "size": "Tamaño",
+      "actions": "Acciones"
+    }
+  },
+  "items": {
+    "fileCount": "{count, plural, one {# archivo} other {# archivos}}",
+    "folderCount": "{count, plural, one {# carpeta} other {# carpetas}}",
+    "pageCount": "{count}p",
+    "noCollection": "Sin colección",
+    "unknownDate": "Desconocida"
+  },
+  "upload": {
+    "title": "Subir documento",
+    "selectLabel": "Selecciona un archivo PDF:",
+    "selectedFile": "Archivo seleccionado: {name}",
+    "submit": "Subir",
+    "uploading": "Subiendo...",
+    "status": {
+      "noFile": "Selecciona un archivo para subir.",
+      "pdfOnly": "Solo se permiten archivos PDF.",
+      "uploading": "Subiendo...",
+      "success": "¡Archivo subido correctamente!",
+      "failed": "Error al subir: {reason}",
+      "unexpected": "Ocurrió un error durante la subida."
+    }
+  }
+}
