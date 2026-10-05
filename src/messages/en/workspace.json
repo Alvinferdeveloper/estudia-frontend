@@ -78,20 +78,5 @@
     "pageCount": "{count}p",
     "noCollection": "No collection",
     "unknownDate": "Unknown"
-  },
-  "upload": {
-    "title": "Upload document",
-    "selectLabel": "Select a PDF file:",
-    "selectedFile": "Selected file: {name}",
-    "submit": "Upload",
-    "uploading": "Uploading...",
-    "status": {
-      "noFile": "Please select a file to upload.",
-      "pdfOnly": "Only PDF files are allowed.",
-      "uploading": "Uploading...",
-      "success": "File uploaded successfully!",
-      "failed": "Upload failed: {reason}",
-      "unexpected": "An error occurred during upload."
-    }
   }
 }

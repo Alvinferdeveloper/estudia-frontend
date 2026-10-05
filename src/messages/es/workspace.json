@@ -78,20 +78,5 @@
     "pageCount": "{count}p",
     "noCollection": "Sin colección",
     "unknownDate": "Desconocida"
-  },
-  "upload": {
-    "title": "Subir documento",
-    "selectLabel": "Selecciona un archivo PDF:",
-    "selectedFile": "Archivo seleccionado: {name}",
-    "submit": "Subir",
-    "uploading": "Subiendo...",
-    "status": {
-      "noFile": "Selecciona un archivo para subir.",
-      "pdfOnly": "Solo se permiten archivos PDF.",
-      "uploading": "Subiendo...",
-      "success": "¡Archivo subido correctamente!",
-      "failed": "Error al subir: {reason}",
-      "unexpected": "Ocurrió un error durante la subida."
-    }
   }
 }

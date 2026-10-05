@@ -6,7 +6,6 @@ export const ROUTES = {
   register: "/register",
   workspace: "/workspace",
   subscription: "/subscription",
-  upload: "/upload",
   document: (id: string) => `${DOCUMENT_BASE}/${id}`,
 } as const;
 
