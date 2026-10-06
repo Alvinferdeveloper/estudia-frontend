@@ -24,7 +24,10 @@
     "recent": "Recientes",
     "collections": "Colecciones",
     "noCollections": "Aún no tienes colecciones.",
-    "savedDocuments": "{count, plural, one {<strong>#</strong> documento guardado} other {<strong>#</strong> documentos guardados}}"
+    "documentsQuota": "{used} de {limit, plural, one {# documento} other {# documentos}}",
+    "documentsUnlimited": "{used, plural, one {# documento} other {# documentos}}",
+    "storageQuota": "{used} de {limit}",
+    "storageUnlimited": "{used} usados"
   },
   "newMenu": {
     "new": "Nuevo",
@@ -32,7 +35,8 @@
     "pdfOnly": "Solo se permiten archivos PDF.",
     "tagsPlaceholder": "Agregar etiquetas (opcional)",
     "upload": "Subir",
-    "uploading": "Subiendo..."
+    "uploading": "Subiendo...",
+    "uploadLimitReached": "Llegaste al límite de tu plan."
   },
   "colorPicker": {
     "label": "Color",

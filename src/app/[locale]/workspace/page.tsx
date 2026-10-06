@@ -267,7 +267,6 @@ const DashboardPage = () => {
         createFolder={createFolder}
         uploadDocument={uploadDocument}
         isUploading={isUploading}
-        totalDocuments={view === 'recent' ? recentCount : data?.pages[0].total || 0}
       />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header

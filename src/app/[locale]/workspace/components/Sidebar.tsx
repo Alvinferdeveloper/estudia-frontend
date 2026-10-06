@@ -1,10 +1,11 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock, FolderOpen, Plus } from "lucide-react";
+import { Clock, Plus } from "lucide-react";
 import { TopicList } from "@/app/[locale]/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/[locale]/workspace/components/CreateTopicDialog";
 import { NewMenu } from "@/app/[locale]/workspace/components/NewMenu";
+import { StorageQuota } from "@/app/[locale]/workspace/components/StorageQuota";
 import { useFetchTopics } from "@/app/[locale]/workspace/hooks/useFetchTopics";
 import { useCreateTopic } from "@/app/[locale]/workspace/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,6 @@ interface SidebarProps {
   createFolder: (folder: { name: string; color: string; topicId: string; parentId?: string }) => void;
   uploadDocument: (formData: FormData, options?: { onSuccess?: () => void; onError?: () => void }) => void;
   isUploading: boolean;
-  totalDocuments: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -32,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   createFolder,
   uploadDocument,
   isUploading,
-  totalDocuments,
 }) => {
   const t = useTranslations("workspace");
   const { data: topics } = useFetchTopics();
@@ -105,16 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </ScrollArea>
       </div>
 
-      {/* --- FOOTER STAT --- */}
-      <div className="flex items-center gap-2 border-t border-border/60 px-5 py-4 text-xs text-muted-foreground">
-        <FolderOpen className="h-3.5 w-3.5" />
-        <span>
-          {t.rich("sidebar.savedDocuments", {
-            count: totalDocuments,
-            strong: (chunks) => <span className="font-medium tabular-nums text-foreground">{chunks}</span>,
-          })}
-        </span>
-      </div>
+      <StorageQuota />
     </aside>
   );
 };

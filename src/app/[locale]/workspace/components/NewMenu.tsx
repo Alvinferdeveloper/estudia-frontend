@@ -16,6 +16,9 @@ import { CreateFolderDialog } from "@/app/[locale]/workspace/components/CreateFo
 import { Plus, FolderPlus, Upload, FileText, X, Paperclip } from "lucide-react";
 import { Folder, Topic } from "@/app/types";
 import { cn } from "@/lib/utils";
+import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
+import { isQuotaFull } from "@/app/[locale]/subscription/lib/usage";
+import { UpgradePlanLink } from "@/components/upgrade-plan-link";
 
 interface NewMenuProps {
   selectedTopic: Topic | null;
@@ -39,6 +42,9 @@ export const NewMenu: React.FC<NewMenuProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showFolderDialog, setShowFolderDialog] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const { data: usage } = useUsage();
+  // The API refuses it anyway; blocking it here says why before the user picks a file.
+  const isUploadBlocked = !!usage && (isQuotaFull(usage.quotas.documents) || isQuotaFull(usage.quotas.storageBytes));
   const [tags, setTags] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +94,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             {t("newMenu.newFolder")}
           </DropdownMenuItem>
           <DropdownMenuItem
+            disabled={isUploadBlocked}
             onSelect={(e) => {
               e.preventDefault();
               fileInputRef.current?.click();
@@ -96,6 +103,11 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             <Upload className="mr-2 h-4 w-4" />
             {t("actions.uploadDocument")}
           </DropdownMenuItem>
+          {isUploadBlocked && (
+            <p className="px-2 pb-1.5 pt-0.5 text-xs text-muted-foreground">
+              {t("newMenu.uploadLimitReached")} <UpgradePlanLink />
+            </p>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
