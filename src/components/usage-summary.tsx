@@ -1,7 +1,7 @@
 "use client";
 
 import { Zap } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import type { SubscriptionPlan, UsageStats } from "@/app/[locale]/subscription/hooks/useSubscription";
 import { UNLIMITED } from "@/app/[locale]/subscription/lib/entitlements";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,8 @@ const PLAN_BADGE_STYLES: Record<SubscriptionPlan, string> = {
 export const UsageSummary = ({ usage }: { usage: UsageStats }) => {
   const t = useTranslations("common");
   const format = useFormatter();
+  // An explicit, ticking "now" keeps "renews in…" consistent across renders and current while open.
+  const now = useNow({ updateInterval: 60_000 });
   const { used, limit, resetsAt } = usage.credits;
   const isUnlimited = limit === UNLIMITED;
   const usedPercent = limit > 0 ? Math.min(100, (used / limit) * 100) : 100;
@@ -43,7 +45,7 @@ export const UsageSummary = ({ usage }: { usage: UsageStats }) => {
           </div>
         )}
         <p className="text-[11px] text-muted-foreground">
-          {t("userMenu.creditsRenew", { when: format.relativeTime(new Date(resetsAt)) })}
+          {t("userMenu.creditsRenew", { when: format.relativeTime(new Date(resetsAt), now) })}
         </p>
       </div>
     </div>
