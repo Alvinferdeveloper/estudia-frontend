@@ -40,6 +40,9 @@ export const EXAM_MODES = {
 
 export type ExamModeType = typeof EXAM_MODES[keyof typeof EXAM_MODES];
 
+export const EXAM_SIZES = [5, 10, 15, 20] as const;
+
+
 export interface Exam {
   id: string;
   documentId: string;
@@ -94,8 +97,12 @@ export interface GenerateExamRequest {
   mode: string;
   difficulty: string;
   questionType: QuestionType;
+  questionCount: number;
   title: string;
 }
+
+// What the setup dialog decides; the session adds the document and its page text.
+export type ExamConfig = Omit<GenerateExamRequest, "documentId" | "pages" | "content">;
 
 export const useGenerateExam = () => {
   return useMutation({

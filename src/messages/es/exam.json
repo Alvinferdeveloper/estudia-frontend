@@ -23,11 +23,13 @@
     "title": "Configurar examen",
     "modeLabel": "Modo de examen",
     "questionTypeLabel": "Tipo de pregunta",
+    "questionCountLabel": "Número de preguntas",
+    "questionCountCap": "Hasta {max} preguntas en tu plan.",
     "difficultyLabel": "Dificultad",
     "modes": {
       "quick_review": {
         "title": "Repaso rápido",
-        "description": "5 preguntas para comprobar lo que has entendido"
+        "description": "Pocas preguntas para comprobar lo que has entendido"
       },
       "exam_simulation": {
         "title": "Simulacro de examen",
@@ -37,7 +39,9 @@
         "title": "Personalizado",
         "description": "Configura tu examen a tu manera"
       }
-    }
+    },
+    "cost": "Usa {cost, plural, one {# crédito} other {# créditos}} de IA",
+    "creditsLeft": "{count, plural, one {te queda #} other {te quedan #}}"
   },
   "pageSelector": {
     "title": "Selecciona las páginas del examen",

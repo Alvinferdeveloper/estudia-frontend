@@ -15,28 +15,31 @@ import {
   QUESTION_TYPES,
   EXAM_MODES,
   DIFFICULTY_LEVELS,
+  EXAM_SIZES,
   type DifficultyLevel,
+  type ExamConfig,
+  type ExamModeType,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { UpgradePlanLink } from "@/components/upgrade-plan-link";
+import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
+import { UNLIMITED, examCreditCost } from "@/app/[locale]/subscription/lib/entitlements";
+import { remainingCredits } from "@/app/[locale]/subscription/lib/usage";
 import type { ApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 
 interface ExamSetupDialogProps {
   selectedPages: number[];
-  onStartExam: (config: {
-    mode: string;
-    difficulty: string;
-    questionType: QuestionType;
-    title: string;
-  }) => void;
+  onStartExam: (config: ExamConfig) => void;
   onCancel: () => void;
   errorKey: ApiErrorKey | null;
 }
 
-const modes = [
-  { id: EXAM_MODES.QUICK_REVIEW, defaultType: QUESTION_TYPES.OPEN },
-  { id: EXAM_MODES.EXAM_SIMULATION, defaultType: QUESTION_TYPES.MULTIPLE_CHOICE },
+// Presets: choosing a mode sets its question type and size (custom keeps what the user picked).
+const modes: { id: ExamModeType; defaultType: QuestionType; defaultSize?: number }[] = [
+  { id: EXAM_MODES.QUICK_REVIEW, defaultType: QUESTION_TYPES.OPEN, defaultSize: 5 },
+  { id: EXAM_MODES.EXAM_SIMULATION, defaultType: QUESTION_TYPES.MULTIPLE_CHOICE, defaultSize: 10 },
   { id: EXAM_MODES.CUSTOM, defaultType: QUESTION_TYPES.OPEN },
 ];
 
@@ -61,12 +64,25 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   const [selectedMode, setSelectedMode] = useState<string>(EXAM_MODES.QUICK_REVIEW);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS.MEDIUM);
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
+  const [questionCount, setQuestionCount] = useState<number>(EXAM_SIZES[0]);
+  const { data: usage } = useUsage();
+
+  // Until usage loads nothing is locked; the API enforces the plan's cap either way.
+  const maxQuestions = usage?.caps.examQuestions ?? UNLIMITED;
+  const isAllowedSize = (size: number) => maxQuestions === UNLIMITED || size <= maxQuestions;
+  // Falls back to the smallest size if the cap is below every option; the API then explains the cap.
+  const fitToPlan = (size: number) =>
+    isAllowedSize(size) ? size : Math.max(EXAM_SIZES[0], ...EXAM_SIZES.filter(isAllowedSize));
+  const selectedSize = fitToPlan(questionCount);
+  const cost = examCreditCost(selectedSize);
+  const creditsLeft = usage ? remainingCredits(usage.credits) : null;
 
   const handleModeChange = (modeId: string) => {
     setSelectedMode(modeId);
     const mode = modes.find(m => m.id === modeId);
     if (mode && modeId !== EXAM_MODES.CUSTOM) {
       setQuestionType(mode.defaultType);
+      if (mode.defaultSize) setQuestionCount(mode.defaultSize);
     }
   };
 
@@ -75,6 +91,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
       mode: selectedMode,
       difficulty,
       questionType,
+      questionCount: selectedSize,
       title: t("defaultTitle", { count: selectedPages.length }),
     });
   };
@@ -136,6 +153,21 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           </div>
 
           <div className="space-y-2">
+            <label id="exam-size-label" className="text-sm font-medium">{t("setup.questionCountLabel")}</label>
+            <SegmentedControl
+              aria-labelledby="exam-size-label"
+              value={selectedSize}
+              onChange={setQuestionCount}
+              options={EXAM_SIZES.map((size) => ({ value: size, label: size, disabled: !isAllowedSize(size) }))}
+            />
+            {!EXAM_SIZES.every(isAllowedSize) && (
+              <p className="text-xs text-muted-foreground">
+                {t("setup.questionCountCap", { max: maxQuestions })} <UpgradePlanLink />
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <label id="exam-difficulty-label" className="text-sm font-medium">{t("setup.difficultyLabel")}</label>
             <SegmentedControl
               aria-labelledby="exam-difficulty-label"
@@ -149,6 +181,15 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
         <ApiErrorMessage errorKey={errorKey} className="px-4 pb-3" />
 
         <DialogFooter className="border-t border-border p-4">
+          <p
+            className={cn(
+              "mr-auto self-center text-xs tabular-nums text-muted-foreground",
+              creditsLeft !== null && cost > creditsLeft && "text-destructive"
+            )}
+          >
+            {t("setup.cost", { cost })}
+            {creditsLeft !== null && ` · ${t("setup.creditsLeft", { count: creditsLeft })}`}
+          </p>
           <Button variant="ghost" className="press-feedback" onClick={onCancel}>
             {tCommon("actions.cancel")}
           </Button>

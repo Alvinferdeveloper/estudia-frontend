@@ -23,11 +23,13 @@
     "title": "Exam setup",
     "modeLabel": "Exam mode",
     "questionTypeLabel": "Question type",
+    "questionCountLabel": "Number of questions",
+    "questionCountCap": "Up to {max} questions on your plan.",
     "difficultyLabel": "Difficulty",
     "modes": {
       "quick_review": {
         "title": "Quick review",
-        "description": "5 questions to test your understanding"
+        "description": "A few questions to check what you've understood"
       },
       "exam_simulation": {
         "title": "Exam simulation",
@@ -37,7 +39,9 @@
         "title": "Custom",
         "description": "Configure your own exam settings"
       }
-    }
+    },
+    "cost": "Uses {cost, plural, one {# AI credit} other {# AI credits}}",
+    "creditsLeft": "{count} left"
   },
   "pageSelector": {
     "title": "Select pages for the exam",

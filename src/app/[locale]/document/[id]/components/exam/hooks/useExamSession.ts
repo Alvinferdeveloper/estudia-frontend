@@ -10,7 +10,8 @@ import {
   QUESTION_TYPES,
   Question,
   Answer,
-  Exam
+  Exam,
+  type ExamConfig,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 import { showApiErrorToast } from "@/components/api-error-toast";
@@ -73,7 +74,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     }
   }, []);
 
-  const handleStartExam = useCallback(async (config: { mode: string; difficulty: string; questionType: QuestionType; title: string }) => {
+  const handleStartExam = useCallback(async (config: ExamConfig) => {
     try {
       setErrorKey(null);
       setExamPhase(EXAM_PHASES.GENERATING);
@@ -104,6 +105,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
         mode: config.mode,
         difficulty: config.difficulty,
         questionType: config.questionType,
+        questionCount: config.questionCount,
         title: config.title,
       });
 

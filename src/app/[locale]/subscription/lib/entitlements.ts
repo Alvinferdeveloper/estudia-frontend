@@ -14,3 +14,9 @@ export interface PlanEntitlements {
   quotas: Record<PlanQuota, number>;
   caps: Record<PlanCap, number>;
 }
+
+// Mirrors CREDIT_COSTS['exam.generate'] in estudia-api's catalog.ts, for showing the price up front.
+// The API's charge stays authoritative; change both together.
+const EXAM_QUESTIONS_PER_CREDIT = 5;
+
+export const examCreditCost = (questions: number): number => Math.ceil(questions / EXAM_QUESTIONS_PER_CREDIT);
