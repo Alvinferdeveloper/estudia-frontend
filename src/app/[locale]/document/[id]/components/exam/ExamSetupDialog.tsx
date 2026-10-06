@@ -14,9 +14,11 @@ import {
   QuestionType,
   QUESTION_TYPES,
   EXAM_MODES,
-  DIFFICULTY_LEVELS
+  DIFFICULTY_LEVELS,
+  type DifficultyLevel,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { ApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 
@@ -38,6 +40,8 @@ const modes = [
   { id: EXAM_MODES.CUSTOM, defaultType: QUESTION_TYPES.OPEN },
 ];
 
+const DIFFICULTIES = [DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD];
+
 const questionTypes: { id: QuestionType; icon: React.ElementType }[] = [
   { id: QUESTION_TYPES.OPEN, icon: PenLine },
   { id: QUESTION_TYPES.MULTIPLE_CHOICE, icon: CircleDot },
@@ -55,7 +59,7 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
   const t = useTranslations("exam");
   const tCommon = useTranslations("common");
   const [selectedMode, setSelectedMode] = useState<string>(EXAM_MODES.QUICK_REVIEW);
-  const [difficulty, setDifficulty] = useState<string>(DIFFICULTY_LEVELS.MEDIUM);
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS.MEDIUM);
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
 
   const handleModeChange = (modeId: string) => {
@@ -132,20 +136,13 @@ export const ExamSetupDialog: React.FC<ExamSetupDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("setup.difficultyLabel")}</label>
-            <div className="flex gap-2">
-              {[DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD].map((d) => (
-                <Button
-                  key={d}
-                  variant={difficulty === d ? "default" : "outline"}
-                  size="sm"
-                  className="press-feedback"
-                  onClick={() => setDifficulty(d)}
-                >
-                  {t(`difficulty.${d}`)}
-                </Button>
-              ))}
-            </div>
+            <label id="exam-difficulty-label" className="text-sm font-medium">{t("setup.difficultyLabel")}</label>
+            <SegmentedControl
+              aria-labelledby="exam-difficulty-label"
+              value={difficulty}
+              onChange={setDifficulty}
+              options={DIFFICULTIES.map((level) => ({ value: level, label: t(`difficulty.${level}`) }))}
+            />
           </div>
         </div>
 
