@@ -1,4 +1,3 @@
-import { QueryProvider } from "@/app/providers/QueryProvider";
 import type { Metadata } from "next";
 import { privatePageMetadata } from "@/config/seo";
 import { LocaleParams } from "@/i18n/routing";
@@ -13,5 +12,5 @@ export default function SubscriptionLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <QueryProvider>{children}</QueryProvider>;
+  return children;
 }

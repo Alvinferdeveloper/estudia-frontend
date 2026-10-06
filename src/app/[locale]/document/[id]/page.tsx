@@ -1,4 +1,3 @@
-import { QueryProvider } from "@/app/providers/QueryProvider";
 import { getDocument, touchDocumentAccess } from "./actions";
 import DocumentClient from "./components/DocumentClient";
 import { Document } from "@/app/types";
@@ -28,8 +27,6 @@ export default async function DocumentPage({ params }: { params: Promise<{ local
   void touchDocumentAccess(id);
 
   return (
-    <QueryProvider>
-      <DocumentClient document={document} />
-    </QueryProvider>
+    <DocumentClient document={document} />
   )
 }

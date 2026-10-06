@@ -18,7 +18,6 @@ import { useDebounce } from "@/app/hooks/useDebounce";
 import { Sidebar } from "@/app/[locale]/workspace/components/Sidebar";
 import { Header, SortBy } from "@/app/[locale]/workspace/components/Header";
 import { DocumentList } from "@/app/[locale]/workspace/components/DocumentList";
-import { QueryProvider } from "@/app/providers/QueryProvider";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Folder, Topic, Document } from "@/app/types";
 
@@ -347,10 +346,4 @@ const DashboardPage = () => {
   );
 }
 
-export default function Dashboard() {
-  return (
-    <QueryProvider>
-      <DashboardPage />
-    </QueryProvider>
-  )
-}
+export default DashboardPage;

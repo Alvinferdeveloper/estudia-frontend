@@ -9,6 +9,7 @@ import { LocaleParams, OPEN_GRAPH_LOCALES, routing } from "@/i18n/routing";
 import { isLocale, resolveLocale } from "@/i18n/paths";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryProvider } from "@/app/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,8 +72,11 @@ export default async function LocaleLayout({ children, params }: LocaleParams & 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {children}
-            <Toaster />
+            {/* App-wide, so the Toaster and every page share one query cache. */}
+            <QueryProvider>
+              {children}
+              <Toaster />
+            </QueryProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
