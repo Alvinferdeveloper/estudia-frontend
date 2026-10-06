@@ -28,7 +28,7 @@ export function Header() {
               {t("header.login")}
             </Button>
           </Link>
-          <Link href={ROUTES.login}>
+          <Link href={ROUTES.register}>
             <Button size="sm" className="press-feedback rounded-full px-4">
               {t("header.getStarted")}
             </Button>
