@@ -1,65 +1,56 @@
-import React, { useState, memo } from "react";
+import React, { isValidElement, memo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { Check, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { Components } from "react-markdown";
-import type { ClassAttributes, HTMLAttributes, ReactNode } from "react";
-import type { ExtraProps } from "react-markdown";
+import type { Components, ExtraProps } from "react-markdown";
+import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type CodeProps = ClassAttributes<HTMLElement> &
-  HTMLAttributes<HTMLElement> &
-  ExtraProps & {
-    inline?: boolean;
-  };
+type CodeProps = ComponentProps<"code"> & ExtraProps;
 
-const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
-  const match = /language-(\w+)/.exec(className ?? "");
-  const language = match ? match[1] : "text";
+const InlineCode = ({ node: _node, className, ...props }: CodeProps) => (
+  <code
+    className={cn("bg-muted text-foreground px-1.5 py-0.5 rounded-md text-[0.85em] border border-border/60 font-mono", className)}
+    {...props}
+  />
+);
+
+const CodeBlock = ({ className, children }: { className?: string; children?: ReactNode }) => {
+  const language = /language-(\w+)/.exec(className ?? "")?.[1] ?? "text";
   const [isCopied, setIsCopied] = useState(false);
+  // Highlighted children are React spans, so copy the rendered text instead.
+  const codeRef = useRef<HTMLElement>(null);
   const t = useTranslations("notes.markdown");
 
   const handleCopy = () => {
-    const codeText = String(children).replace(/\n$/, "");
-    navigator.clipboard.writeText(codeText);
+    navigator.clipboard.writeText(codeRef.current?.textContent?.replace(/\n$/, "") ?? "");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  if (!inline) {
-    return (
-      <div className="relative rounded-lg overflow-hidden my-5 border border-border bg-muted/40">
-        <div className="flex items-center justify-between px-4 py-2 bg-muted text-muted-foreground text-xs font-sans">
-          <span className="uppercase tracking-wider font-semibold">
-            {language}
-          </span>
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-1.5 hover:text-foreground transition-colors"
-            aria-label={t("copyCode")}
-          >
-            {isCopied ? <Check size={14} /> : <Copy size={14} />}
-            {isCopied ? t("copied") : t("copy")}
-          </button>
-        </div>
-        <pre className="overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">
-          <code className={`${className ?? ""} !p-0`} {...props}>
-            {children}
-          </code>
-        </pre>
-      </div>
-    );
-  }
-
   return (
-    <code
-      className="bg-muted text-foreground px-1.5 py-0.5 rounded-md text-[0.85em] border border-border/60 font-mono"
-      {...props}
-    >
-      {children}
-    </code>
+    <div className="relative rounded-lg overflow-hidden my-5 border border-border bg-muted/40">
+      <div className="flex items-center justify-between px-4 py-2 bg-muted text-muted-foreground text-xs font-sans">
+        <span className="uppercase tracking-wider font-semibold">
+          {language}
+        </span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+          aria-label={t("copyCode")}
+        >
+          {isCopied ? <Check size={14} /> : <Copy size={14} />}
+          {isCopied ? t("copied") : t("copy")}
+        </button>
+      </div>
+      <pre className="overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">
+        <code ref={codeRef} className={cn(className, "!p-0")}>
+          {children}
+        </code>
+      </pre>
+    </div>
   );
 };
 
@@ -68,8 +59,12 @@ type WithChildren = { children?: ReactNode };
 type AnchorProps = WithChildren & { href?: string };
 
 const MarkdownComponents: Components = {
-  pre: ({ children }: WithChildren) => <>{children}</>,
-  code: CodeBlock,
+  // react-markdown v10 no longer flags inline code; only fenced blocks are wrapped in <pre>.
+  pre: ({ children }: WithChildren) => {
+    const code = isValidElement<CodeProps>(children) ? children.props : null;
+    return <CodeBlock className={code?.className}>{code?.children}</CodeBlock>;
+  },
+  code: InlineCode,
 
   h1: ({ children }: WithChildren) => (
     <h1 className="text-xl font-bold text-foreground mt-5 mb-4 border-b border-border pb-3">
