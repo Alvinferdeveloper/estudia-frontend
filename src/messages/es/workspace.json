@@ -56,8 +56,14 @@
     "submit": "Crear colección"
   },
   "deleteDialog": {
-    "title": "Eliminar documento",
-    "description": "¿Seguro que quieres eliminar este documento? Esta acción no se puede deshacer y se eliminarán permanentemente todos sus datos asociados."
+    "document": {
+      "title": "Eliminar documento",
+      "description": "¿Seguro que quieres eliminar este documento? Esta acción no se puede deshacer y se eliminarán permanentemente todos sus datos asociados."
+    },
+    "folder": {
+      "title": "Eliminar carpeta",
+      "description": "Se eliminarán la carpeta y sus subcarpetas. Los documentos que contienen no se borran: quedarán fuera de la carpeta."
+    }
   },
   "list": {
     "emptyTitle": "No se encontraron elementos",

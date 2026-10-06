@@ -4,8 +4,13 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import type referenceMessages from "@/messages/es";
+
+// Each deletable item type has its own copy, since deleting a folder affects its contents differently.
+export type DeletableItemType = keyof typeof referenceMessages.workspace.deleteDialog;
 
 interface DeleteConfirmationDialogProps {
+  itemType: DeletableItemType;
   onConfirm: () => void | Promise<void>;
   /** Render-prop for a custom trigger (e.g. an inline icon button). Receives
    * the click handler to attach — it already stops propagation so it's safe
@@ -14,7 +19,7 @@ interface DeleteConfirmationDialogProps {
   trigger?: (onClick: (e: React.MouseEvent) => void) => React.ReactNode;
 }
 
-export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ onConfirm, trigger }) => {
+export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ itemType, onConfirm, trigger }) => {
   const t = useTranslations("workspace");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,8 +46,8 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         onConfirm={onConfirm}
-        title={t("deleteDialog.title")}
-        description={t("deleteDialog.description")}
+        title={t(`deleteDialog.${itemType}.title`)}
+        description={t(`deleteDialog.${itemType}.description`)}
         confirmText={t("actions.delete")}
         variant="destructive"
       />

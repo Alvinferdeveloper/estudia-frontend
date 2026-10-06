@@ -87,6 +87,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
           </button>
           <DeleteConfirmationDialog
+            itemType="folder"
             onConfirm={() => deleteFolder?.(folder.id)}
             trigger={(open) => (
               <button

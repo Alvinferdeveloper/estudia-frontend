@@ -56,8 +56,14 @@
     "submit": "Create collection"
   },
   "deleteDialog": {
-    "title": "Delete document",
-    "description": "Are you sure you want to delete this document? This action can't be undone and will permanently delete all associated data."
+    "document": {
+      "title": "Delete document",
+      "description": "Are you sure you want to delete this document? This action can't be undone and will permanently delete all associated data."
+    },
+    "folder": {
+      "title": "Delete folder",
+      "description": "The folder and its subfolders will be deleted. The documents inside aren't deleted: they'll be moved out of the folder."
+    }
   },
   "list": {
     "emptyTitle": "No items found",

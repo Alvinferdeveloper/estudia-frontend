@@ -95,6 +95,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
             <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />
           </button>
           <DeleteConfirmationDialog
+            itemType="document"
             onConfirm={() => deleteDocument(doc.id)}
             trigger={(open) => (
               <button

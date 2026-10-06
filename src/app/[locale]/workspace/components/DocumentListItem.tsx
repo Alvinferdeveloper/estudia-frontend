@@ -111,6 +111,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             <Download className="h-3.5 w-3.5" />
           </a>
           <DeleteConfirmationDialog
+            itemType="document"
             onConfirm={() => deleteDocument(doc.id)}
             trigger={(open) => (
               <button
