@@ -4,6 +4,7 @@ import { Zap } from "lucide-react";
 import { useFormatter, useNow, useTranslations } from "next-intl";
 import type { SubscriptionPlan, UsageStats } from "@/app/[locale]/subscription/hooks/useSubscription";
 import { UNLIMITED } from "@/app/[locale]/subscription/lib/entitlements";
+import { type CreditState, getCreditState } from "@/app/[locale]/subscription/lib/usage";
 import { cn } from "@/lib/utils";
 
 const PLAN_BADGE_STYLES: Record<SubscriptionPlan, string> = {
@@ -11,6 +12,12 @@ const PLAN_BADGE_STYLES: Record<SubscriptionPlan, string> = {
   basic: "bg-info text-info-foreground",
   pro: "bg-primary text-primary-foreground",
   enterprise: "bg-warning text-warning-foreground",
+};
+
+const BAR_STYLES: Record<CreditState, string> = {
+  ok: "bg-primary",
+  low: "bg-warning",
+  empty: "bg-danger",
 };
 
 // Plan in force and remaining AI credits, as shown in the user menu.
@@ -41,7 +48,10 @@ export const UsageSummary = ({ usage }: { usage: UsageStats }) => {
         </div>
         {!isUnlimited && (
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${usedPercent}%` }} />
+            <div
+              className={cn("h-full rounded-full", BAR_STYLES[getCreditState(usage.credits)])}
+              style={{ width: `${usedPercent}%` }}
+            />
           </div>
         )}
         <p className="text-[11px] text-muted-foreground">

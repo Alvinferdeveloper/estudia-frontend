@@ -2,7 +2,8 @@
   "actions": {
     "cancel": "Cancelar",
     "confirm": "Confirmar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "upgradePlan": "Mejorar plan"
   },
   "localeSwitcher": {
     "label": "Idioma"
@@ -19,13 +20,16 @@
     "pro": "Pro",
     "enterprise": "Empresa"
   },
+  "credits": {
+    "remaining": "{count, plural, one {Te queda # crédito de IA} other {Te quedan # créditos de IA}}",
+    "unlimited": "Créditos de IA ilimitados"
+  },
   "userMenu": {
     "avatarAlt": "Tu foto de perfil",
     "currentPlan": "Plan actual",
     "aiCredits": "Créditos de IA",
     "creditsUnlimited": "Ilimitados",
     "creditsRenew": "Se renuevan {when}",
-    "upgradePlan": "Mejorar plan",
     "profile": "Perfil",
     "settings": "Configuración",
     "logOut": "Cerrar sesión"

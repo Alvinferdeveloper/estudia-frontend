@@ -79,7 +79,7 @@ export function UserProfileMenu() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer" onClick={() => router.push(ROUTES.subscription)}>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    <span>{t("userMenu.upgradePlan")}</span>
+                    <span>{t("actions.upgradePlan")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />

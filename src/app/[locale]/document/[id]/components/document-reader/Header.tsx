@@ -19,6 +19,7 @@ import { LanguageFlag } from "@/app/[locale]/document/[id]/components/document-r
 import { DocumentFile } from "@/app/[locale]/document/[id]/page";
 import { LanguageCode, LanguageOption } from "@/app/types";
 import { ROUTES } from "@/config/routes";
+import { CreditIndicator } from "@/components/credit-indicator";
 
 interface HeaderProps {
     fileName: string;
@@ -89,6 +90,8 @@ export const Header: React.FC<HeaderProps> = ({
                     <p className="text-sm text-muted-foreground truncate max-w-md">{fileName}</p>
                 </div>
                 <div className="flex items-center gap-1">
+                    <CreditIndicator />
+                    <Separator orientation="vertical" className="mx-1 h-5" />
                     <ExamMode
                         document={document}
                         numPages={numPages}

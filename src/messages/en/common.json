@@ -2,7 +2,8 @@
   "actions": {
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "upgradePlan": "Upgrade plan"
   },
   "localeSwitcher": {
     "label": "Language"
@@ -19,13 +20,16 @@
     "pro": "Pro",
     "enterprise": "Enterprise"
   },
+  "credits": {
+    "remaining": "{count, plural, one {# AI credit left} other {# AI credits left}}",
+    "unlimited": "Unlimited AI credits"
+  },
   "userMenu": {
     "avatarAlt": "Your profile picture",
     "currentPlan": "Current plan",
     "aiCredits": "AI credits",
     "creditsUnlimited": "Unlimited",
     "creditsRenew": "Renews {when}",
-    "upgradePlan": "Upgrade plan",
     "profile": "Profile",
     "settings": "Settings",
     "logOut": "Log out"
