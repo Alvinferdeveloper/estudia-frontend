@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { QueryClient, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import type { CreditPeriod, PlanEntitlements, PlanFeature, PlanQuota } from '../lib/entitlements';
@@ -51,11 +52,20 @@ const capturePayment = async (paymentId: string): Promise<any> => {
   return data;
 };
 
-export const useUsage = () => {
+export const USAGE_QUERY_KEY = ['usage'] as const;
+
+export const useUsage = ({ enabled = true }: { enabled?: boolean } = {}) => {
   return useQuery<UsageStats, Error>({
-    queryKey: ['usage'],
+    queryKey: USAGE_QUERY_KEY,
     queryFn: fetchUsage,
+    enabled,
   });
+};
+
+// For AI work that isn't a mutation (streams); mutations use meta.refreshesUsage instead.
+export const useRefreshUsage = () => {
+  const queryClient = useQueryClient();
+  return useCallback(() => queryClient.invalidateQueries({ queryKey: USAGE_QUERY_KEY }), [queryClient]);
 };
 
 export const usePlans = () => {
@@ -68,7 +78,7 @@ export const usePlans = () => {
 // A plan change affects both the plan list (current plan) and the usage limits.
 const invalidateSubscriptionQueries = (queryClient: QueryClient) => {
   queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
-  queryClient.invalidateQueries({ queryKey: ['usage'] });
+  queryClient.invalidateQueries({ queryKey: USAGE_QUERY_KEY });
 };
 
 export const useCreateSubscription = () => {

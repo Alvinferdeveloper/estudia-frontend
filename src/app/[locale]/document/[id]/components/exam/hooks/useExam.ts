@@ -103,7 +103,7 @@ export const useGenerateExam = () => {
       const { data } = await api.post<{ exam: Exam; questions: RawExamQuestion[] }>("/exam/generate", request);
       return { exam: data.exam, questions: data.questions.map(toQuestion) };
     },
-    meta: { inlineError: true },
+    meta: { inlineError: true, refreshesUsage: true },
   });
 };
 

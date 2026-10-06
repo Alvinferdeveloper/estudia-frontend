@@ -14,6 +14,8 @@ declare module "@tanstack/react-query" {
     mutationMeta: {
       // Set when the component shows the error itself, so the global toast stays quiet.
       inlineError?: boolean;
+      // Set when the mutation spends credits or changes stored data, so the usage balance refreshes.
+      refreshesUsage?: boolean;
     };
   }
 }

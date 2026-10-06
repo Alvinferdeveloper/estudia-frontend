@@ -20,6 +20,6 @@ const postExplainVocabulary = async (
 export const useVocabularyExplanation = () => {
   return useMutation<VocabularyExplanation, Error, VocabularyExplainRequest>({
     mutationFn: postExplainVocabulary,
-    meta: { inlineError: true },
+    meta: { inlineError: true, refreshesUsage: true },
   });
 };

@@ -1,6 +1,7 @@
 import { useCompletion } from "@ai-sdk/react";
 import { useCallback, useRef } from "react";
 import { apiUrl } from "@/lib/api-client";
+import { useRefreshUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
 
 interface UseStreamingNoteOptions {
   apiEndpoint?: string;
@@ -26,6 +27,7 @@ interface UseStreamingNoteReturn {
 export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStreamingNoteReturn => {
   const { apiEndpoint = apiUrl("/ai/notes/stream") } = options;
   const lastError = useRef<Error | null>(null);
+  const refreshUsage = useRefreshUsage();
 
   const {
     completion,
@@ -48,11 +50,15 @@ export const useStreamingNote = (options: UseStreamingNoteOptions = {}): UseStre
   const wrappedComplete = useCallback(
     async (prompt: string, body: UseStreamingNoteBody) => {
       lastError.current = null;
-      const result = await complete(prompt, { body });
-      if (lastError.current) throw lastError.current;
-      return result;
+      try {
+        const result = await complete(prompt, { body });
+        if (lastError.current) throw lastError.current;
+        return result;
+      } finally {
+        refreshUsage();
+      }
     },
-    [complete]
+    [complete, refreshUsage]
   );
 
   return {

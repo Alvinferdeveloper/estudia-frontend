@@ -49,7 +49,7 @@ export function UserProfileMenu() {
     }
 
     return (
-        // Credits change with every AI action, so the balance is refreshed each time the menu opens.
+        // Actions refresh usage themselves; reopening also catches a renewal that happened meanwhile.
         <DropdownMenu onOpenChange={(open) => open && refetchUsage()}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="press-feedback relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">

@@ -20,5 +20,7 @@ export const useUploadDocument = (topicId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
       queryClient.invalidateQueries({ queryKey: ['topics'] });
     },
+    // Changes the documents and storage quotas.
+    meta: { refreshesUsage: true },
   });
 };

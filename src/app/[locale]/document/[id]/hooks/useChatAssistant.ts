@@ -6,6 +6,7 @@ import { Message } from "@/app/types";
 import { useFetchMessages } from "@/app/[locale]/document/[id]/hooks/useFetchMessages";
 import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { apiUrl } from "@/lib/api-client";
+import { useRefreshUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
 
 interface UseChatAssistantOptions {
   documentId: string;
@@ -37,6 +38,7 @@ export const useChatAssistant = ({
 }: UseChatAssistantOptions): UseChatAssistantReturn => {
   const history = useFetchMessages(documentId, conversationId);
   const queryClient = useQueryClient();
+  const refreshUsage = useRefreshUsage();
 
   const transport = useMemo(
     () =>
@@ -54,8 +56,9 @@ export const useChatAssistant = ({
   const { messages, sendMessage, setMessages, status, error, regenerate, stop } = useChat({
     id: conversationId ?? DRAFT_CHAT_ID,
     transport,
-    // The server stored both turns; refresh the cached history and the conversation order.
+    // The server stored both turns and charged (or refunded) the reply; refresh what changed.
     onFinish: () => {
+      refreshUsage();
       queryClient.invalidateQueries({ queryKey: ["messages", documentId, conversationId] });
       queryClient.invalidateQueries({ queryKey: ["conversations", documentId] });
     },
