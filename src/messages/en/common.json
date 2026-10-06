@@ -22,8 +22,9 @@
   "userMenu": {
     "avatarAlt": "Your profile picture",
     "currentPlan": "Current plan",
-    "aiChat": "AI chat",
-    "aiNotes": "AI notes",
+    "aiCredits": "AI credits",
+    "creditsUnlimited": "Unlimited",
+    "creditsRenew": "Renews {when}",
     "upgradePlan": "Upgrade plan",
     "profile": "Profile",
     "settings": "Settings",

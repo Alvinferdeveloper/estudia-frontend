@@ -1,52 +1,23 @@
 import { QueryClient, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
+import type { CreditPeriod, PlanEntitlements, PlanFeature, PlanQuota } from '../lib/entitlements';
 
 export type SubscriptionPlan = 'free' | 'basic' | 'pro' | 'enterprise';
 
+// GET /usage: the plan in force and how much of it has been used.
 export interface UsageStats {
   plan: SubscriptionPlan;
-  isActive: boolean;
-  chat: {
-    used: number;
-    limit: number;
-    remaining: number;
-  };
-  aiNotes: {
-    used: number;
-    limit: number;
-    remaining: number;
-  };
-  documents: {
-    limit: number;
-  };
-  storage: {
-    limit: number;
-  };
-  features: PlanFeatures;
-}
-
-export interface PlanFeatures {
-  semanticSearch: boolean;
-  vectorization: boolean;
-  advancedModels: boolean;
-  exportNotes: boolean;
-  apiAccess: boolean;
-}
-
-// A limit of -1 means unlimited.
-export interface PlanLimits {
-  chatMessages: number;
-  aiNotes: number;
-  documents: number;
-  storageBytes: number;
+  credits: { used: number; limit: number; period: CreditPeriod; resetsAt: string };
+  quotas: Record<PlanQuota, { used: number; limit: number }>;
+  features: PlanFeature[];
+  caps: PlanEntitlements['caps'];
 }
 
 export interface Plan {
   plan: SubscriptionPlan;
   price: number;
   isPopular?: boolean;
-  limits: PlanLimits;
-  features: PlanFeatures;
+  entitlements: PlanEntitlements;
 }
 
 export interface PlansResponse {
@@ -61,7 +32,7 @@ export interface CreateSubscriptionResponse {
 }
 
 const fetchUsage = async (): Promise<UsageStats> => {
-  const { data } = await api.get('/subscriptions/usage');
+  const { data } = await api.get('/usage');
   return data;
 };
 

@@ -22,8 +22,9 @@
   "userMenu": {
     "avatarAlt": "Tu foto de perfil",
     "currentPlan": "Plan actual",
-    "aiChat": "Chat con IA",
-    "aiNotes": "Notas con IA",
+    "aiCredits": "Créditos de IA",
+    "creditsUnlimited": "Ilimitados",
+    "creditsRenew": "Se renuevan {when}",
     "upgradePlan": "Mejorar plan",
     "profile": "Perfil",
     "settings": "Configuración",

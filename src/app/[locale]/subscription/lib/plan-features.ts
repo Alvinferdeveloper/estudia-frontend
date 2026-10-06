@@ -1,5 +1,6 @@
 import type referenceMessages from "@/messages/es";
-import type { Plan, PlanFeatures, PlanLimits, SubscriptionPlan } from "../hooks/useSubscription";
+import type { Plan, SubscriptionPlan } from "../hooks/useSubscription";
+import { UNLIMITED, type CreditPeriod } from "./entitlements";
 
 export type PlanFeatureKey = keyof typeof referenceMessages.subscription.features;
 
@@ -9,39 +10,39 @@ export interface PlanFeatureItem {
   storageBytes?: number;
 }
 
-const UNLIMITED = -1;
+interface LimitKeys {
+  limited: PlanFeatureKey;
+  unlimited: PlanFeatureKey;
+}
 
-type CountedLimit = Exclude<keyof PlanLimits, "storageBytes">;
-
-const COUNTED_LIMITS: Record<CountedLimit, { limited: PlanFeatureKey; unlimited: PlanFeatureKey }> = {
-  documents: { limited: "documents", unlimited: "documentsUnlimited" },
-  chatMessages: { limited: "chatMessages", unlimited: "chatMessagesUnlimited" },
-  aiNotes: { limited: "aiNotes", unlimited: "aiNotesUnlimited" },
+const CREDIT_KEYS: Record<CreditPeriod, LimitKeys> = {
+  daily: { limited: "creditsDaily", unlimited: "creditsUnlimited" },
+  monthly: { limited: "creditsMonthly", unlimited: "creditsUnlimited" },
 };
+const DOCUMENT_KEYS: LimitKeys = { limited: "documents", unlimited: "documentsUnlimited" };
+const STORAGE_KEYS: LimitKeys = { limited: "storage", unlimited: "storageUnlimited" };
+const EXAM_KEYS: LimitKeys = { limited: "examQuestions", unlimited: "examQuestionsUnlimited" };
 
-const FLAG_FEATURES = [
-  "semanticSearch",
-  "vectorization",
-  "advancedModels",
-  "exportNotes",
-  "apiAccess",
-] as const satisfies readonly (keyof PlanFeatures & PlanFeatureKey)[];
-
-// Perks with no backing column in the plan table.
+// Perks with no entitlement behind them.
 const PLAN_EXTRAS: Partial<Record<SubscriptionPlan, PlanFeatureKey[]>> = {
   enterprise: ["prioritySupport"],
 };
 
-export const getPlanFeatureItems = ({ plan, limits, features }: Plan): PlanFeatureItem[] => [
-  ...(Object.keys(COUNTED_LIMITS) as CountedLimit[]).map((name): PlanFeatureItem => {
-    const count = limits[name];
-    const keys = COUNTED_LIMITS[name];
-    return count === UNLIMITED ? { key: keys.unlimited } : { key: keys.limited, count };
-  }),
-  { key: "storage", storageBytes: limits.storageBytes },
-  ...FLAG_FEATURES.filter((flag) => features[flag]).map((key) => ({ key })),
-  ...(PLAN_EXTRAS[plan] ?? []).map((key) => ({ key })),
-];
+const limitItem = (value: number, keys: LimitKeys, field: "count" | "storageBytes" = "count"): PlanFeatureItem =>
+  value === UNLIMITED ? { key: keys.unlimited } : { key: keys.limited, [field]: value };
+
+// Feature keys double as message keys, so a plan feature without copy fails type-checking.
+export const getPlanFeatureItems = ({ plan, entitlements }: Plan): PlanFeatureItem[] => {
+  const { credits, quotas, caps, features } = entitlements;
+  return [
+    limitItem(credits.amount, CREDIT_KEYS[credits.period]),
+    limitItem(quotas.documents, DOCUMENT_KEYS),
+    limitItem(quotas.storageBytes, STORAGE_KEYS, "storageBytes"),
+    limitItem(caps.examQuestions, EXAM_KEYS),
+    ...features.map((key): PlanFeatureItem => ({ key })),
+    ...(PLAN_EXTRAS[plan] ?? []).map((key) => ({ key })),
+  ];
+};
 
 const STORAGE_UNITS = ["megabyte", "gigabyte", "terabyte"] as const;
 

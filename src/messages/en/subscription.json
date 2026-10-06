@@ -24,18 +24,16 @@
     "enterprise": "For teams and organizations"
   },
   "features": {
+    "creditsDaily": "{count, plural, one {# AI credit} other {# AI credits}} per day",
+    "creditsMonthly": "{count, plural, one {# AI credit} other {# AI credits}} per month",
+    "creditsUnlimited": "Unlimited AI credits",
     "documents": "{count, plural, one {# document} other {# documents}}",
     "documentsUnlimited": "Unlimited documents",
-    "chatMessages": "{count, plural, one {# AI chat message} other {# AI chat messages}} per month",
-    "chatMessagesUnlimited": "Unlimited AI chat messages",
-    "aiNotes": "{count, plural, one {# AI note} other {# AI notes}} per month",
-    "aiNotesUnlimited": "Unlimited AI notes",
     "storage": "{size} of storage",
-    "semanticSearch": "Semantic search",
-    "vectorization": "Document vectorization",
-    "advancedModels": "Advanced AI models",
+    "storageUnlimited": "Unlimited storage",
+    "examQuestions": "Exams of up to {count} questions",
+    "examQuestionsUnlimited": "Exams of any size",
     "exportNotes": "Note export",
-    "apiAccess": "API access",
     "prioritySupport": "Priority support"
   },
   "checkout": {

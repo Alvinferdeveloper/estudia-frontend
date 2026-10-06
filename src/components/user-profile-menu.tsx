@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun, User, Settings, LogOut, CreditCard, Zap } from "lucide-react"
+import { Moon, Sun, User, Settings, LogOut, CreditCard } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useTranslations } from "next-intl"
 
@@ -23,15 +23,15 @@ import useAuth from "@/app/hooks/useAuth"
 import { authClient } from "@/app/lib/auth-client"
 import { useRouter } from "@/i18n/navigation"
 import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription"
-import { cn } from "@/lib/utils"
 import { ROUTES } from "@/config/routes"
 import { LocaleSubmenu } from "@/components/locale/LocaleSubmenu"
+import { UsageSummary } from "@/components/usage-summary"
 
 export function UserProfileMenu() {
     const t = useTranslations("common");
     const { setTheme } = useTheme();
     const { data: session, } = useAuth();
-    const { data: usage } = useUsage();
+    const { data: usage, refetch: refetchUsage } = useUsage();
     const router = useRouter();
 
     const getInitials = (name = 'U') => {
@@ -48,15 +48,9 @@ export function UserProfileMenu() {
         });
     }
 
-    const planColors: Record<string, string> = {
-        free: "bg-muted text-muted-foreground",
-        basic: "bg-info text-info-foreground",
-        pro: "bg-primary text-primary-foreground",
-        enterprise: "bg-warning text-warning-foreground",
-    };
-
     return (
-        <DropdownMenu>
+        // Credits change with every AI action, so the balance is refreshed each time the menu opens.
+        <DropdownMenu onOpenChange={(open) => open && refetchUsage()}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="press-feedback relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
                     <Avatar className="h-10 w-10">
@@ -78,39 +72,7 @@ export function UserProfileMenu() {
                 {usage && (
                     <>
                         <DropdownMenuSeparator />
-                        <div className="px-2 py-1.5">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-medium flex items-center gap-1">
-                                    <Zap className="w-3 h-3" />
-                                    {t("userMenu.currentPlan")}
-                                </span>
-                                <span className={cn("text-xs px-2 py-0.5 rounded-full", planColors[usage.plan])}>
-                                    {t(`plans.${usage.plan}`)}
-                                </span>
-                            </div>
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">{t("userMenu.aiChat")}</span>
-                                    <span>{usage.chat.used}/{usage.chat.limit}</span>
-                                </div>
-                                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-primary rounded-full"
-                                        style={{ width: `${Math.min(100, (usage.chat.used / usage.chat.limit) * 100)}%` }}
-                                    />
-                                </div>
-                                <div className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">{t("userMenu.aiNotes")}</span>
-                                    <span>{usage.aiNotes.used}/{usage.aiNotes.limit}</span>
-                                </div>
-                                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                                    <div 
-                                        className="h-full bg-primary rounded-full"
-                                        style={{ width: `${Math.min(100, (usage.aiNotes.used / usage.aiNotes.limit) * 100)}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <UsageSummary usage={usage} />
                     </>
                 )}
                 
