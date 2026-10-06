@@ -22,7 +22,8 @@
   },
   "credits": {
     "remaining": "{count, plural, one {# AI credit left} other {# AI credits left}}",
-    "unlimited": "Unlimited AI credits"
+    "unlimited": "Unlimited AI credits",
+    "renewSoon": "soon"
   },
   "userMenu": {
     "avatarAlt": "Your profile picture",

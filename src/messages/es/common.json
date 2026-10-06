@@ -22,7 +22,8 @@
   },
   "credits": {
     "remaining": "{count, plural, one {Te queda # crédito de IA} other {Te quedan # créditos de IA}}",
-    "unlimited": "Créditos de IA ilimitados"
+    "unlimited": "Créditos de IA ilimitados",
+    "renewSoon": "pronto"
   },
   "userMenu": {
     "avatarAlt": "Tu foto de perfil",

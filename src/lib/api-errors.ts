@@ -41,6 +41,11 @@ const ERROR_CODE_KEYS: Record<string, ApiErrorKey> = {
   SUBSCRIPTION_ACTIVATION_FAILED: "subscriptionActivationFailed",
 };
 
+// Limits an upgrade lifts, so their messages come with a link to the plans.
+const PLAN_LIMIT_ERRORS: ApiErrorKey[] = ["insufficientCredits", "quotaExceeded", "capExceeded", "featureNotAvailable"];
+
+export const isPlanLimitError = (key: ApiErrorKey): boolean => PLAN_LIMIT_ERRORS.includes(key);
+
 export const getApiErrorKeyFromBody = (body: unknown): ApiErrorKey => {
   const code = body && typeof body === "object" ? (body as { code?: unknown }).code : undefined;
   return (typeof code === "string" && ERROR_CODE_KEYS[code]) || "unknown";
