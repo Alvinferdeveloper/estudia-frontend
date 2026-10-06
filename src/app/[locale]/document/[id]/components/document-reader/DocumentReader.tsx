@@ -48,10 +48,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [selectedPages, setSelectedPages] = useState<number[]>([]);
     const [pdfDoc, setPdfDoc] = useState<any>(null);
 
-    const chat = useChatSession({
-        documentId: document.id,
-        documentName: document.fileName,
-    });
+    const chat = useChatSession({ documentId: document.id });
 
     const handleTogglePage = (pageNumber: number) => {
         setSelectedPages(prev => {

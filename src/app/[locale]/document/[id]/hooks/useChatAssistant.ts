@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type ChatStatus, type UIMessage } from "ai";
 import { Message } from "@/app/types";
 import { useFetchMessages } from "@/app/[locale]/document/[id]/hooks/useFetchMessages";
-import { useCreateMessage } from "@/app/[locale]/document/[id]/hooks/useCreateMessage";
 import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { apiUrl } from "@/lib/api-client";
 
 interface UseChatAssistantOptions {
   documentId: string;
-  documentName: string;
   conversationId: string | null;
 }
 
@@ -34,31 +33,31 @@ const toUIMessage = (message: Message): UIMessage => ({
 
 export const useChatAssistant = ({
   documentId,
-  documentName,
   conversationId,
 }: UseChatAssistantOptions): UseChatAssistantReturn => {
   const history = useFetchMessages(documentId, conversationId);
-  const { mutate: saveMessage } = useCreateMessage(documentId);
+  const queryClient = useQueryClient();
 
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: apiUrl("/ai/chat"),
         credentials: "include",
+        // The server keeps the history; send only the message to answer (on retry, the same one again).
         prepareSendMessagesRequest: ({ messages }) => ({
-          body: { messages, documentId, documentName, conversationId },
+          body: { conversationId, message: getMessageText(messages[messages.length - 1]) },
         }),
       }),
-    [documentId, documentName, conversationId]
+    [conversationId]
   );
 
   const { messages, sendMessage, setMessages, status, error, regenerate, stop } = useChat({
     id: conversationId ?? DRAFT_CHAT_ID,
     transport,
-    onFinish: ({ message, isError }) => {
-      const text = getMessageText(message);
-      if (isError || !conversationId || !text) return;
-      saveMessage({ conversationId, role: "assistant", content: text });
+    // The server stored both turns; refresh the cached history and the conversation order.
+    onFinish: () => {
+      queryClient.invalidateQueries({ queryKey: ["messages", documentId, conversationId] });
+      queryClient.invalidateQueries({ queryKey: ["conversations", documentId] });
     },
   });
 
@@ -74,9 +73,8 @@ export const useChatAssistant = ({
     (text: string) => {
       if (!conversationId) return;
       sendMessage({ text });
-      saveMessage({ conversationId, role: "user", content: text });
     },
-    [conversationId, sendMessage, saveMessage]
+    [conversationId, sendMessage]
   );
 
   const retry = useCallback(() => {

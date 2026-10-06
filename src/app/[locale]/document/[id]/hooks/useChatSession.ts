@@ -9,7 +9,6 @@ import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 
 interface UseChatSessionOptions {
   documentId: string;
-  documentName: string;
 }
 
 interface PendingMessage {
@@ -37,7 +36,7 @@ export interface UseChatSessionReturn {
   deleteConversation: (id: string) => Promise<void>;
 }
 
-export const useChatSession = ({ documentId, documentName }: UseChatSessionOptions): UseChatSessionReturn => {
+export const useChatSession = ({ documentId }: UseChatSessionOptions): UseChatSessionReturn => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [context, setContext] = useState<ChatContext | null>(null);
   const [draftError, setDraftError] = useState<Error | null>(null);
@@ -48,7 +47,7 @@ export const useChatSession = ({ documentId, documentName }: UseChatSessionOptio
   const { mutateAsync: createConversation } = create;
   const { mutateAsync: renameMutation } = rename;
   const { mutateAsync: removeConversation } = remove;
-  const assistant = useChatAssistant({ documentId, documentName, conversationId });
+  const assistant = useChatAssistant({ documentId, conversationId });
   const { send: sendToConversation, retry: retryAssistant } = assistant;
   const conversations = list.data ?? [];
 
