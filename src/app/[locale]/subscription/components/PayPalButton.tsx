@@ -3,7 +3,7 @@
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { SubscriptionPlan, useCreateSubscription, useCapturePayment } from "../hooks/useSubscription";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 
 interface PayPalButtonProps {
@@ -18,7 +18,8 @@ export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButto
   const [{ isPending }] = usePayPalScriptReducer();
   const createSubscriptionMutation = useCreateSubscription();
   const capturePaymentMutation = useCapturePayment();
-  const [internalPaymentId, setInternalPaymentId] = useState<string | null>(null);
+  // PayPalButtons keeps its first callbacks, so state set in createSubscription would read stale here.
+  const paymentIdRef = useRef<string | null>(null);
 
   if (isPending) {
     return (
@@ -36,33 +37,32 @@ export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButto
         createSubscription={async () => {
           try {
             const response = await createSubscriptionMutation.mutateAsync(plan);
-            setInternalPaymentId(response.paymentId);
+            paymentIdRef.current = response.paymentId;
             return response.subscriptionId;
           } catch (error) {
             console.error("Error creating PayPal subscription:", error);
-            if (onError) onError(error);
+            onError?.(error);
             throw error;
           }
         }}
-        onApprove={async (data) => {
-          if (!internalPaymentId) {
-            console.error("Internal payment ID not found");
+        onApprove={async () => {
+          const paymentId = paymentIdRef.current;
+          if (!paymentId) {
+            onError?.(new Error("Approved a PayPal subscription without an internal payment id"));
             return;
           }
           try {
-            await capturePaymentMutation.mutateAsync(internalPaymentId);
+            await capturePaymentMutation.mutateAsync(paymentId);
             onSuccess();
           } catch (error) {
             console.error("Error activating PayPal subscription:", error);
-            if (onError) onError(error);
+            onError?.(error);
           }
         }}
-        onCancel={() => {
-          if (onCancel) onCancel();
-        }}
+        onCancel={() => onCancel?.()}
         onError={(err) => {
           console.error("PayPal Button Error:", err);
-          if (onError) onError(err);
+          onError?.(err);
         }}
       />
     </div>
