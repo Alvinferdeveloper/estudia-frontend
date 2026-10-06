@@ -1,27 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 
 export type SubscriptionPlan = 'free' | 'basic' | 'pro' | 'enterprise';
-
-export interface Subscription {
-  id: string;
-  userId: string;
-  plan: SubscriptionPlan;
-  isActive: boolean;
-  currentPeriodStart: string | null;
-  currentPeriodEnd: string | null;
-  chatMessagesUsed: number;
-  chatMessagesLimit: number;
-  aiNotesUsed: number;
-  aiNotesLimit: number;
-  documentsLimit: number;
-  storageLimitBytes: number;
-  hasSemanticSearch: boolean;
-  hasVectorization: boolean;
-  hasAdvancedModels: boolean;
-  hasExportNotes: boolean;
-  hasApiAccess: boolean;
-}
 
 export interface UsageStats {
   plan: SubscriptionPlan;
@@ -74,22 +54,11 @@ export interface PlansResponse {
   currentPlan: SubscriptionPlan;
 }
 
-export interface CreateOrderResponse {
-  orderId: string;
-  approvalUrl: string;
-  paymentId: string;
-}
-
 export interface CreateSubscriptionResponse {
   subscriptionId: string;
   approvalUrl: string;
   paymentId: string;
 }
-
-const fetchSubscription = async (): Promise<Subscription> => {
-  const { data } = await api.get('/subscriptions');
-  return data;
-};
 
 const fetchUsage = async (): Promise<UsageStats> => {
   const { data } = await api.get('/subscriptions/usage');
@@ -101,16 +70,6 @@ const fetchPlans = async (): Promise<PlansResponse> => {
   return data;
 };
 
-const updatePlan = async (plan: SubscriptionPlan): Promise<Subscription> => {
-  const { data } = await api.post('/subscriptions/update-plan', { plan });
-  return data;
-};
-
-const createPaymentOrder = async (plan: SubscriptionPlan): Promise<CreateOrderResponse> => {
-  const { data } = await api.post('/payments/create-order', { plan });
-  return data;
-};
-
 const createSubscription = async (plan: SubscriptionPlan): Promise<CreateSubscriptionResponse> => {
   const { data } = await api.post('/payments/create-subscription', { plan });
   return data;
@@ -119,13 +78,6 @@ const createSubscription = async (plan: SubscriptionPlan): Promise<CreateSubscri
 const capturePayment = async (paymentId: string): Promise<any> => {
   const { data } = await api.post(`/payments/activate-subscription/${paymentId}`, {});
   return data;
-};
-
-export const useSubscription = () => {
-  return useQuery<Subscription, Error>({
-    queryKey: ['subscription'],
-    queryFn: fetchSubscription,
-  });
 };
 
 export const useUsage = () => {
@@ -142,23 +94,10 @@ export const usePlans = () => {
   });
 };
 
-export const useUpdatePlan = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updatePlan,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
-      queryClient.invalidateQueries({ queryKey: ['usage'] });
-    },
-  }, queryClient);
-};
-
-export const useCreatePaymentOrder = () => {
-  return useMutation({
-    mutationFn: createPaymentOrder,
-  });
+// A plan change affects both the plan list (current plan) and the usage limits.
+const invalidateSubscriptionQueries = (queryClient: QueryClient) => {
+  queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
+  queryClient.invalidateQueries({ queryKey: ['usage'] });
 };
 
 export const useCreateSubscription = () => {
@@ -167,12 +106,8 @@ export const useCreateSubscription = () => {
   return useMutation({
     mutationFn: createSubscription,
     meta: { inlineError: true },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
-      queryClient.invalidateQueries({ queryKey: ['usage'] });
-    },
-  }, queryClient);
+    onSuccess: () => invalidateSubscriptionQueries(queryClient),
+  });
 };
 
 export const useCapturePayment = () => {
@@ -181,10 +116,6 @@ export const useCapturePayment = () => {
   return useMutation({
     mutationFn: capturePayment,
     meta: { inlineError: true },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['subscription-plans'] });
-      queryClient.invalidateQueries({ queryKey: ['usage'] });
-    },
-  }, queryClient);
+    onSuccess: () => invalidateSubscriptionQueries(queryClient),
+  });
 };
