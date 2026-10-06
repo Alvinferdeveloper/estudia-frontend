@@ -43,16 +43,3 @@ export const getPlanFeatureItems = ({ plan, entitlements }: Plan): PlanFeatureIt
     ...(PLAN_EXTRAS[plan] ?? []).map((key) => ({ key })),
   ];
 };
-
-const STORAGE_UNITS = ["megabyte", "gigabyte", "terabyte"] as const;
-
-// Picks the largest binary unit (from MB up) that keeps the value >= 1, for Intl unit formatting.
-export const toStorageSize = (bytes: number): { value: number; unit: (typeof STORAGE_UNITS)[number] } => {
-  let value = bytes / 1024 ** 2;
-  let index = 0;
-  while (value >= 1024 && index < STORAGE_UNITS.length - 1) {
-    value /= 1024;
-    index++;
-  }
-  return { value, unit: STORAGE_UNITS[index] };
-};

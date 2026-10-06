@@ -83,7 +83,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
         </div>
 
         <div className="col-span-2 text-xs tabular-nums text-muted-foreground">
-          {formatBytes(doc.fileSize)}
+          {formatBytes(format, doc.fileSize)}
         </div>
 
         <div className="col-span-2 flex items-center justify-end gap-1">

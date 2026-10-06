@@ -115,7 +115,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         <h4 className="truncate text-sm font-medium text-foreground">{doc.fileName}</h4>
         <p className="truncate text-xs text-muted-foreground">
           {topic ? `${topic.name} · ` : ""}
-          {formatBytes(doc.fileSize)}
+          {formatBytes(format, doc.fileSize)}
           {doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
         </p>
         <p className="truncate text-[11px] text-muted-foreground/70">

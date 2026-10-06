@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Check, Sparkles } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { SubscriptionPlan } from "../hooks/useSubscription";
-import { PlanFeatureItem, toStorageSize } from "../lib/plan-features";
+import { PlanFeatureItem } from "../lib/plan-features";
+import { formatBytes } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {
@@ -38,10 +39,7 @@ export function PricingCard({
   const isFree = price === 0;
 
   const featureLabel = ({ key, count, storageBytes }: PlanFeatureItem): string => {
-    if (storageBytes !== undefined) {
-      const { value, unit } = toStorageSize(storageBytes);
-      return tFeatures(key, { size: format.number(value, { style: "unit", unit, maximumFractionDigits: 1 }) });
-    }
+    if (storageBytes !== undefined) return tFeatures(key, { size: formatBytes(format, storageBytes) });
     return count === undefined ? tFeatures(key) : tFeatures(key, { count });
   };
 

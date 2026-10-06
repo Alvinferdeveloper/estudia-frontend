@@ -108,7 +108,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         <p className="truncate text-xs text-muted-foreground">
           {t("items.fileCount", { count: folder.count })}
           {folder.subfoldersCount > 0 ? ` · ${t("items.folderCount", { count: folder.subfoldersCount })}` : ""}
-          {Number(folder.totalSize) > 0 ? ` · ${formatBytes(folder.totalSize)}` : ""}
+          {Number(folder.totalSize) > 0 ? ` · ${formatBytes(format, folder.totalSize)}` : ""}
         </p>
         <p className="truncate text-[11px] text-muted-foreground/70">
           {folder.updatedAt ? format.dateTime(new Date(folder.updatedAt), { dateStyle: "medium" }) : "—"}

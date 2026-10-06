@@ -74,7 +74,7 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
         </div>
 
         <div className="col-span-2 text-xs tabular-nums text-muted-foreground">
-          {Number(folder.totalSize) > 0 ? formatBytes(folder.totalSize) : "—"}
+          {Number(folder.totalSize) > 0 ? formatBytes(format, folder.totalSize) : "—"}
         </div>
 
         <div className="col-span-2 flex items-center justify-end gap-1">
