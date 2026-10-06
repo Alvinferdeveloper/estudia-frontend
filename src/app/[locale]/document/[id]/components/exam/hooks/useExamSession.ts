@@ -1,10 +1,8 @@
 import { useState, useCallback } from "react";
 import {
-  useGenerateQuestions,
+  useGenerateExam,
   useEvaluateAnswer,
-  useCreateExam,
   useSaveExamResult,
-  useSaveExamQuestions,
   fetchExamQuestions,
   QuestionType,
   ExamPhase,
@@ -36,11 +34,9 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
   const [examMeta, setExamMeta] = useState<Exam | null>(null);
   const [errorKey, setErrorKey] = useState<ApiErrorKey | null>(null);
 
-  const generateQuestionsMutation = useGenerateQuestions();
+  const generateExamMutation = useGenerateExam();
   const evaluateAnswerMutation = useEvaluateAnswer();
-  const createExamMutation = useCreateExam();
   const saveResultMutation = useSaveExamResult();
-  const saveQuestionsMutation = useSaveExamQuestions();
 
   const disableExamMode = useCallback(() => {
     setExamPhase(EXAM_PHASES.INACTIVE);
@@ -100,61 +96,38 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
         content = extracted || content;
       }
 
-      const generatedQuestions = await generateQuestionsMutation.mutateAsync({
-        content,
-        pages: selectedPages,
-        difficulty: config.difficulty,
-        questionType: config.questionType,
-      });
-
-      const questionsWithOrder = generatedQuestions.map((q: any, i: number) => ({ 
-        ...q, 
-        id: i.toString(),
-        order: i + 1,
-      }));
-      setQuestions(questionsWithOrder);
-
-      const exam = await createExamMutation.mutateAsync({
+      // The server generates the questions and stores the exam with them in one step.
+      const { exam, questions: generated } = await generateExamMutation.mutateAsync({
         documentId,
         pages: selectedPages,
+        content,
         mode: config.mode,
         difficulty: config.difficulty,
-        title: config.title,
         questionType: config.questionType,
-        totalQuestions: generatedQuestions.length,
+        title: config.title,
       });
 
+      setQuestions(generated);
       setExamId(exam.id);
-
-      await saveQuestionsMutation.mutateAsync({
-        examId: exam.id,
-        questions: generatedQuestions.map((q: any, i: number) => ({
-          text: q.text,
-          type: q.type || config.questionType,
-          options: q.options ? JSON.stringify(q.options) : undefined,
-          idealAnswer: q.idealAnswer || q.correctAnswer || '',
-          order: i + 1,
-        })),
-      });
-
+      setExamMeta(exam);
       setExamPhase(EXAM_PHASES.EXAM);
     } catch (error) {
       setErrorKey(getApiErrorKey(error));
       setExamPhase(EXAM_PHASES.SETUP);
     }
-  }, [selectedPages, documentName, documentId, pdfDoc, generateQuestionsMutation, createExamMutation, saveQuestionsMutation]);
+  }, [selectedPages, documentName, documentId, pdfDoc, generateExamMutation]);
 
   const handleSubmitAnswer = useCallback(async () => {
     const currentQuestion = questions[currentIndex];
-    if (!currentQuestion) return;
+    if (!currentQuestion || !examId) return;
 
     setErrorKey(null);
     try {
+      // Graded against the stored question and ideal answer, so only the answer is sent.
       const evaluation = await evaluateAnswerMutation.mutateAsync({
+        examId,
+        questionId: currentQuestion.id,
         userAnswer: currentAnswer,
-        idealAnswer: currentQuestion.idealAnswer || '',
-        question: currentQuestion.text,
-        questionType: currentQuestion.type || questionType,
       });
 
       setAnswers(prev => [...prev, {
@@ -167,7 +140,7 @@ export const useExamSession = ({ documentName, documentId, selectedPages, pdfDoc
     } catch (error) {
       setErrorKey(getApiErrorKey(error));
     }
-  }, [questions, currentIndex, currentAnswer, evaluateAnswerMutation, questionType]);
+  }, [questions, currentIndex, currentAnswer, examId, evaluateAnswerMutation]);
 
   const handleNextQuestion = useCallback(() => {
     if (currentIndex < questions.length - 1) {

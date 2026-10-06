@@ -86,17 +86,22 @@ export interface ExamResults {
   averageScore: number;
 }
 
-export const useGenerateQuestions = () => {
+export interface GenerateExamRequest {
+  documentId: string;
+  pages: number[];
+  // Text of the selected pages, extracted from the PDF in the browser.
+  content: string;
+  mode: string;
+  difficulty: string;
+  questionType: QuestionType;
+  title: string;
+}
+
+export const useGenerateExam = () => {
   return useMutation({
-    mutationFn: async (data: {
-      content: string;
-      pages: number[];
-      difficulty: string;
-      questionType?: QuestionType;
-      numQuestions?: number;
-    }) => {
-      const { data: result } = await api.post<{ questions: any[] }>("/ai/exam/generate", data);
-      return result.questions;
+    mutationFn: async (request: GenerateExamRequest) => {
+      const { data } = await api.post<{ exam: Exam; questions: RawExamQuestion[] }>("/exam/generate", request);
+      return { exam: data.exam, questions: data.questions.map(toQuestion) };
     },
     meta: { inlineError: true },
   });
@@ -104,35 +109,12 @@ export const useGenerateQuestions = () => {
 
 export const useEvaluateAnswer = () => {
   return useMutation({
-    mutationFn: async (data: {
-      userAnswer: string;
-      idealAnswer: string;
-      question: string;
-      questionType?: QuestionType;
-    }) => {
-      const { data: result } = await api.post<{ score: number; feedback: string }>(
-        "/ai/exam/evaluate",
-        data
+    mutationFn: async ({ examId, questionId, userAnswer }: { examId: string; questionId: string; userAnswer: string }) => {
+      const { data } = await api.post<{ score: number; feedback: string }>(
+        `/exam/${examId}/questions/${questionId}/evaluate`,
+        { userAnswer }
       );
-      return result;
-    },
-    meta: { inlineError: true },
-  });
-};
-
-export const useCreateExam = () => {
-  return useMutation({
-    mutationFn: async (data: {
-      documentId: string;
-      pages: number[];
-      mode: string;
-      difficulty: string;
-      title: string;
-      questionType: QuestionType;
-      totalQuestions: number;
-    }) => {
-      const { data: result } = await api.post<{ id: string }>("/exam", data);
-      return result;
+      return data;
     },
     meta: { inlineError: true },
   });
@@ -196,19 +178,6 @@ export function computeExamStats(results: ExamResult[]): ExamStats {
   };
 }
 
-export const useSaveExamQuestions = () => {
-  return useMutation({
-    mutationFn: async (data: {
-      examId: string;
-      questions: { text: string; type: string; options?: string; idealAnswer: string; order: number }[];
-    }) => {
-      const { data: result } = await api.post("/exam/questions", data);
-      return result;
-    },
-    meta: { inlineError: true },
-  });
-};
-
 interface RawExamQuestion {
   id: string;
   examId: string;
@@ -219,18 +188,19 @@ interface RawExamQuestion {
   idealAnswer: string | null;
 }
 
+const toQuestion = (q: RawExamQuestion): Question => ({
+  id: q.id,
+  examId: q.examId,
+  text: q.text,
+  type: q.type ?? undefined,
+  options: q.options ? JSON.parse(q.options) : undefined,
+  order: q.order,
+  idealAnswer: q.idealAnswer,
+});
+
 export const fetchExamQuestions = async (examId: string): Promise<Question[]> => {
   const { data } = await api.get<RawExamQuestion[]>(`/exam/${examId}/questions`);
-
-  return data.map((q) => ({
-    id: q.id,
-    examId: q.examId,
-    text: q.text,
-    type: q.type ?? undefined,
-    options: q.options ? JSON.parse(q.options) : undefined,
-    order: q.order,
-    idealAnswer: q.idealAnswer,
-  }));
+  return data.map(toQuestion);
 };
 
 export const useUserExams = (documentId?: string) => {
