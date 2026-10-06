@@ -60,12 +60,8 @@ export const useQuickTranslate = (): UseQuickTranslateReturn => {
     setIsLoading(true);
     setTranslation(null);
 
-    axios
-      .post(
-        "/translate",
-        { text, targetLanguage },
-        { signal: controller.signal }
-      )
+    api
+      .post("/translate", { text, targetLanguage }, { signal: controller.signal })
       .then(({ data }) => {
         if (requestIdRef.current !== requestId) return;
         const detected = data.detectedSourceLanguage ?? null;
