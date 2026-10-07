@@ -83,13 +83,13 @@
 :root {
   --radius: 0.75rem;
   /* Base */
-  --background: oklch(0.985 0.002 255);
+  --background: oklch(0.982 0.006 85);
   --foreground: oklch(0.22 0.01 255);
 
   /* Surfaces */
-  --card: oklch(1 0 0);
+  --card: oklch(0.995 0.004 85);
   --card-foreground: oklch(0.22 0.01 255);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.995 0.004 85);
   --popover-foreground: oklch(0.22 0.01 255);
 
   /* Brand */
@@ -98,15 +98,15 @@
   --primary-foreground: oklch(0.985 0.006 80);
 
   /* Secondary */
-  --secondary: oklch(0.955 0.004 255);
+  --secondary: oklch(0.955 0.007 85);
   --secondary-foreground: oklch(0.28 0.01 255);
 
   /* Muted */
-  --muted: oklch(0.965 0.003 255);
+  --muted: oklch(0.962 0.006 85);
   --muted-foreground: oklch(0.52 0.012 255);
 
   /* Accent */
-  --accent: oklch(0.94 0.008 254);
+  --accent: oklch(0.94 0.009 85);
   --accent-foreground: oklch(0.28 0.01 255);
 
   /* Destructive */
@@ -114,8 +114,8 @@
   --destructive-foreground: oklch(0.99 0.002 27);
 
   /* Borders & Inputs */
-  --border: oklch(0.90 0.006 255);
-  --input: oklch(0.90 0.006 255);
+  --border: oklch(0.9 0.008 85);
+  --input: oklch(0.9 0.008 85);
   --ring: oklch(0.36 0.05 254 / 0.3);
 
   /* Charts */
@@ -126,13 +126,13 @@
   --chart-5: oklch(0.66 0.18 25);
 
   /* Sidebar */
-  --sidebar: oklch(0.975 0.003 255);
+  --sidebar: oklch(0.968 0.007 85);
   --sidebar-foreground: oklch(0.24 0.01 255);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.95 0.006 248);
+  --sidebar-accent: oklch(0.94 0.009 85);
   --sidebar-accent-foreground: oklch(0.24 0.01 255);
-  --sidebar-border: oklch(0.91 0.006 255);
+  --sidebar-border: oklch(0.905 0.008 85);
   --sidebar-ring: var(--ring);
 
   /* Semantic */
@@ -149,7 +149,7 @@
   --marketing-accent: var(--chart-3);
 
   /* Document reader tray behind PDF pages — needs real contrast against a white page, unlike --muted */
-  --reader-canvas: oklch(0.89 0.004 255);
+  --reader-canvas: oklch(0.89 0.006 85);
 }
 
 .dark {
