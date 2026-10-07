@@ -8,6 +8,8 @@
     "register": "Crear cuenta",
     "workspace": "Mis documentos",
     "document": "Documento",
-    "subscription": "Planes"
+    "subscription": "Planes",
+    "exams": "Exámenes",
+    "examAttempt": "Examen"
   }
 }

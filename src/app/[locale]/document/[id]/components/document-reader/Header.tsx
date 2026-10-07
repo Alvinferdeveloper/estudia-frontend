@@ -13,10 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/[locale]/document/[id]/hooks/useExportAnnotations";
-import { ExamMode } from "@/app/[locale]/document/[id]/components/exam/ExamMode";
+import { ExamHeaderActions } from "@/app/[locale]/document/[id]/components/exam/ExamHeaderActions";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LanguageFlag } from "@/app/[locale]/document/[id]/components/document-reader/language-ui";
-import { DocumentFile } from "@/app/[locale]/document/[id]/page";
 import { LanguageCode, LanguageOption } from "@/app/types";
 import { ROUTES } from "@/config/routes";
 import { CreditIndicator } from "@/components/credit-indicator";
@@ -24,13 +23,8 @@ import { CreditIndicator } from "@/components/credit-indicator";
 interface HeaderProps {
     fileName: string;
     documentId: string;
-    numPages: number;
-    document: DocumentFile;
-    examMode?: boolean;
-    selectedPages?: number[];
-    pdfDoc?: any;
-    onEnableExamMode?: () => void;
-    onDisableExamMode?: () => void;
+    examMode: boolean;
+    onToggleExamMode: () => void;
     languageModeEnabled?: boolean;
     wordLanguage?: LanguageCode;
     explanationLanguage?: LanguageCode;
@@ -43,13 +37,8 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
     fileName,
     documentId,
-    numPages,
-    document,
-    examMode = false,
-    selectedPages = [],
-    pdfDoc,
-    onEnableExamMode,
-    onDisableExamMode,
+    examMode,
+    onToggleExamMode,
     languageModeEnabled = false,
     wordLanguage = "en",
     explanationLanguage = "es",
@@ -92,14 +81,10 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="flex items-center gap-1">
                     <CreditIndicator />
                     <Separator orientation="vertical" className="mx-1 h-5" />
-                    <ExamMode
-                        document={document}
-                        numPages={numPages}
+                    <ExamHeaderActions
+                        documentId={documentId}
                         examMode={examMode}
-                        selectedPages={selectedPages}
-                        pdfDoc={pdfDoc}
-                        onEnableExamMode={onEnableExamMode || (() => {})}
-                        onDisableExamMode={onDisableExamMode || (() => {})}
+                        onToggleExamMode={onToggleExamMode}
                     />
                     {!examMode && onToggleLanguageMode && (
                         <>

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 
 export const QUESTION_TYPES = {
@@ -11,16 +11,6 @@ export const QUESTION_TYPES = {
 
 export type QuestionType = typeof QUESTION_TYPES[keyof typeof QUESTION_TYPES];
 
-export const EXAM_PHASES = {
-  INACTIVE: 'inactive',
-  SETUP: 'setup',
-  GENERATING: 'generating',
-  EXAM: 'exam',
-  RESULTS: 'results',
-} as const;
-
-export type ExamPhase = typeof EXAM_PHASES[keyof typeof EXAM_PHASES];
-
 export const DIFFICULTY_LEVELS = {
   EASY: 'easy',
   MEDIUM: 'medium',
@@ -32,61 +22,72 @@ export type DifficultyLevel = typeof DIFFICULTY_LEVELS[keyof typeof DIFFICULTY_L
 export const isDifficultyLevel = (value: string): value is DifficultyLevel =>
   (Object.values(DIFFICULTY_LEVELS) as string[]).includes(value);
 
-export const EXAM_MODES = {
-  QUICK_REVIEW: 'quick_review',
-  EXAM_SIMULATION: 'exam_simulation',
-  CUSTOM: 'custom',
+export const ATTEMPT_MODES = {
+  PRACTICE: 'practice',
+  SIMULATION: 'simulation',
 } as const;
 
-export type ExamModeType = typeof EXAM_MODES[keyof typeof EXAM_MODES];
+export type AttemptMode = typeof ATTEMPT_MODES[keyof typeof ATTEMPT_MODES];
+
+export const ATTEMPT_STATUS = {
+  IN_PROGRESS: 'in_progress',
+  COMPLETED: 'completed',
+} as const;
+
+export type AttemptStatus = typeof ATTEMPT_STATUS[keyof typeof ATTEMPT_STATUS];
 
 export const EXAM_SIZES = [5, 10, 15, 20] as const;
 
-
+// Mirrors the API's exam views (estudia-api `exam-views.ts`).
 export interface Exam {
   id: string;
   documentId: string;
-  pages: number[];
-  mode: string;
-  totalQuestions: number;
   title: string;
   difficulty: string;
-  questionType?: QuestionType;
+  questionType: QuestionType | null;
+  pages: number[];
+  totalQuestions: number;
   createdAt: string;
 }
 
-export interface ExamResult {
+export interface AttemptSummary {
   id: string;
-  examId: string;
+  mode: AttemptMode;
+  status: AttemptStatus;
+  startedAt: string;
+  finishedAt: string | null;
+  // 0-100, set once the attempt is finished.
   score: number | null;
   correctAnswers: number;
   totalQuestions: number;
-  createdAt: string;
+}
+
+export interface ExamWithAttempts extends Exam {
+  attempts: AttemptSummary[];
 }
 
 export interface Question {
   id: string;
-  examId?: string;
+  order: number;
   text: string;
-  type?: QuestionType;
-  options?: string[];
-  order?: number;
-  idealAnswer: string | null;
+  type: QuestionType | null;
+  options: string[] | null;
 }
 
 export interface Answer {
-  id?: string;
   questionId: string;
   userAnswer: string;
-  score: number | null;
+  // 0-10.
+  score: number;
   feedback: string | null;
+  idealAnswer: string | null;
 }
 
-export interface ExamResults {
+export interface AttemptView {
+  attempt: AttemptSummary;
   exam: Exam;
   questions: Question[];
   answers: Answer[];
-  averageScore: number;
 }
 
 export interface GenerateExamRequest {
@@ -94,131 +95,96 @@ export interface GenerateExamRequest {
   pages: number[];
   // Text of the selected pages, extracted from the PDF in the browser.
   content: string;
-  mode: string;
-  difficulty: string;
+  difficulty: DifficultyLevel;
   questionType: QuestionType;
   questionCount: number;
   title: string;
 }
 
-// What the setup dialog decides; the session adds the document and its page text.
+// What the setup panel decides; the document, its pages and their text are added on generation.
 export type ExamConfig = Omit<GenerateExamRequest, "documentId" | "pages" | "content">;
 
+export interface AttemptRef {
+  examId: string;
+  attemptId: string;
+}
+
+export const examKeys = {
+  all: ['exams'] as const,
+  list: (documentId: string) => ['exams', 'list', documentId] as const,
+  attempt: (attemptId: string) => ['exams', 'attempt', attemptId] as const,
+};
+
+export const useUserExams = (documentId: string) =>
+  useQuery({
+    queryKey: examKeys.list(documentId),
+    queryFn: async () => {
+      const { data } = await api.get<ExamWithAttempts[]>("/exam", { params: { documentId } });
+      return data;
+    },
+  });
+
+// Creates the exam and its first attempt in one step.
 export const useGenerateExam = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (request: GenerateExamRequest) => {
-      const { data } = await api.post<{ exam: Exam; questions: RawExamQuestion[] }>("/exam/generate", request);
-      return { exam: data.exam, questions: data.questions.map(toQuestion) };
+      const { data } = await api.post<AttemptRef>("/exam/generate", request);
+      return data;
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: examKeys.all }),
     meta: { inlineError: true, refreshesUsage: true },
   });
 };
 
-export const useEvaluateAnswer = () => {
+export const useStartAttempt = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ examId, questionId, userAnswer }: { examId: string; questionId: string; userAnswer: string }) => {
-      const { data } = await api.post<{ score: number; feedback: string }>(
-        `/exam/${examId}/questions/${questionId}/evaluate`,
-        { userAnswer }
-      );
+    mutationFn: async ({ examId, mode }: { examId: string; mode: AttemptMode }) => {
+      const { data } = await api.post<{ attemptId: string }>(`/exam/${examId}/attempts`, { mode });
+      return { examId, attemptId: data.attemptId };
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: examKeys.all }),
+  });
+};
+
+export const useAttempt = ({ examId, attemptId }: AttemptRef) =>
+  useQuery({
+    queryKey: examKeys.attempt(attemptId),
+    queryFn: async () => {
+      const { data } = await api.get<AttemptView>(`/exam/${examId}/attempts/${attemptId}`);
       return data;
     },
+  });
+
+export const useAnswerQuestion = ({ examId, attemptId }: AttemptRef) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: { questionId: string; userAnswer: string }) => {
+      const { data } = await api.post<Answer>(`/exam/${examId}/attempts/${attemptId}/answers`, body);
+      return data;
+    },
+    onSuccess: (answer) =>
+      queryClient.setQueryData<AttemptView>(examKeys.attempt(attemptId), (view) =>
+        view && {
+          ...view,
+          answers: [...view.answers.filter((a) => a.questionId !== answer.questionId), answer],
+        }
+      ),
     meta: { inlineError: true },
   });
 };
 
-export const useSaveExamResult = () => {
+export const useFinishAttempt = ({ examId, attemptId }: AttemptRef) => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: {
-      examId: string;
-      score: number;
-      correctAnswers: number;
-      totalQuestions: number;
-    }) => {
-      const { data: result } = await api.post<ExamResult>("/exam/result", data);
-      return result;
-    },
-  });
-};
-
-export const useExamResults = (examId: string) => {
-  return useQuery({
-    queryKey: ['examResults', examId],
-    queryFn: async () => {
-      const { data } = await api.get<ExamResult[]>(`/exam/${examId}/results`);
+    mutationFn: async () => {
+      const { data } = await api.post<AttemptView>(`/exam/${examId}/attempts/${attemptId}/finish`);
       return data;
     },
-    enabled: !!examId,
-  });
-};
-
-export interface ExamStats {
-  attemptCount: number;
-  highestScore: number | null;
-  lowestScore: number | null;
-  lastScore: number | null;
-  lastAttemptAt: string | null;
-}
-
-export function computeExamStats(results: ExamResult[]): ExamStats {
-  if (results.length === 0) {
-    return {
-      attemptCount: 0,
-      highestScore: null,
-      lowestScore: null,
-      lastScore: null,
-      lastAttemptAt: null,
-    };
-  }
-
-  const scored = results.filter((r) => r.score !== null) as (ExamResult & { score: number })[];
-  const sortedByDate = [...results].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-
-  return {
-    attemptCount: results.length,
-    highestScore: scored.length ? Math.max(...scored.map((r) => r.score)) : null,
-    lowestScore: scored.length ? Math.min(...scored.map((r) => r.score)) : null,
-    lastScore: sortedByDate[0].score,
-    lastAttemptAt: sortedByDate[0].createdAt,
-  };
-}
-
-interface RawExamQuestion {
-  id: string;
-  examId: string;
-  order: number;
-  text: string;
-  type?: QuestionType | null;
-  options?: string | null;
-  idealAnswer: string | null;
-}
-
-const toQuestion = (q: RawExamQuestion): Question => ({
-  id: q.id,
-  examId: q.examId,
-  text: q.text,
-  type: q.type ?? undefined,
-  options: q.options ? JSON.parse(q.options) : undefined,
-  order: q.order,
-  idealAnswer: q.idealAnswer,
-});
-
-export const fetchExamQuestions = async (examId: string): Promise<Question[]> => {
-  const { data } = await api.get<RawExamQuestion[]>(`/exam/${examId}/questions`);
-  return data.map(toQuestion);
-};
-
-export const useUserExams = (documentId?: string) => {
-  return useQuery({
-    queryKey: ['exams', documentId],
-    queryFn: async () => {
-      const url = documentId
-        ? `/exam?documentId=${documentId}`
-        : "/exam";
-      const { data } = await api.get<Exam[]>(url);
-      return data;
+    onSuccess: (view) => {
+      queryClient.setQueryData(examKeys.attempt(attemptId), view);
+      queryClient.invalidateQueries({ queryKey: examKeys.list(view.exam.documentId) });
     },
   });
 };

@@ -1,96 +1,45 @@
-import React from "react";
-import { Check, Info } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Answer, Question, QuestionType, QUESTION_TYPES } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
-import { cn } from "@/lib/utils";
+import type { Answer, Question } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { VERDICT_KEY, answerTone } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
+import { answerText } from "@/app/[locale]/document/[id]/components/exam/lib/answer-text";
+import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
 
 interface AnswerFeedbackProps {
-  currentAnswerData: Answer;
-  currentQuestion: Question;
-  currentQuestionType: QuestionType;
-  isCorrect: boolean;
+  question: Question;
+  answer: Answer;
 }
 
-export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({
-  currentAnswerData,
-  currentQuestion,
-  currentQuestionType,
-  isCorrect,
-}) => {
+// The grade of an answered question: verdict, the model's feedback and, unless it was right, the reference answer.
+export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({ question, answer }) => {
   const t = useTranslations("exam.session");
-  const showCorrectAnswer = (
-    [QUESTION_TYPES.MULTIPLE_CHOICE, QUESTION_TYPES.TRUE_FALSE, QUESTION_TYPES.FILL_BLANK] as QuestionType[]
-  ).includes(currentQuestionType);
-
-  const correctAnswerLabel = (() => {
-    if (currentQuestionType === QUESTION_TYPES.MULTIPLE_CHOICE && currentQuestion.options && currentQuestion.idealAnswer) {
-      return currentQuestion.options[currentQuestion.idealAnswer.charCodeAt(0) - 65];
-    }
-    if (currentQuestionType === QUESTION_TYPES.TRUE_FALSE) {
-      const isTrue = ['true', 'verdadero', 'v', '1'].includes(String(currentQuestion.idealAnswer).toLowerCase().trim());
-      return isTrue ? t("true") : t("false");
-    }
-    return currentQuestion.idealAnswer;
-  })();
+  const tone = answerTone(answer.score);
 
   return (
-    <div
-      className={cn(
-        "mt-6 overflow-hidden rounded-xl border animate-in fade-in slide-in-from-bottom-1 duration-300",
-        isCorrect
-          ? "border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20"
-          : "border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/20"
-      )}
-    >
+    <div className="overflow-hidden rounded-xl border border-border bg-card animate-in fade-in slide-in-from-bottom-1 duration-200">
       <div className="flex items-start gap-3 px-4 py-3.5">
-        <div
-          className={cn(
-            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full animate-in zoom-in-50 duration-300",
-            isCorrect
-              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-              : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
-          )}
-        >
-          {isCorrect ? <Check size={12} strokeWidth={3} /> : <Info size={12} />}
-        </div>
+        <ToneMark tone={tone} className="mt-px" />
         <div className="min-w-0 flex-1">
-          <p
-            className={cn(
-              "mb-1 text-[11px] font-bold uppercase tracking-widest",
-              isCorrect ? "text-emerald-600/70 dark:text-emerald-400/70" : "text-amber-600/70 dark:text-amber-400/70"
-            )}
-          >
-            {isCorrect ? t("correct") : t("incorrect")}
+          <p className="flex items-baseline justify-between gap-3 text-sm font-semibold text-foreground">
+            {t(VERDICT_KEY[tone])}
+            <span className="font-mono text-xs font-semibold tabular-nums text-muted-foreground">
+              {t("grade", { score: answer.score })}
+            </span>
           </p>
           {/* Closed questions carry no feedback: the verdict and the right answer already say it all. */}
-          {currentAnswerData.feedback && (
-            <p
-              className={cn(
-                "text-sm leading-relaxed",
-                isCorrect ? "text-emerald-800 dark:text-emerald-200" : "text-amber-800 dark:text-amber-200"
-              )}
-            >
-              {currentAnswerData.feedback}
-            </p>
+          {answer.feedback && (
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{answer.feedback}</p>
           )}
         </div>
       </div>
 
-      {/* Respuesta correcta */}
-      {!isCorrect && showCorrectAnswer && (
-        <div
-          className={cn(
-            "flex items-center gap-3 border-t px-4 py-3",
-            "border-amber-500/15 bg-background/40"
-          )}
-        >
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Check size={12} />
-          </div>
-          <div className="min-w-0">
-            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/50">{t("correctAnswer")}</p>
-            <p className="truncate text-sm font-medium text-foreground">{correctAnswerLabel}</p>
-          </div>
+      {tone !== "success" && answer.idealAnswer && (
+        <div className="border-t border-border bg-secondary/60 px-4 py-3">
+          <p className="mb-1 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+            {t("referenceAnswer")}
+          </p>
+          <p className="text-sm leading-relaxed text-foreground">
+            {answerText(question, answer.idealAnswer, { true: t("true"), false: t("false") })}
+          </p>
         </div>
       )}
     </div>

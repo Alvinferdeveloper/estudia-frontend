@@ -1,81 +1,29 @@
-import React from "react";
-import { ArrowRight, CornerDownLeft, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface ExamFooterProps {
-  hasAnswered: boolean;
-  isCorrect: boolean;
-  isLastQuestion: boolean;
-  isSubmitting: boolean;
-  currentAnswer: string;
-  onNext: () => void;
-  onFinish: () => void;
+  label: string;
+  shortcut: string;
+  isBusy: boolean;
+  disabled: boolean;
+  onAction: () => void;
 }
 
-export const ExamFooter: React.FC<ExamFooterProps> = ({
-  hasAnswered,
-  isCorrect,
-  isLastQuestion,
-  isSubmitting,
-  currentAnswer,
-  onNext,
-  onFinish,
-}) => {
+// One primary action per step: grade, next question or results.
+export const ExamFooter: React.FC<ExamFooterProps> = ({ label, shortcut, isBusy, disabled, onAction }) => {
   const t = useTranslations("exam.session");
-  const isDisabled = (!currentAnswer.trim() && !hasAnswered) || isSubmitting;
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 px-4 py-4 bg-gradient-to-t from-background via-background/95 to-transparent pointer-events-none">
-      <div className="max-w-2xl gap-3 mx-auto flex items-center justify-between pointer-events-auto">
-        {/* Hint de teclado */}
-        <div className="hidden md:flex items-center gap-1.5 text-[0.8rem] font-medium uppercase tracking-widest text-muted-foreground/30">
-          <kbd className="px-1 py-0.5 rounded border border-border/50 bg-muted/20 font-sans text-[9px]">Enter</kbd>
-          <span>{t("keyboardHint")}</span>
-        </div>
-
-        {/* Indicador de resultado (cuando ya respondió) */}
-        {hasAnswered && (
-          <div className={cn(
-            "flex items-center gap-1.5 text-[0.8rem] font-medium animate-in fade-in duration-300",
-            isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
-          )}>
-            {isCorrect
-              ? <CheckCircle2 size={13} />
-              : <XCircle size={13} />
-            }
-            <span>{isCorrect ? t("correct") : t("incorrect")}</span>
-          </div>
-        )}
-
-        <Button
-          size="sm"
-          className={cn(
-            "press-feedback ml-auto h-10 rounded-full px-8 text-xs font-semibold text-white shadow-md transition-colors duration-200 ease-[var(--ease-out)]",
-            hasAnswered
-              ? isCorrect
-                ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/10"
-                : "bg-amber-600 hover:bg-amber-700 shadow-amber-500/10"
-              : "bg-primary hover:bg-primary/90 shadow-primary/20"
-          )}
-          disabled={isDisabled}
-          onClick={hasAnswered ? (isLastQuestion ? onFinish : onNext) : onNext}
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="animate-spin mr-1.5" size={13} />
-              <span>{t("processing")}</span>
-            </>
-          ) : hasAnswered ? (
-            <>
-              <span>{isLastQuestion ? t("seeResults") : t("next")}</span>
-            </>
-          ) : (
-            <>
-              <span>{t("evaluate")}</span>
-            </>
-          )}
+    <footer className="sticky bottom-0 border-t border-border bg-background">
+      <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between gap-3 px-4">
+        <p className="hidden items-center gap-1.5 text-xs text-muted-foreground md:flex">
+          <kbd className="rounded border border-border bg-secondary px-1.5 py-0.5 font-sans text-[11px]">{shortcut}</kbd>
+          {t("keyboardHint")}
+        </p>
+        <Button className="press-feedback ml-auto h-9 rounded-full px-6" disabled={disabled || isBusy} onClick={onAction}>
+          {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
+          {label}
         </Button>
       </div>
     </footer>

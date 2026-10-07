@@ -13,8 +13,6 @@ interface PdfControlsProps {
     onZoomIn: () => void;
     onZoomOut: () => void;
     examMode?: boolean;
-    selectedPages?: number[];
-    onPageSelect?: (page: number) => void;
     regionMode?: boolean;
     onRegionModeToggle?: () => void;
 }
@@ -79,26 +77,28 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                 </div>
             )}
 
-            {/* Floating "Ask AI" trigger */}
-            <div className="absolute right-4 top-4 z-20">
-                <button
-                    onClick={onChatToggle}
-                    className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
-                        isChatOpen
-                            ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
-                            : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
-                    }`}
-                >
-                    <ZocratisMark className="size-[18px]" />
-                    {t("assistant")}
-                    {selectedText && !isChatOpen && (
-                        <span className="relative flex h-2 w-2">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-                        </span>
-                    )}
-                </button>
-            </div>
+            {/* Floating "Ask AI" trigger; exam mode takes that side for its setup panel */}
+            {!examMode && (
+                <div className="absolute right-4 top-4 z-20">
+                    <button
+                        onClick={onChatToggle}
+                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
+                            isChatOpen
+                                ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
+                                : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
+                        }`}
+                    >
+                        <ZocratisMark className="size-[18px]" />
+                        {t("assistant")}
+                        {selectedText && !isChatOpen && (
+                            <span className="relative flex h-2 w-2">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                            </span>
+                        )}
+                    </button>
+                </div>
+            )}
         </>
     );
 };

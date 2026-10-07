@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Group, Panel } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/[locale]/document/[id]/hooks/useDocumentViewer";
+import { useExamMode } from "@/app/[locale]/document/[id]/hooks/useExamMode";
 import { useTextSelection } from "@/app/[locale]/document/[id]/hooks/useTextSelection";
 import { useChatSession } from "@/app/[locale]/document/[id]/hooks/useChatSession";
 import { useAnnotationActions } from "@/app/[locale]/document/[id]/hooks/useAnnotationActions";
@@ -20,6 +21,7 @@ import { Header } from "@/app/[locale]/document/[id]/components/document-reader/
 import { PdfControls } from "@/app/[locale]/document/[id]/components/document-reader/PdfControls";
 import { PdfViewer, PdfHighlightItem } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
+import { ExamSetupPanel } from "@/app/[locale]/document/[id]/components/exam/ExamSetupPanel";
 import { SelectionPopup } from "@/app/[locale]/document/[id]/components/document-reader/SelectionPopup";
 import { QuickTranslateBubble } from "@/app/[locale]/document/[id]/components/document-reader/QuickTranslateBubble";
 import { NoteDialog } from "@/app/[locale]/document/[id]/components/document-reader/note-ui";
@@ -44,29 +46,10 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         zoomOut,
     } = useDocumentViewer();
 
-    const [examMode, setExamMode] = useState(false);
-    const [selectedPages, setSelectedPages] = useState<number[]>([]);
+    const exam = useExamMode();
     const [pdfDoc, setPdfDoc] = useState<any>(null);
 
     const chat = useChatSession({ documentId: document.id });
-
-    const handleTogglePage = (pageNumber: number) => {
-        setSelectedPages(prev => {
-            if (prev.includes(pageNumber)) {
-                return prev.filter(p => p !== pageNumber);
-            }
-            return [...prev, pageNumber];
-        });
-    };
-
-    const handleEnableExamMode = () => {
-        setExamMode(true);
-    };
-
-    const handleDisableExamMode = () => {
-        setExamMode(false);
-        setSelectedPages([]);
-    };
 
     const {
         selectedText,
@@ -259,13 +242,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
             <Header
                 fileName={document.fileName}
                 documentId={document.id}
-                numPages={numPages || 0}
-                document={document}
-                examMode={examMode}
-                selectedPages={selectedPages}
-                pdfDoc={pdfDoc}
-                onEnableExamMode={handleEnableExamMode}
-                onDisableExamMode={handleDisableExamMode}
+                examMode={exam.enabled}
+                onToggleExamMode={exam.toggle}
                 languageModeEnabled={languageMode.enabled}
                 wordLanguage={lang.documentLanguage}
                 explanationLanguage={lang.target}
@@ -287,9 +265,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             onChatToggle={handleChatToggle}
                             onZoomIn={zoomIn}
                             onZoomOut={zoomOut}
-                            examMode={examMode}
-                            selectedPages={selectedPages}
-                            onPageSelect={handleTogglePage}
+                            examMode={exam.enabled}
                             regionMode={regionMode}
                             onRegionModeToggle={handleToggleRegionMode}
                         />
@@ -306,7 +282,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             viewportRef={setReaderViewport}
                             selectionTip={
                                 <div>
-                                    {selectedText && !examMode && (
+                                    {selectedText && !exam.enabled && (
                                         <div key={selectedText} className="flex flex-col items-center gap-1.5">
                                             <QuickTranslateBubble
                                                 translation={quickTranslate.translation}
@@ -323,14 +299,29 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                     )}
                                 </div>
                             }
-                            examMode={examMode}
-                            selectedPages={selectedPages}
-                            onPageSelect={handleTogglePage}
+                            examMode={exam.enabled}
+                            selectedPages={exam.selectedPages}
+                            onPageSelect={exam.togglePage}
                             onPdfLoad={setPdfDoc}
                         />
                     </Panel>
 
-                    {isChatOpen && (
+                    {exam.enabled ? (
+                        <>
+                            <ResizeHandle />
+                            <Panel defaultSize="28" minSize="22" maxSize="40">
+                                <div className="h-full animate-in fade-in slide-in-from-right-4 duration-200 ease-[var(--ease-out)]">
+                                    <ExamSetupPanel
+                                        documentId={document.id}
+                                        documentName={document.fileName}
+                                        selectedPages={exam.selectedPages}
+                                        pdfDoc={pdfDoc}
+                                        onClose={exam.exit}
+                                    />
+                                </div>
+                            </Panel>
+                        </>
+                    ) : isChatOpen && (
                         <>
                             <ResizeHandle />
                             <Panel defaultSize="30" minSize="22" maxSize="45">

@@ -2,10 +2,14 @@
   "modeButton": "Exam mode",
   "myExams": "My exams",
   "defaultTitle": "Exam - {count, plural, one {# page} other {# pages}}",
-  "generating": "Generating questions with AI...",
+  "generating": "Generating questions...",
   "pagesSelected": "{count, plural, one {# page selected} other {# pages selected}}",
   "startExam": "Start exam",
-  "selectionHint": "Click on the pages you want to include in your exam",
+  "selectionHint": "Click the pages of the document you want to include.",
+  "loading": "Loading...",
+  "backToDocument": "Back to document",
+  "allExams": "All exams",
+  "retake": "Retake exam",
   "difficulty": {
     "easy": "Easy",
     "medium": "Medium",
@@ -20,83 +24,59 @@
   },
   "questionCount": "{count, plural, one {# question} other {# questions}}",
   "setup": {
-    "title": "Exam setup",
-    "modeLabel": "Exam mode",
+    "title": "New exam",
+    "close": "Exit exam mode",
     "questionTypeLabel": "Question type",
     "questionCountLabel": "Number of questions",
     "questionCountCap": "Up to {max} questions on your plan.",
     "difficultyLabel": "Difficulty",
-    "modes": {
-      "quick_review": {
-        "title": "Quick review",
-        "description": "A few questions to check what you've understood"
-      },
-      "exam_simulation": {
-        "title": "Exam simulation",
-        "description": "Realistic test conditions with time pressure"
-      },
-      "custom": {
-        "title": "Custom",
-        "description": "Configure your own exam settings"
-      }
-    },
     "cost": "Uses {cost, plural, one {# AI credit} other {# AI credits}}",
     "creditsLeft": "{count} left"
   },
-  "pageSelector": {
-    "title": "Select pages for the exam",
-    "description": "Click on pages to select them. Selected: {count}",
-    "continue": "Continue ({count, plural, one {# page} other {# pages}})"
-  },
   "session": {
     "keyboardHint": "to continue",
+    "modifierEnter": "Ctrl Enter",
     "correct": "Correct",
+    "partial": "Partially correct",
     "incorrect": "Incorrect",
-    "processing": "Processing...",
+    "grade": "{score}/10",
+    "referenceAnswer": "Reference answer",
     "seeResults": "See results",
     "next": "Next",
     "evaluate": "Check",
-    "correctAnswer": "Correct answer",
     "true": "True",
     "false": "False",
     "fillBlankPlaceholder": "Type your answer...",
-    "openPlaceholder": "Write out your answer...",
-    "characterCount": "{count, plural, one {# character} other {# characters}}"
-  },
-  "mascot": {
-    "idle": "Come on, you've got this!",
-    "submitting": "Analyzing your answer...",
-    "positive1": "Impressive!",
-    "positive2": "Spot on, nice one!",
-    "positive3": "You're on fire!",
-    "learning1": "Almost! Check the explanation.",
-    "learning2": "Mistakes are how we learn.",
-    "learning3": "You'll nail the next one."
+    "openPlaceholder": "Write your answer...",
+    "characterCount": "{count, plural, one {# character} other {# characters}}",
+    "leave": "Leave (your progress is saved)",
+    "progress": "{answered} of {total} answered",
+    "finishNow": "Finish now"
   },
   "results": {
-    "finished": "Exam complete",
-    "questions": "{count, plural, one {question} other {questions}}",
-    "pages": "{count, plural, one {page} other {pages}}",
-    "breakdown": "Breakdown",
+    "finished": "Exam finished",
+    "verdict": {
+      "success": "Strong grasp",
+      "warning": "Passed, with room to improve",
+      "danger": "Worth reviewing"
+    },
+    "correctCount": "{correct} of {total} correct",
+    "pages": "{count, plural, one {# page} other {# pages}}",
+    "review": "Review",
     "questionNumber": "Question {number}",
-    "retry": "Try again"
-  },
-  "savedExams": {
-    "description": "View history or retake a previously saved exam",
-    "historyDescription": "Exam history and stats",
-    "loading": "Loading...",
-    "empty": "No saved exams yet. Create one first.",
-    "iconAlt": "Crayon"
+    "unanswered": "Unanswered",
+    "unansweredHint": "You finished the exam before answering this question.",
+    "yourAnswer": "Your answer"
   },
   "history": {
-    "back": "Back",
-    "createdAt": "Created {date}",
-    "empty": "You haven't finished this exam yet.",
-    "attempts": "{count, plural, one {attempt} other {attempts}}",
-    "best": "best",
-    "lowest": "lowest",
-    "last": "last",
-    "title": "History",
-    "retake": "Retake exam"
+    "attempts": "Attempts",
+    "inProgress": "In progress",
+    "score": "{score}/10",
+    "continue": "Continue",
+    "review": "Review",
+    "best": "Best score: {score}/10",
+    "emptyTitle": "No exams for this document yet",
+    "emptyHint": "Turn on exam mode in the reader, pick the pages and generate your first exam.",
+    "emptyAction": "Go to the document"
   }
 }

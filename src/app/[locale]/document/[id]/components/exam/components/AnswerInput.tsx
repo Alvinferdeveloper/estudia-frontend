@@ -1,16 +1,15 @@
 import React from "react";
 import { Check, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Question, Answer, QuestionType, QUESTION_TYPES } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { type Question, QUESTION_TYPES } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 interface AnswerInputProps {
-  currentQuestion: Question;
-  currentAnswer: string;
-  currentQuestionType: QuestionType;
+  question: Question;
+  value: string;
   isSubmitting: boolean;
-  onAnswerChange: (answer: string) => void;
+  onChange: (answer: string) => void;
 }
 
 const MultipleChoiceInput: React.FC<{
@@ -19,7 +18,7 @@ const MultipleChoiceInput: React.FC<{
   isSubmitting: boolean;
   onAnswerChange: (answer: string) => void;
 }> = ({ options, currentAnswer, isSubmitting, onAnswerChange }) => (
-  <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
     {options.map((option, idx) => {
       const optionLetter = String.fromCharCode(65 + idx);
       const isSelected = currentAnswer === optionLetter;
@@ -70,7 +69,7 @@ const TrueFalseInput: React.FC<{
 }> = ({ currentAnswer, isSubmitting, onAnswerChange }) => {
   const t = useTranslations("exam.session");
   return (
-    <div className="mt-6 grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3">
       {(['true', 'false'] as const).map((val, idx) => {
         const isSelected = currentAnswer === val;
         return (
@@ -116,7 +115,7 @@ const FillBlankInput: React.FC<{
 }> = ({ currentAnswer, isSubmitting, onAnswerChange }) => {
   const t = useTranslations("exam.session");
   return (
-    <div className="mt-8 animate-in fade-in duration-200">
+    <div className="pt-2 animate-in fade-in duration-200">
       <input
         type="text"
         value={currentAnswer}
@@ -137,7 +136,7 @@ const OpenAnswerInput: React.FC<{
 }> = ({ currentAnswer, isSubmitting, onAnswerChange }) => {
   const t = useTranslations("exam.session");
   return (
-    <div className="mt-6 animate-in fade-in duration-200">
+    <div className="animate-in fade-in duration-200">
       <Textarea
         placeholder={t("openPlaceholder")}
         value={currentAnswer}
@@ -154,46 +153,16 @@ const OpenAnswerInput: React.FC<{
   );
 };
 
-export const AnswerInput: React.FC<AnswerInputProps> = ({
-  currentQuestion,
-  currentAnswer,
-  currentQuestionType,
-  isSubmitting,
-  onAnswerChange,
-}) => {
-  switch (currentQuestionType) {
+export const AnswerInput: React.FC<AnswerInputProps> = ({ question, value, isSubmitting, onChange }) => {
+  const props = { currentAnswer: value, isSubmitting, onAnswerChange: onChange };
+  switch (question.type) {
     case QUESTION_TYPES.MULTIPLE_CHOICE:
-      return (
-        <MultipleChoiceInput
-          options={currentQuestion.options ?? []}
-          currentAnswer={currentAnswer}
-          isSubmitting={isSubmitting}
-          onAnswerChange={onAnswerChange}
-        />
-      );
+      return <MultipleChoiceInput options={question.options ?? []} {...props} />;
     case QUESTION_TYPES.TRUE_FALSE:
-      return (
-        <TrueFalseInput
-          currentAnswer={currentAnswer}
-          isSubmitting={isSubmitting}
-          onAnswerChange={onAnswerChange}
-        />
-      );
+      return <TrueFalseInput {...props} />;
     case QUESTION_TYPES.FILL_BLANK:
-      return (
-        <FillBlankInput
-          currentAnswer={currentAnswer}
-          isSubmitting={isSubmitting}
-          onAnswerChange={onAnswerChange}
-        />
-      );
+      return <FillBlankInput {...props} />;
     default:
-      return (
-        <OpenAnswerInput
-          currentAnswer={currentAnswer}
-          isSubmitting={isSubmitting}
-          onAnswerChange={onAnswerChange}
-        />
-      );
+      return <OpenAnswerInput {...props} />;
   }
 };

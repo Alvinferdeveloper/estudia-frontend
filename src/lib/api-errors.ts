@@ -23,6 +23,7 @@ const ERROR_CODE_KEYS: Record<string, ApiErrorKey> = {
   TOPIC_NOT_FOUND: "topicNotFound",
   CONVERSATION_NOT_FOUND: "conversationNotFound",
   EXAM_NOT_FOUND: "examNotFound",
+  EXAM_ATTEMPT_FINISHED: "examAttemptFinished",
   AI_PROVIDER_ERROR: "aiUnavailable",
   TRANSLATION_FAILED: "translationFailed",
   INSUFFICIENT_CREDITS: "insufficientCredits",

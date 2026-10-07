@@ -7,6 +7,9 @@ export const ROUTES = {
   workspace: "/workspace",
   subscription: "/subscription",
   document: (id: string) => `${DOCUMENT_BASE}/${id}`,
+  documentExams: (id: string) => `${DOCUMENT_BASE}/${id}/exams`,
+  examAttempt: (documentId: string, examId: string, attemptId: string) =>
+    `${DOCUMENT_BASE}/${documentId}/exams/${examId}/attempts/${attemptId}`,
 } as const;
 
 // Route groups the middleware guards.

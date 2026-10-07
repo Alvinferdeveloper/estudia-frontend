@@ -1,43 +1,52 @@
-import React from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { ROUTES } from "@/config/routes";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 
 interface ExamHeaderProps {
-  currentIndex: number;
-  totalQuestions: number;
+  documentId: string;
+  answeredCount: number;
+  total: number;
   onFinish: () => void;
+  isFinishing: boolean;
 }
 
-export const ExamHeader: React.FC<ExamHeaderProps> = ({
-  currentIndex,
-  totalQuestions,
-  onFinish,
-}) => {
-  const progress = (currentIndex / totalQuestions) * 100;
+// Leaving keeps the attempt in progress: every answer is already saved.
+export const ExamHeader: React.FC<ExamHeaderProps> = ({ documentId, answeredCount, total, onFinish, isFinishing }) => {
+  const t = useTranslations("exam.session");
 
   return (
-    <header className="sticky top-0 z-10 bg-background/90 backdrop-blur-md border-b border-border/40">
-      <div className="w-full max-w-2xl mx-auto px-4 h-16 flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="press-feedback h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full shrink-0"
-          onClick={onFinish}
+    <header className="sticky top-0 z-10 border-b border-border bg-background">
+      <div className="mx-auto flex h-14 w-full max-w-2xl items-center gap-4 px-4">
+        <Link
+          href={ROUTES.document(documentId)}
+          title={t("leave")}
+          aria-label={t("leave")}
+          className="press-feedback flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
         >
-          <X size={15} />
-        </Button>
+          <X className="h-4 w-4" />
+        </Link>
 
-        <div className="flex-1 flex items-center">
-          <Progress
-            value={progress}
-            className="h-4 rounded-full bg-muted/60 border-0"
-          />
-        </div>
+        <Progress
+          value={(answeredCount / total) * 100}
+          aria-label={t("progress", { answered: answeredCount, total })}
+          className="h-1.5 flex-1 rounded-full bg-secondary"
+        />
 
-        <span className="text-xs font-semibold text-muted-foreground tabular-nums w-11 text-right">
-          {currentIndex + 1}<span className="text-muted-foreground/40"> / {totalQuestions}</span>
+        <span className="font-mono text-xs font-semibold tabular-nums text-muted-foreground">
+          {answeredCount}/{total}
         </span>
+
+        {answeredCount > 0 && answeredCount < total && (
+          <button
+            onClick={onFinish}
+            disabled={isFinishing}
+            className="press-feedback rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:opacity-50"
+          >
+            {t("finishNow")}
+          </button>
+        )}
       </div>
     </header>
   );
