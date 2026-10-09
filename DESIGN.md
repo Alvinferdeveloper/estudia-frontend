@@ -119,7 +119,7 @@ This is a product surface: familiar patterns where they help students move fast,
 A restrained palette: warm paper neutrals, one ink accent, and semantic colors reserved for meaning.
 
 ### Primary
-- **Zocratis Ink** (oklch(0.36 0.05 254)): the logo's own blue-black ink. Primary actions, current selection, focus rings, links. In dark mode it inverts to **Ivory Light** (oklch(0.925 0.008 85)) so the brand keeps its contrast.
+- **Zocratis Ink** (oklch(0.36 0.05 254)): the logo's own blue-black ink. Primary actions, current selection, focus rings, links. In dark mode it inverts to **Ivory Light** (oklch(0.925 0.008 85)) so the brand keeps its contrast. Marks drawn on PDF pages (exam selection) use the theme-independent `--ink` token instead, because pages stay white in both themes.
 
 ### Secondary
 - **Ochre** (oklch(0.74 0.15 85)): the warm highlighter. Marketing accents and rare moments of emphasis (a highlighted passage, a streak). Never for buttons or errors.
