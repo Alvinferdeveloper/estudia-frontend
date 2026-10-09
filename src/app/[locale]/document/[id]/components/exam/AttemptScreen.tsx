@@ -5,18 +5,19 @@ import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
 import { getApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
-import { ATTEMPT_STATUS, type AttemptRef, useAttempt } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
-import { AttemptRunner } from "@/app/[locale]/document/[id]/components/exam/AttemptRunner";
+import { ATTEMPT_MODES, ATTEMPT_STATUS, type AttemptRef, useAttempt } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { PracticeRunner } from "@/app/[locale]/document/[id]/components/exam/PracticeRunner";
+import { SimulationRunner } from "@/app/[locale]/document/[id]/components/exam/SimulationRunner";
 import { AttemptResults } from "@/app/[locale]/document/[id]/components/exam/AttemptResults";
 
 interface AttemptScreenProps extends AttemptRef {
   documentId: string;
 }
 
-// An attempt by URL: taken while in progress, reviewed once finished.
+// An attempt by URL: taken in its mode while in progress, reviewed once finished.
 export const AttemptScreen = ({ documentId, examId, attemptId }: AttemptScreenProps) => {
   const t = useTranslations("exam");
-  const { data: view, error } = useAttempt({ examId, attemptId });
+  const { data: view, error, dataUpdatedAt } = useAttempt({ examId, attemptId });
 
   if (error) {
     return (
@@ -37,9 +38,11 @@ export const AttemptScreen = ({ documentId, examId, attemptId }: AttemptScreenPr
     );
   }
 
-  return view.attempt.status === ATTEMPT_STATUS.COMPLETED ? (
-    <AttemptResults view={view} />
+  if (view.attempt.status === ATTEMPT_STATUS.COMPLETED) return <AttemptResults view={view} />;
+
+  return view.attempt.mode === ATTEMPT_MODES.SIMULATION ? (
+    <SimulationRunner attemptRef={{ examId, attemptId }} view={view} receivedAt={dataUpdatedAt} />
   ) : (
-    <AttemptRunner attemptRef={{ examId, attemptId }} view={view} />
+    <PracticeRunner attemptRef={{ examId, attemptId }} view={view} />
   );
 };

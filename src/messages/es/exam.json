@@ -10,6 +10,16 @@
   "backToDocument": "Volver al documento",
   "allExams": "Todos los exámenes",
   "retake": "Repetir examen",
+  "modes": {
+    "practice": {
+      "title": "Práctica",
+      "description": "Corrección y feedback después de cada respuesta."
+    },
+    "simulation": {
+      "title": "Simulacro",
+      "description": "Con tiempo límite y sin ayudas: la nota llega al entregar."
+    }
+  },
   "difficulty": {
     "easy": "Fácil",
     "medium": "Media",
@@ -31,7 +41,9 @@
     "questionCountCap": "Hasta {max} preguntas en tu plan.",
     "difficultyLabel": "Dificultad",
     "cost": "Usa {cost, plural, one {# crédito} other {# créditos}} de IA",
-    "creditsLeft": "{count, plural, one {te queda #} other {te quedan #}}"
+    "creditsLeft": "{count, plural, one {te queda #} other {te quedan #}}",
+    "modeLabel": "Modo",
+    "timeLimit": "Tendrás {time}."
   },
   "session": {
     "keyboardHint": "para continuar",
@@ -54,7 +66,7 @@
     "finishNow": "Terminar ahora"
   },
   "results": {
-    "finished": "Examen terminado",
+    "finished": "{mode, select, simulation {Simulacro terminado} other {Práctica terminada}}",
     "verdict": {
       "success": "Buen dominio",
       "warning": "Aprobado, con margen de mejora",
@@ -66,7 +78,8 @@
     "questionNumber": "Pregunta {number}",
     "unanswered": "Sin responder",
     "unansweredHint": "Terminaste el examen antes de responder esta pregunta.",
-    "yourAnswer": "Tu respuesta"
+    "yourAnswer": "Tu respuesta",
+    "timeUsed": "{used} de {limit}"
   },
   "history": {
     "attempts": "Intentos",
@@ -78,5 +91,21 @@
     "emptyTitle": "Aún no hay exámenes de este documento",
     "emptyHint": "Activa el modo examen en el lector, elige las páginas y genera tu primer examen.",
     "emptyAction": "Ir al documento"
+  },
+  "simulation": {
+    "leave": "Salir (el tiempo sigue corriendo)",
+    "handIn": "Entregar",
+    "previous": "Anterior",
+    "keepGoing": "Seguir respondiendo",
+    "confirmUnanswered": "{count, plural, one {Queda # pregunta sin responder.} other {Quedan # preguntas sin responder.}} ¿Entregar igual?",
+    "confirmAll": "Después de entregar ya no podrás cambiar tus respuestas.",
+    "grading": "Corrigiendo respuestas...",
+    "timeUp": "Se acabó el tiempo.",
+    "warning": "Quedan {minutes} minutos.",
+    "urgent": "Queda menos de un minuto.",
+    "timeLeft": "Tiempo restante: {time}",
+    "navigator": "Preguntas",
+    "questionAnswered": "Pregunta {number}, respondida",
+    "questionPending": "Pregunta {number}, sin responder"
   }
 }

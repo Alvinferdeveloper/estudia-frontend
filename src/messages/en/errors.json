@@ -25,6 +25,7 @@
   "capExceeded": "Your plan doesn't allow exams this long. Choose fewer questions.",
   "examNotFound": "We couldn't find this exam.",
   "examAttemptFinished": "This attempt is already finished, so it takes no more answers.",
+  "examTimeUp": "Time is up for this simulation.",
   "evaluationLimitReached": "You've evaluated this question too many times. Generate a new exam to keep practicing.",
   "featureNotAvailable": "Your plan doesn't include this feature.",
   "subscriptionInactive": "Your subscription isn't active.",

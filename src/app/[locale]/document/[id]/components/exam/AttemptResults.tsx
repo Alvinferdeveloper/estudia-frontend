@@ -1,13 +1,14 @@
-import { ArrowLeft, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
-import { Button } from "@/components/ui/button";
-import { type AttemptView, isDifficultyLevel } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { ATTEMPT_MODES, type AttemptView, isDifficultyLevel, isGraded } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { useRetakeExam } from "@/app/[locale]/document/[id]/components/exam/hooks/useRetakeExam";
 import { attemptTone, toTenScale } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
 import { AnswerReview } from "@/app/[locale]/document/[id]/components/exam/components/AnswerReview";
+import { RetakeMenu } from "@/app/[locale]/document/[id]/components/exam/components/RetakeMenu";
+import { attemptDuration, formatDuration } from "@/app/[locale]/document/[id]/components/exam/lib/exam-timing";
 
 // A finished attempt: the score as the moment of ceremony, then a question-by-question review.
 export const AttemptResults = ({ view }: { view: AttemptView }) => {
@@ -17,6 +18,7 @@ export const AttemptResults = ({ view }: { view: AttemptView }) => {
   const { retake, pendingExamId } = useRetakeExam(exam.documentId);
   const score = attempt.score ?? 0;
   const tone = attemptTone(score);
+  const duration = attempt.mode === ATTEMPT_MODES.SIMULATION ? attemptDuration(attempt) : null;
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -38,7 +40,9 @@ export const AttemptResults = ({ view }: { view: AttemptView }) => {
         </nav>
 
         <header className="mt-12 border-b border-border pb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">{t("results.finished")}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+            {t("results.finished", { mode: attempt.mode })}
+          </p>
           <h1 className="mt-2 text-balance text-xl font-semibold tracking-tight">{exam.title}</h1>
 
           <p className="mt-8 flex items-baseline gap-2">
@@ -54,6 +58,14 @@ export const AttemptResults = ({ view }: { view: AttemptView }) => {
               {t(`results.verdict.${tone}`)}
             </span>
             <span>{t("results.correctCount", { correct: attempt.correctAnswers, total: attempt.totalQuestions })}</span>
+            {duration !== null && attempt.timeLimitSeconds !== null && (
+              <>
+                <span aria-hidden>·</span>
+                <span className="tabular-nums">
+                  {t("results.timeUsed", { used: formatDuration(duration), limit: formatDuration(attempt.timeLimitSeconds) })}
+                </span>
+              </>
+            )}
             <span aria-hidden>·</span>
             <span>{t("results.pages", { count: exam.pages.length })}</span>
             {isDifficultyLevel(exam.difficulty) && (
@@ -75,21 +87,14 @@ export const AttemptResults = ({ view }: { view: AttemptView }) => {
                 key={question.id}
                 number={index + 1}
                 question={question}
-                answer={answers.find((a) => a.questionId === question.id) ?? null}
+                answer={answers.filter(isGraded).find((a) => a.questionId === question.id) ?? null}
               />
             ))}
           </ol>
         </section>
 
         <div className="mt-10 flex justify-end">
-          <Button
-            className="press-feedback h-9 rounded-full px-5"
-            disabled={pendingExamId !== null}
-            onClick={() => retake(exam.id)}
-          >
-            {pendingExamId ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-            {t("retake")}
-          </Button>
+          <RetakeMenu appearance="primary" onRetake={(mode) => retake(exam.id, mode)} isPending={pendingExamId !== null} />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ChevronRight, Loader2, RotateCcw } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
@@ -6,14 +6,16 @@ import {
   ATTEMPT_STATUS,
   type AttemptSummary,
   type ExamWithAttempts,
+  type AttemptMode,
   isDifficultyLevel,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { attemptTone, bestScore, toTenScale } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
+import { RetakeMenu } from "@/app/[locale]/document/[id]/components/exam/components/RetakeMenu";
 
 interface ExamHistoryItemProps {
   exam: ExamWithAttempts;
-  onRetake: () => void;
+  onRetake: (mode: AttemptMode) => void;
   isRetaking: boolean;
   retakeDisabled: boolean;
 }
@@ -36,6 +38,7 @@ const AttemptRow = ({ exam, attempt }: { exam: ExamWithAttempts; attempt: Attemp
         )}
         <span className="flex-1 text-muted-foreground">
           {format.dateTime(new Date(attempt.startedAt), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+          <span className="ml-2 text-xs">{t(`modes.${attempt.mode}.title`)}</span>
         </span>
         <span className="font-mono font-semibold tabular-nums text-foreground">
           {inProgress || attempt.score === null
@@ -84,14 +87,7 @@ export const ExamHistoryItem: React.FC<ExamHistoryItemProps> = ({ exam, onRetake
             </p>
           )}
         </div>
-        <button
-          onClick={onRetake}
-          disabled={retakeDisabled}
-          className="press-feedback flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
-        >
-          {isRetaking ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-          {t("retake")}
-        </button>
+        <RetakeMenu appearance="quiet" onRetake={onRetake} isPending={isRetaking} disabled={retakeDisabled} />
       </div>
 
       {exam.attempts.length > 0 && (

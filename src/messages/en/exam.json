@@ -10,6 +10,16 @@
   "backToDocument": "Back to document",
   "allExams": "All exams",
   "retake": "Retake exam",
+  "modes": {
+    "practice": {
+      "title": "Practice",
+      "description": "Graded with feedback after every answer."
+    },
+    "simulation": {
+      "title": "Simulation",
+      "description": "Timed and without help: your grade comes when you hand it in."
+    }
+  },
   "difficulty": {
     "easy": "Easy",
     "medium": "Medium",
@@ -31,7 +41,9 @@
     "questionCountCap": "Up to {max} questions on your plan.",
     "difficultyLabel": "Difficulty",
     "cost": "Uses {cost, plural, one {# AI credit} other {# AI credits}}",
-    "creditsLeft": "{count} left"
+    "creditsLeft": "{count} left",
+    "modeLabel": "Mode",
+    "timeLimit": "You will have {time}."
   },
   "session": {
     "keyboardHint": "to continue",
@@ -54,7 +66,7 @@
     "finishNow": "Finish now"
   },
   "results": {
-    "finished": "Exam finished",
+    "finished": "{mode, select, simulation {Simulation finished} other {Practice finished}}",
     "verdict": {
       "success": "Strong grasp",
       "warning": "Passed, with room to improve",
@@ -66,7 +78,8 @@
     "questionNumber": "Question {number}",
     "unanswered": "Unanswered",
     "unansweredHint": "You finished the exam before answering this question.",
-    "yourAnswer": "Your answer"
+    "yourAnswer": "Your answer",
+    "timeUsed": "{used} of {limit}"
   },
   "history": {
     "attempts": "Attempts",
@@ -78,5 +91,21 @@
     "emptyTitle": "No exams for this document yet",
     "emptyHint": "Turn on exam mode in the reader, pick the pages and generate your first exam.",
     "emptyAction": "Go to the document"
+  },
+  "simulation": {
+    "leave": "Leave (the clock keeps running)",
+    "handIn": "Hand in",
+    "previous": "Previous",
+    "keepGoing": "Keep answering",
+    "confirmUnanswered": "{count, plural, one {# question is unanswered.} other {# questions are unanswered.}} Hand in anyway?",
+    "confirmAll": "Once handed in, you can no longer change your answers.",
+    "grading": "Grading answers...",
+    "timeUp": "Time is up.",
+    "warning": "{minutes} minutes left.",
+    "urgent": "Less than a minute left.",
+    "timeLeft": "Time left: {time}",
+    "navigator": "Questions",
+    "questionAnswered": "Question {number}, answered",
+    "questionPending": "Question {number}, unanswered"
   }
 }

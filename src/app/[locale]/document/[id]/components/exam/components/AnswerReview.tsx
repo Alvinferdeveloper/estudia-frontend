@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { Answer, Question } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { type GradedAnswer, type Question } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { answerTone } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { answerText } from "@/app/[locale]/document/[id]/components/exam/lib/answer-text";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 interface AnswerReviewProps {
   number: number;
   question: Question;
-  answer: Answer | null;
+  // Null when the question was left unanswered.
+  answer: GradedAnswer | null;
 }
 
 // One row of a finished attempt; expands to the given answer and its grade.

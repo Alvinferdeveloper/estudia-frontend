@@ -64,7 +64,7 @@ export const ExamHistory = ({ documentId, documentName }: ExamHistoryProps) => {
               <ExamHistoryItem
                 key={exam.id}
                 exam={exam}
-                onRetake={() => retake(exam.id)}
+                onRetake={(mode) => retake(exam.id, mode)}
                 isRetaking={pendingExamId === exam.id}
                 retakeDisabled={pendingExamId !== null}
               />

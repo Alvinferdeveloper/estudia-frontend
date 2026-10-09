@@ -3,24 +3,22 @@ import { getApiErrorKey } from "@/lib/api-errors";
 import {
   type AttemptRef,
   type AttemptView,
+  isGraded,
   useAnswerQuestion,
   useFinishAttempt,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { resumeIndex } from "@/app/[locale]/document/[id]/components/exam/lib/attempt-progress";
 
-// Taking an in-progress attempt. Answers live on the server, so a reload resumes at the first unanswered question.
-export const useAttemptSession = (ref: AttemptRef, view: AttemptView) => {
+// Taking a practice attempt: each answer is graded as it is given. Answers live on the server, so a reload resumes.
+export const usePracticeSession = (ref: AttemptRef, view: AttemptView) => {
   const { questions, answers } = view;
-  const [currentIndex, setCurrentIndex] = useState(() => {
-    const answered = new Set(answers.map((a) => a.questionId));
-    const next = questions.findIndex((q) => !answered.has(q.id));
-    return next === -1 ? questions.length - 1 : next;
-  });
+  const [currentIndex, setCurrentIndex] = useState(() => resumeIndex(view));
   const [draft, setDraft] = useState("");
   const answerQuestion = useAnswerQuestion(ref);
   const finishAttempt = useFinishAttempt(ref);
 
   const question = questions[currentIndex];
-  const answer = answers.find((a) => a.questionId === question.id) ?? null;
+  const answer = answers.filter(isGraded).find((a) => a.questionId === question.id) ?? null;
   const isLast = currentIndex === questions.length - 1;
 
   const submit = useCallback(() => {
@@ -55,5 +53,3 @@ export const useAttemptSession = (ref: AttemptRef, view: AttemptView) => {
     errorKey: answerQuestion.error ? getApiErrorKey(answerQuestion.error) : null,
   };
 };
-
-export type AttemptSession = ReturnType<typeof useAttemptSession>;

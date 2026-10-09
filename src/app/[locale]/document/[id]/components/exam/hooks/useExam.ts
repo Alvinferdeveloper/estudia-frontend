@@ -60,6 +60,9 @@ export interface AttemptSummary {
   score: number | null;
   correctAnswers: number;
   totalQuestions: number;
+  // Simulations only.
+  timeLimitSeconds: number | null;
+  deadline: string | null;
 }
 
 export interface ExamWithAttempts extends Exam {
@@ -77,17 +80,23 @@ export interface Question {
 export interface Answer {
   questionId: string;
   userAnswer: string;
-  // 0-10.
-  score: number;
+  // 0-10; null while a simulation is in progress (grades come at the end).
+  score: number | null;
   feedback: string | null;
   idealAnswer: string | null;
 }
+
+export type GradedAnswer = Answer & { score: number };
+
+export const isGraded = (answer: Answer): answer is GradedAnswer => answer.score !== null;
 
 export interface AttemptView {
   attempt: AttemptSummary;
   exam: Exam;
   questions: Question[];
   answers: Answer[];
+  // The server's clock when the view was built, for the simulation countdown.
+  serverNow: string;
 }
 
 export interface GenerateExamRequest {
@@ -95,6 +104,7 @@ export interface GenerateExamRequest {
   pages: number[];
   // Text of the selected pages, extracted from the PDF in the browser.
   content: string;
+  mode: AttemptMode;
   difficulty: DifficultyLevel;
   questionType: QuestionType;
   questionCount: number;

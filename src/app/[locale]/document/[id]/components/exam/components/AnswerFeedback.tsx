@@ -1,12 +1,12 @@
 import { useTranslations } from "next-intl";
-import type { Answer, Question } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import type { GradedAnswer, Question } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { VERDICT_KEY, answerTone } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { answerText } from "@/app/[locale]/document/[id]/components/exam/lib/answer-text";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
 
 interface AnswerFeedbackProps {
   question: Question;
-  answer: Answer;
+  answer: GradedAnswer;
 }
 
 // The grade of an answered question: verdict, the model's feedback and, unless it was right, the reference answer.

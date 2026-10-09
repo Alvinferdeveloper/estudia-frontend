@@ -9,12 +9,15 @@ import { useUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
 import { UNLIMITED, examCreditCost } from "@/app/[locale]/subscription/lib/entitlements";
 import { remainingCredits } from "@/app/[locale]/subscription/lib/usage";
 import {
+  ATTEMPT_MODES,
   DIFFICULTY_LEVELS,
   EXAM_SIZES,
   QUESTION_TYPES,
+  type AttemptMode,
   type DifficultyLevel,
   type QuestionType,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { formatDuration, simulationTimeLimit } from "@/app/[locale]/document/[id]/components/exam/lib/exam-timing";
 import { useExamSetup } from "@/app/[locale]/document/[id]/components/exam/hooks/useExamSetup";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { cn } from "@/lib/utils";
@@ -40,6 +43,7 @@ interface ExamSetupPanelProps {
 // Side panel of the reader's exam mode: pages are picked on the document itself, the rest here.
 export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, documentName, selectedPages, pdfDoc, onClose }) => {
   const t = useTranslations("exam");
+  const [mode, setMode] = useState<AttemptMode>(ATTEMPT_MODES.PRACTICE);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS.MEDIUM);
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
   const [questionCount, setQuestionCount] = useState<number>(EXAM_SIZES[0]);
@@ -59,6 +63,7 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
 
   const handleGenerate = () =>
     generate({
+      mode,
       difficulty,
       questionType,
       questionCount: selectedSize,
@@ -94,6 +99,21 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
               {t("selectionHint")}
             </p>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <p id="exam-mode-label" className="text-sm font-medium">{t("setup.modeLabel")}</p>
+          <SegmentedControl
+            aria-labelledby="exam-mode-label"
+            value={mode}
+            onChange={setMode}
+            options={Object.values(ATTEMPT_MODES).map((value) => ({ value, label: t(`modes.${value}.title`) }))}
+          />
+          <p aria-live="polite" className="text-xs leading-relaxed text-muted-foreground">
+            {t(`modes.${mode}.description`)}
+            {mode === ATTEMPT_MODES.SIMULATION &&
+              ` ${t("setup.timeLimit", { time: formatDuration(simulationTimeLimit(questionType, selectedSize)) })}`}
+          </p>
         </div>
 
         <div className="space-y-2">
