@@ -1,12 +1,18 @@
 "use client";
 
-import { useRef, useMemo, useCallback, useEffect } from "react";
+import { useRef, useMemo, useCallback, useEffect, useImperativeHandle } from "react";
 import { PdfLoader, PdfHighlighter, TextHighlight, useHighlightContainerContext, ViewportHighlight } from "react-pdf-highlighter-extended";
 import "react-pdf-highlighter-extended/dist/esm/style/PdfHighlighter.css";
 import "react-pdf-highlighter-extended/dist/esm/style/pdf_viewer.css";
 import { AnnotationRect, BoundingRect } from "@/app/types";
 import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 import { PdfSkeleton } from "./PdfSkeleton";
+import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
+
+// Lets the reader move the viewer from outside it (the page thumbnails).
+export interface PdfNavigation {
+    goToPage: (pageNumber: number) => void;
+}
 
 interface RegionSelection {
     imageBase64: string;
@@ -35,7 +41,8 @@ interface PdfViewerProps {
     examMode?: boolean;
     selectedPages?: number[];
     onPageSelect?: (page: number) => void;
-    onPdfLoad?: (pdfDoc: any) => void;
+    onPdfLoad?: (pdfDoc: PdfDocument) => void;
+    navigationRef?: React.Ref<PdfNavigation>;
     regionMode?: boolean;
     onRegionSelection?: (region: RegionSelection) => void;
     viewportRef?: React.Ref<HTMLDivElement>;
@@ -93,6 +100,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     selectedPages = [],
     onPageSelect,
     onPdfLoad,
+    navigationRef,
     regionMode = false,
     onRegionSelection,
     viewportRef,
@@ -111,6 +119,10 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     useEffect(() => {
         onPageChangeRef.current = onPageChange;
     }, [onPageChange]);
+
+    useImperativeHandle(navigationRef, () => ({
+        goToPage: (pageNumber) => utilsRef.current?.getViewer()?.scrollPageIntoView({ pageNumber }),
+    }), []);
 
     useEffect(() => {
         if (utilsRef.current) {

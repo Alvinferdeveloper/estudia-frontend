@@ -16,6 +16,7 @@ import {
   type QuestionType,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { useExamSetup } from "@/app/[locale]/document/[id]/components/exam/hooks/useExamSetup";
+import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { cn } from "@/lib/utils";
 
 const DIFFICULTIES = [DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD];
@@ -32,7 +33,7 @@ interface ExamSetupPanelProps {
   documentId: string;
   documentName: string;
   selectedPages: number[];
-  pdfDoc: Parameters<typeof useExamSetup>[0]["pdfDoc"];
+  pdfDoc: PdfDocument | null;
   onClose: () => void;
 }
 

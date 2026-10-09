@@ -1,5 +1,6 @@
 
-import { ZoomIn, ZoomOut, ScanSearch } from "lucide-react";
+import { ZoomIn, ZoomOut, ScanSearch, PanelLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 
@@ -12,6 +13,8 @@ interface PdfControlsProps {
     onChatToggle: () => void;
     onZoomIn: () => void;
     onZoomOut: () => void;
+    isThumbnailsOpen: boolean;
+    onThumbnailsToggle: () => void;
     examMode?: boolean;
     regionMode?: boolean;
     onRegionModeToggle?: () => void;
@@ -26,6 +29,8 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
     onChatToggle,
     onZoomIn,
     onZoomOut,
+    isThumbnailsOpen,
+    onThumbnailsToggle,
     examMode = false,
     regionMode = false,
     onRegionModeToggle,
@@ -37,6 +42,21 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
             {/* Floating toolbar: page indicator + zoom */}
             <div className="pointer-events-none absolute inset-x-0 top-4 z-20 flex justify-center">
                 <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-md">
+                    <button
+                        onClick={onThumbnailsToggle}
+                        aria-pressed={isThumbnailsOpen}
+                        title={t("thumbnails")}
+                        aria-label={t("thumbnails")}
+                        className={cn(
+                            "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-150",
+                            isThumbnailsOpen
+                                ? "bg-primary/10 text-primary"
+                                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        )}
+                    >
+                        <PanelLeft className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="h-4 w-px bg-border" />
                     <span className="px-2 text-xs font-medium tabular-nums text-muted-foreground">
                         {pageNumber || 1} / {numPages || "--"}
                     </span>

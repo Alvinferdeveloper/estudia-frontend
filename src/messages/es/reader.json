@@ -15,7 +15,13 @@
   "controls": {
     "regionQuery": "Imagen o fórmula",
     "regionQueryHint": "Preguntar sobre una imagen o fórmula",
-    "assistant": "Asistente IA"
+    "assistant": "Asistente IA",
+    "thumbnails": "Miniaturas de páginas"
+  },
+  "thumbnails": {
+    "label": "Páginas del documento",
+    "goToPage": "Ir a la página {page}",
+    "selectPage": "Página {page}: incluir o quitar del examen"
   },
   "selectionPopup": {
     "chat": "Chat",

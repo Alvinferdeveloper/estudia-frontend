@@ -3,6 +3,7 @@ import { useRouter } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
 import { getApiErrorKey } from "@/lib/api-errors";
 import { extractPagesText } from "@/app/[locale]/document/[id]/lib/pdf-text";
+import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import {
   type ExamConfig,
   useGenerateExam,
@@ -12,7 +13,7 @@ interface UseExamSetupProps {
   documentId: string;
   documentName: string;
   selectedPages: number[];
-  pdfDoc: Parameters<typeof extractPagesText>[0] | null;
+  pdfDoc: PdfDocument | null;
 }
 
 // Generates an exam from the selected pages and opens its first attempt.

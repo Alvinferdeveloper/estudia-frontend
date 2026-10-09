@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Group, Panel } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/[locale]/document/[id]/hooks/useDocumentViewer";
 import { useExamMode } from "@/app/[locale]/document/[id]/hooks/useExamMode";
@@ -19,7 +19,10 @@ import { ResizeHandle } from "@/components/ui/resize-handle";
 
 import { Header } from "@/app/[locale]/document/[id]/components/document-reader/Header";
 import { PdfControls } from "@/app/[locale]/document/[id]/components/document-reader/PdfControls";
-import { PdfViewer, PdfHighlightItem } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
+import { PdfViewer, PdfHighlightItem, type PdfNavigation } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
+import { PageThumbnails } from "@/app/[locale]/document/[id]/components/document-reader/thumbnails/PageThumbnails";
+import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
+import { useStoredBoolean } from "@/hooks/useStoredBoolean";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
 import { ExamSetupPanel } from "@/app/[locale]/document/[id]/components/exam/ExamSetupPanel";
 import { SelectionPopup } from "@/app/[locale]/document/[id]/components/document-reader/SelectionPopup";
@@ -47,7 +50,15 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     } = useDocumentViewer();
 
     const exam = useExamMode();
-    const [pdfDoc, setPdfDoc] = useState<any>(null);
+    const [pdfDoc, setPdfDoc] = useState<PdfDocument | null>(null);
+    const [isThumbnailsOpen, toggleThumbnails] = useStoredBoolean("reader:thumbnailsOpen");
+    const navigationRef = useRef<PdfNavigation>(null);
+
+    // In exam mode a thumbnail also selects its page, like clicking the page itself.
+    const handleThumbnailClick = (pageNumber: number) => {
+        if (exam.enabled) exam.togglePage(pageNumber);
+        navigationRef.current?.goToPage(pageNumber);
+    };
 
     const chat = useChatSession({ documentId: document.id });
 
@@ -255,55 +266,68 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
 
             <div className="flex-1 overflow-hidden">
                 <Group orientation="horizontal" className="h-full">
-                    <Panel minSize="40" className="flex flex-col relative">
-                        <PdfControls
-                            pageNumber={currentPage}
-                            numPages={numPages}
-                            scale={scale}
-                            isChatOpen={isChatOpen}
-                            selectedText={selectedText}
-                            onChatToggle={handleChatToggle}
-                            onZoomIn={zoomIn}
-                            onZoomOut={zoomOut}
-                            examMode={exam.enabled}
-                            regionMode={regionMode}
-                            onRegionModeToggle={handleToggleRegionMode}
-                        />
-                        <PdfViewer
-                            publicUrl={document.publicUrl}
-                            scale={scale}
-                            highlights={activeHighlights}
-                            setNumPages={setNumPages}
-                            onTextSelection={handleTextSelection}
-                            onPageChange={setCurrentPage}
-                            onHighlightClick={handleHighlightClick}
-                            regionMode={regionMode}
-                            onRegionSelection={handleRegionSelection}
-                            viewportRef={setReaderViewport}
-                            selectionTip={
-                                <div>
-                                    {selectedText && !exam.enabled && (
-                                        <div key={selectedText} className="flex flex-col items-center gap-1.5">
-                                            <QuickTranslateBubble
-                                                translation={quickTranslate.translation}
-                                                isLoading={quickTranslate.isLoading}
-                                            />
-                                            <SelectionPopup
-                                                selectedText={selectedText}
-                                                mode={languageMode.enabled ? "language" : "notes"}
-                                                onChatClick={handleAskAboutSelection}
-                                                onCreateNoteClick={handleNoteDialogOpen}
-                                                onExplainClick={handleExplainClick}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            }
-                            examMode={exam.enabled}
-                            selectedPages={exam.selectedPages}
-                            onPageSelect={exam.togglePage}
-                            onPdfLoad={setPdfDoc}
-                        />
+                    <Panel minSize="40" className="relative flex">
+                        {isThumbnailsOpen && pdfDoc && (
+                            <PageThumbnails
+                                pdf={pdfDoc}
+                                currentPage={currentPage}
+                                onPageClick={handleThumbnailClick}
+                                selectedPages={exam.enabled ? exam.selectedPages : undefined}
+                            />
+                        )}
+                        <div className="relative flex min-w-0 flex-1 flex-col">
+                            <PdfControls
+                                pageNumber={currentPage}
+                                numPages={numPages}
+                                scale={scale}
+                                isChatOpen={isChatOpen}
+                                selectedText={selectedText}
+                                onChatToggle={handleChatToggle}
+                                onZoomIn={zoomIn}
+                                onZoomOut={zoomOut}
+                                isThumbnailsOpen={isThumbnailsOpen}
+                                onThumbnailsToggle={toggleThumbnails}
+                                examMode={exam.enabled}
+                                regionMode={regionMode}
+                                onRegionModeToggle={handleToggleRegionMode}
+                            />
+                            <PdfViewer
+                                publicUrl={document.publicUrl}
+                                scale={scale}
+                                highlights={activeHighlights}
+                                setNumPages={setNumPages}
+                                onTextSelection={handleTextSelection}
+                                onPageChange={setCurrentPage}
+                                onHighlightClick={handleHighlightClick}
+                                regionMode={regionMode}
+                                onRegionSelection={handleRegionSelection}
+                                viewportRef={setReaderViewport}
+                                selectionTip={
+                                    <div>
+                                        {selectedText && !exam.enabled && (
+                                            <div key={selectedText} className="flex flex-col items-center gap-1.5">
+                                                <QuickTranslateBubble
+                                                    translation={quickTranslate.translation}
+                                                    isLoading={quickTranslate.isLoading}
+                                                />
+                                                <SelectionPopup
+                                                    selectedText={selectedText}
+                                                    mode={languageMode.enabled ? "language" : "notes"}
+                                                    onChatClick={handleAskAboutSelection}
+                                                    onCreateNoteClick={handleNoteDialogOpen}
+                                                    onExplainClick={handleExplainClick}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                                examMode={exam.enabled}
+                                selectedPages={exam.selectedPages}
+                                onPageSelect={exam.togglePage}
+                                onPdfLoad={setPdfDoc}
+                                navigationRef={navigationRef}
+                            />
+                        </div>
                     </Panel>
 
                     {exam.enabled ? (
