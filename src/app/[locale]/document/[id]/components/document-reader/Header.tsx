@@ -94,14 +94,14 @@ export const Header: React.FC<HeaderProps> = ({
                                 title={t("languageModeHint")}
                                 className={`press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
                                     languageModeEnabled
-                                        ? "bg-violet-500/15 text-violet-500"
+                                        ? "bg-primary/10 text-primary"
                                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                                 }`}
                             >
                                 <Languages className="h-4 w-4" />
                                 {t("languageMode")}
                             </button>
-                            <div className="flex items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-500">
+                            <div className="flex items-center gap-1 rounded-full border border-border bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
                                 <LanguageFlag code={wordLanguage} />
                                 <span>→</span>
                                 {isTargetEditable ? (
@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
                                         </PopoverTrigger>
                                         <PopoverContent
                                             align="end"
-                                            className="flex w-auto gap-1 rounded-full border border-violet-500/30 bg-card p-1 shadow-lg"
+                                            className="flex w-auto gap-1 rounded-full border border-border bg-popover p-1 shadow-float"
                                         >
                                             {availableTargets.map((option) => (
                                                 <button

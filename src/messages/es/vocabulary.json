@@ -13,7 +13,7 @@
   },
   "cardFront": {
     "learnHowToSay": "Aprende cómo se dice en {language, select, en {inglés} es {español} other {{language}}}",
-    "conjure": "Conjurar"
+    "reveal": "Ver significado"
   },
   "cardBack": {
     "fromSource": "de «{text}»",
@@ -21,7 +21,7 @@
     "confusables": "No confundir con",
     "tip": "Dato útil",
     "delete": "Eliminar",
-    "regenerate": "Volver a conjurar"
+    "regenerate": "Volver a explicar"
   },
   "loader": {
     "analyzingMeaning": "Analizando significado",

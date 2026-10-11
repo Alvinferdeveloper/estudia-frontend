@@ -43,7 +43,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
             {isLanguageMode ? (
                 <button
                     onClick={(e) => onExplainClick?.(e.currentTarget)}
-                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-violet-500/10 hover:text-violet-500"
+                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
                 >
                     <Languages className="h-3.5 w-3.5" />
                     {t("explain")}

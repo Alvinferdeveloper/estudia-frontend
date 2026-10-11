@@ -9,3 +9,4 @@ export const NOTE_COLORS = [
 ] as const;
 
 export const DEFAULT_NOTE_COLOR = NOTE_COLORS[0].value;
+export const DEFAULT_VOCABULARY_COLOR: string = NOTE_COLORS[2].value;

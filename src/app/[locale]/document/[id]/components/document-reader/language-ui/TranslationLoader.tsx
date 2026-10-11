@@ -56,12 +56,12 @@ export const TranslationLoader: React.FC<TranslationLoaderProps> = ({
     <div className="flex flex-col items-center gap-3 py-1">
       <div className="flex items-center gap-2.5">
         <FlagReel countryCode={left} direction="up" />
-        <ArrowRight className="h-3.5 w-3.5 text-violet-300/60" />
+        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
         <FlagReel countryCode={right} direction="down" />
       </div>
       <DecodingText
         phrases={phrases}
-        className="text-[11px] text-violet-200/70"
+        className="text-[11px] text-muted-foreground"
       />
     </div>
   );

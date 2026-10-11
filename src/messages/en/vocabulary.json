@@ -13,7 +13,7 @@
   },
   "cardFront": {
     "learnHowToSay": "Learn how to say it in {language, select, en {English} es {Spanish} other {{language}}}",
-    "conjure": "Conjure"
+    "reveal": "Show meaning"
   },
   "cardBack": {
     "fromSource": "from “{text}”",
@@ -21,7 +21,7 @@
     "confusables": "Don't confuse with",
     "tip": "Good to know",
     "delete": "Delete",
-    "regenerate": "Conjure again"
+    "regenerate": "Explain again"
   },
   "loader": {
     "analyzingMeaning": "Analyzing meaning",

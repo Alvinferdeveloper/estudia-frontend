@@ -101,7 +101,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
 
   const { virtualRef, boundary } = useLiveAnchor(anchor, handleClose);
 
-  const conjure = async (editingEntry: VocabularyEntry | null) => {
+  const explain = async (editingEntry: VocabularyEntry | null) => {
     try {
       const result = await explanationMutation.mutateAsync({
         selectedText,
@@ -130,8 +130,8 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
     }
   };
 
-  const handleConjure = () => conjure(null);
-  const handleRegenerate = () => conjure(localEntry);
+  const handleReveal = () => explain(null);
+  const handleRegenerate = () => explain(localEntry);
 
   const handleChangeColor = async (color: string) => {
     dialog.setSelectedColor(color);
@@ -178,7 +178,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
           <button
             onClick={handleClose}
             title={tActions("close")}
-            className="press-feedback absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-violet-400/30 bg-[#1a1330] text-violet-200 shadow-lg transition-colors hover:bg-violet-500/20"
+            className="press-feedback absolute -top-3 -right-3 z-10 flex size-7 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-float transition-colors duration-150 hover:bg-accent hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -200,7 +200,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
                   sourceLanguage={sourceLanguage}
                   isLoading={explanationMutation.isPending}
                   errorKey={explanationMutation.error && getApiErrorKey(explanationMutation.error)}
-                  onConjure={handleConjure}
+                  onReveal={handleReveal}
                 />
               </motion.div>
             ) : (

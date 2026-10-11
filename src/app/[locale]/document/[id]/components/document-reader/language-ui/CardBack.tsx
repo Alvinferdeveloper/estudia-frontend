@@ -1,9 +1,13 @@
 import { AlertTriangle, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LanguageCode, VocabularyExplanation } from "@/app/types";
+import { cn } from "@/lib/utils";
+import { IconButton } from "@/components/ui/icon-button";
 import { NoteColorPicker } from "@/app/[locale]/document/[id]/components/document-reader/note-ui";
 import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
+
+const sectionLabelClass = "text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground";
 
 interface CardBackProps {
   explanation: VocabularyExplanation;
@@ -33,149 +37,110 @@ export const CardBack: React.FC<CardBackProps> = ({
   const t = useTranslations("vocabulary.cardBack");
 
   return (
-    <div className="relative flex max-h-[min(70vh,480px)] w-[340px] max-w-[92vw] flex-col rounded-2xl p-[1px] bg-gradient-to-br from-violet-400/60 via-indigo-500/40 to-fuchsia-400/60 shadow-[0_20px_50px_-16px_rgba(109,40,217,0.55)]">
-      <div className="flex max-h-[min(70vh,480px)] flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#1a1330] to-[#0e0a1c]">
-        {/* Header */}
-        <div className="shrink-0 border-b border-violet-400/20 px-5 py-3.5 text-center">
-          <div className="flex items-center justify-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-violet-300/60">
-            <LanguageFlag code={wordLanguage} />
-            <span>&rarr;</span>
-            <LanguageFlag code={explanationLanguage} />
-          </div>
-          <h2 className="mt-1 break-words font-serif text-xl text-white">
-            {explanation.word}
-          </h2>
-          {explanation.sourceText && (
-            <p className="mt-0.5 text-xs text-violet-200/60">
-              {t("fromSource", { text: explanation.sourceText })}
-            </p>
-          )}
-          {explanation.phonetic && (
-            <p className="mt-0.5 text-sm italic text-violet-200/60">/{explanation.phonetic}/</p>
-          )}
+    <div className="flex max-h-[min(70vh,480px)] w-[340px] max-w-[92vw] flex-col overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-float">
+      <div className="shrink-0 border-b border-border px-5 py-3.5 text-center">
+        <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+          <LanguageFlag code={wordLanguage} />
+          <span>&rarr;</span>
+          <LanguageFlag code={explanationLanguage} />
         </div>
+        <h2 className="mt-1 break-words font-serif text-2xl italic">
+          {explanation.word}
+        </h2>
+        {explanation.sourceText && (
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {t("fromSource", { text: explanation.sourceText })}
+          </p>
+        )}
+        {explanation.phonetic && (
+          <p className="mt-0.5 text-sm italic text-muted-foreground">/{explanation.phonetic}/</p>
+        )}
+      </div>
 
-        {/* Scrollable body */}
-        {isRegenerating ? (
-          <div className="flex flex-1 items-center justify-center py-10">
-            <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
-          </div>
-        ) : (
-          <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-4 space-y-4">
-            {/* Meanings */}
-            <div className="space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300/70">
-                {t("meanings")}
-              </p>
+      {isRegenerating ? (
+        <div className="flex flex-1 items-center justify-center py-10">
+          <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
+        </div>
+      ) : (
+        <div className="flex-1 space-y-5 overflow-y-auto scrollbar-thin px-5 py-4">
+          <section>
+            <h3 className={sectionLabelClass}>{t("meanings")}</h3>
+            <ol className="divide-y divide-border">
               {explanation.meanings.map((meaning, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-violet-400/20 bg-violet-500/[0.06] p-3.5"
-                >
-                  <div className="flex items-baseline justify-between gap-2">
-                    {meaning.partOfSpeech && (
-                      <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-violet-200">
-                        {meaning.partOfSpeech}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-violet-50">
-                    {meaning.definition}
-                  </p>
+                <li key={i} className="py-3 first:pt-2 last:pb-0">
+                  {meaning.partOfSpeech && (
+                    <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-secondary-foreground">
+                      {meaning.partOfSpeech}
+                    </span>
+                  )}
+                  <p className="mt-2 text-sm leading-relaxed">{meaning.definition}</p>
                   {meaning.exampleSentence && (
-                    <p className="mt-2 border-l-2 border-fuchsia-400/40 pl-2.5 text-sm italic text-violet-200/80">
+                    <p className="mt-2 text-sm italic text-muted-foreground">
                       &ldquo;{meaning.exampleSentence}&rdquo;
                     </p>
                   )}
                   {meaning.exampleTranslation && (
-                    <p className="mt-1 pl-2.5 text-xs text-violet-300/60">
-                      {meaning.exampleTranslation}
-                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">{meaning.exampleTranslation}</p>
                   )}
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {explanation.confusables && explanation.confusables.length > 0 && (
+            <section className="space-y-2">
+              <h3 className={cn(sectionLabelClass, "flex items-center gap-1.5")}>
+                <AlertTriangle className="size-3.5 text-ochre" />
+                {t("confusables")}
+              </h3>
+              {explanation.confusables.map((c, i) => (
+                <div key={i} className="rounded-xl bg-ochre/10 p-3">
+                  <p className="text-sm font-semibold">{c.word}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{c.explanation}</p>
                 </div>
               ))}
-            </div>
+            </section>
+          )}
 
-            {/* Confusables */}
-            {explanation.confusables && explanation.confusables.length > 0 && (
-              <div className="space-y-2">
-                <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-amber-300/80">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  {t("confusables")}
-                </p>
-                {explanation.confusables.map((c, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border border-amber-400/20 bg-amber-500/[0.06] p-3"
-                  >
-                    <p className="text-sm font-semibold text-amber-200">{c.word}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-amber-100/80">
-                      {c.explanation}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+          {explanation.tip && (
+            <section className="rounded-xl bg-secondary p-3">
+              <h3 className={sectionLabelClass}>{t("tip")}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-secondary-foreground">{explanation.tip}</p>
+            </section>
+          )}
 
-            {/* Tip */}
-            {explanation.tip && (
-              <div className="rounded-xl border border-dashed border-violet-400/30 bg-black/20 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300/60">
-                  {t("tip")}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-violet-100/80">
-                  {explanation.tip}
-                </p>
-              </div>
-            )}
+          {explanation.synonyms && explanation.synonyms.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5">
+              {explanation.synonyms.map((s, i) => (
+                <li key={i} className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
-            {/* Synonyms */}
-            {explanation.synonyms && explanation.synonyms.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {explanation.synonyms.map((s, i) => (
-                  <span
-                    key={i}
-                    className="rounded-full bg-violet-500/15 px-2.5 py-1 text-xs text-violet-200"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Footer controls */}
-        <div className="flex shrink-0 items-center justify-between gap-2 border-t border-violet-400/20 px-4 py-3">
-          <NoteColorPicker
-            selectedColor={selectedColor}
-            onColorChange={onColorChange}
-            className="text-violet-200"
-          />
-          <div className="flex items-center gap-1">
-            {isEditMode && onDelete && (
-              <button
-                onClick={onDelete}
-                disabled={isDeleting}
-                title={t("delete")}
-                className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-red-300/80 transition-colors hover:bg-red-500/15 hover:text-red-200 disabled:opacity-50"
-              >
-                {isDeleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
-              </button>
-            )}
-            <button
-              onClick={onRegenerate}
-              disabled={isRegenerating}
-              title={t("regenerate")}
-              className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-violet-300/80 transition-colors hover:bg-violet-500/15 hover:text-violet-200 disabled:opacity-50"
+      <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-4 py-3">
+        <NoteColorPicker
+          selectedColor={selectedColor}
+          onColorChange={onColorChange}
+          className="text-foreground"
+        />
+        <div className="flex items-center gap-1">
+          {isEditMode && onDelete && (
+            <IconButton
+              label={t("delete")}
+              onClick={onDelete}
+              disabled={isDeleting}
+              className="hover:bg-danger/10 hover:text-danger"
             >
-              <RotateCcw className="h-4 w-4" />
-            </button>
-          </div>
+              {isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
+            </IconButton>
+          )}
+          <IconButton label={t("regenerate")} onClick={onRegenerate} disabled={isRegenerating}>
+            <RotateCcw />
+          </IconButton>
         </div>
       </div>
     </div>

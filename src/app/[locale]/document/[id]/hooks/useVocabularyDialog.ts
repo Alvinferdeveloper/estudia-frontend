@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { VocabularyEntry } from "@/app/types";
-
-const DEFAULT_COLOR = "#B39DDB";
+import { DEFAULT_VOCABULARY_COLOR } from "@/app/[locale]/document/[id]/lib/note-colors";
 
 interface UseVocabularyDialogOptions {
   isOpen: boolean;
@@ -13,19 +12,19 @@ export const useVocabularyDialog = ({
   existingEntry,
 }: UseVocabularyDialogOptions) => {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
+  const [selectedColor, setSelectedColor] = useState(DEFAULT_VOCABULARY_COLOR);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleReset = useCallback(() => {
     setIsFlipped(false);
-    setSelectedColor(DEFAULT_COLOR);
+    setSelectedColor(DEFAULT_VOCABULARY_COLOR);
     setSaveError(null);
   }, []);
 
   useEffect(() => {
     if (isOpen) {
       if (existingEntry) {
-        setSelectedColor(existingEntry.color || DEFAULT_COLOR);
+        setSelectedColor(existingEntry.color || DEFAULT_VOCABULARY_COLOR);
         setIsFlipped(true);
       } else {
         handleReset();
