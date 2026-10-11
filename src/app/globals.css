@@ -90,6 +90,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-reader-canvas: var(--reader-canvas);
+  --color-scrim: var(--scrim);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -178,6 +179,9 @@
 
   /* Document reader tray behind PDF pages — needs real contrast against a white page, unlike --muted */
   --reader-canvas: oklch(0.89 0.006 85);
+
+  /* Ink veil behind dialogs; no blur, the page stays legible but recedes */
+  --scrim: oklch(0.22 0.01 255 / 0.28);
 }
 
 .dark {
@@ -247,6 +251,8 @@
   --ochre: oklch(0.78 0.15 85);
 
   --reader-canvas: oklch(0.10 0.006 255);
+
+  --scrim: oklch(0.08 0.006 255 / 0.6);
 }
 
 @layer base {
