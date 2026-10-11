@@ -4,18 +4,24 @@
   "closePricing": "Close pricing",
   "backToPlans": "Back to plans",
   "hero": {
-    "badge": "Pricing plans",
-    "title": "Choose your <highlight>perfect plan</highlight>",
-    "subtitle": "Unlock the full potential of <strong>{brand}</strong> with our subscription plans. Upgrade anytime to get more <highlight>AI-powered features</highlight>."
+    "title": "Choose your <highlight>plan</highlight>",
+    "subtitle": "Switch plans whenever you like. AI credits renew every period of your plan."
+  },
+  "usage": {
+    "plan": "Your plan: {plan}",
+    "credits": "{used} of {limit} credits {period, select, daily {today} other {this period}}",
+    "creditsUnlimited": "Unlimited credits",
+    "documents": "{used} of {limit} documents",
+    "documentsUnlimited": "{used, plural, one {# document} other {# documents}}"
   },
   "card": {
     "mostPopular": "Most popular",
     "free": "Free",
     "perMonth": "/month",
     "currentPlan": "Current plan",
-    "processing": "Processing…",
     "getStarted": "Get started",
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "notIncluded": "Not included:"
   },
   "planDescriptions": {
     "free": "Perfect for trying out the platform",

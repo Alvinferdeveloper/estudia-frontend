@@ -4,18 +4,24 @@
   "closePricing": "Cerrar planes",
   "backToPlans": "Volver a los planes",
   "hero": {
-    "badge": "Planes y precios",
-    "title": "Elige tu <highlight>plan ideal</highlight>",
-    "subtitle": "Saca todo el partido a <strong>{brand}</strong> con nuestros planes de suscripción. Mejora tu plan cuando quieras para obtener más <highlight>funciones con IA</highlight>."
+    "title": "Elige tu <highlight>plan</highlight>",
+    "subtitle": "Cambia de plan cuando quieras. Los créditos de IA se renuevan en cada período de tu plan."
+  },
+  "usage": {
+    "plan": "Tu plan: {plan}",
+    "credits": "{used} de {limit} créditos {period, select, daily {hoy} other {en este período}}",
+    "creditsUnlimited": "Créditos ilimitados",
+    "documents": "{used} de {limit} documentos",
+    "documentsUnlimited": "{used, plural, one {# documento} other {# documentos}}"
   },
   "card": {
     "mostPopular": "Más popular",
     "free": "Gratis",
     "perMonth": "/mes",
     "currentPlan": "Plan actual",
-    "processing": "Procesando…",
     "getStarted": "Empezar",
-    "subscribe": "Suscribirme"
+    "subscribe": "Suscribirme",
+    "notIncluded": "No incluido:"
   },
   "planDescriptions": {
     "free": "Perfecto para probar la plataforma",

@@ -3,7 +3,8 @@
 export const UNLIMITED = -1;
 
 export type CreditPeriod = "daily" | "monthly";
-export type PlanFeature = "exportNotes";
+export const PLAN_FEATURES = ["exportNotes"] as const;
+export type PlanFeature = (typeof PLAN_FEATURES)[number];
 export type PlanQuota = "documents" | "storageBytes";
 export type PlanCap = "examQuestions";
 

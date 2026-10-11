@@ -7,18 +7,20 @@ import { useFormatter, useTranslations } from "next-intl";
 import { usePlans, SubscriptionPlan } from "./hooks/useSubscription";
 import { PricingCard } from "@/app/[locale]/subscription/components/PricingCard";
 import { PayPalButton } from "@/app/[locale]/subscription/components/PayPalButton";
+import { CurrentUsage } from "@/app/[locale]/subscription/components/CurrentUsage";
 import { getPlanFeatureItems } from "@/app/[locale]/subscription/lib/plan-features";
-import { X, Loader2, ArrowLeft, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
+import { X, ArrowLeft, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/config/routes";
 import { env } from "@/config/env";
 import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 
 const CURRENCY = "USD";
+const PLAN_PLACEHOLDERS = 4;
 
 export default function SubscriptionPage() {
   const t = useTranslations("subscription");
@@ -44,8 +46,12 @@ export default function SubscriptionPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen bg-background px-4 pt-40">
+        <div className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: PLAN_PLACEHOLDERS }, (_, index) => (
+            <Skeleton key={index} className="h-[26rem] rounded-2xl" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -101,69 +107,43 @@ export default function SubscriptionPage() {
               </Button>
             )}
             <div className="flex-1" />
-            <Link
-              href={ROUTES.workspace}
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all duration-200"
-              aria-label={t("closePricing")}
-            >
-              <X className="w-6 h-6" />
-            </Link>
+            <Button asChild variant="ghost" size="icon">
+              <Link href={ROUTES.workspace} aria-label={t("closePricing")} title={t("closePricing")}>
+                <X />
+              </Link>
+            </Button>
           </div>
         </header>
 
-        <main className="container mx-auto px-4 pt-12 pb-12 flex flex-col items-center justify-center min-h-screen">
+        <main className="container mx-auto flex min-h-screen flex-col items-center justify-center px-4 py-24">
           {!selectedPlan ? (
             <>
-              <div className="relative text-center mb-20 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                {/* Background glow (Glow effect) to give it depth */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
-
-                {/* Top label (Badge) with blinking dot */}
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 ring-1 ring-primary/20 hover:ring-primary/40 transition-all cursor-default">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                  </span>
-                  {t("hero.badge")}
-                </div>
-
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+              <div className="mb-12 max-w-2xl text-center">
+                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
                   {t.rich("hero.title", {
-                    highlight: (chunks) => (
-                      <span className="font-serif font-normal italic text-primary">{chunks}</span>
-                    ),
+                    highlight: (chunks) => <span className="font-serif font-normal italic text-primary">{chunks}</span>,
                   })}
                 </h1>
-
-                {/* Subtitle improved with emphasis on keywords */}
-                <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                  {t.rich("hero.subtitle", {
-                    brand: siteConfig.name,
-                    strong: (chunks) => <strong className="text-foreground font-semibold">{chunks}</strong>,
-                    highlight: (chunks) => <span className="text-primary font-medium">{chunks}</span>,
-                  })}
-                </p>
+                <p className="mt-3 text-muted-foreground">{t("hero.subtitle")}</p>
+                <div className="mt-5">
+                  <CurrentUsage />
+                </div>
               </div>
 
-              <div className="grid md:grid-cols-2 px-4 lg:grid-cols-4 max-w-8xl gap-6 mx-auto w-full">
-                {plans.map((plan, index) => (
-                  <div
+              <div className="grid w-full max-w-6xl gap-x-4 md:grid-cols-2 lg:grid-cols-4">
+                {plans.map((plan) => (
+                  <PricingCard
                     key={plan.plan}
-                    className="animate-in fade-in slide-in-from-bottom-8 duration-500 fill-mode-both"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <PricingCard
-                      plan={plan.plan}
-                      name={tPlans(plan.plan)}
-                      price={plan.price}
-                      currency={CURRENCY}
-                      description={tPlanDescriptions(plan.plan)}
-                      features={getPlanFeatureItems(plan)}
-                      isPopular={plan.isPopular}
-                      currentPlan={currentPlan === plan.plan}
-                      onSelect={handleSelectPlan}
-                    />
-                  </div>
+                    plan={plan.plan}
+                    name={tPlans(plan.plan)}
+                    price={plan.price}
+                    currency={CURRENCY}
+                    description={tPlanDescriptions(plan.plan)}
+                    features={getPlanFeatureItems(plan)}
+                    isPopular={plan.isPopular}
+                    currentPlan={currentPlan === plan.plan}
+                    onSelect={handleSelectPlan}
+                  />
                 ))}
               </div>
             </>

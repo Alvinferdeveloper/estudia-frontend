@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import { SubscriptionPlan } from "../hooks/useSubscription";
 import { PlanFeatureItem } from "../lib/plan-features";
 import { formatBytes } from "@/lib/format";
@@ -18,9 +18,12 @@ interface PricingCardProps {
   isPopular?: boolean;
   currentPlan: boolean;
   onSelect: (plan: SubscriptionPlan) => void;
-  isLoading?: boolean;
 }
 
+// Name, price and action, then one row per feature.
+const HEADER_ROWS = 3;
+
+// Spans its rows of the parent grid through subgrid, so each feature lines up with the same row in the other plans.
 export function PricingCard({
   plan,
   name,
@@ -31,7 +34,6 @@ export function PricingCard({
   isPopular,
   currentPlan,
   onSelect,
-  isLoading,
 }: PricingCardProps) {
   const t = useTranslations("subscription.card");
   const tFeatures = useTranslations("subscription.features");
@@ -44,53 +46,59 @@ export function PricingCard({
   };
 
   return (
-    <div
+    <section
+      aria-label={name}
+      style={{ gridRow: `span ${HEADER_ROWS + features.length}` }}
       className={cn(
-        "relative flex flex-col p-6 bg-card border rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full",
-        isPopular ? "border-primary shadow-lg shadow-primary/10" : "border-border"
+        "mb-4 grid grid-rows-subgrid rounded-2xl border bg-card p-6 lg:mb-0",
+        isPopular ? "border-primary" : "border-border"
       )}
     >
-      {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            {t("mostPopular")}
-          </span>
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-base font-semibold">{name}</h2>
+          {isPopular && <span className="text-xs font-medium text-primary">{t("mostPopular")}</span>}
         </div>
-      )}
-
-      <div className="mb-4 mt-2">
-        <h3 className="text-xl font-bold">{name}</h3>
-        <p className="text-sm text-muted-foreground mt-2 min-h-[40px]">{description}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <div className="mb-6 flex items-baseline gap-1">
-        <span className="text-4xl font-extrabold tracking-tight">
+      <p className="mt-5 flex items-baseline gap-1">
+        <span className="font-mono text-3xl font-semibold tabular-nums tracking-tight">
           {isFree ? t("free") : format.number(price, { style: "currency", currency })}
         </span>
-        {!isFree && <span className="text-muted-foreground font-medium">{t("perMonth")}</span>}
-      </div>
+        {!isFree && <span className="text-sm text-muted-foreground">{t("perMonth")}</span>}
+      </p>
 
-      <ul className="flex-1 space-y-3 mb-8">
+      <Button
+        variant={currentPlan ? "secondary" : isPopular ? "default" : "outline"}
+        onClick={() => onSelect(plan)}
+        disabled={currentPlan}
+        className="mb-5 mt-5 w-full"
+      >
+        {currentPlan ? t("currentPlan") : plan === "free" ? t("getStarted") : t("subscribe")}
+      </Button>
+
+      <ul role="list" className="contents">
         {features.map((feature) => (
-          <li key={feature.key} className="flex items-start gap-3 text-sm">
-            <div className="mt-0.5 rounded-full bg-primary/10 p-1">
-              <Check className="w-3 h-3 text-primary shrink-0" />
-            </div>
-            <span className="text-foreground/80 leading-tight">{featureLabel(feature)}</span>
+          <li
+            key={feature.key}
+            className={cn(
+              "flex items-start gap-2.5 py-1.5 text-sm first:border-t first:border-border first:pt-5",
+              feature.included ? "text-foreground/85" : "text-muted-foreground/70"
+            )}
+          >
+            {feature.included ? (
+              <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            ) : (
+              <Minus aria-hidden className="mt-0.5 size-4 shrink-0" />
+            )}
+            <span className="leading-snug">
+              {!feature.included && <span className="sr-only">{t("notIncluded")} </span>}
+              {featureLabel(feature)}
+            </span>
           </li>
         ))}
       </ul>
-
-      <Button
-        size="lg"
-        variant={currentPlan ? "secondary" : "default"}
-        onClick={() => onSelect(plan)}
-        disabled={currentPlan || isLoading}
-        className="w-full"
-      >
-        {currentPlan ? t("currentPlan") : isLoading ? t("processing") : plan === "free" ? t("getStarted") : t("subscribe")}
-      </Button>
-    </div>
+    </section>
   );
 }
