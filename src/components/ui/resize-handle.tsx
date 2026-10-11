@@ -17,7 +17,7 @@ function ResizeHandle({ className, ...props }: React.ComponentProps<typeof Separ
     >
       <span
         aria-hidden
-        className="absolute left-1/2 top-1/2 h-10 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-background opacity-0 shadow-sm transition-opacity duration-150 group-data-[separator=active]:border-primary group-data-[separator=active]:opacity-100 group-data-[separator=focus]:opacity-100 group-data-[separator=hover]:opacity-100"
+        className="absolute left-1/2 top-1/2 h-10 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-card opacity-0 transition-opacity duration-150 group-data-[separator=active]:border-primary group-data-[separator=active]:opacity-100 group-data-[separator=focus]:opacity-100 group-data-[separator=hover]:opacity-100"
       />
     </Separator>
   )
