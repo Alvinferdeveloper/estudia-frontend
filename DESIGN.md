@@ -204,6 +204,9 @@ The single-choice selector (exam size, difficulty). A Paper Shade track (12px ra
 - **Focus:** stroke shifts to ink and a 2px ink ring at 30% opacity appears.
 - **Error / Disabled:** Danger stroke with a message below; disabled at 50% opacity, no hover.
 
+### Scrollbars
+Native scrolling, styled once for the whole app: a muted thumb (45% Ink Muted) on a transparent track, set in `globals.css` and inherited everywhere. Panels, lists, menus and code blocks add `scrollbar-thin`; pages and the reader keep the regular width. A surface can blend the track with its own color through `--scrollbar-track` (the reader does). No JavaScript scroll areas.
+
 ### Navigation
 - Side navigation sits on a slightly deeper paper (Paper Shade family) than the content; the active item uses a 10% ink tint and ink text.
 - Headers are quiet: muted icon buttons, the brand mark, and at most one primary action.

@@ -122,7 +122,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
 
       {/* Breadcrumb / Path Navigation */}
       {currentPath.length > 0 && (
-        <div className="flex items-center gap-1 pb-3 overflow-x-auto">
+        <div className="flex items-center gap-1 pb-3 overflow-x-auto scrollbar-thin">
           {currentPath.map((item, index) => (
             <React.Fragment key={index}>
               {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />}
@@ -170,7 +170,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
       )}
 
       {/* List of folders and documents */}
-      <div className="flex-1 overflow-y-auto py-2">
+      <div className="flex-1 overflow-y-auto scrollbar-thin py-2">
         <div
           key={viewMode}
           className={

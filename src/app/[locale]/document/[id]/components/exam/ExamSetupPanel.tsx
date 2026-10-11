@@ -91,7 +91,7 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
         </button>
       </div>
 
-      <fieldset disabled={isGenerating} className="flex-1 space-y-6 overflow-y-auto px-5 pb-6">
+      <fieldset disabled={isGenerating} className="flex-1 space-y-6 overflow-y-auto scrollbar-thin px-5 pb-6">
         <div aria-live="polite" className="rounded-xl bg-secondary px-4 py-3">
           {hasPages ? (
             <>

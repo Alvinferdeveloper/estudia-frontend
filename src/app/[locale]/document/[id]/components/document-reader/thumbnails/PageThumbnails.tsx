@@ -41,7 +41,7 @@ export const PageThumbnails: React.FC<PageThumbnailsProps> = ({ pdf, currentPage
       aria-label={t("label")}
       // Same surface as the chat panel, so both sides of the document read as one frame.
       className={cn(
-        "shrink-0 overflow-y-auto border-r border-sidebar-border bg-sidebar animate-in fade-in slide-in-from-left-2 duration-200 ease-[var(--ease-out)]",
+        "shrink-0 overflow-y-auto scrollbar-thin border-r border-sidebar-border bg-sidebar animate-in fade-in slide-in-from-left-2 duration-200 ease-[var(--ease-out)]",
         compact ? "w-36" : "w-52"
       )}
     >

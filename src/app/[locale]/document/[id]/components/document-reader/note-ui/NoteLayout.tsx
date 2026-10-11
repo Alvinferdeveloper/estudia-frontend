@@ -15,7 +15,7 @@ export const NoteScrollArea: React.FC<NoteScrollAreaProps> = ({ follow = false, 
   const { scrollRef, contentRef } = useStickToBottom({ enabled: follow });
 
   return (
-    <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+    <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto scrollbar-thin">
       <div ref={contentRef} className="px-6 py-5">
         {children}
       </div>

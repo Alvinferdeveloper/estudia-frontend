@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clock, Plus } from "lucide-react";
 import { TopicList } from "@/app/[locale]/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/[locale]/workspace/components/CreateTopicDialog";
@@ -57,51 +56,49 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* --- NAVIGATION --- */}
-      <div className="mt-5 flex-1 overflow-hidden px-3">
-        <ScrollArea className="h-full pr-2">
-          <nav className="space-y-0.5">
-            <button
-              onClick={onSelectRecent}
-              className={cn(
-                "press-feedback flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-150",
-                view === 'recent'
-                  ? "bg-primary/10 font-medium text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
-              )}
-            >
-              <Clock className="h-4 w-4" />
-              {t("sidebar.recent")}
-            </button>
-          </nav>
-
-          <div className="mt-6 flex items-center justify-between px-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {t("sidebar.collections")}
-            </h3>
-            <CreateTopicDialog
-              createTopic={createTopic}
-              trigger={
-                <button className="press-feedback flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                  <Plus className="h-3.5 w-3.5" />
-                </button>
-              }
-            />
-          </div>
-
-          <div className="mt-1">
-            {topics && topics.length > 0 ? (
-              <TopicList
-                topics={topics}
-                selectedTopic={view === 'topic' ? selectedTopic : null}
-                handleTopicSelect={handleTopicSelect}
-              />
-            ) : (
-              <p className="px-3 py-2 text-xs text-muted-foreground">
-                {t("sidebar.noCollections")}
-              </p>
+      <div className="mt-5 min-h-0 flex-1 overflow-y-auto scrollbar-thin px-3">
+        <nav className="space-y-0.5">
+          <button
+            onClick={onSelectRecent}
+            className={cn(
+              "press-feedback flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-150",
+              view === 'recent'
+                ? "bg-primary/10 font-medium text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
-          </div>
-        </ScrollArea>
+          >
+            <Clock className="h-4 w-4" />
+            {t("sidebar.recent")}
+          </button>
+        </nav>
+
+        <div className="mt-6 flex items-center justify-between px-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("sidebar.collections")}
+          </h3>
+          <CreateTopicDialog
+            createTopic={createTopic}
+            trigger={
+              <button className="press-feedback flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            }
+          />
+        </div>
+
+        <div className="mt-1">
+          {topics && topics.length > 0 ? (
+            <TopicList
+              topics={topics}
+              selectedTopic={view === 'topic' ? selectedTopic : null}
+              handleTopicSelect={handleTopicSelect}
+            />
+          ) : (
+            <p className="px-3 py-2 text-xs text-muted-foreground">
+              {t("sidebar.noCollections")}
+            </p>
+          )}
+        </div>
       </div>
 
       <StorageQuota />

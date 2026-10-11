@@ -61,7 +61,7 @@ export const CardBack: React.FC<CardBackProps> = ({
             <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+          <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-4 space-y-4">
             {/* Meanings */}
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-violet-300/70">

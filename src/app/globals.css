@@ -6,6 +6,15 @@
 /* Cap `.container` at 1280px instead of Tailwind's default growth to 1536px at very
    wide viewports, so the landing page reads the same on any wide screen/window
    instead of getting noticeably roomier past 1536px. */
+/* Narrower scrollbars for panels, lists and menus; big areas (pages, the reader) keep the default. */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+}
+
 @utility container {
   width: 100%;
   margin-inline: auto;
@@ -123,6 +132,10 @@
   --input: oklch(0.9 0.008 85);
   --ring: oklch(0.36 0.05 254 / 0.3);
 
+  /* Scrollbars; an element can override the track to blend with its own surface. */
+  --scrollbar-thumb: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  --scrollbar-track: transparent;
+
   /* Charts */
   --chart-1: oklch(0.62 0.19 248);
   --chart-2: oklch(0.68 0.16 180);
@@ -227,6 +240,25 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  /* Only for browsers without scrollbar-color (Safari); the others use the line above. */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-color: var(--scrollbar-thumb);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background-color: var(--scrollbar-track);
   }
 
   body {
@@ -263,23 +295,20 @@
   user-select: text !important;
 }
 
-/* react-pdf-highlighter-extended ships a hardcoded dark background that ignores our theme */
+/* react-pdf-highlighter-extended ships a hardcoded dark background and scrollbar that ignore our theme */
 .PdfHighlighter {
+  --scrollbar-track: var(--reader-canvas);
   background-color: var(--reader-canvas) !important;
-  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent) var(--reader-canvas);
 }
 
-.PdfHighlighter::-webkit-scrollbar-thumb {
-  background-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent) !important;
-}
-
+.PdfHighlighter::-webkit-scrollbar-thumb,
 .PdfHighlighter::-webkit-scrollbar-thumb:hover {
-  background-color: var(--muted-foreground) !important;
+  background-color: var(--scrollbar-thumb) !important;
 }
 
 .PdfHighlighter::-webkit-scrollbar-track,
 .PdfHighlighter::-webkit-scrollbar-track-piece {
-  background-color: var(--reader-canvas) !important;
+  background-color: var(--scrollbar-track) !important;
 }
 
 /* Exam mode marks on the PDF pages, created by usePdfPageOverlay; same look as the selected thumbnails */

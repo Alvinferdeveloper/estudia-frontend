@@ -45,7 +45,7 @@ const CodeBlock = ({ className, children }: { className?: string; children?: Rea
           {isCopied ? t("copied") : t("copy")}
         </button>
       </div>
-      <pre className="overflow-x-auto !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">
+      <pre className="overflow-x-auto scrollbar-thin !p-4 text-[13.5px] leading-relaxed !m-0 text-foreground font-mono">
         <code ref={codeRef} className={cn(className, "!p-0")}>
           {children}
         </code>
@@ -137,7 +137,7 @@ const MarkdownComponents: Components = {
   hr: () => <hr className="my-6 border-border" />,
 
   table: ({ children }: WithChildren) => (
-    <div className="overflow-x-auto my-5 rounded-lg border border-border">
+    <div className="overflow-x-auto scrollbar-thin my-5 rounded-lg border border-border">
       <table className="min-w-full divide-y divide-border">
         {children}
       </table>

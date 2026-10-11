@@ -59,7 +59,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
         </div>
 
         {previewImage && (
-          <div className="p-4 border-b bg-muted/10 flex justify-center max-h-64 overflow-auto">
+          <div className="p-4 border-b bg-muted/10 flex justify-center max-h-64 overflow-auto scrollbar-thin">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={previewImage}
@@ -99,7 +99,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
         </div>
 
         {(answer || errorKey || isLoading) && (
-          <div className="border-t max-h-80 overflow-y-auto">
+          <div className="border-t max-h-80 overflow-y-auto scrollbar-thin">
             {isLoading && !answer && (
               <div className="p-6 flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />

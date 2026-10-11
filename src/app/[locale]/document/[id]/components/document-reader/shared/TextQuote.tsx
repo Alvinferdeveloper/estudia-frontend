@@ -29,7 +29,7 @@ export const TextQuote: React.FC<TextQuoteProps> = ({ text, caption, onRemove, e
           className={cn(
             "whitespace-pre-wrap leading-relaxed text-foreground/80",
             !isExpanded && "line-clamp-3",
-            isExpanded && "max-h-48 overflow-y-auto"
+            isExpanded && "max-h-48 overflow-y-auto scrollbar-thin"
           )}
         >
           {text}
