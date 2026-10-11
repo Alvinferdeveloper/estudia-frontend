@@ -90,6 +90,7 @@ components:
     textColor: "{colors.ink-text}"
     rounded: "{rounded.md}"
     padding: "8px 12px"
+    height: "36px"
   card:
     backgroundColor: "{colors.ivory-sheet}"
     rounded: "{rounded.xl}"
@@ -207,9 +208,23 @@ The single-choice selector (exam size, difficulty, grid or list view). Icon-only
 - **Internal Padding:** 24px for containers, 16px for list rows.
 
 ### Inputs / Fields
-- **Style:** Ivory Sheet fill, 1px Paper Edge stroke, 10px radius.
+- **Style:** Ivory Sheet fill (Night Sheet at night), 1px Paper Edge stroke, 10px radius; the stroke darkens slightly on hover. `Input` and `Textarea` share one class list, so every text control reads as one family.
+- **Sizes:** `default` 36px; `lg` 44px with 15px text and 12px radius for single-task forms (sign in, sign up).
 - **Focus:** stroke shifts to ink and a 2px ink ring at 30% opacity appears.
 - **Error / Disabled:** Danger stroke with a message below; disabled at 50% opacity, no hover.
+- **Field:** `Field` groups label, control and the hint or error below it, and hands the control its id, `aria-describedby` and `aria-invalid`; an error replaces the hint.
+- **Own patterns:** the chat composer (the border belongs to its container), exam answers (underlined input) and in-place renames keep their own styles.
+
+### Dialogs
+Dialogs are for confirmations and short, focused tasks; prefer an inline panel or a page when one would do.
+- **Surface:** Ivory Sheet, 16px radius, Paper Edge border, Float; 24px padding.
+- **Scrim:** an ink veil (`bg-scrim`), no blur.
+- **Layout:** title (Title style) and muted description aligned left; content; footer actions on the right, ghost cancel before the primary action. No shaded footer band.
+- **Close:** an `IconButton` in the top-right corner.
+- **Destructive confirmation:** a small Danger alert icon next to the title and a `destructive` confirm button.
+
+### Menus
+Dropdown menus: Ivory Sheet, 12px radius, Paper Edge border, Float, 4px padding; items are 32px tall with a 10px radius and a Paper Shade highlight.
 
 ### Scrollbars
 Native scrolling, styled once for the whole app: a muted thumb (45% Ink Muted) on a transparent track, set in `globals.css` and inherited everywhere. Panels, lists, menus and code blocks add `scrollbar-thin`; pages and the reader keep the regular width. A surface can blend the track with its own color through `--scrollbar-track` (the reader does). No JavaScript scroll areas.
