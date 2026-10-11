@@ -8,7 +8,7 @@ export const siteConfig = {
   colors: {
     ink: "#2A3E57",
     ivory: "#FCFAF6",
-    backgroundLight: "#F9FAFB",
+    backgroundLight: "#FBF9F5",
     backgroundDark: "#090A0D",
   },
 } as const;
