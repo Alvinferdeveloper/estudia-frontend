@@ -370,7 +370,7 @@
   }
 }
 
-/* Syntax highlighting for code blocks */
+/* Syntax highlighting for code blocks; state hues are mixed with the text color to reach 4.5:1 in both themes */
 .hljs {
   background: transparent !important;
   padding: 0 !important;
@@ -381,7 +381,7 @@
 .hljs-built_in,
 .hljs-name,
 .hljs-tag {
-  color: #8b5cf6;
+  color: var(--primary);
 }
 
 .hljs-string,
@@ -393,19 +393,19 @@
 .hljs-template-variable,
 .hljs-type,
 .hljs-addition {
-  color: #10b981;
+  color: color-mix(in oklch, var(--success) 65%, var(--foreground));
 }
 
 .hljs-deletion,
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-meta {
-  color: #f472b6;
+  color: color-mix(in oklch, var(--danger) 65%, var(--foreground));
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: #6b7280;
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
@@ -413,64 +413,16 @@
 .hljs-regexp,
 .hljs-selector-id,
 .hljs-variable {
-  color: #f59e0b;
+  color: color-mix(in oklch, var(--ochre) 65%, var(--foreground));
 }
 
 .hljs-function,
 .hljs-title.function_ {
-  color: #3b82f6;
+  color: color-mix(in oklch, var(--info) 65%, var(--foreground));
 }
 
 .hljs-params {
-  color: #e5e7eb;
-}
-
-.dark .hljs-keyword,
-.dark .hljs-selector-tag,
-.dark .hljs-built_in,
-.dark .hljs-name,
-.dark .hljs-tag {
-  color: #a78bfa;
-}
-
-.dark .hljs-string,
-.dark .hljs-title,
-.dark .hljs-section,
-.dark .hljs-attribute,
-.dark .hljs-literal,
-.dark .hljs-template-tag,
-.dark .hljs-template-variable,
-.dark .hljs-type,
-.dark .hljs-addition {
-  color: #34d399;
-}
-
-.dark .hljs-deletion,
-.dark .hljs-selector-attr,
-.dark .hljs-selector-pseudo,
-.dark .hljs-meta {
-  color: #f472b6;
-}
-
-.dark .hljs-comment,
-.dark .hljs-quote {
-  color: #9ca3af;
-}
-
-.dark .hljs-number,
-.dark .hljs-regexp,
-.dark .hljs-selector-id,
-.dark .hljs-variable {
-  color: #fbbf24;
-}
-
-.dark .hljs-function,
-.dark .hljs-title.function_ {
-  color: #60a5fa;
-}
-
-.dark .hljs-params {
-  color: #d1d5db;
+  color: var(--foreground);
 }
 
 .textLayer span {
