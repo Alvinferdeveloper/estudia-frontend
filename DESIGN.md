@@ -3,6 +3,7 @@ name: Zocratis
 description: A study companion built around your own documents. Ink on ivory paper.
 colors:
   ink: "oklch(0.36 0.05 254)"
+  vivid-ink: "oklch(0.6 0.18 254)"
   ink-text: "oklch(0.22 0.01 255)"
   ink-muted: "oklch(0.52 0.012 255)"
   ivory-paper: "oklch(0.982 0.006 85)"
@@ -119,7 +120,10 @@ This is a product surface: familiar patterns where they help students move fast,
 A restrained palette: warm paper neutrals, one ink accent, and semantic colors reserved for meaning.
 
 ### Primary
-- **Zocratis Ink** (oklch(0.36 0.05 254)): the logo's own blue-black ink. Primary actions, current selection, focus rings, links. In dark mode it inverts to **Ivory Light** (oklch(0.925 0.008 85)) so the brand keeps its contrast. Marks drawn on PDF pages (exam selection) use the theme-independent `--ink` token instead, because pages stay white in both themes.
+- **Zocratis Ink** (oklch(0.36 0.05 254)): the logo's own blue-black ink. Primary actions, current selection, focus rings, links. In dark mode it inverts to **Ivory Light** (oklch(0.925 0.008 85)) so the brand keeps its contrast.
+
+### Selection
+- **Vivid Ink** (oklch(0.6 0.18 254)): the logo's ink hue, brightened. Marks what the user has selected over content, such as exam pages on the PDF and their thumbnails (3px border, 12% veil, check badge). The same in both themes, because PDF pages stay white. Never for buttons or links.
 
 ### Secondary
 - **Ochre** (oklch(0.74 0.15 85)): the warm highlighter. Marketing accents and rare moments of emphasis (a highlighted passage, a streak). Never for buttons or errors.
@@ -137,6 +141,8 @@ A restrained palette: warm paper neutrals, one ink accent, and semantic colors r
 - **Success** (oklch(0.68 0.16 155)), **Warning** (oklch(0.82 0.16 82)), **Danger** (oklch(0.67 0.21 27)), **Info** (oklch(0.68 0.16 230)): state only, always paired with an icon or text.
 
 ### Named Rules
+**The Selection Rule.** Selection over content is Vivid Ink, distinct from the ink that marks the current position: a page can be both current (ink) and selected (vivid ink) without the two reading as one.
+
 **The Ink Scarcity Rule.** Ink (ivory at night) covers at most 10% of any screen. It marks the next action and the current selection; if everything is ink, nothing is.
 
 **The Paper, Not White Rule.** Light surfaces are always tinted toward ivory (hue 85, chroma 0.004 to 0.008). Pure white (#fff) is prohibited.

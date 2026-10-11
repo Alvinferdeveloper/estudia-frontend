@@ -31,7 +31,9 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ pdf, pageNumber, i
       <span
         className={cn(
           "relative block w-full overflow-hidden rounded-[3px] bg-card ring-1 transition-shadow duration-150",
-          isCurrent || isSelected ? "ring-2 ring-primary" : "ring-border group-hover:ring-primary/40"
+          // Selected reads in vivid ink, the page being read in ink; a page can be both.
+          isSelected ? "ring-2 ring-selection" : isCurrent ? "ring-2 ring-primary" : "ring-border group-hover:ring-primary/40",
+          isSelected && isCurrent && "outline outline-2 outline-offset-2 outline-primary"
         )}
       >
         {src ? (
@@ -40,9 +42,12 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ pdf, pageNumber, i
           <span className="block aspect-[1/1.414] w-full" />
         )}
         {isSelected && (
-          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground animate-in zoom-in-75 duration-150">
-            <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
-          </span>
+          <>
+            <span aria-hidden className="absolute inset-0 bg-selection/15" />
+            <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-selection text-selection-foreground shadow-sm animate-in zoom-in-75 duration-150">
+              <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
+            </span>
+          </>
         )}
       </span>
       <span
