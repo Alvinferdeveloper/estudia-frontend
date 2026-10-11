@@ -95,7 +95,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             title={doc.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
-              doc.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+              doc.isStarred ? "text-ochre opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
             )}
           >
             <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />

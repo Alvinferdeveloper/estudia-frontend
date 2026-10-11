@@ -12,8 +12,9 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { FolderPlus, Check, Palette } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { FolderPlus } from "lucide-react";
+import { CollectionColorPicker } from "@/app/[locale]/workspace/components/CollectionColorPicker";
+import { DEFAULT_COLLECTION_COLOR } from "@/app/[locale]/workspace/lib/collection-colors";
 
 interface CreateFolderDialogProps {
   createFolder: (folder: { name: string; color: string; topicId: string; parentId?: string }) => void;
@@ -23,19 +24,6 @@ interface CreateFolderDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
-
-const PRESET_COLORS = [
-  "#0ea5e9",
-  "#8b5cf6",
-  "#ec4899",
-  "#f43f5e",
-  "#f97316",
-  "#eab308",
-  "#22c55e",
-  "#14b8a6",
-  "#64748b",
-  "#000000",
-];
 
 export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
   createFolder,
@@ -48,7 +36,7 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
   const t = useTranslations("workspace");
   const tCommon = useTranslations("common.actions");
   const [newFolderName, setNewFolderName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLLECTION_COLOR);
   const [internalOpen, setInternalOpen] = useState(false);
 
   const isOpen = openProp ?? internalOpen;
@@ -66,7 +54,7 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
 
   const resetForm = () => {
     setNewFolderName("");
-    setSelectedColor(PRESET_COLORS[0]);
+    setSelectedColor(DEFAULT_COLLECTION_COLOR);
   };
 
   return (
@@ -106,45 +94,7 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
             />
           </div>
 
-          <div className="space-y-3">
-            <Label className="text-sm font-medium flex items-center gap-2">
-              {t("colorPicker.label")} <span className="text-xs text-muted-foreground font-normal">{t("colorPicker.hint")}</span>
-            </Label>
-
-            <div className="flex flex-wrap gap-3">
-              {PRESET_COLORS.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  onClick={() => setSelectedColor(color)}
-                  className={cn(
-                    "h-8 w-8 rounded-full cursor-pointer transition-all flex items-center justify-center border border-transparent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                    selectedColor === color ? "scale-110 shadow-md ring-2 ring-offset-2 ring-primary" : "hover:scale-105"
-                  )}
-                  style={{ backgroundColor: color }}
-                >
-                  {selectedColor === color && (
-                    <Check className="h-4 w-4 text-white drop-shadow-md" strokeWidth={3} />
-                  )}
-                </button>
-              ))}
-
-              <div className="relative group">
-                <div className={cn(
-                  "h-8 w-8 rounded-full border border-input bg-background flex items-center justify-center cursor-pointer hover:bg-accent transition-colors",
-                  !PRESET_COLORS.includes(selectedColor) && "ring-2 ring-offset-2 ring-primary border-transparent"
-                )}>
-                  <Palette className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <Input
-                  type="color"
-                  value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full p-0"
-                />
-              </div>
-            </div>
-          </div>
+          <CollectionColorPicker selectedColor={selectedColor} onColorChange={setSelectedColor} />
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">

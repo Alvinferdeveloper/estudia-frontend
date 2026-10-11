@@ -86,7 +86,7 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
             title={folder.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
-              folder.isStarred ? "text-amber-500 opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
+              folder.isStarred ? "text-ochre opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
             )}
           >
             <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />

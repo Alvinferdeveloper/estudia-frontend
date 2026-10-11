@@ -65,7 +65,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             "press-feedback absolute left-2 top-2 flex h-5 w-5 items-center justify-center rounded-md border-2 transition-all duration-150",
             isSelected
               ? "border-primary bg-primary text-primary-foreground opacity-100"
-              : "border-white/80 bg-black/10 opacity-0 backdrop-blur-sm group-hover:opacity-100 hover:border-primary"
+              : "border-border bg-card/80 opacity-0 group-hover:opacity-100 hover:border-primary"
           )}
         >
           {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
@@ -81,7 +81,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             title={folder.isStarred ? t("actions.unstar") : t("actions.star")}
             className={cn(
               actionButtonClass,
-              folder.isStarred ? "text-amber-500 opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
+              folder.isStarred ? "text-ochre opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
             )}
           >
             <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />

@@ -41,7 +41,17 @@
   "colorPicker": {
     "label": "Color",
     "hint": "(Elige un color)",
-    "select": "Seleccionar color {color}"
+    "custom": "Color personalizado",
+    "colors": {
+      "ink": "Tinta",
+      "teal": "Verde azulado",
+      "sage": "Salvia",
+      "ochre": "Ocre",
+      "terracotta": "Terracota",
+      "oxblood": "Granate",
+      "plum": "Ciruela",
+      "slate": "Pizarra"
+    }
   },
   "folderDialog": {
     "trigger": "Nueva Carpeta",

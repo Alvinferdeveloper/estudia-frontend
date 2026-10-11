@@ -41,7 +41,17 @@
   "colorPicker": {
     "label": "Color",
     "hint": "(Pick a color)",
-    "select": "Select color {color}"
+    "custom": "Custom color",
+    "colors": {
+      "ink": "Ink",
+      "teal": "Teal",
+      "sage": "Sage",
+      "ochre": "Ochre",
+      "terracotta": "Terracotta",
+      "oxblood": "Oxblood",
+      "plum": "Plum",
+      "slate": "Slate"
+    }
   },
   "folderDialog": {
     "trigger": "New Folder",

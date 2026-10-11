@@ -28,7 +28,7 @@ export const NoteColorPicker: React.FC<NoteColorPickerProps> = ({ selectedColor,
             onClick={() => onColorChange(value)}
             style={{ backgroundColor: value }}
             className={cn(
-              "press-feedback size-5 shrink-0 rounded-full shadow-[inset_0_0_0_1px_rgb(0_0_0/0.12)] outline-2 outline-offset-2 transition-[outline-color] duration-150 focus-visible:outline-current",
+              "press-feedback size-5 shrink-0 rounded-full ring-1 ring-inset ring-foreground/10 outline-2 outline-offset-2 transition-[outline-color] duration-150 focus-visible:outline-current",
               isSelected ? "outline-current" : "outline-transparent hover:outline-current/30"
             )}
           />

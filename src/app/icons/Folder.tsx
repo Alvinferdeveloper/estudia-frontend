@@ -14,7 +14,12 @@ interface FolderIconProps extends React.SVGProps<SVGSVGElement> {
     color?: string;
 }
 
-export default function Folder({ size = 64, color = "#F5B800" }: FolderIconProps) {
+// Ink-tinted shade and ivory light, drawn over any folder color.
+const SHADE = "oklch(0.22 0.01 255)";
+const LIGHT = "oklch(0.995 0.004 85)";
+const EDGE_PATH = "M3.00014 25.5C2.71414 25.5 2.45014 25.416 2.22314 25.277C2.48614 25.709 2.95714 26 3.50014 26H28.5001C29.0431 26 29.5141 25.709 29.7771 25.277C29.5437 25.4216 29.2748 25.4988 29.0001 25.5H3.00014Z";
+
+export default function Folder({ size = 64, color = "var(--ochre)" }: FolderIconProps) {
     const sizeValue = typeof size === 'string' ? SIZES[size] : size;
     return (
         <svg
@@ -29,16 +34,21 @@ export default function Folder({ size = 64, color = "#F5B800" }: FolderIconProps
             />
             <path
                 d="M15 8L13.732 9.268C13.2631 9.73681 12.6271 10.0001 11.964 10H2V24.5C2 25.3284 2.67157 26 3.5 26H28.5C29.3284 26 30 25.3284 30 24.5V9.5C30 8.67157 29.3284 8 28.5 8H15Z"
-                fill="black"
+                fill={SHADE}
                 fillOpacity="0.05"
             />
             <path
-                d="M3.00014 25.5C2.71414 25.5 2.45014 25.416 2.22314 25.277C2.48614 25.709 2.95714 26 3.50014 26H28.5001C29.0431 26 29.5141 25.709 29.7771 25.277C29.5437 25.4216 29.2748 25.4988 29.0001 25.5H3.00014Z"
-                fill="#B64D07"
+                d={EDGE_PATH}
+                fill={color}
+            />
+            <path
+                d={EDGE_PATH}
+                fill={SHADE}
+                fillOpacity="0.4"
             />
             <path
                 d="M14.129 9.621L15.75 8H15L13.732 9.268C13.2631 9.73681 12.6271 10.0001 11.964 10H2V10.5H12.007C12.8029 10.5001 13.5663 10.1839 14.129 9.621Z"
-                fill="white"
+                fill={LIGHT}
                 fillOpacity="0.4"
             />
         </svg>
