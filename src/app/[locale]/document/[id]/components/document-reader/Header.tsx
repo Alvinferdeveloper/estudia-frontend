@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BookOpen, Loader2, Download, ArrowLeft, Languages } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
@@ -89,18 +91,16 @@ export const Header: React.FC<HeaderProps> = ({
                     {!examMode && onToggleLanguageMode && (
                         <>
                             <Separator orientation="vertical" className="mx-1 h-5" />
-                            <button
+                            <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={onToggleLanguageMode}
+                                aria-pressed={languageModeEnabled}
                                 title={t("languageModeHint")}
-                                className={`press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                                    languageModeEnabled
-                                        ? "bg-primary/10 text-primary"
-                                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                                }`}
                             >
-                                <Languages className="h-4 w-4" />
+                                <Languages />
                                 {t("languageMode")}
-                            </button>
+                            </Button>
                             <div className="flex items-center gap-1 rounded-full border border-border bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
                                 <LanguageFlag code={wordLanguage} />
                                 <span>→</span>
@@ -139,13 +139,9 @@ export const Header: React.FC<HeaderProps> = ({
                     <Separator orientation="vertical" className="mx-1 h-5" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button
-                                title={t("export.trigger")}
-                                disabled={isPending}
-                                className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
-                            >
-                                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                            </button>
+                            <IconButton label={t("export.trigger")} disabled={isPending}>
+                                {isPending ? <Loader2 className="animate-spin" /> : <Download />}
+                            </IconButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleExport("markdown")}>

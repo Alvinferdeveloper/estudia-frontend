@@ -33,7 +33,7 @@ interface ExamActionProps extends React.ComponentProps<typeof Button> {
 }
 
 export const ExamAction: React.FC<ExamActionProps> = ({ isBusy, disabled, className, children, ...props }) => (
-  <Button className={cn("press-feedback h-9 rounded-full px-6", className)} disabled={disabled || isBusy} {...props}>
+  <Button className={cn("px-6", className)} disabled={disabled || isBusy} {...props}>
     {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
     {children}
   </Button>

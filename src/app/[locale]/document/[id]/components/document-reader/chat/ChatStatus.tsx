@@ -3,6 +3,7 @@ import { CircleAlert, RotateCcw } from "lucide-react";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 import type { ApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorText } from "@/components/api-error-message";
+import { Button } from "@/components/ui/button";
 
 export const PendingReply: React.FC = () => {
   const t = useTranslations("chat.status");
@@ -26,14 +27,10 @@ export const ChatError: React.FC<{ errorKey: ApiErrorKey | null; onRetry: () => 
       <div className="flex flex-col items-start gap-1 pt-1 text-sm">
         <p className="font-medium text-foreground">{t("errorTitle")}</p>
         <p className="text-muted-foreground"><ApiErrorText errorKey={errorKey} fallback={t("errorDescription")} /></p>
-        <button
-          type="button"
-          onClick={onRetry}
-          className="press-feedback mt-2 inline-flex items-center gap-1.5 rounded-lg border border-sidebar-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <Button type="button" variant="outline" size="sm" onClick={onRetry} className="mt-2 h-7 gap-1.5 text-xs">
           <RotateCcw className="size-3.5" />
           {t("retry")}
-        </button>
+        </Button>
       </div>
     </div>
   );

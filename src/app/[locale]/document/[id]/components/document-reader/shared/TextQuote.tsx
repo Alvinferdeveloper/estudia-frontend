@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TextQuote as TextQuoteIcon, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface TextQuoteProps {
   text: string;
@@ -50,15 +51,9 @@ export const TextQuote: React.FC<TextQuoteProps> = ({ text, caption, onRemove, e
         )}
       </div>
       {onRemove && (
-        <button
-          type="button"
-          onClick={onRemove}
-          aria-label={t("remove")}
-          title={t("remove")}
-          className="-m-1 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <IconButton label={t("remove")} onClick={onRemove} className="-m-1 size-6 hover:bg-background">
           <X className="size-3.5" />
-        </button>
+        </IconButton>
       )}
     </figure>
   );

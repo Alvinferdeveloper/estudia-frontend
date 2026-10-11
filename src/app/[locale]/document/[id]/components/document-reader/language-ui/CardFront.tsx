@@ -5,6 +5,7 @@ import type { ApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 import { TranslationLoader } from "./TranslationLoader";
 import { LanguageFlag } from "./LanguageFlag";
+import { Button } from "@/components/ui/button";
 
 interface CardFrontProps {
   word: string;
@@ -53,13 +54,10 @@ export const CardFront: React.FC<CardFrontProps> = ({
         {isLoading ? (
           <TranslationLoader wordLanguage={wordLanguage} explanationLanguage={explanationLanguage} />
         ) : (
-          <button
-            onClick={onReveal}
-            className="press-feedback inline-flex h-9 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90"
-          >
-            <BookOpenText className="size-4" />
+          <Button onClick={onReveal}>
+            <BookOpenText />
             {t("reveal")}
-          </button>
+          </Button>
         )}
       </div>
 

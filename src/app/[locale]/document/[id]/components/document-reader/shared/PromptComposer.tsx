@@ -3,6 +3,7 @@ import { ArrowUp, Square } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAutoResizeTextarea } from "@/app/[locale]/document/[id]/hooks/useAutoResizeTextarea";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface PromptComposerProps {
   label: string;
@@ -78,25 +79,24 @@ export const PromptComposer: React.FC<PromptComposerProps> = ({
       <div className="flex items-center gap-2 px-2 pb-2">
         <div className="flex min-w-0 flex-1 items-center gap-1">{leading}</div>
         {isBusy ? (
-          <button
-            type="button"
+          <IconButton
+            variant="default"
+            label={t("stop")}
             onClick={onStop}
-            aria-label={t("stop")}
-            title={t("stop")}
-            className="press-feedback flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground text-background hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-foreground text-background hover:bg-foreground/90"
           >
             <Square className="size-3 fill-current" />
-          </button>
+          </IconButton>
         ) : (
-          <button
+          <IconButton
             type="submit"
+            variant="default"
+            label={t("send")}
             disabled={!canSubmit}
-            aria-label={t("send")}
-            title={t("send")}
-            className="press-feedback flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-muted disabled:text-muted-foreground"
+            className="disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100"
           >
-            <ArrowUp className="size-4" />
-          </button>
+            <ArrowUp />
+          </IconButton>
         )}
       </div>
     </form>

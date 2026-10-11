@@ -5,6 +5,7 @@ import { getApiErrorKey } from "@/lib/api-errors";
 import { ApiErrorMessage } from "@/components/api-error-message";
 import { EXAM_TITLE_MAX_LENGTH, useRenameExam } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface EditableExamTitleProps {
   examId: string;
@@ -67,14 +68,14 @@ export const EditableExamTitle: React.FC<EditableExamTitleProps> = ({ examId, ti
   return (
     <div className="group flex min-w-0 items-center gap-1.5">
       <Heading className={cn("min-w-0 truncate", className)}>{title}</Heading>
-      <button
+      <IconButton
+        size="icon-sm"
+        label={t("action")}
         onClick={startEditing}
-        title={t("action")}
-        aria-label={t("action")}
-        className="press-feedback flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground opacity-60 transition-[opacity,color,background-color] duration-150 hover:bg-accent hover:text-foreground hover:opacity-100 focus-visible:opacity-100 group-hover:opacity-100"
+        className="opacity-60 hover:opacity-100 focus-visible:opacity-100 group-hover:opacity-100"
       >
-        <Pencil className="h-3.5 w-3.5" />
-      </button>
+        <Pencil className="size-3.5" />
+      </IconButton>
     </div>
   );
 };

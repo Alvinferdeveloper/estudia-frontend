@@ -1,6 +1,8 @@
 
 import { ZoomIn, ZoomOut, ScanSearch, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { useTranslations } from "next-intl";
 import { ZocratisMark } from "@/components/brand/ZocratisMark";
 
@@ -42,71 +44,55 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
             {/* Floating toolbar: page indicator + zoom */}
             <div className="pointer-events-none absolute inset-x-0 top-4 z-20 flex justify-center">
                 <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-1.5 shadow-float backdrop-blur-md">
-                    <button
+                    <IconButton
+                        size="icon-sm"
+                        label={t("thumbnails")}
                         onClick={onThumbnailsToggle}
                         aria-pressed={isThumbnailsOpen}
-                        title={t("thumbnails")}
-                        aria-label={t("thumbnails")}
-                        className={cn(
-                            "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-150",
-                            isThumbnailsOpen
-                                ? "bg-primary/10 text-primary"
-                                : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                        )}
                     >
-                        <PanelLeft className="h-3.5 w-3.5" />
-                    </button>
+                        <PanelLeft className="size-3.5" />
+                    </IconButton>
                     <div className="h-4 w-px bg-border" />
                     <span className="px-2 text-xs font-medium tabular-nums text-muted-foreground">
                         {pageNumber || 1} / {numPages || "--"}
                     </span>
                     <div className="h-4 w-px bg-border" />
-                    <button
-                        onClick={onZoomOut}
-                        className="press-feedback flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-                    >
-                        <ZoomOut className="h-3.5 w-3.5" />
-                    </button>
+                    <IconButton size="icon-sm" label={t("zoomOut")} onClick={onZoomOut}>
+                        <ZoomOut className="size-3.5" />
+                    </IconButton>
                     <span className="min-w-10 text-center text-xs font-medium tabular-nums text-muted-foreground">
                         {Math.round(scale * 100)}%
                     </span>
-                    <button
-                        onClick={onZoomIn}
-                        className="press-feedback flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-                    >
-                        <ZoomIn className="h-3.5 w-3.5" />
-                    </button>
+                    <IconButton size="icon-sm" label={t("zoomIn")} onClick={onZoomIn}>
+                        <ZoomIn className="size-3.5" />
+                    </IconButton>
                 </div>
             </div>
 
             {/* Floating region-selection toggle: images/formulas visual query */}
             {!examMode && onRegionModeToggle && (
                 <div className="absolute right-40 top-4 z-20">
-                    <button
+                    <Button
+                        variant={regionMode ? "default" : "outline"}
+                        aria-pressed={regionMode}
                         onClick={onRegionModeToggle}
                         title={t("regionQueryHint")}
-                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-float backdrop-blur-md transition-colors duration-150 ${
-                            regionMode
-                                ? "border border-primary/40 bg-primary text-primary-foreground"
-                                : "border border-border/60 bg-card/90 text-foreground hover:border-primary/40"
-                        }`}
+                        className={cn("h-10 shadow-float", !regionMode && "bg-card/90 backdrop-blur-md")}
                     >
-                        <ScanSearch className="h-4 w-4" />
+                        <ScanSearch />
                         {t("regionQuery")}
-                    </button>
+                    </Button>
                 </div>
             )}
 
             {/* Floating "Ask AI" trigger; exam mode takes that side for its setup panel */}
             {!examMode && (
                 <div className="absolute right-4 top-4 z-20">
-                    <button
+                    <Button
+                        variant={isChatOpen ? "default" : "outline"}
+                        aria-pressed={isChatOpen}
                         onClick={onChatToggle}
-                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-float backdrop-blur-md transition-colors duration-150 ${
-                            isChatOpen
-                                ? "border border-primary/40 bg-primary text-primary-foreground"
-                                : "border border-border/60 bg-card/90 text-foreground hover:border-primary/40"
-                        }`}
+                        className={cn("h-10 shadow-float", !isChatOpen && "bg-card/90 backdrop-blur-md")}
                     >
                         <ZocratisMark className="size-[18px]" />
                         {t("assistant")}
@@ -116,7 +102,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                             </span>
                         )}
-                    </button>
+                    </Button>
                 </div>
             )}
         </>

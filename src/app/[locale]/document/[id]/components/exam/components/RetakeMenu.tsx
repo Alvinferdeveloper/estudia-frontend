@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ATTEMPT_MODES, type AttemptMode } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface RetakeMenuProps {
   onRetake: (mode: AttemptMode) => void;
@@ -18,9 +19,9 @@ interface RetakeMenuProps {
 }
 
 const APPEARANCE = {
-  primary: "h-9 bg-primary px-5 text-primary-foreground hover:bg-primary/90",
-  quiet: "px-3 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground",
-};
+  primary: { variant: "default", size: "default", className: "px-5" },
+  quiet: { variant: "ghost", size: "sm", className: undefined },
+} as const;
 
 // Retakes an exam in either mode, so the same questions can be practiced and then simulated.
 export const RetakeMenu: React.FC<RetakeMenuProps> = ({ onRetake, isPending, disabled, appearance }) => {
@@ -29,17 +30,11 @@ export const RetakeMenu: React.FC<RetakeMenuProps> = ({ onRetake, isPending, dis
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          disabled={disabled || isPending}
-          className={cn(
-            "press-feedback flex shrink-0 items-center gap-1.5 rounded-full text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50",
-            APPEARANCE[appearance]
-          )}
-        >
-          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
+        <Button {...APPEARANCE[appearance]} disabled={disabled || isPending} className={cn("gap-1.5", APPEARANCE[appearance].className)}>
+          {isPending ? <Loader2 className="animate-spin" /> : <RotateCcw />}
           {t("retake")}
-          <ChevronDown className="h-3.5 w-3.5 opacity-70" aria-hidden />
-        </button>
+          <ChevronDown className="size-3.5 opacity-70" aria-hidden />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         {Object.values(ATTEMPT_MODES).map((mode) => (

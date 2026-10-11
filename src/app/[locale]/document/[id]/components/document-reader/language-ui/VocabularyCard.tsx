@@ -22,6 +22,7 @@ import { isScrollbarPointerDown } from "@/app/[locale]/document/[id]/lib/scrollb
 import { CardFront } from "./CardFront";
 import { CardBack } from "./CardBack";
 import { getApiErrorKey } from "@/lib/api-errors";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface SaveEntryData {
   selectedText: string;
@@ -175,13 +176,14 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="relative">
-          <button
+          <IconButton
+            size="icon-sm"
+            label={tActions("close")}
             onClick={handleClose}
-            title={tActions("close")}
-            className="press-feedback absolute -top-3 -right-3 z-10 flex size-7 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-float transition-colors duration-150 hover:bg-accent hover:text-foreground"
+            className="absolute -top-3 -right-3 z-10 border border-border bg-popover shadow-float"
           >
-            <X className="h-3.5 w-3.5" />
-          </button>
+            <X className="size-3.5" />
+          </IconButton>
 
           <AnimatePresence mode="wait" initial={false}>
             {!dialog.isFlipped ? (

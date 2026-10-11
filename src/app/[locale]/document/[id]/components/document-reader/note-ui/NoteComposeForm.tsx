@@ -75,15 +75,17 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
 
         <div role="group" aria-label={t("quickPromptsLabel")} className="mt-3 flex flex-wrap gap-1.5">
           {quickPrompts.map((quick) => (
-            <button
+            <Button
               key={quick.id}
               type="button"
+              variant="outline"
+              size="sm"
               aria-pressed={prompt === quick.prompt}
               onClick={() => pickQuickPrompt(quick.prompt)}
-              className="press-feedback rounded-full border border-border px-3 py-1 text-sm text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-pressed:border-primary/40 aria-pressed:bg-accent aria-pressed:text-foreground"
+              className="h-7 font-normal text-muted-foreground aria-pressed:border-primary/40 aria-pressed:bg-accent aria-pressed:text-foreground"
             >
               {quick.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -96,7 +98,7 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
           <Button variant="ghost" size="sm" onClick={onCancel}>
             {tCommon("actions.cancel")}
           </Button>
-          <Button size="sm" onClick={submit} disabled={!canSubmit} className="press-feedback">
+          <Button size="sm" onClick={submit} disabled={!canSubmit}>
             <ZocratisMark className="size-4" />
             {t("submit")}
           </Button>

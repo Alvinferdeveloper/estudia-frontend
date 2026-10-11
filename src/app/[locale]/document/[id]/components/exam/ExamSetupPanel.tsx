@@ -24,6 +24,7 @@ import { formatDuration, simulationTimeLimit } from "@/app/[locale]/document/[id
 import { useExamSetup } from "@/app/[locale]/document/[id]/components/exam/hooks/useExamSetup";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { cn } from "@/lib/utils";
+import { IconButton } from "@/components/ui/icon-button";
 
 const DIFFICULTIES = [DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD];
 
@@ -81,14 +82,9 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
     <aside aria-labelledby="exam-setup-title" className="flex h-full flex-col border-l border-border bg-card">
       <div className="flex items-center justify-between gap-2 px-5 pb-3 pt-4">
         <h2 id="exam-setup-title" className="text-base font-semibold">{t("setup.title")}</h2>
-        <button
-          onClick={onClose}
-          title={t("setup.close")}
-          aria-label={t("setup.close")}
-          className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        <IconButton label={t("setup.close")} onClick={onClose}>
+          <X />
+        </IconButton>
       </div>
 
       <fieldset disabled={isGenerating} className="flex-1 space-y-6 overflow-y-auto scrollbar-thin px-5 pb-6">
@@ -198,7 +194,7 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
           {t("setup.cost", { cost })}
           {creditsLeft !== null && ` · ${t("setup.creditsLeft", { count: creditsLeft })}`}
         </p>
-        <Button className="press-feedback h-9 w-full rounded-full" disabled={!hasPages || isGenerating} onClick={handleGenerate}>
+        <Button className="w-full" disabled={!hasPages || isGenerating} onClick={handleGenerate}>
           {isGenerating && <Loader2 className="h-4 w-4 animate-spin" />}
           {isGenerating ? t("generating") : t("startExam")}
         </Button>

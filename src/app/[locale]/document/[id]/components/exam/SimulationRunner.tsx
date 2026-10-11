@@ -11,6 +11,7 @@ import { QuestionNavigator } from "@/app/[locale]/document/[id]/components/exam/
 import { CountdownClock } from "@/app/[locale]/document/[id]/components/exam/components/CountdownClock";
 import { AnswerInput } from "@/app/[locale]/document/[id]/components/exam/components/AnswerInput";
 import { ApiErrorMessage } from "@/components/api-error-message";
+import { Button } from "@/components/ui/button";
 
 interface SimulationRunnerProps {
   attemptRef: AttemptRef;
@@ -52,12 +53,9 @@ export const SimulationRunner = ({ attemptRef, view, receivedAt }: SimulationRun
           {t("session.progress", { answered: answeredCount, total })}
         </span>
         {!isLast && !locked && (
-          <button
-            onClick={() => setIsConfirming(true)}
-            className="press-feedback rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-          >
+          <Button variant="ghost" size="sm" onClick={() => setIsConfirming(true)} className="h-7 text-xs">
             {t("simulation.handIn")}
-          </button>
+          </Button>
         )}
       </ExamHeader>
 

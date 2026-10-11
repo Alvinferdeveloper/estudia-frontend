@@ -16,7 +16,9 @@
     "regionQuery": "Imagen o fórmula",
     "regionQueryHint": "Preguntar sobre una imagen o fórmula",
     "assistant": "Asistente IA",
-    "thumbnails": "Miniaturas de páginas"
+    "thumbnails": "Miniaturas de páginas",
+    "zoomOut": "Alejar",
+    "zoomIn": "Acercar"
   },
   "thumbnails": {
     "label": "Páginas del documento",

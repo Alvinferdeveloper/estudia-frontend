@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import { MessageSquare, StickyNote, Languages } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 
 interface SelectionPopupProps {
     selectedText: string | null;
@@ -32,30 +33,36 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
             className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/95 p-1 shadow-float backdrop-blur-md"
             onMouseDown={(e) => e.preventDefault()}
         >
-            <button
+            <Button
+                variant="ghost"
+                size="sm"
                 onClick={onChatClick}
-                className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+                className="gap-1.5 text-foreground"
             >
-                <MessageSquare className="h-3.5 w-3.5" />
+                <MessageSquare className="size-3.5" />
                 {t("chat")}
-            </button>
+            </Button>
             <div className="h-4 w-px bg-border" />
             {isLanguageMode ? (
-                <button
+                <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={(e) => onExplainClick?.(e.currentTarget)}
-                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+                    className="gap-1.5 text-foreground"
                 >
-                    <Languages className="h-3.5 w-3.5" />
+                    <Languages className="size-3.5" />
                     {t("explain")}
-                </button>
+                </Button>
             ) : (
-                <button
+                <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={onCreateNoteClick}
-                    className="press-feedback flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+                    className="gap-1.5 text-foreground"
                 >
-                    <StickyNote className="h-3.5 w-3.5" />
+                    <StickyNote className="size-3.5" />
                     {t("note")}
-                </button>
+                </Button>
             )}
         </motion.div>
     );

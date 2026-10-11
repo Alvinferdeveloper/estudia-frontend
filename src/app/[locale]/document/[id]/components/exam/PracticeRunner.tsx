@@ -9,6 +9,7 @@ import { AnswerInput } from "@/app/[locale]/document/[id]/components/exam/compon
 import { AnswerFeedback } from "@/app/[locale]/document/[id]/components/exam/components/AnswerFeedback";
 import { Progress } from "@/components/ui/progress";
 import { ApiErrorMessage } from "@/components/api-error-message";
+import { Button } from "@/components/ui/button";
 
 // Practice: each answer is graded right away, with feedback before moving on.
 export const PracticeRunner = ({ attemptRef, view }: { attemptRef: AttemptRef; view: AttemptView }) => {
@@ -37,13 +38,9 @@ export const PracticeRunner = ({ attemptRef, view }: { attemptRef: AttemptRef; v
           {answeredCount}/{total}
         </span>
         {answeredCount > 0 && answeredCount < total && (
-          <button
-            onClick={session.finish}
-            disabled={session.isFinishing}
-            className="press-feedback rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:opacity-50"
-          >
+          <Button variant="ghost" size="sm" onClick={session.finish} disabled={session.isFinishing} className="h-7 text-xs">
             {t("finishNow")}
-          </button>
+          </Button>
         )}
       </ExamHeader>
 

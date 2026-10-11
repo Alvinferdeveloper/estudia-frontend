@@ -164,7 +164,7 @@ export const NoteDiffReview: React.FC<NoteDiffReviewProps> = ({ original, propos
         <Button variant="ghost" size="sm" onClick={() => review.decideRemaining("reject")}>
           {t("rejectAll")}
         </Button>
-        <Button size="sm" onClick={() => review.decideRemaining("accept")} className="press-feedback">
+        <Button size="sm" onClick={() => review.decideRemaining("accept")}>
           <Check className="size-4" />
           {t("acceptAll")}
         </Button>

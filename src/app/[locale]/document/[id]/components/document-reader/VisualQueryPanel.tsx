@@ -81,7 +81,7 @@ export const VisualQueryPanel: React.FC<VisualQueryPanelProps> = ({
             <Button
               onClick={handleSubmit}
               disabled={isLoading || !question.trim()}
-              className="cursor-pointer"
+             
             >
               {isLoading ? (
                 <>

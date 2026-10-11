@@ -16,7 +16,9 @@
     "regionQuery": "Image or formula",
     "regionQueryHint": "Ask about an image or formula",
     "assistant": "AI Assistant",
-    "thumbnails": "Page thumbnails"
+    "thumbnails": "Page thumbnails",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in"
   },
   "thumbnails": {
     "label": "Document pages",
