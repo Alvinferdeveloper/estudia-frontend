@@ -27,14 +27,17 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ pdf, pageNumber, i
       aria-current={isCurrent ? "page" : undefined}
       aria-pressed={selectable ? isSelected : undefined}
       aria-label={selectable ? t("selectPage", { page: pageNumber }) : t("goToPage", { page: pageNumber })}
-      className="press-feedback group flex w-full flex-col items-center gap-1.5 rounded-lg p-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      className={cn(
+        "press-feedback group flex w-full flex-col items-center gap-1.5 rounded-lg p-2 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-ring/50",
+        // The page being read sits on a tinted tile, like the active item of a navigation list.
+        isCurrent ? "bg-primary/10" : "hover:bg-sidebar-accent"
+      )}
     >
       <span
         className={cn(
           "relative block overflow-hidden rounded-[3px] bg-card ring-1 transition-shadow duration-150",
-          // Selected reads in vivid ink, the page being read in ink; a page can be both.
-          isSelected ? "ring-2 ring-selection" : isCurrent ? "ring-2 ring-primary" : "ring-border group-hover:ring-primary/40",
-          isSelected && isCurrent && "outline outline-2 outline-offset-2 outline-primary"
+          // Selected reads in vivid ink; the current page is marked by its tile and number instead.
+          isSelected ? "ring-2 ring-selection" : "ring-border group-hover:ring-primary/40"
         )}
         style={{ width: THUMBNAIL_WIDTH }}
       >
@@ -54,8 +57,8 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ pdf, pageNumber, i
       </span>
       <span
         className={cn(
-          "font-mono text-[11px] tabular-nums",
-          isCurrent ? "font-semibold text-foreground" : "text-muted-foreground"
+          "rounded-full px-1.5 font-mono text-[11px] tabular-nums",
+          isCurrent ? "bg-primary font-semibold text-primary-foreground" : "text-muted-foreground"
         )}
       >
         {pageNumber}
