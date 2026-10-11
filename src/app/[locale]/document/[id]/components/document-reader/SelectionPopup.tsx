@@ -29,7 +29,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
             initial={{ opacity: 0, scale: 0.9, y: 4 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
-            className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/95 p-1 shadow-lg shadow-black/10 backdrop-blur-md"
+            className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/95 p-1 shadow-float backdrop-blur-md"
             onMouseDown={(e) => e.preventDefault()}
         >
             <button

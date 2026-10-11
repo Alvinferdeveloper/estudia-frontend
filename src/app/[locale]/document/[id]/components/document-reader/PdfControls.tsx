@@ -41,7 +41,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
         <>
             {/* Floating toolbar: page indicator + zoom */}
             <div className="pointer-events-none absolute inset-x-0 top-4 z-20 flex justify-center">
-                <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-1.5 shadow-lg shadow-black/5 backdrop-blur-md">
+                <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-1.5 shadow-float backdrop-blur-md">
                     <button
                         onClick={onThumbnailsToggle}
                         aria-pressed={isThumbnailsOpen}
@@ -85,10 +85,10 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                     <button
                         onClick={onRegionModeToggle}
                         title={t("regionQueryHint")}
-                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
+                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-float backdrop-blur-md transition-colors duration-150 ${
                             regionMode
-                                ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
-                                : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
+                                ? "border border-primary/40 bg-primary text-primary-foreground"
+                                : "border border-border/60 bg-card/90 text-foreground hover:border-primary/40"
                         }`}
                     >
                         <ScanSearch className="h-4 w-4" />
@@ -102,10 +102,10 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                 <div className="absolute right-4 top-4 z-20">
                     <button
                         onClick={onChatToggle}
-                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md transition-colors duration-150 ${
+                        className={`press-feedback flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-float backdrop-blur-md transition-colors duration-150 ${
                             isChatOpen
-                                ? "border border-primary/40 bg-primary text-primary-foreground shadow-primary/20"
-                                : "border border-border/60 bg-card/90 text-foreground shadow-black/5 hover:border-primary/40"
+                                ? "border border-primary/40 bg-primary text-primary-foreground"
+                                : "border border-border/60 bg-card/90 text-foreground hover:border-primary/40"
                         }`}
                     >
                         <ZocratisMark className="size-[18px]" />

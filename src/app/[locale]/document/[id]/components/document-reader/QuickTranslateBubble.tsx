@@ -17,7 +17,7 @@ export const QuickTranslateBubble: React.FC<QuickTranslateBubbleProps> = ({
       initial={{ opacity: 0, scale: 0.9, y: 4 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 400, damping: 40 }}
-      className="flex max-w-xs items-center gap-1.5 rounded-full border border-border/60 bg-card/95 px-3 py-1.5 shadow-lg shadow-black/10 backdrop-blur-md"
+      className="flex max-w-xs items-center gap-1.5 rounded-full border border-border/60 bg-card/95 px-3 py-1.5 shadow-float backdrop-blur-md"
       onMouseDown={(e) => e.preventDefault()}
     >
       <Languages className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

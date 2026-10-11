@@ -138,7 +138,7 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 380, damping: 34 }}
-            className="fixed bottom-6 right-6 z-50 w-80 rounded-xl border border-border bg-card p-4 shadow-2xl shadow-black/10"
+            className="fixed bottom-6 right-6 z-50 w-80 rounded-xl border border-border bg-card p-4 shadow-float"
           >
             <div className="flex items-start gap-3">
               <div className="shrink-0 rounded-lg bg-primary/10 p-2 text-primary">
