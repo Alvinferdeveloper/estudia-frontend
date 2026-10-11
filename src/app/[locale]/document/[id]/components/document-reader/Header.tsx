@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
                                         </PopoverTrigger>
                                         <PopoverContent
                                             align="end"
-                                            className="flex w-auto gap-1 rounded-full border border-border bg-popover p-1 shadow-float"
+                                            className="flex w-auto gap-1 rounded-full p-1"
                                         >
                                             {availableTargets.map((option) => (
                                                 <button
