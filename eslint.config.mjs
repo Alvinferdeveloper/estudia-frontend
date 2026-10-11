@@ -9,6 +9,14 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+// Colors come from the theme tokens in globals.css (see DESIGN.md), never from the raw Tailwind palette or literals.
+const RAW_COLOR_PATTERNS = [
+  "(^|[\\s:])([a-z]+-)+(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\\d\\d",
+  "\\b(bg|text|border|ring|from|via|to|fill|stroke|shadow|outline|divide|decoration|placeholder)-(white|black)\\b",
+  "\\[[^\\]]*(#[0-9a-fA-F]{3}|rgba?\\(|hsla?\\(|oklch\\()",
+];
+const RAW_COLOR_MESSAGE = "Use a theme token (globals.css, DESIGN.md) instead of a raw color.";
+
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
@@ -27,6 +35,13 @@ const eslintConfig = [
       "@typescript-eslint/no-empty-object-type": "off",
       "react-hooks/exhaustive-deps": "off",
       "prefer-const": "off",
+      "no-restricted-syntax": [
+        "error",
+        ...RAW_COLOR_PATTERNS.flatMap((pattern) => [
+          { selector: `Literal[value=/${pattern}/]`, message: RAW_COLOR_MESSAGE },
+          { selector: `TemplateElement[value.raw=/${pattern}/]`, message: RAW_COLOR_MESSAGE },
+        ]),
+      ],
     },
   },
 ];
