@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
+import { THUMBNAIL_WIDTH } from "@/app/[locale]/document/[id]/lib/page-thumbnails";
 import { usePageThumbnail } from "@/app/[locale]/document/[id]/hooks/usePageThumbnail";
 import { cn } from "@/lib/utils";
 
@@ -30,11 +31,12 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ pdf, pageNumber, i
     >
       <span
         className={cn(
-          "relative block w-full overflow-hidden rounded-[3px] bg-card ring-1 transition-shadow duration-150",
+          "relative block overflow-hidden rounded-[3px] bg-card ring-1 transition-shadow duration-150",
           // Selected reads in vivid ink, the page being read in ink; a page can be both.
           isSelected ? "ring-2 ring-selection" : isCurrent ? "ring-2 ring-primary" : "ring-border group-hover:ring-primary/40",
           isSelected && isCurrent && "outline outline-2 outline-offset-2 outline-primary"
         )}
+        style={{ width: THUMBNAIL_WIDTH }}
       >
         {src ? (
           <img src={src} alt="" className="block h-auto w-full animate-in fade-in duration-200" />

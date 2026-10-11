@@ -43,6 +43,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         currentPage,
         numPages,
         scale,
+        pdfScale,
         setCurrentPage,
         setNumPages,
         zoomIn,
@@ -273,6 +274,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 currentPage={currentPage}
                                 onPageClick={handleThumbnailClick}
                                 selectedPages={exam.enabled ? exam.selectedPages : undefined}
+                                compact={isChatOpen || exam.enabled}
                             />
                         )}
                         <div className="relative flex min-w-0 flex-1 flex-col">
@@ -293,7 +295,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                             />
                             <PdfViewer
                                 publicUrl={document.publicUrl}
-                                scale={scale}
+                                scale={pdfScale}
                                 highlights={activeHighlights}
                                 setNumPages={setNumPages}
                                 onTextSelection={handleTextSelection}
@@ -348,7 +350,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                     ) : isChatOpen && (
                         <>
                             <ResizeHandle />
-                            <Panel defaultSize="30" minSize="22" maxSize="45">
+                            <Panel defaultSize="34" minSize="24" maxSize="50">
                                 <div className="h-full animate-in fade-in slide-in-from-right-4 duration-200 ease-[var(--ease-out)]">
                                     <ChatPanel session={chat} onClose={() => setIsChatOpen(false)} />
                                 </div>

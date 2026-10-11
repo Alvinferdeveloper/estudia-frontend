@@ -1,5 +1,8 @@
 import { useState, useCallback } from "react";
 
+// pdf.js scale shown as 100%: its actual size reads too large next to the side panels.
+const BASE_PDF_SCALE = 0.8;
+
 interface UseDocumentViewerOptions {
   initialPage?: number;
   initialScale?: number;
@@ -10,7 +13,10 @@ interface UseDocumentViewerOptions {
 export interface UseDocumentViewerReturn {
   currentPage: number;
   numPages: number | null;
+  // Zoom as shown to the user (1 = 100%).
   scale: number;
+  // What pdf.js renders at for that zoom.
+  pdfScale: number;
   setCurrentPage: (page: number) => void;
   setNumPages: (pages: number | null) => void;
   setScale: (scale: number) => void;
@@ -63,6 +69,7 @@ export const useDocumentViewer = (
     currentPage,
     numPages,
     scale,
+    pdfScale: scale * BASE_PDF_SCALE,
     setCurrentPage,
     setNumPages,
     setScale,
