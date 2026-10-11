@@ -1,7 +1,7 @@
 {
   "modeButton": "Exam mode",
   "myExams": "My exams",
-  "defaultTitle": "Exam - {count, plural, one {# page} other {# pages}}",
+  "defaultTitle": "{count, plural, one {Page {pages}} other {Pages {pages}}}",
   "generating": "Generating questions...",
   "pagesSelected": "{count, plural, one {# page selected} other {# pages selected}}",
   "startExam": "Start exam",
@@ -42,6 +42,8 @@
     "difficultyLabel": "Difficulty",
     "cost": "Uses {cost, plural, one {# AI credit} other {# AI credits}}",
     "creditsLeft": "{count} left",
+    "titleLabel": "Name (optional)",
+    "titlePlaceholder": "E.g. History midterm, chapter 3",
     "modeLabel": "Mode",
     "timeLimit": "You will have {time}."
   },
@@ -107,5 +109,9 @@
     "navigator": "Questions",
     "questionAnswered": "Question {number}, answered",
     "questionPending": "Question {number}, unanswered"
+  },
+  "rename": {
+    "label": "Exam name",
+    "action": "Rename"
   }
 }

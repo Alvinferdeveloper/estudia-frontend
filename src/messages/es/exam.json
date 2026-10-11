@@ -1,7 +1,7 @@
 {
   "modeButton": "Modo examen",
   "myExams": "Mis exámenes",
-  "defaultTitle": "Examen - {count, plural, one {# página} other {# páginas}}",
+  "defaultTitle": "{count, plural, one {Página {pages}} other {Páginas {pages}}}",
   "generating": "Generando preguntas...",
   "pagesSelected": "{count, plural, one {# página seleccionada} other {# páginas seleccionadas}}",
   "startExam": "Empezar examen",
@@ -42,6 +42,8 @@
     "difficultyLabel": "Dificultad",
     "cost": "Usa {cost, plural, one {# crédito} other {# créditos}} de IA",
     "creditsLeft": "{count, plural, one {te queda #} other {te quedan #}}",
+    "titleLabel": "Nombre (opcional)",
+    "titlePlaceholder": "Ej. Parcial de Historia, capítulo 3",
     "modeLabel": "Modo",
     "timeLimit": "Tendrás {time}."
   },
@@ -107,5 +109,9 @@
     "navigator": "Preguntas",
     "questionAnswered": "Pregunta {number}, respondida",
     "questionPending": "Pregunta {number}, sin responder"
+  },
+  "rename": {
+    "label": "Nombre del examen",
+    "action": "Cambiar nombre"
   }
 }

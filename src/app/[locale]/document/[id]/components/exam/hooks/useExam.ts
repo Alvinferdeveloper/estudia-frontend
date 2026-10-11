@@ -38,6 +38,9 @@ export type AttemptStatus = typeof ATTEMPT_STATUS[keyof typeof ATTEMPT_STATUS];
 
 export const EXAM_SIZES = [5, 10, 15, 20] as const;
 
+// Same cap as the API's MAX_TITLE_LENGTH.
+export const EXAM_TITLE_MAX_LENGTH = 120;
+
 // Mirrors the API's exam views (estudia-api `exam-views.ts`).
 export interface Exam {
   id: string;
@@ -144,6 +147,19 @@ export const useGenerateExam = () => {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: examKeys.all }),
     meta: { inlineError: true, refreshesUsage: true },
+  });
+};
+
+export const useRenameExam = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ examId, title }: { examId: string; title: string }) => {
+      const { data } = await api.patch<Exam>(`/exam/${examId}`, { title });
+      return data;
+    },
+    // The title shows in lists and in every attempt view of the exam.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: examKeys.all }),
+    meta: { inlineError: true },
   });
 };
 

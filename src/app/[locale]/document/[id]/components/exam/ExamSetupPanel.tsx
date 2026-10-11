@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CheckCheck, CircleDot, Loader2, MousePointerClick, PenLine, Shuffle, Underline, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { UpgradePlanLink } from "@/components/upgrade-plan-link";
 import { ApiErrorMessage } from "@/components/api-error-message";
@@ -12,11 +13,13 @@ import {
   ATTEMPT_MODES,
   DIFFICULTY_LEVELS,
   EXAM_SIZES,
+  EXAM_TITLE_MAX_LENGTH,
   QUESTION_TYPES,
   type AttemptMode,
   type DifficultyLevel,
   type QuestionType,
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
+import { formatPageRanges } from "@/app/[locale]/document/[id]/components/exam/lib/exam-title";
 import { formatDuration, simulationTimeLimit } from "@/app/[locale]/document/[id]/components/exam/lib/exam-timing";
 import { useExamSetup } from "@/app/[locale]/document/[id]/components/exam/hooks/useExamSetup";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
@@ -44,6 +47,7 @@ interface ExamSetupPanelProps {
 export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, documentName, selectedPages, pdfDoc, onClose }) => {
   const t = useTranslations("exam");
   const [mode, setMode] = useState<AttemptMode>(ATTEMPT_MODES.PRACTICE);
+  const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS.MEDIUM);
   const [questionType, setQuestionType] = useState<QuestionType>(QUESTION_TYPES.OPEN);
   const [questionCount, setQuestionCount] = useState<number>(EXAM_SIZES[0]);
@@ -60,6 +64,9 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
   const cost = examCreditCost(selectedSize);
   const creditsLeft = usage ? remainingCredits(usage.credits) : null;
   const hasPages = selectedPages.length > 0;
+  const pageRanges = formatPageRanges(selectedPages);
+  // Named after its pages unless the user names it, so untitled exams still tell apart.
+  const defaultTitle = t("defaultTitle", { count: selectedPages.length, pages: pageRanges });
 
   const handleGenerate = () =>
     generate({
@@ -67,7 +74,7 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
       difficulty,
       questionType,
       questionCount: selectedSize,
-      title: t("defaultTitle", { count: selectedPages.length }),
+      title: title.trim() || defaultTitle,
     });
 
   return (
@@ -90,7 +97,7 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
             <>
               <p className="text-sm font-medium tabular-nums">{t("pagesSelected", { count: selectedPages.length })}</p>
               <p className="mt-0.5 truncate font-mono text-xs tabular-nums text-muted-foreground">
-                {[...selectedPages].sort((a, b) => a - b).join(", ")}
+                {pageRanges}
               </p>
             </>
           ) : (
@@ -99,6 +106,18 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
               {t("selectionHint")}
             </p>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="exam-title" className="text-sm font-medium">{t("setup.titleLabel")}</label>
+          <Input
+            id="exam-title"
+            value={title}
+            maxLength={EXAM_TITLE_MAX_LENGTH}
+            placeholder={hasPages ? defaultTitle : t("setup.titlePlaceholder")}
+            onChange={(event) => setTitle(event.target.value)}
+            className="rounded-[10px] bg-background"
+          />
         </div>
 
         <div className="space-y-2">

@@ -7,6 +7,7 @@ import { useRetakeExam } from "@/app/[locale]/document/[id]/components/exam/hook
 import { attemptTone, toTenScale } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
 import { AnswerReview } from "@/app/[locale]/document/[id]/components/exam/components/AnswerReview";
+import { EditableExamTitle } from "@/app/[locale]/document/[id]/components/exam/components/EditableExamTitle";
 import { RetakeMenu } from "@/app/[locale]/document/[id]/components/exam/components/RetakeMenu";
 import { attemptDuration, formatDuration } from "@/app/[locale]/document/[id]/components/exam/lib/exam-timing";
 
@@ -43,7 +44,9 @@ export const AttemptResults = ({ view }: { view: AttemptView }) => {
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
             {t("results.finished", { mode: attempt.mode })}
           </p>
-          <h1 className="mt-2 text-balance text-xl font-semibold tracking-tight">{exam.title}</h1>
+          <div className="mt-2">
+            <EditableExamTitle examId={exam.id} title={exam.title} as="h1" className="text-xl font-semibold tracking-tight" />
+          </div>
 
           <p className="mt-8 flex items-baseline gap-2">
             <span className="font-serif text-7xl italic leading-none tabular-nums">

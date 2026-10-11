@@ -11,6 +11,7 @@ import {
 } from "@/app/[locale]/document/[id]/components/exam/hooks/useExam";
 import { attemptTone, bestScore, toTenScale } from "@/app/[locale]/document/[id]/components/exam/lib/exam-score";
 import { ToneMark } from "@/app/[locale]/document/[id]/components/exam/components/ToneMark";
+import { EditableExamTitle } from "@/app/[locale]/document/[id]/components/exam/components/EditableExamTitle";
 import { RetakeMenu } from "@/app/[locale]/document/[id]/components/exam/components/RetakeMenu";
 
 interface ExamHistoryItemProps {
@@ -63,7 +64,7 @@ export const ExamHistoryItem: React.FC<ExamHistoryItemProps> = ({ exam, onRetake
     <section className="py-6">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold text-foreground">{exam.title}</h2>
+          <EditableExamTitle examId={exam.id} title={exam.title} as="h2" className="text-base font-semibold text-foreground" />
           <p className="mt-1 flex flex-wrap gap-x-2 text-sm text-muted-foreground">
             <span>{t("questionCount", { count: exam.totalQuestions })}</span>
             {isDifficultyLevel(exam.difficulty) && (
