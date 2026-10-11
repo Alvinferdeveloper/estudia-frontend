@@ -133,7 +133,7 @@ export const CardBack: React.FC<CardBackProps> = ({
               label={t("delete")}
               onClick={onDelete}
               disabled={isDeleting}
-              className="hover:bg-danger/10 hover:text-danger"
+              variant="ghost-destructive"
             >
               {isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
             </IconButton>

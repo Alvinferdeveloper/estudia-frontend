@@ -44,7 +44,7 @@ export const NoteDialogHeader: React.FC<NoteDialogHeaderProps> = ({ selectedText
           <IconButton
             label={t("delete")}
             onClick={() => setIsConfirmingDelete(true)}
-            className="hover:bg-destructive/10 hover:text-destructive"
+            variant="ghost-destructive"
           >
             <Trash2 />
           </IconButton>

@@ -436,8 +436,15 @@
   /* compensates for the padding so as not to shift the visual layout */
 }
 
+/* Unlayered, so it beats Tailwind's transition utilities: it carries the state transitions too. */
 .press-feedback {
-  transition: transform 160ms var(--ease-out);
+  transition:
+    transform 160ms var(--ease-out),
+    color 150ms var(--ease-out),
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    box-shadow 150ms var(--ease-out),
+    opacity 150ms var(--ease-out);
 }
 
 .press-feedback:active {
