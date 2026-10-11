@@ -62,6 +62,9 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
   --color-marketing-accent: var(--marketing-accent);
+  --color-ochre: var(--ochre);
+  --shadow-lift: 0 0 0 1px var(--border), 0 1px 2px oklch(0.22 0.01 255 / 0.06);
+  --shadow-float: 0 12px 32px -12px oklch(0.22 0.01 255 / 0.18);
   --font-serif: var(--font-instrument-serif);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
@@ -163,8 +166,10 @@
   --danger: var(--destructive);
   --danger-foreground: var(--destructive-foreground);
 
-  /* Marketing accent (landing page): reuses the chart-3 amber already in the palette */
-  --marketing-accent: var(--chart-3);
+  /* Warm highlighter for rare emphasis (favorites, highlighted passages); never for actions or state */
+  --ochre: oklch(0.74 0.15 85);
+
+  --marketing-accent: var(--ochre);
 
   /* Document reader tray behind PDF pages — needs real contrast against a white page, unlike --muted */
   --reader-canvas: oklch(0.89 0.006 85);
@@ -233,6 +238,8 @@
   --info-foreground: oklch(0.16 0.01 230);
   --danger: var(--destructive);
   --danger-foreground: var(--destructive-foreground);
+
+  --ochre: oklch(0.78 0.15 85);
 
   --reader-canvas: oklch(0.10 0.006 255);
 }

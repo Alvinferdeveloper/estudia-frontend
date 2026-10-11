@@ -93,7 +93,7 @@ export function SegmentedControl<T extends string | number>({
               <motion.span
                 layoutId={thumbId}
                 transition={reduceMotion ? { duration: 0 } : THUMB_TRANSITION}
-                className="absolute inset-0 rounded-md bg-card shadow-sm ring-1 ring-border/70 dark:bg-accent"
+                className="absolute inset-0 rounded-md bg-card shadow-lift dark:bg-accent"
               />
             )}
             <span className="relative flex items-center gap-1.5">
