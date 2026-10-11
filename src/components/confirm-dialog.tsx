@@ -70,7 +70,7 @@ export function ConfirmDialog({
             className={cn(
               "press-feedback flex-1 cursor-pointer font-medium transition-all",
               variant === "destructive"
-                ? "bg-destructive hover:bg-destructive/90 text-white"
+                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 : "bg-primary hover:bg-primary/90 text-primary-foreground"
             )}
           >

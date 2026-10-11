@@ -75,6 +75,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ivory-sheet: var(--ivory-sheet);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -96,14 +98,17 @@
 
 :root {
   --radius: 0.75rem;
+  /* The lightest paper, fixed in both themes for third-party widgets made for light surfaces */
+  --ivory-sheet: oklch(0.995 0.004 85);
+
   /* Base */
   --background: oklch(0.982 0.006 85);
   --foreground: oklch(0.22 0.01 255);
 
   /* Surfaces */
-  --card: oklch(0.995 0.004 85);
+  --card: var(--ivory-sheet);
   --card-foreground: oklch(0.22 0.01 255);
-  --popover: oklch(0.995 0.004 85);
+  --popover: var(--ivory-sheet);
   --popover-foreground: oklch(0.22 0.01 255);
 
   /* Brand */

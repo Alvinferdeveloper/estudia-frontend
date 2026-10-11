@@ -130,11 +130,10 @@ export default function SubscriptionPage() {
                   {t("hero.badge")}
                 </div>
 
-                {/* Main title with gradient text */}
                 <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
                   {t.rich("hero.title", {
                     highlight: (chunks) => (
-                      <span className="bg-gradient-to-r from-primary via-green-400 to-green-600 bg-clip-text text-transparent">{chunks}</span>
+                      <span className="font-serif font-normal italic text-primary">{chunks}</span>
                     ),
                   })}
                 </h1>
@@ -217,13 +216,13 @@ export default function SubscriptionPage() {
                   </div>
 
                   <div className="space-y-5">
-                    <div className="flex items-center justify-center gap-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-2 rounded-lg">
-                      <ShieldCheck className="w-4 h-4" />
+                    <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground bg-success/10 py-2 rounded-lg">
+                      <ShieldCheck className="w-4 h-4 text-success" />
                       <span>{t("checkout.securePayment")}</span>
                     </div>
 
-                    {/* PayPal Component */}
-                    <div className="bg-white p-1 rounded-xl">
+                    {/* PayPal's buttons (including the black card button) are made for a light surface */}
+                    <div className="bg-ivory-sheet p-1 rounded-xl">
                       <PayPalButton
                         plan={selectedPlan}
                         onSuccess={handlePaymentSuccess}

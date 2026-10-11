@@ -24,7 +24,7 @@ export function PayPalButton({ plan, onSuccess, onCancel, onError }: PayPalButto
   if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-6 gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
         <span className="text-sm text-muted-foreground font-medium animate-pulse">{t("connectingPayPal")}</span>
       </div>
     );
