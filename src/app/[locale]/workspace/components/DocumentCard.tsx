@@ -4,6 +4,8 @@ import { Document } from "@/app/types";
 import { Topic } from "@/app/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { formatBytes } from "@/lib/format";
 
 interface DocumentCardProps {
@@ -17,8 +19,7 @@ interface DocumentCardProps {
   onToggleStar?: () => void;
 }
 
-const actionButtonClass =
-  "press-feedback flex h-6 w-6 items-center justify-center rounded-full bg-card/90 shadow-sm transition-opacity duration-150";
+const actionButtonClass = "bg-card/90 shadow-lift focus-visible:opacity-100";
 
 export const DocumentCard: React.FC<DocumentCardProps> = ({
   doc,
@@ -71,40 +72,42 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
 
         {/* Acciones en línea */}
         <div className="absolute right-2 top-2 flex items-center gap-1">
-          <a
-            href={doc.filePath}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={t("actions.download")}
-            onClick={(e) => e.stopPropagation()}
-            className={cn(actionButtonClass, "text-foreground opacity-0 group-hover:opacity-100")}
-          >
-            <Download className="h-3.5 w-3.5" />
-          </a>
-          <button
+          <Button asChild variant="ghost" size="icon-sm" className={cn(actionButtonClass, "text-foreground opacity-0 group-hover:opacity-100")}>
+            <a
+              href={doc.filePath}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t("actions.download")}
+              title={t("actions.download")}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Download className="size-3.5" />
+            </a>
+          </Button>
+          <IconButton
+            size="icon-sm"
+            label={doc.isStarred ? t("actions.unstar") : t("actions.star")}
             onClick={(e) => {
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={doc.isStarred ? t("actions.unstar") : t("actions.star")}
-            className={cn(
-              actionButtonClass,
-              doc.isStarred ? "text-ochre opacity-100" : "text-foreground opacity-0 group-hover:opacity-100"
-            )}
+            className={cn(actionButtonClass, doc.isStarred ? "text-ochre opacity-100 hover:text-ochre" : "text-foreground opacity-0 group-hover:opacity-100")}
           >
-            <Star className={cn("h-3.5 w-3.5", doc.isStarred && "fill-current")} />
-          </button>
+            <Star className={cn("size-3.5", doc.isStarred && "fill-current")} />
+          </IconButton>
           <DeleteConfirmationDialog
             itemType="document"
             onConfirm={() => deleteDocument(doc.id)}
             trigger={(open) => (
-              <button
+              <IconButton
+                size="icon-sm"
+                variant="ghost-destructive"
+                label={t("actions.delete")}
                 onClick={open}
-                title={t("actions.delete")}
-                className={cn(actionButtonClass, "text-foreground opacity-0 hover:text-destructive group-hover:opacity-100")}
+                className={cn(actionButtonClass, "text-foreground opacity-0 group-hover:opacity-100")}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+                <Trash2 className="size-3.5" />
+              </IconButton>
             )}
           />
         </div>

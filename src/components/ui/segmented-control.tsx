@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 export interface SegmentedOption<T extends string | number> {
   value: T;
   label: ReactNode;
+  // Accessible name and tooltip, required when the label is only an icon.
+  ariaLabel?: string;
   disabled?: boolean;
 }
 
@@ -15,6 +17,7 @@ interface SegmentedControlProps<T extends string | number> {
   value: T;
   onChange: (value: T) => void;
   options: SegmentedOption<T>[];
+  size?: "default" | "sm";
   className?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -28,6 +31,7 @@ export function SegmentedControl<T extends string | number>({
   value,
   onChange,
   options,
+  size = "default",
   className,
   ...labelProps
 }: SegmentedControlProps<T>) {
@@ -78,12 +82,15 @@ export function SegmentedControl<T extends string | number>({
             type="button"
             role="radio"
             aria-checked={isSelected}
+            aria-label={option.ariaLabel}
+            title={option.ariaLabel}
             disabled={option.disabled}
             tabIndex={index === tabStop ? 0 : -1}
             onClick={() => select(index)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              "relative flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium tabular-nums outline-none transition-colors duration-150",
+              "relative flex items-center justify-center rounded-md text-sm font-medium tabular-nums outline-none transition-colors duration-150",
+              size === "sm" ? "h-6 px-2" : "h-8 px-3",
               "focus-visible:ring-2 focus-visible:ring-ring",
               isSelected ? "text-foreground" : "text-muted-foreground",
               option.disabled ? "cursor-not-allowed opacity-50" : !isSelected && "hover:text-foreground"

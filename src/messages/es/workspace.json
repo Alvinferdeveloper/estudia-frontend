@@ -18,7 +18,13 @@
     "selectedCount": "{count, plural, one {# seleccionado} other {# seleccionados}}",
     "searchPlaceholder": "Buscar...",
     "sortByName": "Ordenar por nombre",
-    "sortByDate": "Ordenar por fecha"
+    "sortByDate": "Ordenar por fecha",
+    "clearSelection": "Quitar selección",
+    "back": "Volver",
+    "sort": "Ordenar",
+    "viewMode": "Vista",
+    "gridView": "Cuadrícula",
+    "listView": "Lista"
   },
   "sidebar": {
     "recent": "Recientes",

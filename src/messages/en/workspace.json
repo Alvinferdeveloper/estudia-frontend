@@ -18,7 +18,13 @@
     "selectedCount": "{count, plural, one {# selected} other {# selected}}",
     "searchPlaceholder": "Search...",
     "sortByName": "Sort by name",
-    "sortByDate": "Sort by date"
+    "sortByDate": "Sort by date",
+    "clearSelection": "Clear selection",
+    "back": "Back",
+    "sort": "Sort",
+    "viewMode": "View",
+    "gridView": "Grid",
+    "listView": "List"
   },
   "sidebar": {
     "recent": "Recent",

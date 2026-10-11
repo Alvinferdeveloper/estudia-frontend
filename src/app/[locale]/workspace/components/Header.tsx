@@ -1,5 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -67,22 +69,19 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="flex items-center justify-between gap-4 border-b border-border/60 bg-background px-6 py-3.5">
       {hasSelection ? (
         <div className="flex w-full items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
-          <button
-            onClick={onClearSelection}
-            className="press-feedback flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <IconButton label={t("header.clearSelection")} onClick={onClearSelection}>
+            <X />
+          </IconButton>
           <span className="text-sm font-medium tabular-nums">
             {t("header.selectedCount", { count: selectedCount })}
           </span>
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="outline" size="sm" className="press-feedback gap-2" onClick={onBulkDownload}>
-              <Download className="h-3.5 w-3.5" />
+            <Button variant="outline" size="sm" onClick={onBulkDownload}>
+              <Download className="size-3.5" />
               {t("actions.download")}
             </Button>
-            <Button variant="outline" size="sm" className="press-feedback gap-2 text-destructive hover:text-destructive" onClick={onBulkDelete}>
-              <Trash2 className="h-3.5 w-3.5" />
+            <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" onClick={onBulkDelete}>
+              <Trash2 className="size-3.5" />
               {t("actions.delete")}
             </Button>
           </div>
@@ -91,12 +90,9 @@ export const Header: React.FC<HeaderProps> = ({
         <>
           <div className="flex min-w-0 items-center gap-3">
             {onGoBack && (
-              <button
-                onClick={onGoBack}
-                className="press-feedback flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
+              <IconButton label={t("header.back")} onClick={onGoBack}>
+                <ArrowLeft />
+              </IconButton>
             )}
             <div className="min-w-0">
               <h1 className="flex items-center gap-2 truncate text-lg font-semibold tracking-tight text-foreground">
@@ -141,9 +137,9 @@ export const Header: React.FC<HeaderProps> = ({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="press-feedback h-8 gap-1.5 px-2 text-muted-foreground">
-                  <ArrowUpDown className="h-3.5 w-3.5" />
-                </Button>
+                <IconButton label={t("header.sort")}>
+                  <ArrowUpDown className="size-3.5" />
+                </IconButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setSortBy("name")} className={cn(sortBy === "name" && "font-medium text-primary")}>
@@ -155,26 +151,16 @@ export const Header: React.FC<HeaderProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <div className="flex items-center gap-0.5 rounded-lg bg-secondary p-0.5">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={cn(
-                  "press-feedback flex h-7 w-7 items-center justify-center rounded-md transition-all duration-150",
-                  viewMode === "grid" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Grid3X3 className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "press-feedback flex h-7 w-7 items-center justify-center rounded-md transition-all duration-150",
-                  viewMode === "list" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <List className="h-3.5 w-3.5" />
-              </button>
-            </div>
+            <SegmentedControl
+              size="sm"
+              aria-label={t("header.viewMode")}
+              value={viewMode}
+              onChange={setViewMode}
+              options={[
+                { value: "grid", label: <Grid3X3 className="size-3.5" />, ariaLabel: t("header.gridView") },
+                { value: "list", label: <List className="size-3.5" />, ariaLabel: t("header.listView") },
+              ]}
+            />
 
             <div className="ml-1 h-6 w-px bg-border" />
 

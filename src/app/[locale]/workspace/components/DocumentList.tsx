@@ -100,12 +100,8 @@ export const DocumentList: React.FC<DocumentListProps> = ({
             : t("list.emptyDefault")}
         </p>
         {!searchQuery && showUploadCta && (
-          <Button
-            onClick={onUploadCtaClick}
-            className="press-feedback mt-5"
-            size="sm"
-          >
-            <Upload className="mr-2 h-4 w-4" />
+          <Button onClick={onUploadCtaClick} size="sm" className="mt-5">
+            <Upload />
             {t("actions.uploadDocument")}
           </Button>
         )}
@@ -136,7 +132,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                     onFolderSelect(item.item as Folder);
                   }
                 }}
-                className="press-feedback text-sm h-7 px-2 gap-1 shrink-0"
+                className="h-7 gap-1 px-2"
               >
                 {item.type === 'folder' && index < currentPath.length - 1 && (
                   <FolderIcon size="sm" color={(item.item as Folder).color} />

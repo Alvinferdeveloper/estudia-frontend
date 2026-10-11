@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import Folder from "@/app/icons/Folder";
 import { Topic } from "@/app/types";
 import { cn } from "@/lib/utils";
@@ -13,29 +12,25 @@ interface TopicListProps {
 export const TopicList: React.FC<TopicListProps> = ({ topics, selectedTopic, handleTopicSelect }) => {
   const t = useTranslations("workspace");
   return (
-    <div className="space-y-2">
+    <div className="space-y-0.5">
       {topics.map((topic) => {
         const isSelected = selectedTopic?.id === topic.id;
         return (
-          <Button
+          <button
             key={topic.id}
-            variant={selectedTopic?.id === topic.id ? "default" : "ghost"}
             onClick={() => handleTopicSelect(topic)}
+            aria-current={isSelected ? "page" : undefined}
             className={cn(
-              "w-full justify-start h-10  px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50",
-              isSelected && "bg-secondary text-foreground font-medium"
+              "press-feedback flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-sm",
+              isSelected ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
           >
-            <div
-              className="mr-3 p-1.5 rounded-md"
-            >
-              <Folder size="lg" color={topic.color} />
-            </div>
-            <div className="flex-1 text-left">
-              <div className="font-medium">{topic.name}</div>
+            <Folder size="lg" color={topic.color} />
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-medium">{topic.name}</div>
               <div className="text-xs text-muted-foreground">{t("items.fileCount", { count: topic.count })}</div>
             </div>
-          </Button>
+          </button>
         )
       })}
     </div>

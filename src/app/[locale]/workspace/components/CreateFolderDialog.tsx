@@ -64,8 +64,8 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
     }}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button variant="ghost" size="sm" className="w-full justify-start h-9 px-2 text-sm font-normal cursor-pointer text-muted-foreground hover:text-foreground hover:bg-background/50">
-            <FolderPlus className="mr-2 h-4 w-4" />
+          <Button variant="ghost" className="w-full justify-start rounded-lg px-2 font-normal">
+            <FolderPlus />
             <span>{t("folderDialog.trigger")}</span>
           </Button>
         )}
@@ -98,14 +98,10 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
+          <Button variant="ghost" onClick={() => setIsOpen(false)}>
             {tCommon("cancel")}
           </Button>
-          <Button
-            onClick={handleCreate}
-            disabled={!newFolderName.trim()}
-            className="press-feedback h-8 cursor-pointer"
-          >
+          <Button onClick={handleCreate} disabled={!newFolderName.trim()}>
             {t("folderDialog.submit")}
           </Button>
         </DialogFooter>

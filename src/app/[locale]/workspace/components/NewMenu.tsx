@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { CreateFolderDialog } from "@/app/[locale]/workspace/components/CreateFolderDialog";
 import { Plus, FolderPlus, Upload, FileText, X, Paperclip } from "lucide-react";
@@ -77,8 +78,8 @@ export const NewMenu: React.FC<NewMenuProps> = ({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className={cn("press-feedback gap-1.5 rounded-full shadow-sm", className)}>
-            <Plus className="h-4 w-4" />
+          <Button className={cn("gap-1.5", className)}>
+            <Plus />
             {t("newMenu.new")}
           </Button>
         </DropdownMenuTrigger>
@@ -151,12 +152,9 @@ export const NewMenu: React.FC<NewMenuProps> = ({
                   {selectedFolder ? ` · ${selectedFolder.name}` : selectedTopic ? ` · ${selectedTopic.name}` : ""}
                 </p>
               </div>
-              <button
-                onClick={() => setPendingFile(null)}
-                className="press-feedback shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <IconButton size="icon-sm" label={tCommon("close")} onClick={() => setPendingFile(null)}>
+                <X className="size-3.5" />
+              </IconButton>
             </div>
 
             <div className="relative mt-3">
@@ -170,20 +168,10 @@ export const NewMenu: React.FC<NewMenuProps> = ({
             </div>
 
             <div className="mt-3 flex justify-end gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="press-feedback"
-                onClick={() => setPendingFile(null)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setPendingFile(null)}>
                 {tCommon("cancel")}
               </Button>
-              <Button
-                size="sm"
-                className="press-feedback"
-                disabled={isUploading}
-                onClick={handleConfirmUpload}
-              >
+              <Button size="sm" disabled={isUploading} onClick={handleConfirmUpload}>
                 {isUploading ? t("newMenu.uploading") : t("newMenu.upload")}
               </Button>
             </div>

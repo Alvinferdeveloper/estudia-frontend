@@ -4,6 +4,7 @@ import { Check, Star, Trash2 } from "lucide-react";
 import FolderIcon from "@/app/icons/Folder";
 import { Folder } from "@/app/types";
 import { cn } from "@/lib/utils";
+import { IconButton } from "@/components/ui/icon-button";
 import { formatBytes } from "@/lib/format";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
@@ -16,8 +17,7 @@ interface FolderListItemProps {
   onToggleStar?: () => void;
 }
 
-const actionButtonClass =
-  "press-feedback flex h-7 w-7 items-center justify-center rounded-full transition-opacity duration-150";
+const actionButtonClass = "focus-visible:opacity-100";
 
 export const FolderListItem: React.FC<FolderListItemProps> = ({
   folder,
@@ -78,30 +78,30 @@ export const FolderListItem: React.FC<FolderListItemProps> = ({
         </div>
 
         <div className="col-span-2 flex items-center justify-end gap-1">
-          <button
+          <IconButton
+            size="icon-sm"
+            label={folder.isStarred ? t("actions.unstar") : t("actions.star")}
             onClick={(e) => {
               e.stopPropagation();
               onToggleStar?.();
             }}
-            title={folder.isStarred ? t("actions.unstar") : t("actions.star")}
-            className={cn(
-              actionButtonClass,
-              folder.isStarred ? "text-ochre opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-100"
-            )}
+            className={cn(actionButtonClass, folder.isStarred ? "text-ochre opacity-100 hover:text-ochre" : "opacity-0 group-hover:opacity-100")}
           >
-            <Star className={cn("h-3.5 w-3.5", folder.isStarred && "fill-current")} />
-          </button>
+            <Star className={cn("size-3.5", folder.isStarred && "fill-current")} />
+          </IconButton>
           <DeleteConfirmationDialog
             itemType="folder"
             onConfirm={() => deleteFolder?.(folder.id)}
             trigger={(open) => (
-              <button
+              <IconButton
+                size="icon-sm"
+                variant="ghost-destructive"
+                label={t("actions.delete")}
                 onClick={open}
-                title={t("actions.delete")}
-                className={cn(actionButtonClass, "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive")}
+                className={cn(actionButtonClass, "opacity-0 group-hover:opacity-100")}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+                <Trash2 className="size-3.5" />
+              </IconButton>
             )}
           />
         </div>

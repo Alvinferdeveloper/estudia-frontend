@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslations } from "next-intl";
+import { IconButton } from "@/components/ui/icon-button";
 import { Clock, Plus } from "lucide-react";
 import { TopicList } from "@/app/[locale]/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/[locale]/workspace/components/CreateTopicDialog";
@@ -79,9 +80,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <CreateTopicDialog
             createTopic={createTopic}
             trigger={
-              <button className="press-feedback flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                <Plus className="h-3.5 w-3.5" />
-              </button>
+              <IconButton size="icon-sm" label={t("topicDialog.trigger")} className="-my-1">
+                <Plus className="size-3.5" />
+              </IconButton>
             }
           />
         </div>

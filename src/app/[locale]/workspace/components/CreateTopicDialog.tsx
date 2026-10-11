@@ -12,13 +12,12 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { PlusCircle } from "lucide-react";
 import { CollectionColorPicker } from "@/app/[locale]/workspace/components/CollectionColorPicker";
 import { DEFAULT_COLLECTION_COLOR } from "@/app/[locale]/workspace/lib/collection-colors";
 
 interface CreateTopicDialogProps {
   createTopic: (topic: { name: string; color: string }) => void;
-  trigger?: React.ReactNode;
+  trigger: React.ReactNode;
 }
 
 export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopic, trigger }) => {
@@ -45,13 +44,7 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
       setIsOpen(open);
       if (!open) resetForm();
     }}>
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button className="w-full shadow-sm cursor-pointer">
-            <PlusCircle className="mr-2 h-4 w-4" /> {t("topicDialog.trigger")}
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -81,14 +74,10 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="outline" className="press-feedback h-8 cursor-pointer" onClick={() => setIsOpen(false)}>
+          <Button variant="ghost" onClick={() => setIsOpen(false)}>
             {tCommon("cancel")}
           </Button>
-          <Button
-            onClick={handleCreate}
-            disabled={!newTopicName.trim()}
-            className="press-feedback h-8 cursor-pointer"
-          >
+          <Button onClick={handleCreate} disabled={!newTopicName.trim()}>
             {t("topicDialog.submit")}
           </Button>
         </DialogFooter>
