@@ -187,15 +187,17 @@ Both are Tailwind utilities (`shadow-lift`, `shadow-float`); never write a shado
 ## 5. Components
 
 ### Buttons
-Calm and tactile: pill-shaped, they press slightly when clicked.
-- **Shape:** fully rounded pills (9999px) for actions; icon buttons are 32px circles.
-- **Primary:** Zocratis Ink fill with Ivory Sheet text, 36px tall. One per view.
-- **Ghost:** Ink Muted text, Paper Shade fill on hover, ink text on hover.
-- **Press:** scale to 0.97 on active (160 ms ease-out); focus shows a 2px ink ring at 30% opacity.
-- **Status:** migrating from the generic shadcn variants to these pills (see Do's and Don'ts).
+Calm and tactile: pill-shaped, they press slightly when clicked. One component, `components/ui/button.tsx`; icon-only actions use `IconButton`, whose required `label` is the accessible name and tooltip.
+- **Shape:** fully rounded pills (9999px) for actions; icon buttons are circles.
+- **Variants:** `default` (Zocratis Ink fill, Ivory Sheet text; one per view), `secondary` (Paper Shade fill), `outline` (Paper Edge stroke, no shadow), `ghost` (Ink Muted text, Paper Shade fill and ink text on hover), `ghost-destructive` (ghost that turns Danger on hover, for delete icons), `destructive` (Danger fill, only to confirm a deletion), `link`.
+- **Sizes:** `sm` 32px, `default` 36px, `lg` 44px for page-level calls to action (sign in, plans), `icon` 32px, `icon-sm` 28px for dense toolbars and inline row actions.
+- **Toggles:** a `ghost` button with `aria-pressed` shows the active state as a 10% ink tint with ink text. Single choice among options is a Segmented Control instead.
+- **Dialogs:** the cancel action is `ghost`, so the weight stays on the confirming action.
+- **Press:** scale to 0.97 on active (160 ms ease-out, `press-feedback`, built into the base); focus shows a 2px ink ring at 30% opacity.
+- **Not buttons:** selectable rows, navigation items, thumbnails, answer options and color swatches keep their own styles; they are choices or places, not actions.
 
 ### Segmented Control (signature)
-The single-choice selector (exam size, difficulty). A Paper Shade track (12px radius, 4px padding) holds options; the selected one is an Ivory Sheet thumb with Lift that slides to the choice in 200 ms ease-out (instant under reduced motion). Locked options show a lock icon at 50% opacity. Radio-group semantics, one tab stop, arrow keys.
+The single-choice selector (exam size, difficulty, grid or list view). Icon-only options carry an `ariaLabel`; `size="sm"` fits it in a 32px toolbar. A Paper Shade track (12px radius, 4px padding) holds options; the selected one is an Ivory Sheet thumb with Lift that slides to the choice in 200 ms ease-out (instant under reduced motion). Locked options show a lock icon at 50% opacity. Radio-group semantics, one tab stop, arrow keys.
 
 ### Cards / Containers
 - **Corner Style:** 16px for page-level containers, 12px for inner groups.
@@ -232,6 +234,7 @@ A sheet of paper, not a spell: Ivory Sheet (Night Sheet at night) with a Paper E
 ### Don't:
 - **Don't** look like generic AI SaaS: no purple gradients, glows, sparkles or "magic" framing of AI, and no hero-metric cards with giant numbers.
 - **Don't** ship default shadcn looks: no black or outline button toggles and no identical card grids. Adapt the component to these tokens first.
+- **Don't** hand-style a `<button>` for an action: use a `Button` variant or `IconButton`, and add a variant when a pattern repeats.
 - **Don't** drift into a childish school app: no saturated rainbow palettes, cartoon illustrations or gamification that interrupts study.
 - **Don't** resemble legacy academic platforms like Moodle or Blackboard: no gray bureaucracy or dense tables without hierarchy.
 - **Don't** use pure white (#fff) or pure black (#000) anywhere.
