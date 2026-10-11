@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface ConfirmDialogProps {
@@ -44,21 +44,20 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
-        <DialogHeader className="flex flex-col items-center gap-3 pt-8 px-6">
-          <DialogTitle className="text-xl font-semibold text-foreground text-center">
+      <DialogContent className="sm:max-w-[420px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {variant === "destructive" && <TriangleAlert aria-hidden className="size-4 shrink-0 text-destructive" />}
             {title}
           </DialogTitle>
-          <DialogDescription className="text-center text-muted-foreground text-sm leading-relaxed">
-            {description}
-          </DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex gap-3 mt-8 p-6 bg-muted/40 border-t border-border">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isLoading} className="flex-1">
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {cancelText ?? t("cancel")}
           </Button>
-          <Button variant={variant} onClick={handleConfirm} disabled={isLoading} className="flex-1">
+          <Button variant={variant} onClick={handleConfirm} disabled={isLoading}>
             {isLoading && <Loader2 className="animate-spin" />}
             {confirmText ?? t("confirm")}
           </Button>

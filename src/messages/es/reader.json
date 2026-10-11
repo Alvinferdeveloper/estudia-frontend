@@ -33,7 +33,6 @@
   "visualQuery": {
     "title": "Preguntar sobre imagen o fórmula",
     "description": "Haz una pregunta sobre la imagen o fórmula seleccionada en el documento.",
-    "selectedRegion": "Región seleccionada",
     "previewAlt": "Región seleccionada del documento",
     "defaultQuestion": "¿Qué significa esto?",
     "ask": "Preguntar",

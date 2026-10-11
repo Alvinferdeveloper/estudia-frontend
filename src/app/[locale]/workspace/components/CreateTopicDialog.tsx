@@ -67,7 +67,7 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
           <CollectionColorPicker selectedColor={selectedColor} onColorChange={setSelectedColor} />
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-2">
+        <DialogFooter>
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
             {tCommon("cancel")}
           </Button>
