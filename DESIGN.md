@@ -126,7 +126,7 @@ A restrained palette: warm paper neutrals, one ink accent, and semantic colors r
 - **Vivid Ink** (oklch(0.6 0.18 254)): the logo's ink hue, brightened. Marks what the user has selected over content, such as exam pages on the PDF and their thumbnails (3px border, 12% veil, check badge). The same in both themes, because PDF pages stay white. Never for buttons or links.
 
 ### Secondary
-- **Ochre** (oklch(0.74 0.15 85)): the warm highlighter. Marketing accents and rare moments of emphasis (a highlighted passage, a streak). Never for buttons or errors.
+- **Ochre** (oklch(0.74 0.15 85); oklch(0.78 0.15 85) at night, `--ochre`): the warm highlighter. Favorites, marketing accents and rare moments of emphasis (a highlighted passage, a streak, a "commonly confused" note). Never for buttons or errors.
 
 ### Neutral
 - **Ivory Paper** (oklch(0.982 0.006 85)): the page background in light mode.
@@ -147,7 +147,11 @@ A restrained palette: warm paper neutrals, one ink accent, and semantic colors r
 
 **The Paper, Not White Rule.** Light surfaces are always tinted toward ivory (hue 85, chroma 0.004 to 0.008). Pure white (#fff) is prohibited.
 
-**The Tokens-Only State Rule.** Correct, warning and wrong states use the success, warning and danger tokens. Raw Tailwind palette colors (emerald, amber, rose) are prohibited in product UI.
+**The Tokens-Only State Rule.** Correct, warning and wrong states use the success, warning and danger tokens. Raw Tailwind palette colors (emerald, amber, rose), `white`/`black` utilities and color literals in arbitrary values are prohibited; ESLint rejects them (`eslint.config.mjs`).
+
+**Data Colors.** Colors the user picks are data, stored as hex, and the only literals allowed: note and vocabulary highlights (`document/[id]/lib/note-colors.ts`, made for white PDF pages) and topic and folder colors (`workspace/lib/collection-colors.ts`, eight book-cloth tones tuned in OKLCH for ivory and night). Third-party brand marks (Google, Facebook) keep their own colors.
+
+**Syntax Colors.** Code blocks reuse the tokens: keywords in ink, strings in success, numbers in ochre, functions in info, deletions in danger, comments in Ink Muted; the state hues are mixed 65% with the text color to keep 4.5:1.
 
 ## 3. Typography
 
@@ -173,8 +177,9 @@ A restrained palette: warm paper neutrals, one ink accent, and semantic colors r
 Flat by default, built from tonal layers: Ivory Paper is the page, Ivory Sheet lifts content one step, Paper Shade recedes. Shadows are reserved for elements that truly float above the page or respond to state.
 
 ### Shadow Vocabulary
+Both are Tailwind utilities (`shadow-lift`, `shadow-float`); never write a shadow by hand.
 - **Lift** (`box-shadow: 0 1px 2px oklch(0.22 0.01 255 / 0.06)` plus a 1px Paper Edge ring): raised controls such as the segmented thumb.
-- **Float** (`box-shadow: 0 12px 32px -12px oklch(0.22 0.01 255 / 0.18)`): popovers, menus, toasts and the upload flyout.
+- **Float** (`box-shadow: 0 12px 32px -12px oklch(0.22 0.01 255 / 0.18)`): dialogs, popovers, menus, toasts, the upload flyout, the reader's floating controls and the vocabulary card.
 
 ### Named Rules
 **The Earned Shadow Rule.** A shadow means "this sits above the page right now". Static cards and panels use tone and a Paper Edge border, never a shadow.
@@ -207,6 +212,9 @@ The single-choice selector (exam size, difficulty). A Paper Shade track (12px ra
 ### Scrollbars
 Native scrolling, styled once for the whole app: a muted thumb (45% Ink Muted) on a transparent track, set in `globals.css` and inherited everywhere. Panels, lists, menus and code blocks add `scrollbar-thin`; pages and the reader keep the regular width. A surface can blend the track with its own color through `--scrollbar-track` (the reader does). No JavaScript scroll areas.
 
+### Vocabulary Card
+A sheet of paper, not a spell: Ivory Sheet (Night Sheet at night) with a Paper Edge border and Float. The word is the screen's serif moment (Instrument Serif italic); meanings are a divided list, "commonly confused" notes sit on a 10% ochre tint and the tip on Paper Shade. No gradients, glows or sparkles. In the reader header, language mode active uses the 10% ink tint like any selected item.
+
 ### Navigation
 - Side navigation sits on a slightly deeper paper (Paper Shade family) than the content; the active item uses a 10% ink tint and ink text.
 - Headers are quiet: muted icon buttons, the brand mark, and at most one primary action.
@@ -227,6 +235,6 @@ Native scrolling, styled once for the whole app: a muted thumb (45% Ink Muted) o
 - **Don't** drift into a childish school app: no saturated rainbow palettes, cartoon illustrations or gamification that interrupts study.
 - **Don't** resemble legacy academic platforms like Moodle or Blackboard: no gray bureaucracy or dense tables without hierarchy.
 - **Don't** use pure white (#fff) or pure black (#000) anywhere.
-- **Don't** use raw Tailwind palette colors (emerald, amber, rose) for state; use the semantic tokens.
+- **Don't** use raw Tailwind palette colors, `text-white`/`bg-black` or color literals in class names; use the tokens (the linter enforces it).
 - **Don't** use side-stripe borders thicker than 1px as accents, gradient text, or glassmorphism as decoration.
 - **Don't** open a modal when an inline panel or a page would do.
