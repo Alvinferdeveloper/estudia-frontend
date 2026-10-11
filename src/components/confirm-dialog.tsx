@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -56,27 +55,11 @@ export function ConfirmDialog({
         </DialogHeader>
 
         <DialogFooter className="flex gap-3 mt-8 p-6 bg-muted/40 border-t border-border">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isLoading}
-            className="press-feedback flex-1 cursor-pointer transition-colors"
-          >
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isLoading} className="flex-1">
             {cancelText ?? t("cancel")}
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={isLoading}
-            className={cn(
-              "press-feedback flex-1 cursor-pointer font-medium transition-all",
-              variant === "destructive"
-                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                : "bg-primary hover:bg-primary/90 text-primary-foreground"
-            )}
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : null}
+          <Button variant={variant} onClick={handleConfirm} disabled={isLoading} className="flex-1">
+            {isLoading && <Loader2 className="animate-spin" />}
             {confirmText ?? t("confirm")}
           </Button>
         </DialogFooter>

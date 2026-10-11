@@ -83,11 +83,11 @@ export function PricingCard({
       </ul>
 
       <Button
+        size="lg"
+        variant={currentPlan ? "secondary" : "default"}
         onClick={() => onSelect(plan)}
         disabled={currentPlan || isLoading}
-        className={cn("w-full py-6 font-semibold rounded-xl cursor-pointer",
-          currentPlan && "bg-secondary text-secondary-foreground hover:bg-secondary border-none"
-        )}
+        className="w-full"
       >
         {currentPlan ? t("currentPlan") : isLoading ? t("processing") : plan === "free" ? t("getStarted") : t("subscribe")}
       </Button>

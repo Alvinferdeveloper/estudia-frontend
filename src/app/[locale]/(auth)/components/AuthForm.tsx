@@ -108,7 +108,7 @@ export const AuthForm: React.FC<{ mode: AuthMode }> = ({ mode }) => {
             </div>
           )}
 
-          <Button type="submit" disabled={isBusy} className="press-feedback group mt-1 h-11 w-full rounded-xl text-[15px]">
+          <Button type="submit" size="lg" disabled={isBusy} className="group mt-1 w-full text-[15px]">
             {emailAuth.isSubmitting ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

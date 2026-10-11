@@ -76,7 +76,7 @@ export default function SubscriptionPage() {
           <p className="text-muted-foreground text-lg">
             {t("success.description")}
           </p>
-          <Button asChild className="w-full py-6 text-lg font-semibold rounded-xl">
+          <Button asChild size="lg" className="w-full">
             <Link href={ROUTES.workspace}>{t("success.goToWorkspace")}</Link>
           </Button>
         </div>
@@ -95,13 +95,10 @@ export default function SubscriptionPage() {
         <header className="absolute top-0 w-full z-10">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             {selectedPlan && (
-              <button
-                onClick={() => setSelectedPlan(null)}
-                className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
+              <Button variant="ghost" size="sm" onClick={() => setSelectedPlan(null)}>
+                <ArrowLeft />
                 {t("backToPlans")}
-              </button>
+              </Button>
             )}
             <div className="flex-1" />
             <Link
@@ -233,13 +230,10 @@ export default function SubscriptionPage() {
 
                     <ApiErrorMessage errorKey={paymentErrorKey} className="text-center" />
 
-                    <button
-                      onClick={() => setSelectedPlan(null)}
-                      className="w-full cursor-pointer flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4"
-                    >
-                      <ArrowLeft className="w-4 h-4" />
+                    <Button variant="ghost" onClick={() => setSelectedPlan(null)} className="mt-4 w-full">
+                      <ArrowLeft />
                       {t("checkout.cancelAndReturn")}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

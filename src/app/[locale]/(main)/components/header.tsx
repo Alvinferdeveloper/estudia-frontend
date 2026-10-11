@@ -23,16 +23,12 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
-          <Link href={ROUTES.login}>
-            <Button variant="ghost" size="sm" className="press-feedback text-foreground/80 hover:text-foreground hover:bg-foreground/10">
-              {t("header.login")}
-            </Button>
-          </Link>
-          <Link href={ROUTES.register}>
-            <Button size="sm" className="press-feedback rounded-full px-4">
-              {t("header.getStarted")}
-            </Button>
-          </Link>
+          <Button asChild variant="ghost" size="sm" className="text-foreground/80">
+            <Link href={ROUTES.login}>{t("header.login")}</Link>
+          </Button>
+          <Button asChild size="sm" className="px-4">
+            <Link href={ROUTES.register}>{t("header.getStarted")}</Link>
+          </Button>
         </div>
       </div>
     </header>

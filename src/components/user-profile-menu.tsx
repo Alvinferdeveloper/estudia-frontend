@@ -52,7 +52,7 @@ export function UserProfileMenu() {
         // Actions refresh usage themselves; reopening also catches a renewal that happened meanwhile.
         <DropdownMenu onOpenChange={(open) => open && refetchUsage()}>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="press-feedback relative cursor-pointer h-10 w-10 rounded-full p-0 overflow-hidden border border-border/50 hover:border-primary/50 transition-colors shadow-sm">
+                <Button variant="ghost" size="icon" className="relative size-10 overflow-hidden border border-border/50 hover:border-primary/50">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src={session?.user?.image || undefined} alt={t("userMenu.avatarAlt")} />
                         <AvatarFallback className="bg-primary/10 text-primary font-medium">{getInitials(session?.user?.name)}</AvatarFallback>
