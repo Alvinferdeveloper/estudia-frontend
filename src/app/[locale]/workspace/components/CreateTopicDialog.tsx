@@ -11,9 +11,9 @@ import {
   DialogFooter,
   DialogDescription
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { CollectionColorPicker } from "@/app/[locale]/workspace/components/CollectionColorPicker";
 import { DEFAULT_COLLECTION_COLOR } from "@/app/[locale]/workspace/lib/collection-colors";
+import { Field } from "@/components/ui/field";
 
 interface CreateTopicDialogProps {
   createTopic: (topic: { name: string; color: string }) => void;
@@ -54,21 +54,15 @@ export const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({ createTopi
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
-          {/* Input Nombre */}
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium">
-              {t("topicDialog.nameLabel")}
-            </Label>
+        <div className="grid gap-6 py-2">
+          <Field id="topic-name" label={t("topicDialog.nameLabel")}>
             <Input
-              id="name"
               value={newTopicName}
               onChange={(e) => setNewTopicName(e.target.value)}
               placeholder={t("topicDialog.namePlaceholder")}
-              className="col-span-3"
               autoFocus
             />
-          </div>
+          </Field>
 
           <CollectionColorPicker selectedColor={selectedColor} onColorChange={setSelectedColor} />
         </div>

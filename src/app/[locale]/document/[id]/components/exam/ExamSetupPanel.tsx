@@ -25,6 +25,7 @@ import { useExamSetup } from "@/app/[locale]/document/[id]/components/exam/hooks
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { cn } from "@/lib/utils";
 import { IconButton } from "@/components/ui/icon-button";
+import { Field } from "@/components/ui/field";
 
 const DIFFICULTIES = [DIFFICULTY_LEVELS.EASY, DIFFICULTY_LEVELS.MEDIUM, DIFFICULTY_LEVELS.HARD];
 
@@ -104,17 +105,14 @@ export const ExamSetupPanel: React.FC<ExamSetupPanelProps> = ({ documentId, docu
           )}
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="exam-title" className="text-sm font-medium">{t("setup.titleLabel")}</label>
+        <Field id="exam-title" label={t("setup.titleLabel")}>
           <Input
-            id="exam-title"
             value={title}
             maxLength={EXAM_TITLE_MAX_LENGTH}
             placeholder={hasPages ? defaultTitle : t("setup.titlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
-            className="rounded-[10px] bg-background"
           />
-        </div>
+        </Field>
 
         <div className="space-y-2">
           <p id="exam-mode-label" className="text-sm font-medium">{t("setup.modeLabel")}</p>

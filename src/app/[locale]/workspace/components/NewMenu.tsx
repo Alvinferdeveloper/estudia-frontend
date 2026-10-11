@@ -162,7 +162,8 @@ export const NewMenu: React.FC<NewMenuProps> = ({
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder={t("newMenu.tagsPlaceholder")}
-                className="h-9 pr-8 text-sm"
+                aria-label={t("newMenu.tagsPlaceholder")}
+                className="pr-8"
               />
               <Paperclip className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/50" />
             </div>

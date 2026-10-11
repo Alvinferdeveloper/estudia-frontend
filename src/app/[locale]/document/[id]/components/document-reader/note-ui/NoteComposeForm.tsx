@@ -6,6 +6,8 @@ import { useAutoResizeTextarea } from "@/app/[locale]/document/[id]/hooks/useAut
 import type { NoteSessionError } from "@/app/[locale]/document/[id]/hooks/useNoteSession";
 import { NoteColorPicker } from "./NoteColorPicker";
 import { NoteError, NoteFooter, NoteScrollArea } from "./NoteLayout";
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
 
 const QUICK_PROMPTS = ["summarize", "simplify", "keyPoints", "reviewQuestions"] as const;
 
@@ -54,24 +56,22 @@ export const NoteComposeForm: React.FC<NoteComposeFormProps> = ({
   return (
     <>
       <NoteScrollArea>
-        <label htmlFor="note-prompt" className="text-sm font-medium text-foreground">
-          {t("label")}
-        </label>
-        <textarea
-          id="note-prompt"
-          ref={textareaRef}
-          rows={3}
-          value={prompt}
-          onChange={(event) => setPrompt(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-              event.preventDefault();
-              submit();
-            }
-          }}
-          placeholder={t("placeholder")}
-          className="mt-2 block max-h-48 w-full resize-none rounded-xl border border-border bg-background px-3.5 py-3 text-[15px] leading-relaxed text-foreground outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-ring"
-        />
+        <Field id="note-prompt" label={t("label")}>
+          <Textarea
+            ref={textareaRef}
+            rows={3}
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                event.preventDefault();
+                submit();
+              }
+            }}
+            placeholder={t("placeholder")}
+            className="max-h-48 resize-none rounded-lg px-3.5 py-3 text-[15px] md:text-[15px]"
+          />
+        </Field>
 
         <div role="group" aria-label={t("quickPromptsLabel")} className="mt-3 flex flex-wrap gap-1.5">
           {quickPrompts.map((quick) => (

@@ -11,10 +11,10 @@ import {
   DialogFooter,
   DialogDescription
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { FolderPlus } from "lucide-react";
 import { CollectionColorPicker } from "@/app/[locale]/workspace/components/CollectionColorPicker";
 import { DEFAULT_COLLECTION_COLOR } from "@/app/[locale]/workspace/lib/collection-colors";
+import { Field } from "@/components/ui/field";
 
 interface CreateFolderDialogProps {
   createFolder: (folder: { name: string; color: string; topicId: string; parentId?: string }) => void;
@@ -79,20 +79,15 @@ export const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="folderName" className="text-sm font-medium">
-              {t("folderDialog.nameLabel")}
-            </Label>
+        <div className="grid gap-6 py-2">
+          <Field id="folder-name" label={t("folderDialog.nameLabel")}>
             <Input
-              id="folderName"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder={t("folderDialog.namePlaceholder")}
-              className="col-span-3"
               autoFocus
             />
-          </div>
+          </Field>
 
           <CollectionColorPicker selectedColor={selectedColor} onColorChange={setSelectedColor} />
         </div>
