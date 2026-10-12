@@ -329,6 +329,16 @@
   background-color: var(--scrollbar-track) !important;
 }
 
+/* A highlight the reader jumped to (from the notes panel): a vivid-ink outline that fades out. */
+.TextHighlight--scrolledTo .TextHighlight__part {
+  animation: highlight-flash 1.4s var(--ease-out);
+}
+
+@keyframes highlight-flash {
+  0%, 35% { box-shadow: 0 0 0 2px var(--selection); }
+  100% { box-shadow: 0 0 0 2px transparent; }
+}
+
 /* Exam mode marks on the PDF pages, created by usePdfPageOverlay; same look as the selected thumbnails */
 .exam-page-overlay {
   position: absolute;

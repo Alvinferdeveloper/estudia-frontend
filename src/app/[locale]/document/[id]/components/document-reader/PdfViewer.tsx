@@ -9,9 +9,11 @@ import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 import { PdfSkeleton } from "./PdfSkeleton";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 
-// Lets the reader move the viewer from outside it (the page thumbnails).
+// Lets the reader move the viewer from outside it (the sidebar's pages, notes and vocabulary).
 export interface PdfNavigation {
     goToPage: (pageNumber: number) => void;
+    // Scrolls to a highlight and flashes it; false when it isn't rendered (e.g. the other mode's highlights).
+    scrollToHighlight: (id: string) => boolean;
 }
 
 interface RegionSelection {
@@ -130,6 +132,12 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
 
     useImperativeHandle(navigationRef, () => ({
         goToPage: (pageNumber) => utilsRef.current?.getViewer()?.scrollPageIntoView({ pageNumber }),
+        scrollToHighlight: (id) => {
+            const highlight = highlightsRef.current.find((item) => item.id === id);
+            if (!highlight || !utilsRef.current) return false;
+            utilsRef.current.scrollToHighlight(highlight);
+            return true;
+        },
     }), []);
 
     useEffect(() => {
@@ -162,6 +170,10 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
             }
         }));
     }, [highlightItems]);
+    const highlightsRef = useRef(highlights);
+    useEffect(() => {
+        highlightsRef.current = highlights;
+    }, [highlights]);
 
     const handleSelection = useCallback((selection: SelectionEvent) => {
         const position = selection?.position;
