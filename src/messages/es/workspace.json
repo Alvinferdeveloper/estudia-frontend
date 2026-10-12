@@ -104,5 +104,11 @@
     "pageCount": "{count}p",
     "noCollection": "Sin colección",
     "unknownDate": "Desconocida"
+  },
+  "progress": {
+    "label": "{ratio, number, percent} leído",
+    "pageOf": "Página {page} de {total} · {ratio, number, percent}",
+    "continueLabel": "Continuar leyendo",
+    "continueAction": "Continuar"
   }
 }

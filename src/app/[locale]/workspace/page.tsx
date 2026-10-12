@@ -10,6 +10,8 @@ import { ROUTES } from "@/config/routes";
 import { useFetchTopics } from "@/app/[locale]/workspace/hooks/useFetchTopics";
 import { useFetchItems } from "@/app/[locale]/workspace/hooks/useFetchItems";
 import { useFetchRecentDocuments } from "@/app/[locale]/workspace/hooks/useFetchRecentDocuments";
+import { findDocumentToContinue } from "@/app/[locale]/workspace/lib/reading-progress";
+import { ContinueReading } from "@/app/[locale]/workspace/components/ContinueReading";
 import { useCreateFolder, useDeleteFolder } from "@/app/[locale]/workspace/hooks/useFolders";
 import { useUploadDocument } from "@/app/[locale]/workspace/hooks/useUploadDocument";
 import { useDeleteDocument } from "@/app/[locale]/workspace/hooks/useDeleteDocument";
@@ -94,6 +96,7 @@ const DashboardPage = () => {
   }, [items, sortBy, view]);
 
   const recentCount = view === 'recent' ? (recentData?.length ?? 0) : 0;
+  const documentToContinue = view === 'recent' && !debouncedSearchQuery ? findDocumentToContinue(recentData ?? []) : null;
 
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(selectedTopic?.id);
   const { mutate: deleteDocument } = useDeleteDocument(selectedTopic?.id);
@@ -288,6 +291,7 @@ const DashboardPage = () => {
         />
         <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
           <div className="max-w-6xl mx-auto">
+            {documentToContinue && <ContinueReading document={documentToContinue} />}
             <DocumentList
               items={sortedItems}
               selectedFolder={selectedFolder}

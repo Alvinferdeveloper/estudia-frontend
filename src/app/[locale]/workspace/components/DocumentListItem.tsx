@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { formatBytes } from "@/lib/format";
+import { getReadingProgress } from "@/app/[locale]/workspace/lib/reading-progress";
 
 const actionButtonClass = "focus-visible:opacity-100";
 
@@ -30,6 +31,7 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
   onToggleStar,
 }) => {
   const t = useTranslations("workspace");
+  const progress = getReadingProgress(doc);
   const format = useFormatter();
   // "Modificado" refleja el contenido/metadata del documento (updatedAt), no la última
   // vez que se abrió (lastAccessedAt) — son conceptos distintos.
@@ -74,7 +76,11 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
             </span>
             <span className="truncate text-[11px] text-muted-foreground">
               {topic?.name || t("items.noCollection")}
-              {doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
+              {progress
+                ? ` · ${t("progress.pageOf", { page: progress.lastPage, total: progress.pageCount, ratio: progress.ratio })}`
+                : doc.pageCount
+                  ? ` · ${t("items.pageCount", { count: doc.pageCount })}`
+                  : ""}
             </span>
           </div>
         </div>

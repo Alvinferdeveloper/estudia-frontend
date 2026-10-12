@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { formatBytes } from "@/lib/format";
+import { getReadingProgress } from "@/app/[locale]/workspace/lib/reading-progress";
+import { ReadingProgressBar } from "@/app/[locale]/workspace/components/ReadingProgressBar";
 
 interface DocumentCardProps {
   doc: Document;
@@ -34,6 +36,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   const t = useTranslations("workspace");
   const format = useFormatter();
   const tint = topic?.color || "var(--muted-foreground)";
+  const progress = getReadingProgress(doc);
 
   return (
     <div
@@ -53,6 +56,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         style={{ backgroundColor: `color-mix(in oklch, ${tint} 10%, var(--muted))` }}
       >
         <FileText className="h-9 w-9" style={{ color: tint }} strokeWidth={1.5} />
+        {progress && <ReadingProgressBar ratio={progress.ratio} className="absolute inset-x-3 bottom-3" />}
 
         {/* Checkbox de selección */}
         <button
@@ -119,9 +123,10 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
         <p className="truncate text-xs text-muted-foreground">
           {topic ? `${topic.name} · ` : ""}
           {formatBytes(format, doc.fileSize)}
-          {doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
+          {!progress && doc.pageCount ? ` · ${t("items.pageCount", { count: doc.pageCount })}` : ""}
         </p>
-        <p className="truncate text-[11px] text-muted-foreground/70">
+        <p className="truncate text-[11px] text-muted-foreground">
+          {progress && `${t("progress.pageOf", { page: progress.lastPage, total: progress.pageCount, ratio: progress.ratio })} · `}
           {doc.updatedAt ? format.dateTime(new Date(doc.updatedAt), { dateStyle: "medium" }) : "—"}
         </p>
       </div>
