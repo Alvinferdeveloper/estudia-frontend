@@ -44,7 +44,7 @@
   },
   "checkout": {
     "title": "Completa el pago",
-    "subscribingTo": "Te estás suscribiendo al plan <badge>{plan}</badge>",
+    "plan": "Plan",
     "totalToPay": "Total a pagar",
     "perMonth": "/ mes",
     "securePayment": "Pago 100 % seguro y cifrado",
