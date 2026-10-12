@@ -2,6 +2,7 @@ import type { Document } from "@/app/types";
 
 export interface ReadingProgress {
   lastPage: number;
+  furthestPage: number;
   pageCount: number;
   // Share of the document reached, from the furthest page (0 to 1).
   ratio: number;
@@ -14,7 +15,7 @@ export const getReadingProgress = ({
   pageCount,
 }: Pick<Document, "lastPage" | "furthestPage" | "pageCount">): ReadingProgress | null => {
   if (!lastPage || !furthestPage || !pageCount) return null;
-  return { lastPage, pageCount, ratio: Math.min(1, furthestPage / pageCount) };
+  return { lastPage, furthestPage, pageCount, ratio: Math.min(1, furthestPage / pageCount) };
 };
 
 const isUnfinished = (progress: ReadingProgress | null): progress is ReadingProgress =>

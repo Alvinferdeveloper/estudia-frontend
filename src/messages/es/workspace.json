@@ -108,7 +108,8 @@
   "progress": {
     "label": "{ratio, number, percent} leído",
     "pageOf": "Página {page} de {total} · {ratio, number, percent}",
-    "continueLabel": "Continuar leyendo",
-    "continueAction": "Continuar"
+    "continueAction": "Seguir leyendo",
+    "leftOff": "Te quedaste en la página {page}",
+    "remaining": "{ratio, number, percent} · {count, plural, =0 {llegaste al final} one {# página por leer} other {# páginas por leer}}"
   }
 }
