@@ -8,10 +8,12 @@ import { AnnotationRect, BoundingRect } from "@/app/types";
 import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 import { PdfSkeleton } from "./PdfSkeleton";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
+import type { PdfDestination } from "@/app/[locale]/document/[id]/lib/pdf-outline";
 
 // Lets the reader move the viewer from outside it (the sidebar's pages, notes and vocabulary).
 export interface PdfNavigation {
-    goToPage: (pageNumber: number) => void;
+    // With a destination (from the outline), lands on that spot of the page instead of its top.
+    goToPage: (pageNumber: number, destination?: PdfDestination) => void;
     // Scrolls to a highlight and flashes it; false when it isn't rendered (e.g. the other mode's highlights).
     scrollToHighlight: (id: string) => boolean;
 }
@@ -146,7 +148,13 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     }, [onPageChange, onReady]);
 
     useImperativeHandle(navigationRef, () => ({
-        goToPage: (pageNumber) => utilsRef.current?.getViewer()?.scrollPageIntoView({ pageNumber }),
+        goToPage: (pageNumber, destination) => {
+            const viewer = utilsRef.current?.getViewer();
+            if (!viewer) return;
+            viewer.scrollPageIntoView({ pageNumber, destArray: destination });
+            // pdf.js puts the destination at the very top, under the floating controls.
+            if (destination) viewer.container.scrollTop -= MIN_TOP_CLEARANCE;
+        },
         scrollToHighlight: (id) => {
             const highlight = highlightsRef.current.find((item) => item.id === id);
             const utils = utilsRef.current;
