@@ -9,6 +9,79 @@
     "login": "Log in",
     "getStarted": "Start for free"
   },
+  "hero": {
+    "badge": "New · ask about the images and formulas in your PDF",
+    "title": "The AI that reads your PDFs <em>with you</em>.",
+    "subtitle": "{brand} highlights, summarizes and answers questions about the text, images and formulas in your documents, in real time and without leaving the page.",
+    "ctaPrimary": "Start for free",
+    "ctaSecondary": "See how it works",
+    "note": "No credit card · free plan forever"
+  },
+  "demo": {
+    "fileName": "Calculus II.pdf",
+    "recent": "Recent",
+    "collections": "Collections",
+    "collectionCalculus": "Calculus II",
+    "collectionHistory": "History",
+    "savedDocuments": "24 saved documents",
+    "selectionPlaceholder": "Select a passage or ask something about the document.",
+    "noteLabel": "Note",
+    "notePlaceholder": "Tap a suggestion to see how {brand} answers.",
+    "accept": "Accept",
+    "edit": "Edit",
+    "tryIt": "Try it:",
+    "prompts": {
+      "formula": {
+        "chip": "Explain this formula",
+        "selection": "∂f / ∂x · partial derivative of the surface",
+        "response": "The partial derivative measures how f changes as x varies while every other variable stays fixed: the slope of the surface in a single direction."
+      },
+      "summary": {
+        "chip": "Summarize this paragraph",
+        "selection": "Fundamental Theorem of Calculus",
+        "response": "The text says differentiation and integration are inverse operations: the integral accumulates area, and its rate of change recovers the original function."
+      },
+      "image": {
+        "chip": "Ask about the image",
+        "selection": "Concavity graph of f(x)",
+        "response": "The graph is concave up where f''(x) > 0 and flattens at the inflection points, where the curvature changes sign."
+      }
+    }
+  },
+  "featureRows": {
+    "eyebrow": "How it works",
+    "title": "How it helps while you read",
+    "subtitle": "Three small moves that change how you understand a document.",
+    "understand": {
+      "title": "Understand every page, not just the words",
+      "body": "{brand} doesn't match text: it understands the meaning of every paragraph, table, image or formula in your document to give you answers with real context.",
+      "tags": {
+        "definition": "Definition",
+        "example": "Example",
+        "formula": "Formula"
+      },
+      "progress": "Page 12 of 48 · reading the context"
+    },
+    "ask": {
+      "title": "Select and ask, instantly",
+      "body": "Highlight any passage and ask for an explanation without leaving the page.",
+      "action": "Explain this"
+    },
+    "notes": {
+      "title": "From reading to notes, without friction",
+      "body": "When the AI writes a note, you see exactly what changes. Accept, edit or discard each suggestion line by line: the final note is always yours.",
+      "before": "The derivative is a number that comes out of the function.",
+      "after": "The derivative measures the instantaneous rate of change of the function at a point.",
+      "accept": "Accept",
+      "edit": "Edit"
+    }
+  },
+  "closingCta": {
+    "title": "Stop taking notes.<br></br>Start <em>understanding</em>.",
+    "body": "Upload your first PDF and let {brand} take care of the rest.",
+    "cta": "Start for free",
+    "note": "No credit card"
+  },
   "deepDive": {
     "eyebrow": "Built around you",
     "title": "Fits the way you already study",
@@ -53,7 +126,7 @@
       },
       "examMode": {
         "question": "What is Exam Mode?",
-        "answer": "It creates personalized practice exams from your own documents, with a mascot that keeps you company and instant feedback."
+        "answer": "It creates practice exams from the pages you choose, in Practice or Simulation mode, with instant grading."
       },
       "security": {
         "question": "Are my documents secure?",

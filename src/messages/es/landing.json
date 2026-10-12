@@ -9,6 +9,79 @@
     "login": "Iniciar sesión",
     "getStarted": "Empieza gratis"
   },
+  "hero": {
+    "badge": "Nuevo · pregunta sobre imágenes y fórmulas de tu PDF",
+    "title": "La IA que lee tus PDFs <em>contigo</em>.",
+    "subtitle": "{brand} subraya, resume y responde preguntas sobre el texto, las imágenes y las fórmulas de tus documentos, en tiempo real y sin salir de la página.",
+    "ctaPrimary": "Empieza gratis",
+    "ctaSecondary": "Ver cómo funciona",
+    "note": "Sin tarjeta de crédito · plan gratuito para siempre"
+  },
+  "demo": {
+    "fileName": "Cálculo II.pdf",
+    "recent": "Recientes",
+    "collections": "Colecciones",
+    "collectionCalculus": "Cálculo II",
+    "collectionHistory": "Historia",
+    "savedDocuments": "24 documentos guardados",
+    "selectionPlaceholder": "Selecciona un fragmento o pregunta algo sobre el documento.",
+    "noteLabel": "Nota",
+    "notePlaceholder": "Toca una sugerencia para ver cómo responde {brand}.",
+    "accept": "Aceptar",
+    "edit": "Editar",
+    "tryIt": "Pruébalo:",
+    "prompts": {
+      "formula": {
+        "chip": "Explica esta fórmula",
+        "selection": "∂f / ∂x · derivada parcial de la superficie",
+        "response": "La derivada parcial mide cómo cambia f cuando variamos x, dejando el resto de variables fijo: la pendiente de la superficie en una sola dirección."
+      },
+      "summary": {
+        "chip": "Resume este párrafo",
+        "selection": "Teorema Fundamental del Cálculo",
+        "response": "El texto dice que derivar e integrar son operaciones inversas: la integral acumula área, y su tasa de cambio recupera la función original."
+      },
+      "image": {
+        "chip": "Pregunta sobre la imagen",
+        "selection": "Gráfica de concavidad de f(x)",
+        "response": "El gráfico es cóncavo hacia arriba donde f''(x) > 0 y se aplana en los puntos de inflexión, donde la curvatura cambia de signo."
+      }
+    }
+  },
+  "featureRows": {
+    "eyebrow": "Cómo funciona",
+    "title": "Cómo te ayuda mientras lees",
+    "subtitle": "Tres movimientos pequeños que cambian la forma en que entiendes un documento.",
+    "understand": {
+      "title": "Entiende cada página, no solo las palabras",
+      "body": "{brand} no busca coincidencias de texto: entiende el significado de cada párrafo, tabla, imagen o fórmula de tu documento para darte respuestas con contexto real.",
+      "tags": {
+        "definition": "Definición",
+        "example": "Ejemplo",
+        "formula": "Fórmula"
+      },
+      "progress": "Página 12 de 48 · analizando contexto"
+    },
+    "ask": {
+      "title": "Selecciona y pregunta, al instante",
+      "body": "Marca cualquier fragmento y pídele una explicación sin salir de la página.",
+      "action": "Explicar esto"
+    },
+    "notes": {
+      "title": "De la lectura a la nota, sin fricción",
+      "body": "Cuando la IA genera una nota, ves exactamente qué cambia. Acepta, edita o descarta cada sugerencia línea por línea: la nota final siempre es tuya.",
+      "before": "La derivada es un número que sale de la función.",
+      "after": "La derivada mide la razón de cambio instantánea de la función en un punto.",
+      "accept": "Aceptar",
+      "edit": "Editar"
+    }
+  },
+  "closingCta": {
+    "title": "Deja de tomar apuntes.<br></br>Empieza a <em>entender</em>.",
+    "body": "Sube tu primer PDF y deja que {brand} se encargue del resto.",
+    "cta": "Empieza gratis",
+    "note": "Sin tarjeta de crédito"
+  },
   "deepDive": {
     "eyebrow": "Se adapta a ti",
     "title": "Se adapta a como ya estudias",
@@ -53,7 +126,7 @@
       },
       "examMode": {
         "question": "¿Qué es el Modo Examen?",
-        "answer": "Genera exámenes de práctica personalizados a partir de tus propios documentos, con una mascota que te acompaña y retroalimentación al instante."
+        "answer": "Genera exámenes de práctica a partir de las páginas que elijas, en modo Práctica o Simulacro, con corrección al instante."
       },
       "security": {
         "question": "¿Mis documentos están seguros?",
