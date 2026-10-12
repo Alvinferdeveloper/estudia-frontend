@@ -47,5 +47,9 @@
     "remove": "Remove excerpt",
     "showMore": "Show all",
     "showLess": "Show less"
+  },
+  "resume": {
+    "notice": "Picked up on page {page}",
+    "startOver": "Back to the start"
   }
 }

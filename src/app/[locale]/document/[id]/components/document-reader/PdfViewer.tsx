@@ -46,6 +46,9 @@ interface PdfViewerProps {
     regionMode?: boolean;
     onRegionSelection?: (region: RegionSelection) => void;
     viewportRef?: React.Ref<HTMLDivElement>;
+    // Page to open on once pdf.js has laid out the pages; onReady fires after that, or right away without one.
+    initialPage?: number;
+    onReady?: () => void;
 }
 
 interface SelectionEvent {
@@ -104,11 +107,15 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     regionMode = false,
     onRegionSelection,
     viewportRef,
+    initialPage,
+    onReady,
 }) => {
     const utilsRef = useRef<any>(null);
     const numPagesRef = useRef<number | null>(null);
     const eventBusAttachedRef = useRef(false);
     const onPageChangeRef = useRef(onPageChange);
+    const initialPageRef = useRef(initialPage);
+    const onReadyRef = useRef(onReady);
 
     const { setUtils } = usePdfPageOverlay({
         examMode,
@@ -118,7 +125,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
 
     useEffect(() => {
         onPageChangeRef.current = onPageChange;
-    }, [onPageChange]);
+        onReadyRef.current = onReady;
+    }, [onPageChange, onReady]);
 
     useImperativeHandle(navigationRef, () => ({
         goToPage: (pageNumber) => utilsRef.current?.getViewer()?.scrollPageIntoView({ pageNumber }),
@@ -223,6 +231,13 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                                     viewer.eventBus.on("pagechanging", (evt: { pageNumber: number }) => {
                                         onPageChangeRef.current(evt.pageNumber);
                                     });
+                                    const openInitialPage = () => {
+                                        const page = initialPageRef.current;
+                                        if (page && page > 1 && page <= viewer.pagesCount) viewer.currentPageNumber = page;
+                                        onReadyRef.current?.();
+                                    };
+                                    if (viewer.pagesCount > 0) openInitialPage();
+                                    else viewer.eventBus.on("pagesinit", openInitialPage, { once: true });
                                 }
                             }}
                         >

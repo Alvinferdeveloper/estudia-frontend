@@ -47,5 +47,9 @@
     "remove": "Quitar fragmento",
     "showMore": "Ver todo",
     "showLess": "Ver menos"
+  },
+  "resume": {
+    "notice": "Retomaste en la página {page}",
+    "startOver": "Ir al inicio"
   }
 }

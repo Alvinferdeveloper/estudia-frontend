@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Group, Panel } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/[locale]/document/[id]/hooks/useDocumentViewer";
 import { useExamMode } from "@/app/[locale]/document/[id]/hooks/useExamMode";
+import { useReadingProgress } from "@/app/[locale]/document/[id]/hooks/useReadingProgress";
 import { useTextSelection } from "@/app/[locale]/document/[id]/hooks/useTextSelection";
 import { useChatSession } from "@/app/[locale]/document/[id]/hooks/useChatSession";
 import { useAnnotationActions } from "@/app/[locale]/document/[id]/hooks/useAnnotationActions";
@@ -19,6 +20,7 @@ import { ResizeHandle } from "@/components/ui/resize-handle";
 
 import { Header } from "@/app/[locale]/document/[id]/components/document-reader/Header";
 import { PdfControls } from "@/app/[locale]/document/[id]/components/document-reader/PdfControls";
+import { ResumeNotice } from "@/app/[locale]/document/[id]/components/document-reader/ResumeNotice";
 import { PdfViewer, PdfHighlightItem, type PdfNavigation } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
 import { PageThumbnails } from "@/app/[locale]/document/[id]/components/document-reader/thumbnails/PageThumbnails";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
@@ -54,6 +56,22 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [pdfDoc, setPdfDoc] = useState<PdfDocument | null>(null);
     const [isThumbnailsOpen, toggleThumbnails] = useStoredBoolean("reader:thumbnailsOpen");
     const navigationRef = useRef<PdfNavigation>(null);
+
+    // Reopen where the reader left off; progress is only saved once that page is on screen.
+    const resumePage = document.lastPage && document.lastPage > 1 ? document.lastPage : undefined;
+    const [isViewerReady, setIsViewerReady] = useState(false);
+    const [isResumeNoticeOpen, setIsResumeNoticeOpen] = useState(false);
+    useReadingProgress({ documentId: document.id, currentPage, enabled: isViewerReady });
+
+    const handleViewerReady = useCallback(() => {
+        setIsViewerReady(true);
+        if (resumePage) setIsResumeNoticeOpen(true);
+    }, [resumePage]);
+    const dismissResumeNotice = useCallback(() => setIsResumeNoticeOpen(false), []);
+    const startOver = () => {
+        navigationRef.current?.goToPage(1);
+        dismissResumeNotice();
+    };
 
     // In exam mode a thumbnail also selects its page, like clicking the page itself.
     const handleThumbnailClick = (pageNumber: number) => {
@@ -328,7 +346,12 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 onPageSelect={exam.togglePage}
                                 onPdfLoad={setPdfDoc}
                                 navigationRef={navigationRef}
+                                initialPage={resumePage}
+                                onReady={handleViewerReady}
                             />
+                            {isResumeNoticeOpen && resumePage && (
+                                <ResumeNotice page={resumePage} onStartOver={startOver} onDismiss={dismissResumeNotice} />
+                            )}
                         </div>
                     </Panel>
 

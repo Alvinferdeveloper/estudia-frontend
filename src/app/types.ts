@@ -12,6 +12,9 @@ export interface Document {
     tags: string[];
     isStarred: boolean;
     pageCount: number | null;
+    // Reading progress; null until the document is first read.
+    lastPage: number | null;
+    furthestPage: number | null;
     type: 'document';
 }
 
