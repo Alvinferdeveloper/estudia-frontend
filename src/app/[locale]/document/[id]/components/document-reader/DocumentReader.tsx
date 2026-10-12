@@ -22,7 +22,7 @@ import { Header } from "@/app/[locale]/document/[id]/components/document-reader/
 import { PdfControls } from "@/app/[locale]/document/[id]/components/document-reader/PdfControls";
 import { ResumeNotice } from "@/app/[locale]/document/[id]/components/document-reader/ResumeNotice";
 import { PdfViewer, PdfHighlightItem, type PdfNavigation } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
-import { PageThumbnails } from "@/app/[locale]/document/[id]/components/document-reader/thumbnails/PageThumbnails";
+import { ReaderSidebar } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/ReaderSidebar";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { useStoredBoolean } from "@/hooks/useStoredBoolean";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
@@ -212,6 +212,23 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
         }
     };
 
+    // The viewer draws either notes or words, so jumping to the other kind switches mode first and scrolls once it's drawn.
+    const [pendingHighlightId, setPendingHighlightId] = useState<string | null>(null);
+    const jumpToHighlight = (id: string, isWord: boolean) => {
+        if (isWord !== languageMode.enabled) {
+            languageMode.toggle();
+            setPendingHighlightId(id);
+            return;
+        }
+        navigationRef.current?.scrollToHighlight(id);
+    };
+
+    useEffect(() => {
+        if (pendingHighlightId && navigationRef.current?.scrollToHighlight(pendingHighlightId)) {
+            setPendingHighlightId(null);
+        }
+    }, [pendingHighlightId, activeHighlights]);
+
     // ─── Visual query (images/formulas on-demand) ──────────────────────
     const [regionMode, setRegionMode] = useState(false);
     const [isVisualQueryOpen, setIsVisualQueryOpen] = useState(false);
@@ -287,12 +304,16 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                 <Group orientation="horizontal" className="h-full">
                     <Panel minSize="40" className="relative flex">
                         {isThumbnailsOpen && pdfDoc && (
-                            <PageThumbnails
+                            <ReaderSidebar
                                 pdf={pdfDoc}
                                 currentPage={currentPage}
                                 onPageClick={handleThumbnailClick}
                                 selectedPages={exam.enabled ? exam.selectedPages : undefined}
                                 compact={isChatOpen || exam.enabled}
+                                notes={annotations}
+                                words={vocabularyEntries}
+                                onNoteSelect={(note) => jumpToHighlight(note.id, false)}
+                                onWordSelect={(word) => jumpToHighlight(word.id, true)}
                             />
                         )}
                         <div className="relative flex min-w-0 flex-1 flex-col">

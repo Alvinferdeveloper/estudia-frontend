@@ -16,7 +16,7 @@
     "regionQuery": "Imagen o fórmula",
     "regionQueryHint": "Preguntar sobre una imagen o fórmula",
     "assistant": "Asistente IA",
-    "thumbnails": "Miniaturas de páginas",
+    "thumbnails": "Páginas, notas y vocabulario",
     "zoomOut": "Alejar",
     "zoomIn": "Acercar"
   },
@@ -24,6 +24,26 @@
     "label": "Páginas del documento",
     "goToPage": "Ir a la página {page}",
     "selectPage": "Página {page}: incluir o quitar del examen"
+  },
+  "sidebar": {
+    "label": "Navegación del documento",
+    "tabs": {
+      "pages": "Páginas",
+      "notes": "Notas",
+      "vocabulary": "Palabras"
+    },
+    "page": "Página {page}",
+    "noResults": "Nada coincide con tu búsqueda.",
+    "notes": {
+      "search": "Buscar en tus notas",
+      "emptyTitle": "Aún no hay notas",
+      "emptyHint": "Selecciona un texto del documento y elige «Nota» para guardarlo aquí."
+    },
+    "vocabulary": {
+      "search": "Buscar en tus palabras",
+      "emptyTitle": "Aún no hay palabras",
+      "emptyHint": "Activa el modo idioma, selecciona una palabra y pide su significado para guardarla aquí."
+    }
   },
   "selectionPopup": {
     "chat": "Chat",

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
-import { cn } from "@/lib/utils";
 import { PageThumbnail } from "@/app/[locale]/document/[id]/components/document-reader/thumbnails/PageThumbnail";
 
 interface PageThumbnailsProps {
@@ -10,8 +9,6 @@ interface PageThumbnailsProps {
   onPageClick: (pageNumber: number) => void;
   // Set only in exam mode, where a click also selects the page.
   selectedPages?: number[];
-  // Narrower while a panel (chat or exam setup) takes the other side.
-  compact: boolean;
 }
 
 const focusSibling = (list: HTMLElement, from: Element, step: 1 | -1) => {
@@ -19,8 +16,8 @@ const focusSibling = (list: HTMLElement, from: Element, step: 1 | -1) => {
   buttons[buttons.indexOf(from as HTMLButtonElement) + step]?.focus();
 };
 
-// Left sidebar with every page in small, like a desktop PDF viewer; follows the page being read.
-export const PageThumbnails: React.FC<PageThumbnailsProps> = ({ pdf, currentPage, onPageClick, selectedPages, compact }) => {
+// Every page in small, like a desktop PDF viewer; follows the page being read.
+export const PageThumbnails: React.FC<PageThumbnailsProps> = ({ pdf, currentPage, onPageClick, selectedPages }) => {
   const t = useTranslations("reader.thumbnails");
   const listRef = useRef<HTMLOListElement>(null);
 
@@ -37,14 +34,7 @@ export const PageThumbnails: React.FC<PageThumbnailsProps> = ({ pdf, currentPage
   };
 
   return (
-    <nav
-      aria-label={t("label")}
-      // Same surface as the chat panel, so both sides of the document read as one frame.
-      className={cn(
-        "shrink-0 overflow-y-auto scrollbar-thin border-r border-sidebar-border bg-sidebar animate-in fade-in slide-in-from-left-2 duration-200 ease-[var(--ease-out)]",
-        compact ? "w-36" : "w-52"
-      )}
-    >
+    <nav aria-label={t("label")} className="h-full overflow-y-auto scrollbar-thin">
       <ol ref={listRef} onKeyDown={handleKeyDown} className="space-y-1 p-2">
         {Array.from({ length: pdf.numPages }, (_, index) => index + 1).map((pageNumber) => (
           <li key={pageNumber}>

@@ -16,7 +16,7 @@
     "regionQuery": "Image or formula",
     "regionQueryHint": "Ask about an image or formula",
     "assistant": "AI Assistant",
-    "thumbnails": "Page thumbnails",
+    "thumbnails": "Pages, notes and vocabulary",
     "zoomOut": "Zoom out",
     "zoomIn": "Zoom in"
   },
@@ -24,6 +24,26 @@
     "label": "Document pages",
     "goToPage": "Go to page {page}",
     "selectPage": "Page {page}: add to or remove from the exam"
+  },
+  "sidebar": {
+    "label": "Document navigation",
+    "tabs": {
+      "pages": "Pages",
+      "notes": "Notes",
+      "vocabulary": "Words"
+    },
+    "page": "Page {page}",
+    "noResults": "Nothing matches your search.",
+    "notes": {
+      "search": "Search your notes",
+      "emptyTitle": "No notes yet",
+      "emptyHint": "Select some text in the document and choose “Note” to keep it here."
+    },
+    "vocabulary": {
+      "search": "Search your words",
+      "emptyTitle": "No words yet",
+      "emptyHint": "Turn on language mode, select a word and ask for its meaning to keep it here."
+    }
   },
   "selectionPopup": {
     "chat": "Chat",
