@@ -29,6 +29,7 @@
     "label": "Navegación del documento",
     "tabs": {
       "pages": "Páginas",
+      "outline": "Índice",
       "notes": "Notas",
       "vocabulary": "Palabras"
     },
@@ -43,6 +44,11 @@
       "search": "Buscar en tus palabras",
       "emptyTitle": "Aún no hay palabras",
       "emptyHint": "Activa el modo idioma, selecciona una palabra y pide su significado para guardarla aquí."
+    },
+    "outline": {
+      "label": "Índice del documento",
+      "expand": "Mostrar las secciones de {title}",
+      "collapse": "Ocultar las secciones de {title}"
     }
   },
   "selectionPopup": {

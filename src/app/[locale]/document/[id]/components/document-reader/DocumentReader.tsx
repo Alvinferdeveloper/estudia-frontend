@@ -314,6 +314,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 words={vocabularyEntries}
                                 onNoteSelect={(note) => jumpToHighlight(note.id, false)}
                                 onWordSelect={(word) => jumpToHighlight(word.id, true)}
+                                onSectionSelect={(section) => navigationRef.current?.goToPage(section.pageNumber, section.destination)}
                             />
                         )}
                         <div className="relative flex min-w-0 flex-1 flex-col">

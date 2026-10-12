@@ -12,8 +12,13 @@ import {
 } from "@/app/[locale]/document/[id]/lib/sidebar-highlights";
 import { PageThumbnails } from "@/app/[locale]/document/[id]/components/document-reader/thumbnails/PageThumbnails";
 import { HighlightList } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/HighlightList";
+import { OutlineList } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/OutlineList";
+import { useDocumentOutline } from "@/app/[locale]/document/[id]/hooks/useDocumentOutline";
+import { countOutlineEntries, type OutlineItem } from "@/app/[locale]/document/[id]/lib/pdf-outline";
 
-const TABS = ["pages", "notes", "vocabulary"] as const;
+const TABS = ["pages", "outline", "notes", "vocabulary"] as const;
+// A single entry is usually just the document title, not worth a tab.
+const MIN_OUTLINE_ENTRIES = 2;
 type SidebarTab = (typeof TABS)[number];
 
 interface ReaderSidebarProps {
@@ -28,7 +33,12 @@ interface ReaderSidebarProps {
   words: VocabularyEntry[];
   onNoteSelect: (note: SidebarHighlight) => void;
   onWordSelect: (word: SidebarHighlight) => void;
+  onSectionSelect: (section: OutlineItem) => void;
 }
+
+const TabCount: React.FC<{ count: number }> = ({ count }) => (
+  <span className="tabular-nums text-muted-foreground">{count}</span>
+);
 
 // Everything for moving through the document: its pages, the user's notes and saved words.
 export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
@@ -41,12 +51,18 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
   words,
   onNoteSelect,
   onWordSelect,
+  onSectionSelect,
 }) => {
   const t = useTranslations("reader.sidebar");
-  const [tab, setTab] = useStoredChoice<SidebarTab>("reader:sidebarTab", TABS, "pages");
+  const [storedTab, setTab] = useStoredChoice<SidebarTab>("reader:sidebarTab", TABS, "pages");
+  const outline = useDocumentOutline(pdf);
+  const hasOutline = countOutlineEntries(outline) >= MIN_OUTLINE_ENTRIES;
+  const tab = storedTab === "outline" && !hasOutline ? "pages" : storedTab;
   const noteItems = useMemo(() => notes.map(noteToSidebarHighlight), [notes]);
   const wordItems = useMemo(() => words.map(wordToSidebarHighlight), [words]);
   const isExamMode = selectedPages !== undefined;
+  // With four tabs in the narrow sidebar, the counts don't fit.
+  const showCounts = !(compact && hasOutline);
 
   const pages = (
     <PageThumbnails pdf={pdf} currentPage={currentPage} onPageClick={onPageClick} selectedPages={selectedPages} />
@@ -67,16 +83,22 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
         <Tabs value={tab} onValueChange={(value) => setTab(value as SidebarTab)} className="h-full min-h-0">
           <TabsList className="m-2">
             <TabsTrigger value="pages">{t("tabs.pages")}</TabsTrigger>
+            {hasOutline && <TabsTrigger value="outline">{t("tabs.outline")}</TabsTrigger>}
             <TabsTrigger value="notes">
               {t("tabs.notes")}
-              {noteItems.length > 0 && <span className="tabular-nums text-muted-foreground">{noteItems.length}</span>}
+              {showCounts && noteItems.length > 0 && <TabCount count={noteItems.length} />}
             </TabsTrigger>
             <TabsTrigger value="vocabulary">
               {t("tabs.vocabulary")}
-              {wordItems.length > 0 && <span className="tabular-nums text-muted-foreground">{wordItems.length}</span>}
+              {showCounts && wordItems.length > 0 && <TabCount count={wordItems.length} />}
             </TabsTrigger>
           </TabsList>
           <TabsContent value="pages">{pages}</TabsContent>
+          {hasOutline && (
+            <TabsContent value="outline">
+              <OutlineList items={outline} currentPage={currentPage} onSelect={onSectionSelect} />
+            </TabsContent>
+          )}
           <TabsContent value="notes">
             <HighlightList kind="notes" items={noteItems} currentPage={currentPage} onSelect={onNoteSelect} />
           </TabsContent>

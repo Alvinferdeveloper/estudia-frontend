@@ -29,6 +29,7 @@
     "label": "Document navigation",
     "tabs": {
       "pages": "Pages",
+      "outline": "Contents",
       "notes": "Notes",
       "vocabulary": "Words"
     },
@@ -43,6 +44,11 @@
       "search": "Search your words",
       "emptyTitle": "No words yet",
       "emptyHint": "Turn on language mode, select a word and ask for its meaning to keep it here."
+    },
+    "outline": {
+      "label": "Document contents",
+      "expand": "Show the sections of {title}",
+      "collapse": "Hide the sections of {title}"
     }
   },
   "selectionPopup": {
