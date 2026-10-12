@@ -2,7 +2,6 @@
   "loadError": "No se pudieron cargar los planes de suscripción",
   "backToWorkspace": "Volver al espacio de trabajo",
   "closePricing": "Cerrar planes",
-  "backToPlans": "Volver a los planes",
   "hero": {
     "title": "Elige tu <highlight>plan</highlight>",
     "subtitle": "Cambia de plan cuando quieras. Los créditos de IA se renuevan en cada período de tu plan."

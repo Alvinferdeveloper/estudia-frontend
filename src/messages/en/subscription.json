@@ -2,7 +2,6 @@
   "loadError": "Failed to load subscription plans",
   "backToWorkspace": "Back to workspace",
   "closePricing": "Close pricing",
-  "backToPlans": "Back to plans",
   "hero": {
     "title": "Choose your <highlight>plan</highlight>",
     "subtitle": "Switch plans whenever you like. AI credits renew every period of your plan."

@@ -13,6 +13,7 @@ import { X, ArrowLeft, CheckCircle2, ShieldCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/config/routes";
 import { env } from "@/config/env";
@@ -96,13 +97,12 @@ export default function SubscriptionPage() {
       <div className="relative min-h-screen bg-background">
         <header className="absolute top-0 w-full z-10">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-            {selectedPlan && (
-              <Button variant="ghost" size="sm" onClick={() => setSelectedPlan(null)}>
-                <ArrowLeft />
-                {t("backToPlans")}
-              </Button>
-            )}
-            <div className="flex-1" />
+            <Link
+              href={ROUTES.workspace}
+              className="rounded-lg text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <BrandLogo />
+            </Link>
             <Button asChild variant="ghost" size="icon">
               <Link href={ROUTES.workspace} aria-label={t("closePricing")} title={t("closePricing")}>
                 <X />
