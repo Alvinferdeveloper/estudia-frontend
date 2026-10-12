@@ -71,6 +71,21 @@ interface HighlightRect {
     height: number;
 }
 
+// scrollToHighlight leaves the highlight this far from the top, under the floating controls.
+const LIBRARY_SCROLL_MARGIN = 10;
+// Room for the floating page and zoom controls above the highlight.
+const MIN_TOP_CLEARANCE = 88;
+
+// Moves the highlight the library just scrolled to into the middle of the viewer. Synchronous on purpose:
+// the library only starts listening for scroll (which clears the flash) 100ms after its own jump.
+const centerScrolledHighlight = (viewer: any, rect: { y1: number; y2: number; height: number; pageNumber: number }) => {
+    const viewport = viewer?.getPageView(rect.pageNumber - 1)?.viewport;
+    if (!viewport) return;
+    const highlightHeight = ((rect.y2 - rect.y1) * viewport.height) / rect.height;
+    const top = Math.max(MIN_TOP_CLEARANCE, (viewer.container.clientHeight - highlightHeight) / 2);
+    viewer.container.scrollTop -= top - LIBRARY_SCROLL_MARGIN;
+};
+
 // Only .TextHighlight__part elements have a real box, and the click target isn't always one, so pick by position.
 const getClickedPart = (container: Element, x: number, y: number): Element => {
     const parts = Array.from(container.querySelectorAll(".TextHighlight__part"));
@@ -134,8 +149,10 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
         goToPage: (pageNumber) => utilsRef.current?.getViewer()?.scrollPageIntoView({ pageNumber }),
         scrollToHighlight: (id) => {
             const highlight = highlightsRef.current.find((item) => item.id === id);
-            if (!highlight || !utilsRef.current) return false;
-            utilsRef.current.scrollToHighlight(highlight);
+            const utils = utilsRef.current;
+            if (!highlight || !utils) return false;
+            utils.scrollToHighlight(highlight);
+            centerScrolledHighlight(utils.getViewer(), highlight.position.boundingRect);
             return true;
         },
     }), []);
