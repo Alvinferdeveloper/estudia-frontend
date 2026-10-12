@@ -23,8 +23,7 @@ export function DeepDive() {
     <section id="examen" className="py-20 md:py-28 border-y border-border/60 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-xl mx-auto mb-16">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("eyebrow")}</span>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">{t("title")}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t("title")}</h2>
         </div>
 
         <div className="grid md:grid-cols-3 gap-10 md:gap-0 md:divide-x divide-border/60">

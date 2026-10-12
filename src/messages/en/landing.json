@@ -49,7 +49,6 @@
     }
   },
   "featureRows": {
-    "eyebrow": "How it works",
     "title": "How it helps while you read",
     "subtitle": "Three small moves that change how you understand a document.",
     "understand": {
@@ -83,7 +82,6 @@
     "note": "No credit card"
   },
   "deepDive": {
-    "eyebrow": "Built around you",
     "title": "Fits the way you already study",
     "columns": {
       "workflow": {

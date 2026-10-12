@@ -49,7 +49,6 @@
     }
   },
   "featureRows": {
-    "eyebrow": "Cómo funciona",
     "title": "Cómo te ayuda mientras lees",
     "subtitle": "Tres movimientos pequeños que cambian la forma en que entiendes un documento.",
     "understand": {
@@ -83,7 +82,6 @@
     "note": "Sin tarjeta de crédito"
   },
   "deepDive": {
-    "eyebrow": "Se adapta a ti",
     "title": "Se adapta a como ya estudias",
     "columns": {
       "workflow": {
