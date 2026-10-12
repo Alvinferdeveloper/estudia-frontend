@@ -103,6 +103,11 @@
       "powerpoint": "PowerPoint · próximamente"
     }
   },
+  "manifesto": {
+    "lead": "Sócrates enseñaba preguntando.",
+    "brandLine": "{brand} también.",
+    "body": "No te damos las respuestas para que las memorices: te preguntamos, te examinamos y te mostramos qué te falta entender."
+  },
   "faq": {
     "title": "Preguntas frecuentes",
     "items": {

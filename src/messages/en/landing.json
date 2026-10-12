@@ -103,6 +103,11 @@
       "powerpoint": "PowerPoint · coming soon"
     }
   },
+  "manifesto": {
+    "lead": "Socrates taught by asking questions.",
+    "brandLine": "So does {brand}.",
+    "body": "We don't hand you answers to memorize: we ask you, test you and show you what you still need to understand."
+  },
   "faq": {
     "title": "Frequently asked questions",
     "items": {

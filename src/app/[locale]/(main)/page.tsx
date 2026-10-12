@@ -9,7 +9,7 @@ import { Header } from "./components/header";
 import { Hero } from "./components/hero";
 import { FeatureRows } from "./components/feature-rows";
 import { DeepDive } from "./components/deep-dive";
-import { Stats } from "./components/stats";
+import { Manifesto } from "./components/manifesto";
 import { FAQ } from "./components/faq";
 import { ClosingCta } from "./components/closing-cta";
 import { Footer } from "./components/footer";
@@ -32,7 +32,7 @@ export default async function LandingPage({ params }: LocaleParams) {
         <Hero backgroundImageSrc="/images/hero_bg.png" />
         <FeatureRows />
         <DeepDive />
-        <Stats />
+        <Manifesto />
         <FAQ />
         <ClosingCta />
       </main>
