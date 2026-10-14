@@ -23,7 +23,11 @@ import { Header } from "@/app/[locale]/document/[id]/components/document-reader/
 import { PdfControls } from "@/app/[locale]/document/[id]/components/document-reader/PdfControls";
 import { ResumeNotice } from "@/app/[locale]/document/[id]/components/document-reader/ResumeNotice";
 import { PdfViewer, PdfHighlightItem, type PdfNavigation } from "@/app/[locale]/document/[id]/components/document-reader/PdfViewer";
-import { ReaderSidebar } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/ReaderSidebar";
+import { ReaderSidebar, SIDEBAR_TABS, type SidebarTab } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/ReaderSidebar";
+import { useStoredChoice } from "@/hooks/useStoredChoice";
+import { useReaderSearch } from "@/app/[locale]/document/[id]/hooks/useReaderSearch";
+import type { TextSearchResult } from "@/app/[locale]/document/[id]/hooks/useDocumentTextSearch";
+import type { SemanticPassage } from "@/app/[locale]/document/[id]/hooks/useSemanticSearch";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { useStoredBoolean } from "@/hooks/useStoredBoolean";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
@@ -36,6 +40,9 @@ import { VisualQueryPanel } from "@/app/[locale]/document/[id]/components/docume
 import { DocumentFile } from "@/app/[locale]/document/[id]/page";
 import { Annotation, VocabularyEntry } from "@/app/types";
 import { getApiErrorKey } from "@/lib/api-errors";
+
+// A passage's opening words are enough to find it on its page; if they aren't, the jump still lands on the page.
+const PASSAGE_OPENING_WORDS = 8;
 
 interface DocumentReaderProps {
     document: DocumentFile;
@@ -64,6 +71,38 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [isResumeNoticeOpen, setIsResumeNoticeOpen] = useState(false);
     useReadingProgress({ documentId: document.id, currentPage, enabled: isViewerReady });
     const indexing = useDocumentIndexing(document.id);
+    const [sidebarTab, setSidebarTab] = useStoredChoice<SidebarTab>("reader:sidebarTab", SIDEBAR_TABS, "pages");
+    const search = useReaderSearch(document.id, pdfDoc, indexing);
+    const [searchFocusRequest, setSearchFocusRequest] = useState(0);
+
+    // The browser's own find misses pages pdf.js hasn't drawn, so in the reader Ctrl/Cmd+F opens ours.
+    useEffect(() => {
+        const openSearch = (event: KeyboardEvent) => {
+            if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "f" || exam.enabled) return;
+            const target = event.target instanceof HTMLElement ? event.target : null;
+            if (target?.closest("input, textarea, [contenteditable='true']") && !target.closest("[data-reader-search]")) return;
+            event.preventDefault();
+            if (!isThumbnailsOpen) toggleThumbnails();
+            setSidebarTab("search");
+            setSearchFocusRequest((count) => count + 1);
+        };
+        window.addEventListener("keydown", openSearch);
+        return () => window.removeEventListener("keydown", openSearch);
+    }, [exam.enabled, isThumbnailsOpen, toggleThumbnails, setSidebarTab]);
+
+    useEffect(() => {
+        navigationRef.current?.clearTextMatch();
+    }, [search.query, search.mode]);
+
+    const handleSearchResultSelect = (result: TextSearchResult) => {
+        search.setActiveResultId(result.id);
+        navigationRef.current?.showTextMatch(result.pageNumber, search.exactQuery, result.occurrence);
+    };
+
+    const handlePassageSelect = (passage: SemanticPassage) => {
+        const opening = passage.content.split(/\s+/).slice(0, PASSAGE_OPENING_WORDS).join(" ");
+        navigationRef.current?.showTextMatch(passage.pageNumber, opening, 0);
+    };
 
     const handleViewerReady = useCallback(() => {
         setIsViewerReady(true);
@@ -317,6 +356,12 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 onNoteSelect={(note) => jumpToHighlight(note.id, false)}
                                 onWordSelect={(word) => jumpToHighlight(word.id, true)}
                                 onSectionSelect={(section) => navigationRef.current?.goToPage(section.pageNumber, section.destination)}
+                                tab={sidebarTab}
+                                onTabChange={setSidebarTab}
+                                search={search}
+                                searchFocusRequest={searchFocusRequest}
+                                onSearchResultSelect={handleSearchResultSelect}
+                                onPassageSelect={handlePassageSelect}
                             />
                         )}
                         <div className="relative flex min-w-0 flex-1 flex-col">

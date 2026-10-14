@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useStoredChoice } from "@/hooks/useStoredChoice";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Annotation, VocabularyEntry } from "@/app/types";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
@@ -15,11 +15,15 @@ import { HighlightList } from "@/app/[locale]/document/[id]/components/document-
 import { OutlineList } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/OutlineList";
 import { useDocumentOutline } from "@/app/[locale]/document/[id]/hooks/useDocumentOutline";
 import { countOutlineEntries, type OutlineItem } from "@/app/[locale]/document/[id]/lib/pdf-outline";
+import { SearchPanel } from "@/app/[locale]/document/[id]/components/document-reader/sidebar/SearchPanel";
+import type { ReaderSearch } from "@/app/[locale]/document/[id]/hooks/useReaderSearch";
+import type { TextSearchResult } from "@/app/[locale]/document/[id]/hooks/useDocumentTextSearch";
+import type { SemanticPassage } from "@/app/[locale]/document/[id]/hooks/useSemanticSearch";
 
-const TABS = ["pages", "outline", "notes", "vocabulary"] as const;
+export const SIDEBAR_TABS = ["pages", "outline", "notes", "vocabulary", "search"] as const;
+export type SidebarTab = (typeof SIDEBAR_TABS)[number];
 // A single entry is usually just the document title, not worth a tab.
 const MIN_OUTLINE_ENTRIES = 2;
-type SidebarTab = (typeof TABS)[number];
 
 interface ReaderSidebarProps {
   pdf: PdfDocument;
@@ -34,6 +38,13 @@ interface ReaderSidebarProps {
   onNoteSelect: (note: SidebarHighlight) => void;
   onWordSelect: (word: SidebarHighlight) => void;
   onSectionSelect: (section: OutlineItem) => void;
+  // Owned by the reader, so Ctrl/Cmd+F can open the search tab.
+  tab: SidebarTab;
+  onTabChange: (tab: SidebarTab) => void;
+  search: ReaderSearch;
+  searchFocusRequest: number;
+  onSearchResultSelect: (result: TextSearchResult) => void;
+  onPassageSelect: (passage: SemanticPassage) => void;
 }
 
 const TabCount: React.FC<{ count: number }> = ({ count }) => (
@@ -52,12 +63,17 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
   onNoteSelect,
   onWordSelect,
   onSectionSelect,
+  tab: requestedTab,
+  onTabChange,
+  search,
+  searchFocusRequest,
+  onSearchResultSelect,
+  onPassageSelect,
 }) => {
   const t = useTranslations("reader.sidebar");
-  const [storedTab, setTab] = useStoredChoice<SidebarTab>("reader:sidebarTab", TABS, "pages");
   const outline = useDocumentOutline(pdf);
   const hasOutline = countOutlineEntries(outline) >= MIN_OUTLINE_ENTRIES;
-  const tab = storedTab === "outline" && !hasOutline ? "pages" : storedTab;
+  const tab = requestedTab === "outline" && !hasOutline ? "pages" : requestedTab;
   const noteItems = useMemo(() => notes.map(noteToSidebarHighlight), [notes]);
   const wordItems = useMemo(() => words.map(wordToSidebarHighlight), [words]);
   const isExamMode = selectedPages !== undefined;
@@ -80,7 +96,7 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
       {isExamMode ? (
         pages
       ) : (
-        <Tabs value={tab} onValueChange={(value) => setTab(value as SidebarTab)} className="h-full min-h-0">
+        <Tabs value={tab} onValueChange={(value) => onTabChange(value as SidebarTab)} className="h-full min-h-0">
           <TabsList className="m-2">
             <TabsTrigger value="pages">{t("tabs.pages")}</TabsTrigger>
             {hasOutline && <TabsTrigger value="outline">{t("tabs.outline")}</TabsTrigger>}
@@ -91,6 +107,9 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
             <TabsTrigger value="vocabulary">
               {t("tabs.vocabulary")}
               {showCounts && wordItems.length > 0 && <TabCount count={wordItems.length} />}
+            </TabsTrigger>
+            <TabsTrigger value="search" aria-label={t("tabs.search")} title={t("tabs.search")} className="flex-none px-2.5">
+              <Search className="size-3.5" />
             </TabsTrigger>
           </TabsList>
           <TabsContent value="pages">{pages}</TabsContent>
@@ -104,6 +123,15 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
           </TabsContent>
           <TabsContent value="vocabulary">
             <HighlightList kind="vocabulary" items={wordItems} currentPage={currentPage} onSelect={onWordSelect} />
+          </TabsContent>
+          <TabsContent value="search">
+            <SearchPanel
+              search={search}
+              currentPage={currentPage}
+              focusRequest={searchFocusRequest}
+              onResultSelect={onSearchResultSelect}
+              onPassageSelect={onPassageSelect}
+            />
           </TabsContent>
         </Tabs>
       )}

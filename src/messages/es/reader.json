@@ -31,7 +31,8 @@
       "pages": "Páginas",
       "outline": "Índice",
       "notes": "Notas",
-      "vocabulary": "Palabras"
+      "vocabulary": "Palabras",
+      "search": "Buscar"
     },
     "page": "Página {page}",
     "noResults": "Nada coincide con tu búsqueda.",
@@ -49,6 +50,26 @@
       "label": "Índice del documento",
       "expand": "Mostrar las secciones de {title}",
       "collapse": "Ocultar las secciones de {title}"
+    },
+    "search": {
+      "modeLabel": "Tipo de búsqueda",
+      "modes": {
+        "exact": "Exacta",
+        "semantic": "Por significado"
+      },
+      "placeholder": {
+        "exact": "Buscar en el documento",
+        "semantic": "Pregunta o concepto"
+      },
+      "count": "{total, plural, one {# resultado} other {# resultados}}",
+      "position": "{current} de {total}",
+      "previous": "Resultado anterior",
+      "next": "Resultado siguiente",
+      "scanning": "Leyendo el documento… {scanned} de {total} páginas",
+      "semanticHint": "Escribe una pregunta o un concepto y presiona Enter: encontrará los pasajes que hablan de eso aunque usen otras palabras.",
+      "indexing": "Preparando la búsqueda por significado… Solo pasa la primera vez y puede tardar unos segundos.",
+      "searching": "Buscando…",
+      "semanticEmpty": "No encontramos pasajes sobre eso en el documento."
     }
   },
   "selectionPopup": {

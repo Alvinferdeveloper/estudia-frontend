@@ -44,9 +44,9 @@ export const searchHighlights = (items: SidebarHighlight[], query: string): Side
   return items.filter((item) => normalize(`${item.title} ${item.detail ?? ""}`).includes(needle));
 };
 
-// Pages in document order, each with its highlights.
-export const groupByPage = (items: SidebarHighlight[]): [number, SidebarHighlight[]][] => {
-  const pages = new Map<number, SidebarHighlight[]>();
+// Pages in document order, each with its items (highlights, search results).
+export const groupByPage = <T extends { pageNumber: number }>(items: T[]): [number, T[]][] => {
+  const pages = new Map<number, T[]>();
   for (const item of items) pages.set(item.pageNumber, [...(pages.get(item.pageNumber) ?? []), item]);
   return [...pages.entries()].sort(([a], [b]) => a - b);
 };
