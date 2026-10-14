@@ -9,6 +9,7 @@ import { usePdfPageOverlay } from "../../hooks/usePdfPageOverlay";
 import { PdfSkeleton } from "./PdfSkeleton";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import type { PdfDestination } from "@/app/[locale]/document/[id]/lib/pdf-outline";
+import { clearSearchHighlight, findTextLayerRange, showSearchHighlight } from "@/app/[locale]/document/[id]/lib/text-layer-highlight";
 
 // Lets the reader move the viewer from outside it (the sidebar's pages, notes and vocabulary).
 export interface PdfNavigation {
@@ -16,6 +17,9 @@ export interface PdfNavigation {
     goToPage: (pageNumber: number, destination?: PdfDestination) => void;
     // Scrolls to a highlight and flashes it; false when it isn't rendered (e.g. the other mode's highlights).
     scrollToHighlight: (id: string) => boolean;
+    // Jumps to the page and highlights the nth match of the text there (exact search, semantic passages).
+    showTextMatch: (pageNumber: number, query: string, occurrence: number) => void;
+    clearTextMatch: () => void;
 }
 
 interface RegionSelection {
@@ -78,15 +82,43 @@ const LIBRARY_SCROLL_MARGIN = 10;
 // Room for the floating page and zoom controls above the highlight.
 const MIN_TOP_CLEARANCE = 88;
 
+// Scrolls so a box of this height, now `currentTop` px below the viewer's top, sits in the middle (never under the controls).
+const scrollToMiddle = (container: HTMLElement, currentTop: number, height: number) => {
+    const target = Math.max(MIN_TOP_CLEARANCE, (container.clientHeight - height) / 2);
+    container.scrollTop += currentTop - target;
+};
+
 // Moves the highlight the library just scrolled to into the middle of the viewer. Synchronous on purpose:
 // the library only starts listening for scroll (which clears the flash) 100ms after its own jump.
 const centerScrolledHighlight = (viewer: any, rect: { y1: number; y2: number; height: number; pageNumber: number }) => {
     const viewport = viewer?.getPageView(rect.pageNumber - 1)?.viewport;
     if (!viewport) return;
-    const highlightHeight = ((rect.y2 - rect.y1) * viewport.height) / rect.height;
-    const top = Math.max(MIN_TOP_CLEARANCE, (viewer.container.clientHeight - highlightHeight) / 2);
-    viewer.container.scrollTop -= top - LIBRARY_SCROLL_MARGIN;
+    scrollToMiddle(viewer.container, LIBRARY_SCROLL_MARGIN, ((rect.y2 - rect.y1) * viewport.height) / rect.height);
 };
+
+// pdf.js draws a page's text layer only once the page is near the view.
+const TEXT_LAYER_TIMEOUT_MS = 3000;
+const waitForTextLayer = (viewer: any, pageNumber: number): Promise<Element | null> =>
+    new Promise((resolve) => {
+        const find = (): Element | null =>
+            viewer.container.querySelector(`.page[data-page-number="${pageNumber}"] .textLayer`);
+        const ready = find();
+        if (ready?.childElementCount) return resolve(ready);
+        const onRendered = (event: { pageNumber: number }) => {
+            if (event.pageNumber !== pageNumber) return;
+            stop();
+            resolve(find());
+        };
+        const timeout = setTimeout(() => {
+            stop();
+            resolve(null);
+        }, TEXT_LAYER_TIMEOUT_MS);
+        const stop = () => {
+            viewer.eventBus.off("textlayerrendered", onRendered);
+            clearTimeout(timeout);
+        };
+        viewer.eventBus.on("textlayerrendered", onRendered);
+    });
 
 // Only .TextHighlight__part elements have a real box, and the click target isn't always one, so pick by position.
 const getClickedPart = (container: Element, x: number, y: number): Element => {
@@ -135,6 +167,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
     const onPageChangeRef = useRef(onPageChange);
     const initialPageRef = useRef(initialPage);
     const onReadyRef = useRef(onReady);
+    const textMatchRequestRef = useRef(0);
 
     const { setUtils } = usePdfPageOverlay({
         examMode,
@@ -162,6 +195,25 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
             utils.scrollToHighlight(highlight);
             centerScrolledHighlight(utils.getViewer(), highlight.position.boundingRect);
             return true;
+        },
+        showTextMatch: async (pageNumber, query, occurrence) => {
+            const viewer = utilsRef.current?.getViewer();
+            if (!viewer) return;
+            const request = ++textMatchRequestRef.current;
+            clearSearchHighlight();
+            viewer.scrollPageIntoView({ pageNumber });
+            const layer = await waitForTextLayer(viewer, pageNumber);
+            // A newer search result was picked while this page was being drawn.
+            if (!layer || request !== textMatchRequestRef.current) return;
+            const range = findTextLayerRange(layer, query, occurrence);
+            if (!range) return;
+            showSearchHighlight(range);
+            const box = range.getBoundingClientRect();
+            scrollToMiddle(viewer.container, box.top - viewer.container.getBoundingClientRect().top, box.height);
+        },
+        clearTextMatch: () => {
+            textMatchRequestRef.current += 1;
+            clearSearchHighlight();
         },
     }), []);
 
