@@ -5,6 +5,7 @@ import { Group, Panel } from "react-resizable-panels";
 import { useDocumentViewer } from "@/app/[locale]/document/[id]/hooks/useDocumentViewer";
 import { useExamMode } from "@/app/[locale]/document/[id]/hooks/useExamMode";
 import { useReadingProgress } from "@/app/[locale]/document/[id]/hooks/useReadingProgress";
+import { useDocumentIndexing } from "@/app/[locale]/document/[id]/hooks/useDocumentIndexing";
 import { useTextSelection } from "@/app/[locale]/document/[id]/hooks/useTextSelection";
 import { useChatSession } from "@/app/[locale]/document/[id]/hooks/useChatSession";
 import { useAnnotationActions } from "@/app/[locale]/document/[id]/hooks/useAnnotationActions";
@@ -62,6 +63,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [isViewerReady, setIsViewerReady] = useState(false);
     const [isResumeNoticeOpen, setIsResumeNoticeOpen] = useState(false);
     useReadingProgress({ documentId: document.id, currentPage, enabled: isViewerReady });
+    const indexing = useDocumentIndexing(document.id);
 
     const handleViewerReady = useCallback(() => {
         setIsViewerReady(true);
