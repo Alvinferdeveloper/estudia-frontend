@@ -10,6 +10,7 @@
     "document": "Document",
     "subscription": "Plans",
     "exams": "Exams",
-    "examAttempt": "Exam"
+    "examAttempt": "Exam",
+    "flashcards": "Flashcards"
   }
 }

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/[locale]/document/[id]/hooks/useExportAnnotations";
 import { ExamHeaderActions } from "@/app/[locale]/document/[id]/components/exam/ExamHeaderActions";
+import { FlashcardsHeaderAction } from "@/app/[locale]/document/[id]/components/flashcards/FlashcardsHeaderAction";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LanguageFlag } from "@/app/[locale]/document/[id]/components/document-reader/language-ui";
 import { LanguageCode, LanguageOption } from "@/app/types";
@@ -88,6 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
                         examMode={examMode}
                         onToggleExamMode={onToggleExamMode}
                     />
+                    <FlashcardsHeaderAction documentId={documentId} />
                     {!examMode && onToggleLanguageMode && (
                         <>
                             <Separator orientation="vertical" className="mx-1 h-5" />

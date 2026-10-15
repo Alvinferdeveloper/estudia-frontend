@@ -9,6 +9,7 @@ export const ROUTES = {
   document: (id: string) => `${DOCUMENT_BASE}/${id}`,
   documentPage: (id: string, page: number) => `${DOCUMENT_BASE}/${id}?page=${page}`,
   documentExams: (id: string) => `${DOCUMENT_BASE}/${id}/exams`,
+  documentFlashcards: (id: string) => `${DOCUMENT_BASE}/${id}/flashcards`,
   examAttempt: (documentId: string, examId: string, attemptId: string) =>
     `${DOCUMENT_BASE}/${documentId}/exams/${examId}/attempts/${attemptId}`,
 } as const;

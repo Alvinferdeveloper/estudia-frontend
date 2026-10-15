@@ -4,6 +4,7 @@ import errors from "./errors.json";
 import metadata from "./metadata.json";
 import auth from "./auth.json";
 import exam from "./exam.json";
+import flashcards from "./flashcards.json";
 import notes from "./notes.json";
 import chat from "./chat.json";
 import vocabulary from "./vocabulary.json";
@@ -19,6 +20,7 @@ const messages: typeof referenceMessages = {
   metadata,
   auth,
   exam,
+  flashcards,
   notes,
   chat,
   vocabulary,

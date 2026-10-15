@@ -1,0 +1,37 @@
+{
+  "title": "Flashcards",
+  "headerLink": "Flashcards",
+  "backToDocument": "Back to document",
+  "loading": "Loading flashcards",
+  "newCard": "New card",
+  "count": "{count, plural, one {# card} other {# cards}}",
+  "empty": {
+    "title": "No cards yet",
+    "hint": "Write a question and its answer to review what you read in this document."
+  },
+  "form": {
+    "front": "Question",
+    "frontPlaceholder": "What do you want to remember?",
+    "back": "Answer",
+    "backPlaceholder": "The answer, kept short",
+    "backHint": "Markdown is supported.",
+    "save": "Save",
+    "add": "Add card"
+  },
+  "item": {
+    "edit": "Edit card",
+    "delete": "Delete card",
+    "page": "Page {page}",
+    "seeInDocument": "See in document",
+    "confirmDelete": {
+      "title": "Delete this card?",
+      "description": "The card will be removed from your review. This can't be undone.",
+      "confirm": "Delete"
+    }
+  },
+  "source": {
+    "manual": "Written by you",
+    "note": "From a note",
+    "vocabulary": "From your words"
+  }
+}

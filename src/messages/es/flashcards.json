@@ -1,0 +1,37 @@
+{
+  "title": "Tarjetas",
+  "headerLink": "Tarjetas",
+  "backToDocument": "Volver al documento",
+  "loading": "Cargando tarjetas",
+  "newCard": "Nueva tarjeta",
+  "count": "{count, plural, one {# tarjeta} other {# tarjetas}}",
+  "empty": {
+    "title": "Todavía no hay tarjetas",
+    "hint": "Escribe una pregunta y su respuesta para repasar lo que lees en este documento."
+  },
+  "form": {
+    "front": "Pregunta",
+    "frontPlaceholder": "¿Qué quieres recordar?",
+    "back": "Respuesta",
+    "backPlaceholder": "La respuesta, breve",
+    "backHint": "Admite Markdown.",
+    "save": "Guardar",
+    "add": "Agregar tarjeta"
+  },
+  "item": {
+    "edit": "Editar tarjeta",
+    "delete": "Eliminar tarjeta",
+    "page": "Página {page}",
+    "seeInDocument": "Ver en el documento",
+    "confirmDelete": {
+      "title": "¿Eliminar esta tarjeta?",
+      "description": "La tarjeta se borrará del repaso. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar"
+    }
+  },
+  "source": {
+    "manual": "Escrita por ti",
+    "note": "De una nota",
+    "vocabulary": "De tus palabras"
+  }
+}
