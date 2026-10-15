@@ -7,19 +7,21 @@ import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiErrorMessage } from "@/components/api-error-message";
 import { getApiErrorKey } from "@/lib/api-errors";
+import { useFetchAnnotations } from "@/app/[locale]/document/[id]/hooks/useAnnotations";
 import {
   useCreateFlashcard,
-  useDeleteFlashcard,
   useFlashcards,
-  useUpdateFlashcard,
 } from "@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards";
 import { FlashcardForm } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardForm";
-import { FlashcardItem } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardItem";
+import { FlashcardList } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardList";
 import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
 import { NoteSourcePicker } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteSourcePicker";
-import { useFetchAnnotations } from "@/app/[locale]/document/[id]/hooks/useAnnotations";
+import { PracticeDeck } from "@/app/[locale]/document/[id]/components/flashcards/components/PracticeDeck";
+
+type FlashcardsTab = "list" | "practice";
 
 interface FlashcardsViewProps {
   documentId: string;
@@ -38,29 +40,20 @@ const ListSkeleton = ({ label }: { label: string }) => (
   </div>
 );
 
-// Every card made from a document: write, edit and delete them in place.
+// Every card made from a document: create them, edit them in place and practice them.
 export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps) => {
   const t = useTranslations("flashcards");
   const { data: cards, isLoading, error } = useFlashcards(documentId);
-  const createCard = useCreateFlashcard(documentId);
-  const updateCard = useUpdateFlashcard(documentId);
-  const deleteCard = useDeleteFlashcard(documentId);
-  const [isComposing, setIsComposing] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [isPickingNote, setIsPickingNote] = useState(false);
   const { data: notes } = useFetchAnnotations(documentId);
+  const createCard = useCreateFlashcard(documentId);
+  const [tab, setTab] = useState<FlashcardsTab>("list");
+  const [isComposing, setIsComposing] = useState(false);
+  const [isPickingNote, setIsPickingNote] = useState(false);
 
   const openComposer = () => {
     createCard.reset();
     setIsComposing(true);
   };
-
-  const startEditing = (id: string) => {
-    updateCard.reset();
-    setEditingId(id);
-  };
-
-  const hasCards = Boolean(cards?.length);
 
   const sourceActions = (
     <>
@@ -71,6 +64,23 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
         </Button>
       )}
       <AddWordsToDeckButton documentId={documentId} />
+    </>
+  );
+
+  const creation = (
+    <>
+      {isComposing && (
+        <FlashcardForm
+          className="mt-6"
+          submitLabel={t("form.add")}
+          onSubmit={(card) => createCard.mutateAsync(card)}
+          onCancel={() => setIsComposing(false)}
+          isPending={createCard.isPending}
+          error={createCard.error}
+          resetOnSubmit
+        />
+      )}
+      {isPickingNote && <NoteSourcePicker documentId={documentId} onClose={() => setIsPickingNote(false)} />}
     </>
   );
 
@@ -87,81 +97,61 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
         <header className="mt-10 border-b border-border pb-6">
           <p className="truncate text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">{documentName}</p>
           <h1 className="mt-2 font-serif text-4xl italic leading-tight">{t("title")}</h1>
-          {hasCards && <p className="mt-1 text-sm text-muted-foreground">{t("count", { count: cards!.length })}</p>}
+          {cards?.length ? <p className="mt-1 text-sm text-muted-foreground">{t("count", { count: cards.length })}</p> : null}
         </header>
-
-        {hasCards && (
-          <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-            {sourceActions}
-            {!isComposing && (
-              <Button onClick={openComposer}>
-                <Plus className="size-4" />
-                {t("newCard")}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {isComposing && (
-          <FlashcardForm
-            className="mt-6"
-            submitLabel={t("form.add")}
-            onSubmit={(card) => createCard.mutateAsync(card)}
-            onCancel={() => setIsComposing(false)}
-            isPending={createCard.isPending}
-            error={createCard.error}
-            resetOnSubmit
-          />
-        )}
-
-        {isPickingNote && <NoteSourcePicker documentId={documentId} onClose={() => setIsPickingNote(false)} />}
 
         {isLoading && <ListSkeleton label={t("loading")} />}
 
         {error && <ApiErrorMessage errorKey={getApiErrorKey(error)} className="py-10" />}
 
-        {cards?.length === 0 && !isComposing && !isPickingNote && (
-          <div className="py-16">
-            <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
-            <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-2">
-              <Button onClick={openComposer}>
-                <Plus className="size-4" />
-                {t("newCard")}
-              </Button>
-              {sourceActions}
-            </div>
-          </div>
+        {cards?.length === 0 && (
+          <>
+            {creation}
+            {!isComposing && !isPickingNote && (
+              <div className="py-16">
+                <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
+                <div className="mt-6 flex flex-wrap items-center gap-2">
+                  <Button onClick={openComposer}>
+                    <Plus className="size-4" />
+                    {t("newCard")}
+                  </Button>
+                  {sourceActions}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
-        {hasCards && (
-          <ul className="divide-y divide-border">
-            {cards!.map((card) =>
-              card.id === editingId ? (
-                <li key={card.id} className="py-4">
-                  <FlashcardForm
-                    initial={card}
-                    submitLabel={t("form.save")}
-                    onSubmit={async (content) => {
-                      await updateCard.mutateAsync({ id: card.id, ...content });
-                      setEditingId(null);
-                    }}
-                    onCancel={() => setEditingId(null)}
-                    isPending={updateCard.isPending}
-                    error={updateCard.error}
-                  />
-                </li>
-              ) : (
-                <FlashcardItem
-                  key={card.id}
-                  card={card}
-                  onEdit={() => startEditing(card.id)}
-                  onDelete={() => deleteCard.mutateAsync(card.id)}
-                />
-              )
-            )}
-          </ul>
-        )}
+        {cards?.length ? (
+          <Tabs value={tab} onValueChange={(value) => setTab(value as FlashcardsTab)} className="mt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <TabsList className="w-56">
+                <TabsTrigger value="list">{t("practice.listTab")}</TabsTrigger>
+                <TabsTrigger value="practice">{t("practice.tab")}</TabsTrigger>
+              </TabsList>
+              {tab === "list" && (
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  {sourceActions}
+                  {!isComposing && (
+                    <Button onClick={openComposer}>
+                      <Plus className="size-4" />
+                      {t("newCard")}
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <TabsContent value="list">
+              {creation}
+              <FlashcardList documentId={documentId} cards={cards} />
+            </TabsContent>
+            <TabsContent value="practice">
+              <PracticeDeck cards={cards} onExit={() => setTab("list")} />
+            </TabsContent>
+          </Tabs>
+        ) : null}
       </div>
     </div>
   );

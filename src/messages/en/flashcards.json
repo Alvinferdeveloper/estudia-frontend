@@ -59,5 +59,21 @@
     "pickHint": "The AI will suggest up to three cards from it.",
     "close": "Close",
     "existing": "{count, plural, one {# card} other {# cards}}"
+  },
+  "practice": {
+    "listTab": "Cards",
+    "tab": "Practice",
+    "progress": "Card {current} of {total}",
+    "question": "Question",
+    "answer": "Answer",
+    "show": "Show answer",
+    "spaceKey": "Space",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "doneTitle": "You went through {count, plural, one {# card} other {# cards}}",
+    "doneHint": "You can practice again with the cards in a new order.",
+    "restart": "Practice again",
+    "backToList": "See the cards"
   }
 }

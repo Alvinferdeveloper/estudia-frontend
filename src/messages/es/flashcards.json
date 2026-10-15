@@ -59,5 +59,21 @@
     "pickHint": "La IA propondrá hasta tres tarjetas a partir de ella.",
     "close": "Cerrar",
     "existing": "{count, plural, one {# tarjeta} other {# tarjetas}}"
+  },
+  "practice": {
+    "listTab": "Tarjetas",
+    "tab": "Practicar",
+    "progress": "Tarjeta {current} de {total}",
+    "question": "Pregunta",
+    "answer": "Respuesta",
+    "show": "Mostrar respuesta",
+    "spaceKey": "Espacio",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "finish": "Terminar",
+    "doneTitle": "Repasaste {count, plural, one {# tarjeta} other {# tarjetas}}",
+    "doneHint": "Puedes practicar otra vez con las tarjetas en otro orden.",
+    "restart": "Practicar otra vez",
+    "backToList": "Ver las tarjetas"
   }
 }
