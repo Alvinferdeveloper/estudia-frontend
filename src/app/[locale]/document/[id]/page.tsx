@@ -15,8 +15,21 @@ export interface DocumentFile extends Document {
   publicUrl: string;
 }
 
-export default async function DocumentPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+// `?page=N` opens the document at that page instead of where the reader left off.
+const parsePage = (value: string | string[] | undefined): number | undefined => {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : undefined;
+};
+
+export default async function DocumentPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<{ page?: string | string[] }>;
+}) {
   const { locale, id } = await params;
+  const requestedPage = parsePage((await searchParams).page);
   const document = await getDocument(id) as DocumentFile;
 
   if (!document) {
@@ -27,6 +40,6 @@ export default async function DocumentPage({ params }: { params: Promise<{ local
   void touchDocumentAccess(id);
 
   return (
-    <DocumentClient document={document} />
+    <DocumentClient document={document} requestedPage={requestedPage} />
   )
 }

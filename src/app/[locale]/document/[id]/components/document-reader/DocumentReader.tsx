@@ -46,9 +46,10 @@ const PASSAGE_OPENING_WORDS = 8;
 
 interface DocumentReaderProps {
     document: DocumentFile;
+    requestedPage?: number;
 }
 
-export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
+export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, requestedPage }) => {
     const {
         currentPage,
         numPages,
@@ -65,8 +66,8 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
     const [isThumbnailsOpen, toggleThumbnails] = useStoredBoolean("reader:thumbnailsOpen");
     const navigationRef = useRef<PdfNavigation>(null);
 
-    // Reopen where the reader left off; progress is only saved once that page is on screen.
-    const resumePage = document.lastPage && document.lastPage > 1 ? document.lastPage : undefined;
+    // Reopen where the reader left off, unless a link asked for a page; progress is only saved once that page is on screen.
+    const resumePage = !requestedPage && document.lastPage && document.lastPage > 1 ? document.lastPage : undefined;
     const [isViewerReady, setIsViewerReady] = useState(false);
     const [isResumeNoticeOpen, setIsResumeNoticeOpen] = useState(false);
     useReadingProgress({ documentId: document.id, currentPage, enabled: isViewerReady });
@@ -415,7 +416,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document }) => {
                                 onPageSelect={exam.togglePage}
                                 onPdfLoad={setPdfDoc}
                                 navigationRef={navigationRef}
-                                initialPage={resumePage}
+                                initialPage={requestedPage ?? resumePage}
                                 onReady={handleViewerReady}
                             />
                             {isResumeNoticeOpen && resumePage && (
