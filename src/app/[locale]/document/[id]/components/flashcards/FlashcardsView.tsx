@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, StickyNote } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
@@ -18,6 +18,8 @@ import {
 import { FlashcardForm } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardForm";
 import { FlashcardItem } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardItem";
 import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
+import { NoteSourcePicker } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteSourcePicker";
+import { useFetchAnnotations } from "@/app/[locale]/document/[id]/hooks/useAnnotations";
 
 interface FlashcardsViewProps {
   documentId: string;
@@ -45,6 +47,8 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
   const deleteCard = useDeleteFlashcard(documentId);
   const [isComposing, setIsComposing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isPickingNote, setIsPickingNote] = useState(false);
+  const { data: notes } = useFetchAnnotations(documentId);
 
   const openComposer = () => {
     createCard.reset();
@@ -57,6 +61,18 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
   };
 
   const hasCards = Boolean(cards?.length);
+
+  const sourceActions = (
+    <>
+      {Boolean(notes?.length) && !isPickingNote && (
+        <Button variant="ghost" size="sm" onClick={() => setIsPickingNote(true)}>
+          <StickyNote className="size-4" />
+          {t("note.fromNote")}
+        </Button>
+      )}
+      <AddWordsToDeckButton documentId={documentId} />
+    </>
+  );
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -76,7 +92,7 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
 
         {hasCards && (
           <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-            <AddWordsToDeckButton documentId={documentId} />
+            {sourceActions}
             {!isComposing && (
               <Button onClick={openComposer}>
                 <Plus className="size-4" />
@@ -98,11 +114,13 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
           />
         )}
 
+        {isPickingNote && <NoteSourcePicker documentId={documentId} onClose={() => setIsPickingNote(false)} />}
+
         {isLoading && <ListSkeleton label={t("loading")} />}
 
         {error && <ApiErrorMessage errorKey={getApiErrorKey(error)} className="py-10" />}
 
-        {cards?.length === 0 && !isComposing && (
+        {cards?.length === 0 && !isComposing && !isPickingNote && (
           <div className="py-16">
             <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
             <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
@@ -111,7 +129,7 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
                 <Plus className="size-4" />
                 {t("newCard")}
               </Button>
-              <AddWordsToDeckButton documentId={documentId} />
+              {sourceActions}
             </div>
           </div>
         )}

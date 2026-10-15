@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Annotation } from "@/app/types";
@@ -8,6 +9,8 @@ import { NoteDialogHeader } from "./NoteDialogHeader";
 import { NoteComposeForm } from "./NoteComposeForm";
 import { NoteReader } from "./NoteReader";
 import { NoteDiffReview } from "./NoteDiffReview";
+import { NoteFlashcardsButton } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteFlashcardsButton";
+import { NoteFlashcardProposals } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteFlashcardProposals";
 
 interface NoteDialogProps {
   isOpen: boolean;
@@ -58,6 +61,7 @@ const NoteWorkspace: React.FC<NoteWorkspaceProps> = ({
     onSave: onSaveNote,
     onColorChange,
   });
+  const [isMakingCards, setIsMakingCards] = useState(false);
 
   const annotationId = existingAnnotation?.id;
   const handleDelete =
@@ -73,10 +77,28 @@ const NoteWorkspace: React.FC<NoteWorkspaceProps> = ({
       <NoteDialogHeader
         selectedText={selectedText}
         instruction={session.phase === "compose" ? undefined : session.instruction}
+        actions={
+          existingAnnotation &&
+          !isMakingCards && (
+            <NoteFlashcardsButton
+              note={existingAnnotation}
+              onClick={() => setIsMakingCards(true)}
+              disabled={session.phase !== "viewing"}
+            />
+          )
+        }
         onDelete={handleDelete}
         onClose={onClose}
       />
-      <NotePhaseView session={session} onClose={onClose} />
+      {existingAnnotation && isMakingCards ? (
+        <NoteFlashcardProposals
+          annotationId={existingAnnotation.id}
+          documentId={existingAnnotation.documentId}
+          onBack={() => setIsMakingCards(false)}
+        />
+      ) : (
+        <NotePhaseView session={session} onClose={onClose} />
+      )}
     </>
   );
 };
@@ -88,6 +110,9 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({ isOpen, ...workspaceProp
     <Dialog open={isOpen} onOpenChange={(open) => !open && workspaceProps.onClose()}>
       <DialogContent
         showCloseButton={false}
+        onEscapeKeyDown={(event) => {
+          if (event.target instanceof Element && event.target.closest("[data-flashcard-form]")) event.preventDefault();
+        }}
         className="flex max-h-[85vh] w-[calc(100vw-2rem)] max-w-[720px] flex-col gap-0 overflow-hidden p-0 sm:max-w-[720px]"
       >
         <DialogTitle className="sr-only">{t("title")}</DialogTitle>

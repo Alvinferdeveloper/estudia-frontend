@@ -94,3 +94,25 @@ export const useAddWordsToFlashcards = (documentId: string) => {
     onSuccess: invalidate,
   });
 };
+
+// Charges a credit; nothing is saved until the user keeps some of the proposals.
+export const useGenerateNoteFlashcards = () =>
+  useMutation({
+    mutationFn: async (annotationId: string) => {
+      const { data } = await api.post<{ cards: FlashcardContent[] }>(`/annotations/${annotationId}/flashcards/proposals`, {});
+      return data.cards;
+    },
+    meta: { inlineError: true, refreshesUsage: true },
+  });
+
+export const useSaveNoteFlashcards = (documentId: string) => {
+  const invalidate = useInvalidateFlashcards(documentId);
+  return useMutation({
+    mutationFn: async ({ annotationId, cards }: { annotationId: string; cards: FlashcardContent[] }) => {
+      const { data } = await api.post<Flashcard[]>(`/annotations/${annotationId}/flashcards`, { cards });
+      return data;
+    },
+    onSuccess: invalidate,
+    meta: { inlineError: true },
+  });
+};

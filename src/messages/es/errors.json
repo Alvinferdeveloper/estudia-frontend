@@ -25,6 +25,7 @@
   "capExceeded": "Tu plan no permite exámenes tan largos. Elige menos preguntas.",
   "examNotFound": "No encontramos este examen.",
   "flashcardNotFound": "Esta tarjeta ya no existe.",
+  "noteNotFound": "Esta nota ya no existe.",
   "examAttemptFinished": "Este intento ya terminó, así que no admite más respuestas.",
   "examTimeUp": "Se acabó el tiempo de este simulacro.",
   "evaluationLimitReached": "Ya evaluaste esta pregunta demasiadas veces. Genera un examen nuevo para seguir practicando.",

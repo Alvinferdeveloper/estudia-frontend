@@ -7,7 +7,7 @@
   "count": "{count, plural, one {# card} other {# cards}}",
   "empty": {
     "title": "No cards yet",
-    "hint": "Write a question and its answer to review what you read in this document."
+    "hint": "Write a question and its answer, or create cards from your notes and saved words."
   },
   "form": {
     "front": "Question",
@@ -39,5 +39,25 @@
     "added": "{count, plural, =0 {Your words were already in review} one {Added # word to review} other {Added # words to review}}",
     "addOne": "Add to review",
     "removeOne": "Remove from review"
+  },
+  "note": {
+    "create": "Create cards",
+    "createWithExisting": "Create cards (this note already has {count, plural, one {# card} other {# cards}})",
+    "generating": "Preparing cards…",
+    "intro": "Check each card before saving it: edit it, or discard it if it isn't useful.",
+    "edit": "Edit card",
+    "discard": "Discard card",
+    "restore": "Restore",
+    "done": "Done",
+    "back": "Back",
+    "save": "Save {count, plural, one {# card} other {# cards}}",
+    "saved": "{count, plural, one {Saved # card} other {Saved # cards}}",
+    "error": "The cards couldn't be created.",
+    "retry": "Try again",
+    "fromNote": "From a note",
+    "pickTitle": "Choose a note",
+    "pickHint": "The AI will suggest up to three cards from it.",
+    "close": "Close",
+    "existing": "{count, plural, one {# card} other {# cards}}"
   }
 }

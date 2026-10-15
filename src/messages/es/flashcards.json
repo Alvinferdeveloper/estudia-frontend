@@ -7,7 +7,7 @@
   "count": "{count, plural, one {# tarjeta} other {# tarjetas}}",
   "empty": {
     "title": "Todavía no hay tarjetas",
-    "hint": "Escribe una pregunta y su respuesta para repasar lo que lees en este documento."
+    "hint": "Escribe una pregunta con su respuesta, o créalas desde tus notas y palabras guardadas."
   },
   "form": {
     "front": "Pregunta",
@@ -39,5 +39,25 @@
     "added": "{count, plural, =0 {Tus palabras ya estaban en el repaso} one {Se agregó # palabra al repaso} other {Se agregaron # palabras al repaso}}",
     "addOne": "Agregar al repaso",
     "removeOne": "Quitar del repaso"
+  },
+  "note": {
+    "create": "Crear tarjetas",
+    "createWithExisting": "Crear tarjetas (esta nota ya tiene {count, plural, one {# tarjeta} other {# tarjetas}})",
+    "generating": "Preparando tarjetas…",
+    "intro": "Revisa cada tarjeta antes de guardarla: edítala o descártala si no te sirve.",
+    "edit": "Editar tarjeta",
+    "discard": "Descartar tarjeta",
+    "restore": "Recuperar",
+    "done": "Listo",
+    "back": "Volver",
+    "save": "Guardar {count, plural, one {# tarjeta} other {# tarjetas}}",
+    "saved": "{count, plural, one {Se guardó # tarjeta} other {Se guardaron # tarjetas}}",
+    "error": "No se pudieron crear las tarjetas.",
+    "retry": "Reintentar",
+    "fromNote": "Desde una nota",
+    "pickTitle": "Elige una nota",
+    "pickHint": "La IA propondrá hasta tres tarjetas a partir de ella.",
+    "close": "Cerrar",
+    "existing": "{count, plural, one {# tarjeta} other {# tarjetas}}"
   }
 }

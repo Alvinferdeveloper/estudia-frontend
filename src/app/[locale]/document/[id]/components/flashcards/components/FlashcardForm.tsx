@@ -73,6 +73,8 @@ export const FlashcardForm: React.FC<FlashcardFormProps> = ({
         void submit().catch(() => undefined);
       }}
       onKeyDown={handleKeyDown}
+      // Lets a surrounding dialog leave Escape to the form.
+      data-flashcard-form
       className={cn("flex flex-col gap-4 rounded-xl border border-border bg-card p-4", className)}
     >
       <Field id={`${id}-front`} label={t("front")}>

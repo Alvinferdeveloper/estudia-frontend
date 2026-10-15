@@ -24,6 +24,7 @@ const ERROR_CODE_KEYS: Record<string, ApiErrorKey> = {
   CONVERSATION_NOT_FOUND: "conversationNotFound",
   EXAM_NOT_FOUND: "examNotFound",
   FLASHCARD_NOT_FOUND: "flashcardNotFound",
+  ANNOTATION_NOT_FOUND: "noteNotFound",
   EXAM_ATTEMPT_FINISHED: "examAttemptFinished",
   EXAM_TIME_UP: "examTimeUp",
   AI_PROVIDER_ERROR: "aiUnavailable",

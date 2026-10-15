@@ -8,11 +8,13 @@ import { TextQuote } from "@/app/[locale]/document/[id]/components/document-read
 interface NoteDialogHeaderProps {
   selectedText: string;
   instruction?: string;
+  // Extra icon actions before delete.
+  actions?: React.ReactNode;
   onDelete?: () => Promise<void>;
   onClose: () => void;
 }
 
-export const NoteDialogHeader: React.FC<NoteDialogHeaderProps> = ({ selectedText, instruction, onDelete, onClose }) => {
+export const NoteDialogHeader: React.FC<NoteDialogHeaderProps> = ({ selectedText, instruction, actions, onDelete, onClose }) => {
   const t = useTranslations("notes.header");
   const tCommon = useTranslations("common");
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
@@ -40,6 +42,7 @@ export const NoteDialogHeader: React.FC<NoteDialogHeaderProps> = ({ selectedText
       </div>
 
       <div className="-mr-2 -mt-1 flex items-center gap-0.5">
+        {actions}
         {onDelete && (
           <IconButton
             label={t("delete")}
