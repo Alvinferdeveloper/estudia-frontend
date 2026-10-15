@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search } from "lucide-react";
+import { Files, Languages, ListTree, Search, StickyNote, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Annotation, VocabularyEntry } from "@/app/types";
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
@@ -47,9 +47,24 @@ interface ReaderSidebarProps {
   onPassageSelect: (passage: SemanticPassage) => void;
 }
 
-const TabCount: React.FC<{ count: number }> = ({ count }) => (
-  <span className="tabular-nums text-muted-foreground">{count}</span>
-);
+interface SidebarTabTriggerProps {
+  value: SidebarTab;
+  icon: LucideIcon;
+  label: string;
+  count?: number;
+}
+
+// Icon-only while inactive, so five views fit even the narrow sidebar; the active one spells out its name.
+const SidebarTabTrigger: React.FC<SidebarTabTriggerProps> = ({ value, icon: Icon, label, count }) => {
+  const name = count ? `${label} (${count})` : label;
+  return (
+    <TabsTrigger value={value} aria-label={name} title={name} className="group flex-none px-2 data-[state=active]:flex-1">
+      <Icon aria-hidden className="size-3.5 shrink-0" />
+      <span className="hidden truncate group-data-[state=active]:inline">{label}</span>
+      {count ? <span className="hidden tabular-nums text-muted-foreground group-data-[state=active]:inline">{count}</span> : null}
+    </TabsTrigger>
+  );
+};
 
 // Everything for moving through the document: its pages, the user's notes and saved words.
 export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
@@ -77,8 +92,6 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
   const noteItems = useMemo(() => notes.map(noteToSidebarHighlight), [notes]);
   const wordItems = useMemo(() => words.map(wordToSidebarHighlight), [words]);
   const isExamMode = selectedPages !== undefined;
-  // With four tabs in the narrow sidebar, the counts don't fit.
-  const showCounts = !(compact && hasOutline);
 
   const pages = (
     <PageThumbnails pdf={pdf} currentPage={currentPage} onPageClick={onPageClick} selectedPages={selectedPages} />
@@ -98,19 +111,11 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
       ) : (
         <Tabs value={tab} onValueChange={(value) => onTabChange(value as SidebarTab)} className="h-full min-h-0">
           <TabsList className="m-2">
-            <TabsTrigger value="pages">{t("tabs.pages")}</TabsTrigger>
-            {hasOutline && <TabsTrigger value="outline">{t("tabs.outline")}</TabsTrigger>}
-            <TabsTrigger value="notes">
-              {t("tabs.notes")}
-              {showCounts && noteItems.length > 0 && <TabCount count={noteItems.length} />}
-            </TabsTrigger>
-            <TabsTrigger value="vocabulary">
-              {t("tabs.vocabulary")}
-              {showCounts && wordItems.length > 0 && <TabCount count={wordItems.length} />}
-            </TabsTrigger>
-            <TabsTrigger value="search" aria-label={t("tabs.search")} title={t("tabs.search")} className="flex-none px-2.5">
-              <Search className="size-3.5" />
-            </TabsTrigger>
+            <SidebarTabTrigger value="pages" icon={Files} label={t("tabs.pages")} />
+            {hasOutline && <SidebarTabTrigger value="outline" icon={ListTree} label={t("tabs.outline")} />}
+            <SidebarTabTrigger value="notes" icon={StickyNote} label={t("tabs.notes")} count={noteItems.length} />
+            <SidebarTabTrigger value="vocabulary" icon={Languages} label={t("tabs.vocabulary")} count={wordItems.length} />
+            <SidebarTabTrigger value="search" icon={Search} label={t("tabs.search")} />
           </TabsList>
           <TabsContent value="pages">{pages}</TabsContent>
           {hasOutline && (
