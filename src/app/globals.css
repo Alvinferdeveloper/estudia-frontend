@@ -329,11 +329,6 @@
   background-color: var(--scrollbar-track) !important;
 }
 
-/* The search match picked in the reader sidebar, painted over pdf.js's transparent text layer. */
-::highlight(zocratis-search) {
-  background-color: color-mix(in oklch, var(--selection) 35%, transparent);
-}
-
 /* A highlight the reader jumped to (from the notes panel): a vivid-ink outline that fades out. */
 .TextHighlight--scrolledTo .TextHighlight__part {
   animation: highlight-flash 1.4s var(--ease-out);

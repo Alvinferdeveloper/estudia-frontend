@@ -42,8 +42,22 @@ export const findTextLayerRange = (layer: Element, query: string, occurrence: nu
 
 const supportsHighlights = () => typeof CSS !== "undefined" && "highlights" in CSS;
 
+// Injected here instead of globals.css: Next's CSS parser rejects the ::highlight() pseudo-element.
+const HIGHLIGHT_STYLE_ID = "zocratis-search-highlight";
+const HIGHLIGHT_STYLE = `::highlight(${HIGHLIGHT_NAME}) { background-color: color-mix(in oklch, var(--selection) 35%, transparent); }`;
+
+const ensureHighlightStyle = () => {
+  if (document.getElementById(HIGHLIGHT_STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = HIGHLIGHT_STYLE_ID;
+  style.textContent = HIGHLIGHT_STYLE;
+  document.head.append(style);
+};
+
 export const showSearchHighlight = (range: Range): void => {
-  if (supportsHighlights()) CSS.highlights.set(HIGHLIGHT_NAME, new Highlight(range));
+  if (!supportsHighlights()) return;
+  ensureHighlightStyle();
+  CSS.highlights.set(HIGHLIGHT_NAME, new Highlight(range));
 };
 
 export const clearSearchHighlight = (): void => {
