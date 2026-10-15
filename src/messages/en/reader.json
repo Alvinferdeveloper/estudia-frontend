@@ -55,7 +55,7 @@
       "modeLabel": "Search type",
       "modes": {
         "exact": "Exact",
-        "semantic": "By meaning"
+        "semantic": "Meaning"
       },
       "placeholder": {
         "exact": "Search the document",

@@ -90,7 +90,7 @@ export function SegmentedControl<T extends string | number>({
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
               "relative flex items-center justify-center rounded-md text-sm font-medium tabular-nums outline-none transition-colors duration-150",
-              size === "sm" ? "h-6 px-2" : "h-8 px-3",
+              size === "sm" ? "h-6 px-2 text-xs" : "h-8 px-3",
               "focus-visible:ring-2 focus-visible:ring-ring",
               isSelected ? "text-foreground" : "text-muted-foreground",
               option.disabled ? "cursor-not-allowed opacity-50" : !isSelected && "hover:text-foreground"

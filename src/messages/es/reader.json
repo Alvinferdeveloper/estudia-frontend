@@ -55,7 +55,7 @@
       "modeLabel": "Tipo de búsqueda",
       "modes": {
         "exact": "Exacta",
-        "semantic": "Por significado"
+        "semantic": "Significado"
       },
       "placeholder": {
         "exact": "Buscar en el documento",
