@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
+import type { VocabularyEntry } from "@/app/types";
 
 export const FLASHCARD_SOURCES = ["manual", "note", "vocabulary"] as const;
 export type FlashcardSource = (typeof FLASHCARD_SOURCES)[number];
@@ -69,6 +70,26 @@ export const useDeleteFlashcard = (documentId: string) => {
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/flashcards/${id}`);
+    },
+    onSuccess: invalidate,
+  });
+};
+
+// Saved words with an explanation to build a card from and no card yet.
+export const wordsOutsideDeck = (words: VocabularyEntry[], cards: Flashcard[]): VocabularyEntry[] => {
+  const carded = new Set(cards.map((card) => card.vocabularyEntryId));
+  return words.filter((word) => word.explanation?.meanings.length && !carded.has(word.id));
+};
+
+// Omitting the ids adds every saved word of the document that has no card yet.
+export const useAddWordsToFlashcards = (documentId: string) => {
+  const invalidate = useInvalidateFlashcards(documentId);
+  return useMutation({
+    mutationFn: async (vocabularyEntryIds?: string[]) => {
+      const { data } = await api.post<{ added: number }>(`/documents/${documentId}/flashcards/from-vocabulary`, {
+        vocabularyEntryIds,
+      });
+      return data;
     },
     onSuccess: invalidate,
   });

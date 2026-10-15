@@ -33,5 +33,11 @@
     "manual": "Escrita por ti",
     "note": "De una nota",
     "vocabulary": "De tus palabras"
+  },
+  "words": {
+    "addAll": "Agregar {count, plural, one {# palabra} other {# palabras}} al repaso",
+    "added": "{count, plural, =0 {Tus palabras ya estaban en el repaso} one {Se agregó # palabra al repaso} other {Se agregaron # palabras al repaso}}",
+    "addOne": "Agregar al repaso",
+    "removeOne": "Quitar del repaso"
   }
 }

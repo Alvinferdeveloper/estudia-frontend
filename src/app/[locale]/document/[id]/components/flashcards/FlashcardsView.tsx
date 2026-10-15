@@ -17,6 +17,7 @@ import {
 } from "@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards";
 import { FlashcardForm } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardForm";
 import { FlashcardItem } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardItem";
+import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
 
 interface FlashcardsViewProps {
   documentId: string;
@@ -67,19 +68,23 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
           </Link>
         </Button>
 
-        <header className="mt-10 flex items-end justify-between gap-4 border-b border-border pb-6">
-          <div className="min-w-0">
-            <p className="truncate text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">{documentName}</p>
-            <h1 className="mt-2 font-serif text-4xl italic leading-tight">{t("title")}</h1>
-            {hasCards && <p className="mt-1 text-sm text-muted-foreground">{t("count", { count: cards!.length })}</p>}
-          </div>
-          {hasCards && !isComposing && (
-            <Button onClick={openComposer} className="shrink-0">
-              <Plus className="size-4" />
-              {t("newCard")}
-            </Button>
-          )}
+        <header className="mt-10 border-b border-border pb-6">
+          <p className="truncate text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">{documentName}</p>
+          <h1 className="mt-2 font-serif text-4xl italic leading-tight">{t("title")}</h1>
+          {hasCards && <p className="mt-1 text-sm text-muted-foreground">{t("count", { count: cards!.length })}</p>}
         </header>
+
+        {hasCards && (
+          <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+            <AddWordsToDeckButton documentId={documentId} />
+            {!isComposing && (
+              <Button onClick={openComposer}>
+                <Plus className="size-4" />
+                {t("newCard")}
+              </Button>
+            )}
+          </div>
+        )}
 
         {isComposing && (
           <FlashcardForm
@@ -101,10 +106,13 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
           <div className="py-16">
             <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
             <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
-            <Button onClick={openComposer} className="mt-6">
-              <Plus className="size-4" />
-              {t("newCard")}
-            </Button>
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              <Button onClick={openComposer}>
+                <Plus className="size-4" />
+                {t("newCard")}
+              </Button>
+              <AddWordsToDeckButton documentId={documentId} />
+            </div>
           </div>
         )}
 

@@ -23,6 +23,7 @@ import { CardFront } from "./CardFront";
 import { CardBack } from "./CardBack";
 import { getApiErrorKey } from "@/lib/api-errors";
 import { IconButton } from "@/components/ui/icon-button";
+import { WordDeckToggle } from "@/app/[locale]/document/[id]/components/flashcards/components/WordDeckToggle";
 
 interface SaveEntryData {
   selectedText: string;
@@ -230,6 +231,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({
                     isDeleting={isDeleting}
                     selectedColor={dialog.selectedColor}
                     onColorChange={handleChangeColor}
+                    deckAction={localEntry && <WordDeckToggle entry={localEntry} />}
                   />
                 )}
               </motion.div>

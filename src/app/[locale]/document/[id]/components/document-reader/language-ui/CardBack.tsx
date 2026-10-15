@@ -20,6 +20,8 @@ interface CardBackProps {
   isDeleting?: boolean;
   selectedColor: string;
   onColorChange: (color: string) => void;
+  // Shown for saved words only.
+  deckAction?: React.ReactNode;
 }
 
 export const CardBack: React.FC<CardBackProps> = ({
@@ -33,6 +35,7 @@ export const CardBack: React.FC<CardBackProps> = ({
   isDeleting,
   selectedColor,
   onColorChange,
+  deckAction,
 }) => {
   const t = useTranslations("vocabulary.cardBack");
 
@@ -128,6 +131,7 @@ export const CardBack: React.FC<CardBackProps> = ({
           className="text-foreground"
         />
         <div className="flex items-center gap-1">
+          {isEditMode && deckAction}
           {isEditMode && onDelete && (
             <IconButton
               label={t("delete")}

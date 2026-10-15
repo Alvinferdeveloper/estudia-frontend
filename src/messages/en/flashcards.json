@@ -33,5 +33,11 @@
     "manual": "Written by you",
     "note": "From a note",
     "vocabulary": "From your words"
+  },
+  "words": {
+    "addAll": "Add {count, plural, one {# word} other {# words}} to review",
+    "added": "{count, plural, =0 {Your words were already in review} one {Added # word to review} other {Added # words to review}}",
+    "addOne": "Add to review",
+    "removeOne": "Remove from review"
   }
 }

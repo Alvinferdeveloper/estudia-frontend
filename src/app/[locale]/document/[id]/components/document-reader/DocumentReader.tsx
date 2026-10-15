@@ -31,6 +31,7 @@ import type { SemanticPassage } from "@/app/[locale]/document/[id]/hooks/useSema
 import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document";
 import { useStoredBoolean } from "@/hooks/useStoredBoolean";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
+import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
 import { ExamSetupPanel } from "@/app/[locale]/document/[id]/components/exam/ExamSetupPanel";
 import { SelectionPopup } from "@/app/[locale]/document/[id]/components/document-reader/SelectionPopup";
 import { QuickTranslateBubble } from "@/app/[locale]/document/[id]/components/document-reader/QuickTranslateBubble";
@@ -354,6 +355,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
                                 compact={isChatOpen || exam.enabled}
                                 notes={annotations}
                                 words={vocabularyEntries}
+                                wordsAction={<AddWordsToDeckButton documentId={document.id} className="mx-2 mb-2 justify-start" />}
                                 onNoteSelect={(note) => jumpToHighlight(note.id, false)}
                                 onWordSelect={(word) => jumpToHighlight(word.id, true)}
                                 onSectionSelect={(section) => navigationRef.current?.goToPage(section.pageNumber, section.destination)}

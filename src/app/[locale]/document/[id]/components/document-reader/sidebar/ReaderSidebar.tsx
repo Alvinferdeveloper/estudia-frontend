@@ -35,6 +35,8 @@ interface ReaderSidebarProps {
   compact: boolean;
   notes: Annotation[];
   words: VocabularyEntry[];
+  // Rendered under the saved words list.
+  wordsAction?: React.ReactNode;
   onNoteSelect: (note: SidebarHighlight) => void;
   onWordSelect: (word: SidebarHighlight) => void;
   onSectionSelect: (section: OutlineItem) => void;
@@ -75,6 +77,7 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
   compact,
   notes,
   words,
+  wordsAction,
   onNoteSelect,
   onWordSelect,
   onSectionSelect,
@@ -126,8 +129,11 @@ export const ReaderSidebar: React.FC<ReaderSidebarProps> = ({
           <TabsContent value="notes">
             <HighlightList kind="notes" items={noteItems} currentPage={currentPage} onSelect={onNoteSelect} />
           </TabsContent>
-          <TabsContent value="vocabulary">
-            <HighlightList kind="vocabulary" items={wordItems} currentPage={currentPage} onSelect={onWordSelect} />
+          <TabsContent value="vocabulary" className="flex flex-col">
+            <div className="min-h-0 flex-1">
+              <HighlightList kind="vocabulary" items={wordItems} currentPage={currentPage} onSelect={onWordSelect} />
+            </div>
+            {wordsAction}
           </TabsContent>
           <TabsContent value="search">
             <SearchPanel
