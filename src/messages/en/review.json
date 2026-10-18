@@ -19,9 +19,14 @@
     "noCardsHint": "Create them from a document's cards page.",
     "upToDateTitle": "All caught up",
     "doneTitle": "You reviewed {count, plural, one {# card} other {# cards}}",
-    "nextDue": "The next card is due {when}.",
+    "nextDue": "The next card comes back {when}.",
     "noUpcoming": "No more cards are scheduled."
   },
   "dueCount": "{count, plural, one {# card due} other {# cards due}}",
-  "reviewDue": "Review {count}"
+  "reviewDue": "Review {count}",
+  "waiting": {
+    "title": "The next card comes back in",
+    "hint": "Letting a few minutes pass helps it stick. Wait here or come back later.",
+    "leave": "Stop for now"
+  }
 }

@@ -9,6 +9,7 @@ import { type DueFlashcard, useReviewSummary } from "@/app/[locale]/review/hooks
 import { useReviewSession } from "@/app/[locale]/review/hooks/useReviewSession";
 import { RatingButtons } from "@/app/[locale]/review/components/RatingButtons";
 import { ReviewCaughtUp } from "@/app/[locale]/review/components/ReviewCaughtUp";
+import { ReviewWaiting } from "@/app/[locale]/review/components/ReviewWaiting";
 
 interface ReviewSessionProps {
   dueCards: DueFlashcard[];
@@ -20,11 +21,16 @@ export const ReviewSession: React.FC<ReviewSessionProps> = ({ dueCards, document
   const t = useTranslations("review");
   const tPractice = useTranslations("flashcards.practice");
   const session = useReviewSession(dueCards);
-  const { data: summary } = useReviewSummary(documentId, { enabled: session.current === null });
+  const { data: summary } = useReviewSummary(documentId, { enabled: session.isFinished });
 
-  if (!session.current) {
+  if (session.waitingUntil !== null) {
+    return <ReviewWaiting until={session.waitingUntil} back={back} />;
+  }
+  if (session.isFinished) {
     return <ReviewCaughtUp reviewedCount={session.reviewedCount} summary={summary} back={back} />;
   }
+  // The last rating is still being saved.
+  if (!session.current) return null;
 
   const total = session.reviewedCount + session.remainingCount;
 

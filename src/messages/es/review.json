@@ -19,9 +19,14 @@
     "noCardsHint": "Créalas desde la página de tarjetas de un documento.",
     "upToDateTitle": "Todo al día",
     "doneTitle": "Repasaste {count, plural, one {# tarjeta} other {# tarjetas}}",
-    "nextDue": "La próxima tarjeta vence {when}.",
+    "nextDue": "La próxima tarjeta vuelve {when}.",
     "noUpcoming": "No hay más tarjetas programadas."
   },
   "dueCount": "{count, plural, one {# tarjeta pendiente} other {# tarjetas pendientes}}",
-  "reviewDue": "Repasar {count}"
+  "reviewDue": "Repasar {count}",
+  "waiting": {
+    "title": "La siguiente tarjeta vuelve en",
+    "hint": "Dejar pasar unos minutos ayuda a fijarla. Puedes esperar aquí o volver más tarde.",
+    "leave": "Terminar por ahora"
+  }
 }
