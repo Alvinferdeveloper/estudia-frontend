@@ -27,7 +27,10 @@
       "title": "¿Eliminar esta tarjeta?",
       "description": "La tarjeta se borrará del repaso. Esta acción no se puede deshacer.",
       "confirm": "Eliminar"
-    }
+    },
+    "nextReview": "Repaso {when}",
+    "dueNow": "Pendiente de repaso",
+    "notStarted": "Sin repasar"
   },
   "source": {
     "manual": "Escrita por ti",

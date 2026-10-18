@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowUpRight, Languages, Pencil, PenLine, StickyNote, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
 import { IconButton } from "@/components/ui/icon-button";
@@ -14,6 +14,18 @@ const SOURCE_ICONS: Record<FlashcardSource, React.ComponentType<{ className?: st
   manual: PenLine,
   note: StickyNote,
   vocabulary: Languages,
+};
+
+// Where the card stands in spaced repetition: not started, due, or when it comes back.
+const ReviewStatus: React.FC<{ card: Flashcard }> = ({ card }) => {
+  const t = useTranslations("flashcards.item");
+  const format = useFormatter();
+  const now = new Date();
+  const due = new Date(card.due);
+
+  if (card.state === "new") return <span>{t("notStarted")}</span>;
+  if (due <= now) return <span className="text-foreground">{t("dueNow")}</span>;
+  return <span>{t("nextReview", { when: format.relativeTime(due, now) })}</span>;
 };
 
 interface FlashcardItemProps {
@@ -60,6 +72,8 @@ export const FlashcardItem: React.FC<FlashcardItemProps> = ({ card, onEdit, onDe
               </Link>
             </>
           )}
+          <span aria-hidden>·</span>
+          <ReviewStatus card={card} />
         </p>
       </div>
 

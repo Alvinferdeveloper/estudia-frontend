@@ -27,7 +27,10 @@
       "title": "Delete this card?",
       "description": "The card will be removed from your review. This can't be undone.",
       "confirm": "Delete"
-    }
+    },
+    "nextReview": "Review {when}",
+    "dueNow": "Due for review",
+    "notStarted": "Not reviewed yet"
   },
   "source": {
     "manual": "Written by you",

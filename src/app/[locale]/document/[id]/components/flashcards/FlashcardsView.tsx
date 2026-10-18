@@ -19,6 +19,7 @@ import { FlashcardList } from "@/app/[locale]/document/[id]/components/flashcard
 import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
 import { NoteSourcePicker } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteSourcePicker";
 import { PracticeDeck } from "@/app/[locale]/document/[id]/components/flashcards/components/PracticeDeck";
+import { ReviewDueButton } from "@/app/[locale]/review/components/ReviewDueButton";
 import { StudyPageLayout } from "@/app/[locale]/document/[id]/components/flashcards/components/StudyPageLayout";
 
 type FlashcardsTab = "list" | "practice";
@@ -117,10 +118,13 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
       {cards?.length ? (
         <Tabs value={tab} onValueChange={(value) => setTab(value as FlashcardsTab)} className="mt-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <TabsList className="w-56">
-              <TabsTrigger value="list">{t("practice.listTab")}</TabsTrigger>
-              <TabsTrigger value="practice">{t("practice.tab")}</TabsTrigger>
-            </TabsList>
+            <div className="flex items-center gap-2">
+              <TabsList className="w-56">
+                <TabsTrigger value="list">{t("practice.listTab")}</TabsTrigger>
+                <TabsTrigger value="practice">{t("practice.tab")}</TabsTrigger>
+              </TabsList>
+              <ReviewDueButton documentId={documentId} />
+            </div>
             {tab === "list" && (
               <div className="flex flex-wrap items-center justify-end gap-2">
                 {sourceActions}

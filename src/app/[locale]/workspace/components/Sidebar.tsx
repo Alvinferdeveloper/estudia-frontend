@@ -6,6 +6,7 @@ import { TopicList } from "@/app/[locale]/workspace/components/TopicList";
 import { CreateTopicDialog } from "@/app/[locale]/workspace/components/CreateTopicDialog";
 import { NewMenu } from "@/app/[locale]/workspace/components/NewMenu";
 import { StorageQuota } from "@/app/[locale]/workspace/components/StorageQuota";
+import { ReviewNavLink } from "@/app/[locale]/review/components/ReviewNavLink";
 import { useFetchTopics } from "@/app/[locale]/workspace/hooks/useFetchTopics";
 import { useCreateTopic } from "@/app/[locale]/workspace/hooks/useCreateTopic";
 import { cn } from "@/lib/utils";
@@ -71,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Clock className="h-4 w-4" />
             {t("sidebar.recent")}
           </button>
+          <ReviewNavLink />
         </nav>
 
         <div className="mt-6 flex items-center justify-between px-3">

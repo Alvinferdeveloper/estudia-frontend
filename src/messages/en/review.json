@@ -21,5 +21,7 @@
     "doneTitle": "You reviewed {count, plural, one {# card} other {# cards}}",
     "nextDue": "The next card is due {when}.",
     "noUpcoming": "No more cards are scheduled."
-  }
+  },
+  "dueCount": "{count, plural, one {# card due} other {# cards due}}",
+  "reviewDue": "Review {count}"
 }

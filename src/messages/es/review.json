@@ -21,5 +21,7 @@
     "doneTitle": "Repasaste {count, plural, one {# tarjeta} other {# tarjetas}}",
     "nextDue": "La próxima tarjeta vence {when}.",
     "noUpcoming": "No hay más tarjetas programadas."
-  }
+  },
+  "dueCount": "{count, plural, one {# tarjeta pendiente} other {# tarjetas pendientes}}",
+  "reviewDue": "Repasar {count}"
 }
