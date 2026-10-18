@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Flashcard } from "@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards";
+import { useStudyShortcuts } from "@/app/[locale]/document/[id]/components/flashcards/hooks/useStudyShortcuts";
 
 const shuffle = <T>(items: T[]): T[] => {
   const result = [...items];
@@ -37,27 +38,13 @@ export const usePracticeDeck = (cards: Flashcard[]) => {
     setIsRevealed(false);
   }, [cards]);
 
-  // Space or Enter shows the answer (or moves on once shown); arrows move between cards.
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target instanceof HTMLElement ? event.target : null;
-      // Text fields and the tab list keep their own keys.
-      if (target?.closest("input, textarea, [contenteditable='true'], [role='tablist']") || isFinished) return;
-      if (event.key === " " || event.key === "Enter") {
-        // A focused button or link already acts on these keys.
-        if (target?.closest("button, a")) return;
-        event.preventDefault();
-        if (isRevealed) next();
-        else reveal();
-      } else if (event.key === "ArrowRight") {
-        next();
-      } else if (event.key === "ArrowLeft") {
-        previous();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFinished, isRevealed, next, previous, reveal]);
+  const advance = isRevealed ? next : reveal;
+  // Space or Enter shows the answer, or moves on once it is shown; arrows move between cards.
+  const shortcuts = useMemo(
+    () => ({ " ": advance, Enter: advance, ArrowRight: next, ArrowLeft: previous }),
+    [advance, next, previous]
+  );
+  useStudyShortcuts(shortcuts, !isFinished);
 
   return { current, index, total: order.length, isRevealed, isFinished, reveal, next, previous, restart };
 };

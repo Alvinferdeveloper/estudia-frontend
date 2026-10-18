@@ -93,7 +93,6 @@ const NoteWorkspace: React.FC<NoteWorkspaceProps> = ({
       {existingAnnotation && isMakingCards ? (
         <NoteFlashcardProposals
           annotationId={existingAnnotation.id}
-          documentId={existingAnnotation.documentId}
           onBack={() => setIsMakingCards(false)}
         />
       ) : (

@@ -25,7 +25,6 @@ interface Proposal {
 
 interface NoteFlashcardProposalsProps {
   annotationId: string;
-  documentId: string;
   // Leaves the proposals, after saving or without saving.
   onBack: () => void;
   className?: string;
@@ -34,13 +33,12 @@ interface NoteFlashcardProposalsProps {
 // The AI's cards for a note, each kept, edited or discarded before anything is saved.
 export const NoteFlashcardProposals: React.FC<NoteFlashcardProposalsProps> = ({
   annotationId,
-  documentId,
   onBack,
   className,
 }) => {
   const t = useTranslations("flashcards.note");
   const generate = useGenerateNoteFlashcards();
-  const save = useSaveNoteFlashcards(documentId);
+  const save = useSaveNoteFlashcards();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 

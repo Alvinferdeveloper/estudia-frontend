@@ -1,0 +1,25 @@
+{
+  "title": "Repaso",
+  "allDocuments": "Todos tus documentos",
+  "backToWorkspace": "Volver a mis documentos",
+  "backToFlashcards": "Volver a las tarjetas",
+  "loading": "Cargando el repaso",
+  "remaining": "{count, plural, one {Queda #} other {Quedan #}}",
+  "show": "Mostrar respuesta",
+  "rateLabel": "¿Qué tan bien la recordaste?",
+  "ratings": {
+    "again": "Otra vez",
+    "hard": "Difícil",
+    "good": "Bien",
+    "easy": "Fácil"
+  },
+  "intervalHint": "Volverá en {interval}",
+  "caughtUp": {
+    "noCardsTitle": "Todavía no tienes tarjetas",
+    "noCardsHint": "Créalas desde la página de tarjetas de un documento.",
+    "upToDateTitle": "Todo al día",
+    "doneTitle": "Repasaste {count, plural, one {# tarjeta} other {# tarjetas}}",
+    "nextDue": "La próxima tarjeta vence {when}.",
+    "noUpcoming": "No hay más tarjetas programadas."
+  }
+}

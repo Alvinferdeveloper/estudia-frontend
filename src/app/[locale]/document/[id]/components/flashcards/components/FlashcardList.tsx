@@ -11,15 +11,14 @@ import { FlashcardForm } from "@/app/[locale]/document/[id]/components/flashcard
 import { FlashcardItem } from "@/app/[locale]/document/[id]/components/flashcards/components/FlashcardItem";
 
 interface FlashcardListProps {
-  documentId: string;
   cards: Flashcard[];
 }
 
 // The cards of a document; editing swaps a row for the inline form.
-export const FlashcardList: React.FC<FlashcardListProps> = ({ documentId, cards }) => {
+export const FlashcardList: React.FC<FlashcardListProps> = ({ cards }) => {
   const t = useTranslations("flashcards.form");
-  const updateCard = useUpdateFlashcard(documentId);
-  const deleteCard = useDeleteFlashcard(documentId);
+  const updateCard = useUpdateFlashcard();
+  const deleteCard = useDeleteFlashcard();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const startEditing = (id: string) => {

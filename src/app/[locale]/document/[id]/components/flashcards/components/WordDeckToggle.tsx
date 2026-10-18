@@ -15,7 +15,7 @@ export const WordDeckToggle: React.FC<{ entry: VocabularyEntry }> = ({ entry }) 
   const t = useTranslations("flashcards.words");
   const { data: cards } = useFlashcards(entry.documentId);
   const addWords = useAddWordsToFlashcards(entry.documentId);
-  const deleteCard = useDeleteFlashcard(entry.documentId);
+  const deleteCard = useDeleteFlashcard();
   const card = cards?.find((item) => item.vocabularyEntryId === entry.id);
   const isPending = addWords.isPending || deleteCard.isPending;
 

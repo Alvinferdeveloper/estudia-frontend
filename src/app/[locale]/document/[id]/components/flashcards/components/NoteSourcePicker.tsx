@@ -34,7 +34,6 @@ export const NoteSourcePicker: React.FC<NoteSourcePickerProps> = ({ documentId, 
       {selectedNoteId ? (
         <NoteFlashcardProposals
           annotationId={selectedNoteId}
-          documentId={documentId}
           onBack={() => setSelectedNoteId(null)}
         />
       ) : (

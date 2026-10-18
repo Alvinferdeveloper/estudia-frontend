@@ -11,6 +11,7 @@
     "subscription": "Plans",
     "exams": "Exams",
     "examAttempt": "Exam",
-    "flashcards": "Flashcards"
+    "flashcards": "Flashcards",
+    "review": "Review"
   }
 }

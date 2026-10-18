@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Plus, StickyNote } from "lucide-react";
+import { Plus, StickyNote } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/config/routes";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +19,7 @@ import { FlashcardList } from "@/app/[locale]/document/[id]/components/flashcard
 import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
 import { NoteSourcePicker } from "@/app/[locale]/document/[id]/components/flashcards/components/NoteSourcePicker";
 import { PracticeDeck } from "@/app/[locale]/document/[id]/components/flashcards/components/PracticeDeck";
+import { StudyPageLayout } from "@/app/[locale]/document/[id]/components/flashcards/components/StudyPageLayout";
 
 type FlashcardsTab = "list" | "practice";
 
@@ -85,74 +85,64 @@ export const FlashcardsView = ({ documentId, documentName }: FlashcardsViewProps
   );
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <div className="mx-auto w-full max-w-2xl px-4 pb-16 pt-6">
-        <Button asChild variant="ghost" size="sm" className="-ml-3">
-          <Link href={ROUTES.document(documentId)}>
-            <ArrowLeft className="size-4" />
-            {t("backToDocument")}
-          </Link>
-        </Button>
+    <StudyPageLayout
+      back={{ href: ROUTES.document(documentId), label: t("backToDocument") }}
+      eyebrow={documentName}
+      title={t("title")}
+      subtitle={cards?.length ? t("count", { count: cards.length }) : undefined}
+    >
+      {isLoading && <ListSkeleton label={t("loading")} />}
 
-        <header className="mt-10 border-b border-border pb-6">
-          <p className="truncate text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">{documentName}</p>
-          <h1 className="mt-2 font-serif text-4xl italic leading-tight">{t("title")}</h1>
-          {cards?.length ? <p className="mt-1 text-sm text-muted-foreground">{t("count", { count: cards.length })}</p> : null}
-        </header>
+      {error && <ApiErrorMessage errorKey={getApiErrorKey(error)} className="py-10" />}
 
-        {isLoading && <ListSkeleton label={t("loading")} />}
+      {cards?.length === 0 && (
+        <>
+          {creation}
+          {!isComposing && !isPickingNote && (
+            <div className="py-16">
+              <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
+              <div className="mt-6 flex flex-wrap items-center gap-2">
+                <Button onClick={openComposer}>
+                  <Plus className="size-4" />
+                  {t("newCard")}
+                </Button>
+                {sourceActions}
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
-        {error && <ApiErrorMessage errorKey={getApiErrorKey(error)} className="py-10" />}
-
-        {cards?.length === 0 && (
-          <>
-            {creation}
-            {!isComposing && !isPickingNote && (
-              <div className="py-16">
-                <p className="text-base font-medium text-foreground">{t("empty.title")}</p>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">{t("empty.hint")}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-2">
+      {cards?.length ? (
+        <Tabs value={tab} onValueChange={(value) => setTab(value as FlashcardsTab)} className="mt-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <TabsList className="w-56">
+              <TabsTrigger value="list">{t("practice.listTab")}</TabsTrigger>
+              <TabsTrigger value="practice">{t("practice.tab")}</TabsTrigger>
+            </TabsList>
+            {tab === "list" && (
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {sourceActions}
+                {!isComposing && (
                   <Button onClick={openComposer}>
                     <Plus className="size-4" />
                     {t("newCard")}
                   </Button>
-                  {sourceActions}
-                </div>
+                )}
               </div>
             )}
-          </>
-        )}
+          </div>
 
-        {cards?.length ? (
-          <Tabs value={tab} onValueChange={(value) => setTab(value as FlashcardsTab)} className="mt-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <TabsList className="w-56">
-                <TabsTrigger value="list">{t("practice.listTab")}</TabsTrigger>
-                <TabsTrigger value="practice">{t("practice.tab")}</TabsTrigger>
-              </TabsList>
-              {tab === "list" && (
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  {sourceActions}
-                  {!isComposing && (
-                    <Button onClick={openComposer}>
-                      <Plus className="size-4" />
-                      {t("newCard")}
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <TabsContent value="list">
-              {creation}
-              <FlashcardList documentId={documentId} cards={cards} />
-            </TabsContent>
-            <TabsContent value="practice">
-              <PracticeDeck cards={cards} onExit={() => setTab("list")} />
-            </TabsContent>
-          </Tabs>
-        ) : null}
-      </div>
-    </div>
+          <TabsContent value="list">
+            {creation}
+            <FlashcardList cards={cards} />
+          </TabsContent>
+          <TabsContent value="practice">
+            <PracticeDeck cards={cards} onExit={() => setTab("list")} />
+          </TabsContent>
+        </Tabs>
+      ) : null}
+    </StudyPageLayout>
   );
 };

@@ -1,4 +1,5 @@
 const DOCUMENT_BASE = "/document";
+const REVIEW_BASE = "/review";
 
 export const ROUTES = {
   home: "/",
@@ -6,6 +7,8 @@ export const ROUTES = {
   register: "/register",
   workspace: "/workspace",
   subscription: "/subscription",
+  // Without a document, the review covers all of them.
+  review: (documentId?: string) => (documentId ? `${REVIEW_BASE}?document=${documentId}` : REVIEW_BASE),
   document: (id: string) => `${DOCUMENT_BASE}/${id}`,
   documentPage: (id: string, page: number) => `${DOCUMENT_BASE}/${id}?page=${page}`,
   documentExams: (id: string) => `${DOCUMENT_BASE}/${id}/exams`,
@@ -15,5 +18,5 @@ export const ROUTES = {
 } as const;
 
 // Route groups the middleware guards.
-export const PROTECTED_ROUTE_PREFIXES = [ROUTES.workspace, DOCUMENT_BASE];
+export const PROTECTED_ROUTE_PREFIXES = [ROUTES.workspace, DOCUMENT_BASE, REVIEW_BASE];
 export const AUTH_ROUTES: string[] = [ROUTES.login, ROUTES.register];

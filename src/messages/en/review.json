@@ -1,0 +1,25 @@
+{
+  "title": "Review",
+  "allDocuments": "All your documents",
+  "backToWorkspace": "Back to my documents",
+  "backToFlashcards": "Back to the cards",
+  "loading": "Loading the review",
+  "remaining": "{count} left",
+  "show": "Show answer",
+  "rateLabel": "How well did you remember it?",
+  "ratings": {
+    "again": "Again",
+    "hard": "Hard",
+    "good": "Good",
+    "easy": "Easy"
+  },
+  "intervalHint": "Back in {interval}",
+  "caughtUp": {
+    "noCardsTitle": "You don't have any cards yet",
+    "noCardsHint": "Create them from a document's cards page.",
+    "upToDateTitle": "All caught up",
+    "doneTitle": "You reviewed {count, plural, one {# card} other {# cards}}",
+    "nextDue": "The next card is due {when}.",
+    "noUpcoming": "No more cards are scheduled."
+  }
+}

@@ -5,6 +5,8 @@ import type { VocabularyEntry } from "@/app/types";
 export const FLASHCARD_SOURCES = ["manual", "note", "vocabulary"] as const;
 export type FlashcardSource = (typeof FLASHCARD_SOURCES)[number];
 
+export type FlashcardState = "new" | "learning" | "review" | "relearning";
+
 // Mirrors the API's flashcard entity (estudia-api `Flashcard.entity.ts`).
 export interface Flashcard {
   id: string;
@@ -16,6 +18,9 @@ export interface Flashcard {
   // Markdown.
   back: string;
   pageNumber: number | null;
+  // When spaced repetition shows it next.
+  due: string;
+  state: FlashcardState;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,24 +30,30 @@ export interface FlashcardContent {
   back: string;
 }
 
-export const flashcardsQueryKey = (documentId: string) => ["flashcards", documentId] as const;
+// Every key starts with "flashcards", so any change to cards refreshes lists, summaries and due cards together.
+export const flashcardKeys = {
+  all: ["flashcards"] as const,
+  document: (documentId: string) => ["flashcards", "document", documentId] as const,
+  due: (documentId?: string) => ["flashcards", "due", documentId ?? "all"] as const,
+  summary: (documentId?: string) => ["flashcards", "summary", documentId ?? "all"] as const,
+};
 
 export const useFlashcards = (documentId: string) =>
   useQuery({
-    queryKey: flashcardsQueryKey(documentId),
+    queryKey: flashcardKeys.document(documentId),
     queryFn: async () => {
       const { data } = await api.get<Flashcard[]>(`/documents/${documentId}/flashcards`);
       return data;
     },
   });
 
-const useInvalidateFlashcards = (documentId: string) => {
+const useInvalidateFlashcards = () => {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: flashcardsQueryKey(documentId) });
+  return () => queryClient.invalidateQueries({ queryKey: flashcardKeys.all });
 };
 
 export const useCreateFlashcard = (documentId: string) => {
-  const invalidate = useInvalidateFlashcards(documentId);
+  const invalidate = useInvalidateFlashcards();
   return useMutation({
     mutationFn: async (card: FlashcardContent & { pageNumber?: number }) => {
       const { data } = await api.post<Flashcard>(`/documents/${documentId}/flashcards`, card);
@@ -53,8 +64,8 @@ export const useCreateFlashcard = (documentId: string) => {
   });
 };
 
-export const useUpdateFlashcard = (documentId: string) => {
-  const invalidate = useInvalidateFlashcards(documentId);
+export const useUpdateFlashcard = () => {
+  const invalidate = useInvalidateFlashcards();
   return useMutation({
     mutationFn: async ({ id, ...card }: FlashcardContent & { id: string }) => {
       const { data } = await api.patch<Flashcard>(`/flashcards/${id}`, card);
@@ -65,8 +76,8 @@ export const useUpdateFlashcard = (documentId: string) => {
   });
 };
 
-export const useDeleteFlashcard = (documentId: string) => {
-  const invalidate = useInvalidateFlashcards(documentId);
+export const useDeleteFlashcard = () => {
+  const invalidate = useInvalidateFlashcards();
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/flashcards/${id}`);
@@ -83,7 +94,7 @@ export const wordsOutsideDeck = (words: VocabularyEntry[], cards: Flashcard[]): 
 
 // Omitting the ids adds every saved word of the document that has no card yet.
 export const useAddWordsToFlashcards = (documentId: string) => {
-  const invalidate = useInvalidateFlashcards(documentId);
+  const invalidate = useInvalidateFlashcards();
   return useMutation({
     mutationFn: async (vocabularyEntryIds?: string[]) => {
       const { data } = await api.post<{ added: number }>(`/documents/${documentId}/flashcards/from-vocabulary`, {
@@ -105,8 +116,8 @@ export const useGenerateNoteFlashcards = () =>
     meta: { inlineError: true, refreshesUsage: true },
   });
 
-export const useSaveNoteFlashcards = (documentId: string) => {
-  const invalidate = useInvalidateFlashcards(documentId);
+export const useSaveNoteFlashcards = () => {
+  const invalidate = useInvalidateFlashcards();
   return useMutation({
     mutationFn: async ({ annotationId, cards }: { annotationId: string; cards: FlashcardContent[] }) => {
       const { data } = await api.post<Flashcard[]>(`/annotations/${annotationId}/flashcards`, { cards });

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { Annotation } from '@/app/types';
-import { flashcardsQueryKey } from '@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards';
+import { flashcardKeys } from '@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards';
 
 const fetchAnnotations = async (documentId: string): Promise<Annotation[]> => {
   const { data } = await api.get(`/documents/${documentId}/annotations`);
@@ -69,7 +69,7 @@ export const useDeleteAnnotation = (documentId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['annotations', documentId] });
       // The note's cards stay, detached from it.
-      queryClient.invalidateQueries({ queryKey: flashcardsQueryKey(documentId) });
+      queryClient.invalidateQueries({ queryKey: flashcardKeys.all });
     },
   });
 };

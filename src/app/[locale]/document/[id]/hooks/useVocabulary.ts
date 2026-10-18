@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
-import { flashcardsQueryKey } from '@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards';
+import { flashcardKeys } from '@/app/[locale]/document/[id]/components/flashcards/hooks/useFlashcards';
 import { AnnotationRect, BoundingRect, VocabularyEntry, VocabularyExplanation } from '@/app/types';
 
 const fetchVocabulary = async (documentId: string): Promise<VocabularyEntry[]> => {
@@ -54,7 +54,7 @@ export const useDeleteVocabularyEntry = (documentId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vocabulary', documentId] });
       // The word's card is deleted with it.
-      queryClient.invalidateQueries({ queryKey: flashcardsQueryKey(documentId) });
+      queryClient.invalidateQueries({ queryKey: flashcardKeys.all });
     },
   });
 };
