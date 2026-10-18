@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Kbd } from "@/components/ui/kbd";
 import { ApiErrorMessage } from "@/components/api-error-message";
 import { getApiErrorKey } from "@/lib/api-errors";
 import { cn } from "@/lib/utils";
@@ -106,7 +107,7 @@ export const FlashcardForm: React.FC<FlashcardFormProps> = ({
         </Button>
         <Button type="submit" size="sm" disabled={!canSubmit}>
           {submitLabel}
-          <kbd className="font-sans text-[10px] opacity-60">Ctrl ↵</kbd>
+          <Kbd>Ctrl ↵</Kbd>
         </Button>
       </div>
     </form>

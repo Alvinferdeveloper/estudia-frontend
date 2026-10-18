@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
 import { useDiffReview } from "@/app/[locale]/document/[id]/hooks/useDiffReview";
 import { ChangeHunk, resolveHunk } from "@/app/[locale]/document/[id]/lib/note-diff";
 import { MarkdownRenderer } from "./MarkdownRenderer";
@@ -52,10 +53,6 @@ const DiffRow: React.FC<{ side: keyof typeof DIFF_SIDES; lines: string[] }> = ({
   );
 };
 
-const Shortcut: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <kbd className="font-sans text-[10px] opacity-60">{children}</kbd>
-);
-
 interface DiffHunkProps {
   hunk: ChangeHunk;
   isCurrent: boolean;
@@ -83,14 +80,14 @@ const DiffHunk = ({ hunk, isCurrent, onAccept, onReject, ref }: DiffHunkProps & 
           onClick={onReject}
           className="flex items-center gap-1.5 px-2.5 py-1 text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:bg-accent focus-visible:outline-none"
         >
-          {t("reject")} {isCurrent && <Shortcut>Alt ⌫</Shortcut>}
+          {t("reject")} {isCurrent && <Kbd>Alt ⌫</Kbd>}
         </button>
         <button
           type="button"
           onClick={onAccept}
           className="flex items-center gap-1.5 border-l border-border bg-primary px-2.5 py-1 font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         >
-          {t("accept")} {isCurrent && <Shortcut>Alt ↵</Shortcut>}
+          {t("accept")} {isCurrent && <Kbd>Alt ↵</Kbd>}
         </button>
       </div>
     </section>
