@@ -27,10 +27,10 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ cards }) => {
   };
 
   return (
-    <ul className="divide-y divide-border">
+    <ul className="mt-6 flex flex-col gap-3">
       {cards.map((card) =>
         card.id === editingId ? (
-          <li key={card.id} className="py-4">
+          <li key={card.id}>
             <FlashcardForm
               initial={card}
               submitLabel={t("save")}

@@ -57,7 +57,7 @@ export const PracticeDeck: React.FC<PracticeDeckProps> = ({ cards, onExit }) => 
         </div>
       </DeckProgress>
 
-      <FlashcardSheet card={card} isRevealed={deck.isRevealed} className="mt-6">
+      <FlashcardSheet card={card} isRevealed={deck.isRevealed} cardsBehind={deck.total - deck.index - 1} className="mt-6">
         <div className="flex justify-end">
           <Button onClick={deck.isRevealed ? deck.next : deck.reveal}>
             {deck.isRevealed ? (isLast ? t("finish") : t("next")) : t("show")}

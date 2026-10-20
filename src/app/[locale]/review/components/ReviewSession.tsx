@@ -40,7 +40,12 @@ export const ReviewSession: React.FC<ReviewSessionProps> = ({ dueCards, document
         value={session.reviewedCount / total}
         label={t("remaining", { count: session.remainingCount })}
       />
-      <FlashcardSheet card={session.current} isRevealed={session.isRevealed} className="mt-6">
+      <FlashcardSheet
+        card={session.current}
+        isRevealed={session.isRevealed}
+        cardsBehind={session.remainingCount - 1}
+        className="mt-6"
+      >
         {session.isRevealed ? (
           <RatingButtons preview={session.current.preview} onRate={session.rate} />
         ) : (

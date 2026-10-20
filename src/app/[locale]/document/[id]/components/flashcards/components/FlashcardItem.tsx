@@ -50,10 +50,27 @@ export const FlashcardItem: React.FC<FlashcardItemProps> = ({ card, onEdit, onDe
   };
 
   return (
-    <li className="flex items-start gap-4 py-5">
-      <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-medium leading-snug text-foreground">{card.front}</p>
-        <MarkdownRenderer content={card.back} compact className="mt-1.5 px-0 text-sm text-muted-foreground" />
+    // Two faces of an index card: the question on the sheet, the answer on the shaded side.
+    <li className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex items-start gap-3 py-3 pl-5 pr-3">
+        <p className="min-w-0 flex-1 py-1 text-[15px] font-medium leading-snug text-foreground">{card.front}</p>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <IconButton label={t("item.edit")} size="icon-sm" onClick={onEdit}>
+            <Pencil />
+          </IconButton>
+          <IconButton
+            label={t("item.delete")}
+            size="icon-sm"
+            variant="ghost-destructive"
+            onClick={() => setIsConfirmingDelete(true)}
+          >
+            <Trash2 />
+          </IconButton>
+        </div>
+      </div>
+
+      <div className="border-t border-border bg-muted/50 px-5 py-3.5">
+        <MarkdownRenderer content={card.back} compact className="px-0 text-sm text-foreground/80" />
         <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <SourceIcon aria-hidden className="size-3.5" />
@@ -75,20 +92,6 @@ export const FlashcardItem: React.FC<FlashcardItemProps> = ({ card, onEdit, onDe
           <span aria-hidden>·</span>
           <ReviewStatus card={card} />
         </p>
-      </div>
-
-      <div className="-mr-1.5 flex shrink-0 items-center gap-0.5">
-        <IconButton label={t("item.edit")} size="icon-sm" onClick={onEdit}>
-          <Pencil />
-        </IconButton>
-        <IconButton
-          label={t("item.delete")}
-          size="icon-sm"
-          variant="ghost-destructive"
-          onClick={() => setIsConfirmingDelete(true)}
-        >
-          <Trash2 />
-        </IconButton>
       </div>
 
       <ConfirmDialog
