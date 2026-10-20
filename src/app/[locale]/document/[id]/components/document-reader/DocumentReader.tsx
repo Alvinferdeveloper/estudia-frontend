@@ -33,6 +33,7 @@ import type { PdfDocument } from "@/app/[locale]/document/[id]/lib/pdf-document"
 import { useStoredBoolean } from "@/hooks/useStoredBoolean";
 import { ChatPanel } from "@/app/[locale]/document/[id]/components/document-reader/chat";
 import { AddWordsToDeckButton } from "@/app/[locale]/document/[id]/components/flashcards/components/AddWordsToDeckButton";
+import { SelectionCardPopover, type CardSelection } from "@/app/[locale]/document/[id]/components/flashcards/components/SelectionCardPopover";
 import { ExamSetupPanel } from "@/app/[locale]/document/[id]/components/exam/ExamSetupPanel";
 import { SelectionPopup } from "@/app/[locale]/document/[id]/components/document-reader/SelectionPopup";
 import { QuickTranslateBubble } from "@/app/[locale]/document/[id]/components/document-reader/QuickTranslateBubble";
@@ -181,6 +182,19 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
         setEditingAnnotation(annotation);
         setIsNoteDialogOpen(true);
     };
+
+    // The text and page are kept here: the reader's selection can change while the question is being written.
+    const [cardSelection, setCardSelection] = useState<CardSelection | null>(null);
+
+    const handleCreateCardClick = (fallbackAnchor: Element) => {
+        if (!selectedText) return;
+        setCardSelection({ text: selectedText, pageNumber: selectedPage, anchor: getSelectionAnchor(fallbackAnchor) });
+    };
+
+    const handleCardPopoverClose = useCallback(() => {
+        setCardSelection(null);
+        clearSelection();
+    }, [clearSelection]);
 
     const handleNoteDialogClose = () => {
         setIsNoteDialogOpen(false);
@@ -394,7 +408,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
                                 viewportRef={setReaderViewport}
                                 selectionTip={
                                     <div>
-                                        {selectedText && !exam.enabled && (
+                                        {selectedText && !exam.enabled && !cardSelection && (
                                             <div key={selectedText} className="flex flex-col items-center gap-1.5">
                                                 <QuickTranslateBubble
                                                     translation={quickTranslate.translation}
@@ -406,6 +420,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
                                                     onChatClick={handleAskAboutSelection}
                                                     onCreateNoteClick={handleNoteDialogOpen}
                                                     onExplainClick={handleExplainClick}
+                                                    onCreateCardClick={handleCreateCardClick}
                                                 />
                                             </div>
                                         )}
@@ -487,6 +502,13 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
                 onColorChange={handleVocabularyColorChange}
                 onEntryUpdated={setEditingVocabularyEntry}
                 existingEntry={editingVocabularyEntry}
+            />
+
+            <SelectionCardPopover
+                documentId={document.id}
+                selection={cardSelection}
+                onClose={handleCardPopoverClose}
+                portalContainer={readerViewport}
             />
 
             <VisualQueryPanel

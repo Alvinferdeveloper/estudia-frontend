@@ -1,6 +1,6 @@
 
 import { motion } from "motion/react";
-import { MessageSquare, StickyNote, Languages } from "lucide-react";
+import { MessageSquare, StickyNote, Languages, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ interface SelectionPopupProps {
     onChatClick: () => void;
     onCreateNoteClick: () => void;
     onExplainClick?: (anchor: Element) => void;
+    onCreateCardClick: (anchor: Element) => void;
 }
 
 export const SelectionPopup: React.FC<SelectionPopupProps> = ({
@@ -18,6 +19,7 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
     onChatClick,
     onCreateNoteClick,
     onExplainClick,
+    onCreateCardClick,
 }) => {
     const t = useTranslations("reader.selectionPopup");
 
@@ -64,6 +66,15 @@ export const SelectionPopup: React.FC<SelectionPopupProps> = ({
                     {t("note")}
                 </Button>
             )}
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => onCreateCardClick(e.currentTarget)}
+                className="gap-1.5 text-foreground"
+            >
+                <Layers className="size-3.5" />
+                {t("card")}
+            </Button>
         </motion.div>
     );
 }

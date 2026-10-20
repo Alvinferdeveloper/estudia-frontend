@@ -75,7 +75,8 @@
   "selectionPopup": {
     "chat": "Chat",
     "explain": "Explicar",
-    "note": "Nota"
+    "note": "Nota",
+    "card": "Tarjeta"
   },
   "visualQuery": {
     "title": "Preguntar sobre imagen o fórmula",

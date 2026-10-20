@@ -63,6 +63,11 @@
     "close": "Close",
     "existing": "{count, plural, one {# card} other {# cards}}"
   },
+  "selection": {
+    "title": "Card from page {page}",
+    "ariaLabel": "Create a card from the selected text",
+    "saved": "Card saved"
+  },
   "practice": {
     "listTab": "Cards",
     "tab": "Practice",

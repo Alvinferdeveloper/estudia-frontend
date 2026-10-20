@@ -75,7 +75,8 @@
   "selectionPopup": {
     "chat": "Chat",
     "explain": "Explain",
-    "note": "Note"
+    "note": "Note",
+    "card": "Card"
   },
   "visualQuery": {
     "title": "Ask about an image or formula",

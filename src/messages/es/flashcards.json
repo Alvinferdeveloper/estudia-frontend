@@ -63,6 +63,11 @@
     "close": "Cerrar",
     "existing": "{count, plural, one {# tarjeta} other {# tarjetas}}"
   },
+  "selection": {
+    "title": "Tarjeta de la página {page}",
+    "ariaLabel": "Crear una tarjeta con el texto seleccionado",
+    "saved": "Tarjeta guardada"
+  },
   "practice": {
     "listTab": "Tarjetas",
     "tab": "Practicar",
