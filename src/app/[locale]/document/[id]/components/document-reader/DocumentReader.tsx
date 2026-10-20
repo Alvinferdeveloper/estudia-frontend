@@ -17,6 +17,7 @@ import { useQuickTranslate } from "@/app/[locale]/document/[id]/hooks/useQuickTr
 import { useDocumentLanguages } from "@/app/[locale]/document/[id]/hooks/useDocumentLanguages";
 import { LiveAnchorTarget } from "@/app/[locale]/document/[id]/hooks/useLiveAnchor";
 import { findOverlappingImage } from "@/app/[locale]/document/[id]/lib/region-overlap";
+import { getSelectionAnchor } from "@/app/[locale]/document/[id]/lib/selection-anchor";
 import { ResizeHandle } from "@/components/ui/resize-handle";
 
 import { Header } from "@/app/[locale]/document/[id]/components/document-reader/Header";
@@ -205,12 +206,9 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
     const [vocabularyAnchor, setVocabularyAnchor] = useState<LiveAnchorTarget | null>(null);
     const [readerViewport, setReaderViewport] = useState<HTMLDivElement | null>(null);
 
-    // Anchor to the selected word itself; the popup button is only a fallback if the selection is gone.
     const handleExplainClick = (fallbackAnchor: Element) => {
-        const selection = window.getSelection();
-        const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0).cloneRange() : null;
         setEditingVocabularyEntry(null);
-        setVocabularyAnchor(range ?? fallbackAnchor);
+        setVocabularyAnchor(getSelectionAnchor(fallbackAnchor));
         setIsVocabularyCardOpen(true);
     };
 
