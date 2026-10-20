@@ -83,10 +83,10 @@ export const NoteFlashcardProposals: React.FC<NoteFlashcardProposalsProps> = ({
         {proposals.length > 0 && (
           <>
             <p className="text-sm text-muted-foreground">{t("intro")}</p>
-            <ol className="mt-2 divide-y divide-border">
+            <ol className="mt-4 flex flex-col gap-3">
               {proposals.map((proposal, index) =>
                 index === editingIndex ? (
-                  <li key={index} className="py-4">
+                  <li key={index}>
                     <FlashcardForm
                       initial={proposal.card}
                       submitLabel={t("done")}
@@ -99,49 +99,45 @@ export const NoteFlashcardProposals: React.FC<NoteFlashcardProposalsProps> = ({
                       error={null}
                     />
                   </li>
-                ) : (
+                ) : proposal.discarded ? (
+                  // Discarded: folded down to its question, so it reads as left out.
                   <li
                     key={index}
-                    className={cn(
-                      "flex items-start gap-3 py-4 transition-opacity duration-150 ease-[var(--ease-out)]",
-                      proposal.discarded && "opacity-50"
-                    )}
+                    className="flex items-center gap-3 rounded-xl border border-dashed border-border py-2 pl-5 pr-2 text-muted-foreground"
                   >
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={cn(
-                          "text-[15px] font-medium leading-snug text-foreground",
-                          proposal.discarded && "line-through decoration-muted-foreground/60"
-                        )}
-                      >
+                    <p className="min-w-0 flex-1 truncate text-sm line-through decoration-muted-foreground/60">
+                      {proposal.card.front}
+                    </p>
+                    <Button variant="ghost" size="sm" onClick={() => updateProposal(index, { discarded: false })}>
+                      {t("restore")}
+                    </Button>
+                  </li>
+                ) : (
+                  <li key={index} className="overflow-hidden rounded-xl border border-border bg-card">
+                    <div className="flex items-start gap-3 py-3 pl-5 pr-3">
+                      <p className="min-w-0 flex-1 py-1 text-[15px] font-medium leading-snug text-foreground">
                         {proposal.card.front}
                       </p>
+                      <div className="flex shrink-0 items-center gap-0.5">
+                        <IconButton label={t("edit")} size="icon-sm" onClick={() => setEditingIndex(index)}>
+                          <Pencil />
+                        </IconButton>
+                        <IconButton
+                          label={t("discard")}
+                          size="icon-sm"
+                          variant="ghost-destructive"
+                          onClick={() => updateProposal(index, { discarded: true })}
+                        >
+                          <X />
+                        </IconButton>
+                      </div>
+                    </div>
+                    <div className="border-t border-border bg-muted/50 px-5 py-3.5">
                       <MarkdownRenderer
                         content={proposal.card.back}
                         compact
-                        className="mt-1.5 px-0 text-sm text-muted-foreground"
+                        className="px-0 text-sm text-foreground/80"
                       />
-                    </div>
-                    <div className="-mr-1.5 flex shrink-0 items-center gap-0.5">
-                      {proposal.discarded ? (
-                        <Button variant="ghost" size="sm" onClick={() => updateProposal(index, { discarded: false })}>
-                          {t("restore")}
-                        </Button>
-                      ) : (
-                        <>
-                          <IconButton label={t("edit")} size="icon-sm" onClick={() => setEditingIndex(index)}>
-                            <Pencil />
-                          </IconButton>
-                          <IconButton
-                            label={t("discard")}
-                            size="icon-sm"
-                            variant="ghost-destructive"
-                            onClick={() => updateProposal(index, { discarded: true })}
-                          >
-                            <X />
-                          </IconButton>
-                        </>
-                      )}
                     </div>
                   </li>
                 )
