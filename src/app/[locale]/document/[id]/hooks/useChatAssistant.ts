@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type ChatStatus, type UIMessage } from "ai";
+import { DefaultChatTransport, type ChatStatus } from "ai";
 import { Message } from "@/app/types";
 import { useFetchMessages } from "@/app/[locale]/document/[id]/hooks/useFetchMessages";
-import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
+import { type ChatUIMessage, getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { apiUrl } from "@/lib/api-client";
 import { useRefreshUsage } from "@/app/[locale]/subscription/hooks/useSubscription";
 
@@ -14,7 +14,7 @@ interface UseChatAssistantOptions {
 }
 
 export interface UseChatAssistantReturn {
-  messages: UIMessage[];
+  messages: ChatUIMessage[];
   status: ChatStatus;
   error: Error | undefined;
   isLoadingHistory: boolean;
@@ -26,9 +26,10 @@ export interface UseChatAssistantReturn {
 // useChat builds its Chat (transport + callbacks) once per id, so keying it by conversation keeps them bound to it.
 const DRAFT_CHAT_ID = "draft";
 
-const toUIMessage = (message: Message): UIMessage => ({
+const toUIMessage = (message: Message): ChatUIMessage => ({
   id: message.id,
   role: message.role,
+  metadata: { sources: message.sources ?? [] },
   parts: [{ type: "text", text: message.content }],
 });
 
@@ -53,7 +54,7 @@ export const useChatAssistant = ({
     [conversationId]
   );
 
-  const { messages, sendMessage, setMessages, status, error, regenerate, stop } = useChat({
+  const { messages, sendMessage, setMessages, status, error, regenerate, stop } = useChat<ChatUIMessage>({
     id: conversationId ?? DRAFT_CHAT_ID,
     transport,
     // The server stored both turns and charged (or refunded) the reply; refresh what changed.

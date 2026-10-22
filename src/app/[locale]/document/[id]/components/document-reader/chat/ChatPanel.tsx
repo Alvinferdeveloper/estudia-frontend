@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, History, SquarePen, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { ChatSource } from "@/app/types";
 import type { UseChatSessionReturn } from "@/app/[locale]/document/[id]/hooks/useChatSession";
 import { IconButton } from "@/components/ui/icon-button";
 import { TextQuote } from "@/app/[locale]/document/[id]/components/document-reader/shared/TextQuote";
@@ -16,13 +17,14 @@ import { ConversationHistory } from "./ConversationHistory";
 interface ChatPanelProps {
   session: UseChatSessionReturn;
   onClose: () => void;
+  onSourceSelect: (source: ChatSource) => void;
 }
 
 type PanelView = "chat" | "history";
 
 const viewTransition = "flex min-h-0 flex-1 flex-col animate-in fade-in duration-200 ease-[var(--ease-out)]";
 
-export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
+export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose, onSourceSelect }) => {
   const t = useTranslations("chat");
   const [view, setView] = useState<PanelView>("chat");
   const isBusy = session.status === "submitted" || session.status === "streaming";
@@ -89,6 +91,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ session, onClose }) => {
             emptyState={<ChatEmptyState onPromptSelect={session.send} />}
             onRetry={session.retry}
             onSuggestionSelect={session.send}
+            onSourceSelect={onSourceSelect}
           />
           <div className="shrink-0 px-3 pb-3">
             <PromptComposer

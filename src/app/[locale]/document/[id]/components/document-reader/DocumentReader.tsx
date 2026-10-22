@@ -103,10 +103,11 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
         navigationRef.current?.showTextMatch(result.pageNumber, search.exactQuery, result.occurrence);
     };
 
-    const handlePassageSelect = (passage: SemanticPassage) => {
+    // Semantic search results and chat sources: a passage known by its page and text.
+    const handlePassageSelect = useCallback((passage: Pick<SemanticPassage, "content" | "pageNumber">) => {
         const opening = passage.content.split(/\s+/).slice(0, PASSAGE_OPENING_WORDS).join(" ");
         navigationRef.current?.showTextMatch(passage.pageNumber, opening, 0);
-    };
+    }, []);
 
     const handleViewerReady = useCallback(() => {
         setIsViewerReady(true);
@@ -460,7 +461,7 @@ export const DocumentReader: React.FC<DocumentReaderProps> = ({ document, reques
                             <ResizeHandle />
                             <Panel defaultSize="34" minSize="24" maxSize="50">
                                 <div className="h-full animate-in fade-in slide-in-from-right-4 duration-200 ease-[var(--ease-out)]">
-                                    <ChatPanel session={chat} onClose={() => setIsChatOpen(false)} />
+                                    <ChatPanel session={chat} onClose={() => setIsChatOpen(false)} onSourceSelect={handlePassageSelect} />
                                 </div>
                             </Panel>
                         </>

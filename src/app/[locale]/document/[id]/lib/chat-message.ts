@@ -1,3 +1,9 @@
+import type { UIMessage } from "ai";
+import type { ChatSource } from "@/app/types";
+
+// The server sends a reply's sources as message metadata when the stream starts.
+export type ChatUIMessage = UIMessage<{ sources?: ChatSource[] }>;
+
 export interface ChatContext {
   text: string;
   page: number;
@@ -59,6 +65,16 @@ export const splitAssistantText = (text: string): { content: string; suggestions
 
   return { content: text.slice(0, match.index).trim(), suggestions };
 };
+
+// "[2]" becomes a "#source-2" link when that source exists; "arr[2]" and existing links are left alone.
+const CITATION = /(?<!\w)\[(\d+)\](?!\()/g;
+export const SOURCE_HREF_PREFIX = "#source-";
+
+export const linkCitations = (text: string, sourceCount: number): string =>
+  text.replace(CITATION, (marker, n: string) => {
+    const index = Number(n);
+    return index >= 1 && index <= sourceCount ? `[${n}](${SOURCE_HREF_PREFIX}${n})` : marker;
+  });
 
 export const getMessageText = (message: { parts: Array<{ type: string; text?: string }> }): string =>
   message.parts

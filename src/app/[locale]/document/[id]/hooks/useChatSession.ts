@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ChatStatus, UIMessage } from "ai";
+import type { ChatStatus } from "ai";
 import { Conversation } from "@/app/types";
 import { useConversations } from "@/app/[locale]/document/[id]/hooks/useConversations";
 import { useChatAssistant } from "@/app/[locale]/document/[id]/hooks/useChatAssistant";
-import { ChatContext, composeChatMessage } from "@/app/[locale]/document/[id]/lib/chat-message";
+import { ChatContext, type ChatUIMessage, composeChatMessage } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { toConversationTitle } from "@/app/[locale]/document/[id]/lib/conversation-groups";
 import { type ApiErrorKey, getApiErrorKey } from "@/lib/api-errors";
 
@@ -20,7 +20,7 @@ export interface UseChatSessionReturn {
   conversations: Conversation[];
   isLoadingConversations: boolean;
   activeConversation: Conversation | null;
-  messages: UIMessage[];
+  messages: ChatUIMessage[];
   status: ChatStatus;
   errorKey: ApiErrorKey | null;
   isLoadingHistory: boolean;

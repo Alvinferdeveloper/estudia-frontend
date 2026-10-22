@@ -1,20 +1,24 @@
 import { useEffect } from "react";
-import type { ChatStatus, UIMessage } from "ai";
+import type { ChatStatus } from "ai";
+import type { ChatSource } from "@/app/types";
 import { useStickToBottom } from "@/app/[locale]/document/[id]/hooks/useStickToBottom";
-import { getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
+import { type ChatUIMessage, getMessageText } from "@/app/[locale]/document/[id]/lib/chat-message";
 import { AssistantMessage, AssistantMarkState } from "./AssistantMessage";
 import { UserMessage } from "./UserMessage";
 import type { ApiErrorKey } from "@/lib/api-errors";
 import { ChatError, MessagesSkeleton, PendingReply } from "./ChatStatus";
 
+const NO_SOURCES: ChatSource[] = [];
+
 interface ChatMessageListProps {
-  messages: UIMessage[];
+  messages: ChatUIMessage[];
   status: ChatStatus;
   errorKey: ApiErrorKey | null;
   isLoadingHistory: boolean;
   emptyState: React.ReactNode;
   onRetry: () => void;
   onSuggestionSelect: (suggestion: string) => void;
+  onSourceSelect: (source: ChatSource) => void;
 }
 
 export const ChatMessageList: React.FC<ChatMessageListProps> = ({
@@ -25,6 +29,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
   emptyState,
   onRetry,
   onSuggestionSelect,
+  onSourceSelect,
 }) => {
   const { scrollRef, contentRef, scrollToBottom } = useStickToBottom();
   const lastMessage = messages.at(-1);
@@ -53,9 +58,11 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
         <AssistantMessage
           key={message.id}
           text={text}
+          sources={message.metadata?.sources ?? NO_SOURCES}
           markState={getMarkState(index)}
           showSuggestions={index === messages.length - 1 && status === "ready"}
           onSuggestionSelect={onSuggestionSelect}
+          onSourceSelect={onSourceSelect}
         />
       );
     });

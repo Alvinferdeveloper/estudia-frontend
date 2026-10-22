@@ -42,10 +42,17 @@ export interface Topic {
     count: number;
 }
 
+// A passage an assistant reply was grounded on; the reply cites it as [n], its 1-based position.
+export interface ChatSource {
+    pageNumber: number;
+    content: string;
+}
+
 export interface Message {
     id: string;
     role: 'user' | 'assistant';
     content: string;
+    sources: ChatSource[] | null;
     createdAt: string;
 }
 

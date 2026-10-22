@@ -24,7 +24,8 @@
     }
   },
   "assistantMessage": {
-    "suggestionsLabel": "Suggested questions"
+    "suggestionsLabel": "Suggested questions",
+    "sourceLabel": "Source {number}, page {page}"
   },
   "status": {
     "thinking": "Zocratis is thinking",

@@ -58,6 +58,17 @@ type WithChildren = { children?: ReactNode };
 
 type AnchorProps = WithChildren & { href?: string };
 
+export const MarkdownLink = ({ children, href }: AnchorProps) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-primary underline underline-offset-2 decoration-primary/40 hover:decoration-primary font-medium"
+  >
+    {children}
+  </a>
+);
+
 const MarkdownComponents: Components = {
   // react-markdown v10 no longer flags inline code; only fenced blocks are wrapped in <pre>.
   pre: ({ children }: WithChildren) => {
@@ -101,16 +112,7 @@ const MarkdownComponents: Components = {
     <em className="italic">{children}</em>
   ),
 
-  a: ({ children, href }: AnchorProps) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-primary underline underline-offset-2 decoration-primary/40 hover:decoration-primary font-medium"
-    >
-      {children}
-    </a>
-  ),
+  a: MarkdownLink,
 
   ul: ({ children }: WithChildren) => (
     <ul className="list-disc pl-5 my-3 space-y-1.5 text-foreground/90 marker:text-muted-foreground">
@@ -165,12 +167,15 @@ interface MarkdownRendererProps {
   content: string;
   className?: string;
   compact?: boolean;
+  // Overrides single elements; pass a stable object, since the renderer is memoized.
+  components?: Components;
 }
 
 export const MarkdownRenderer = memo(({
   content,
   className,
-  compact = false
+  compact = false,
+  components,
 }: MarkdownRendererProps) => {
   return (
     <div className={cn(
@@ -181,7 +186,7 @@ export const MarkdownRenderer = memo(({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
-        components={MarkdownComponents}
+        components={components ? { ...MarkdownComponents, ...components } : MarkdownComponents}
       >
         {content}
       </ReactMarkdown>
