@@ -325,7 +325,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({
                                         if (page && page > 1 && page <= viewer.pagesCount) viewer.currentPageNumber = page;
                                         onReadyRef.current?.();
                                     };
-                                    if (viewer.pagesCount > 0) openInitialPage();
+                                    // The library calls utilsRef while rendering; the page change and onReady update the reader's state, so wait until it ends.
+                                    if (viewer.pagesCount > 0) queueMicrotask(openInitialPage);
                                     else viewer.eventBus.on("pagesinit", openInitialPage, { once: true });
                                 }
                             }}
