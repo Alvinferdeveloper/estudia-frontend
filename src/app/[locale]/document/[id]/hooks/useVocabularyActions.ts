@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import {
   useFetchVocabulary,
   useCreateVocabularyEntry,
@@ -26,12 +26,6 @@ export const useVocabularyActions = ({
   const { mutate: createEntryMutation } = useCreateVocabularyEntry(documentId);
   const { mutate: updateEntryMutation } = useUpdateVocabularyEntry(documentId);
   const { mutate: deleteEntryMutation } = useDeleteVocabularyEntry(documentId);
-
-  const [localEntries, setLocalEntries] = useState<VocabularyEntry[]>([]);
-
-  useEffect(() => {
-    setLocalEntries(vocabularyEntries);
-  }, [vocabularyEntries]);
 
   const handleColorChange = useCallback(
     async (entryId: string, color: string) => {
@@ -150,7 +144,7 @@ export const useVocabularyActions = ({
   );
 
   return {
-    vocabularyEntries: localEntries,
+    vocabularyEntries,
     handleColorChange,
     handleSaveEntry,
     handleDeleteEntry,
