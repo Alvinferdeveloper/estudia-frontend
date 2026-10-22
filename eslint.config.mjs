@@ -16,6 +16,7 @@ const RAW_COLOR_PATTERNS = [
   "\\[[^\\]]*(#[0-9a-fA-F]{3}|rgba?\\(|hsla?\\(|oklch\\()",
 ];
 const RAW_COLOR_MESSAGE = "Use a theme token (globals.css, DESIGN.md) instead of a raw color.";
+const NAVIGATION_MESSAGE = "Import Link, useRouter, usePathname and redirect from @/i18n/navigation, which keeps the locale.";
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
@@ -35,6 +36,16 @@ const eslintConfig = [
       "@typescript-eslint/no-empty-object-type": "off",
       "react-hooks/exhaustive-deps": "off",
       "prefer-const": "off",
+      // These drop the locale from the URL; @/i18n/navigation keeps it.
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "next/link", message: NAVIGATION_MESSAGE },
+            { name: "next/navigation", importNames: ["useRouter", "usePathname", "redirect", "permanentRedirect"], message: NAVIGATION_MESSAGE },
+          ],
+        },
+      ],
       "no-restricted-syntax": [
         "error",
         ...RAW_COLOR_PATTERNS.flatMap((pattern) => [
