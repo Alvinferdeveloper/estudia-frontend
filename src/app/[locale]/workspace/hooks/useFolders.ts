@@ -18,22 +18,6 @@ export const useCreateFolder = () => {
   });
 };
 
-const updateFolder = async ({ id, name, color }: { id: string; name: string; color: string }): Promise<Folder> => {
-  const { data } = await api.put(`/folders/${id}`, { name, color });
-  return data;
-};
-
-export const useUpdateFolder = () => {
-  const queryClient = useQueryClient();
-  return useMutation<Folder, Error, { id: string; name: string; color: string }>({
-    mutationFn: updateFolder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['folders'] });
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-    },
-  });
-};
-
 const deleteFolder = async (id: string): Promise<void> => {
   await api.delete(`/folders/${id}`);
 };

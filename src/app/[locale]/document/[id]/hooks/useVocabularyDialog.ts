@@ -13,12 +13,10 @@ export const useVocabularyDialog = ({
 }: UseVocabularyDialogOptions) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [selectedColor, setSelectedColor] = useState(DEFAULT_VOCABULARY_COLOR);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleReset = useCallback(() => {
     setIsFlipped(false);
     setSelectedColor(DEFAULT_VOCABULARY_COLOR);
-    setSaveError(null);
   }, []);
 
   useEffect(() => {
@@ -37,9 +35,6 @@ export const useVocabularyDialog = ({
     setIsFlipped,
     selectedColor,
     setSelectedColor,
-    saveError,
-    setSaveError,
     handleReset,
-    isEditMode: !!existingEntry,
   };
 };

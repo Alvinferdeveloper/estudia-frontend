@@ -8,8 +8,7 @@
     "changeTargetLanguage": "Cambiar idioma de traducción",
     "export": {
       "trigger": "Exportar notas",
-      "anki": "Tarjetas de Anki (.apkg)",
-      "importToAnki": "Importar a la app de Anki"
+      "anki": "Tarjetas de Anki (.apkg)"
     }
   },
   "controls": {

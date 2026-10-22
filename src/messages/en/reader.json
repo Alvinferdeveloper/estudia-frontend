@@ -8,8 +8,7 @@
     "changeTargetLanguage": "Change translation language",
     "export": {
       "trigger": "Export notes",
-      "anki": "Anki flashcards (.apkg)",
-      "importToAnki": "Import into the Anki app"
+      "anki": "Anki flashcards (.apkg)"
     }
   },
   "controls": {

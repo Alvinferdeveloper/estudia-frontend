@@ -11,7 +11,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useExportAnnotations, downloadExport, ExportFormat } from "@/app/[locale]/document/[id]/hooks/useExportAnnotations";
@@ -160,10 +159,6 @@ export const Header: React.FC<HeaderProps> = ({
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleExport("anki")}>
                                 {t("export.anki")}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleExport("anki")} className="text-xs text-muted-foreground">
-                                {t("export.importToAnki")}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
