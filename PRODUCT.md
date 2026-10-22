@@ -18,6 +18,16 @@ Zocratis is a study companion built around the user's own documents. It reads wi
 
 The marketing landing exists to bring students in, but the primary surface is the app: the reader, the workspace and the exam flow.
 
+## Vision
+
+Zocratis aims to become the platform that powers the next generation of scientific breakthroughs: the place where every researcher works, and where every young person and university student feels at home learning and taking their knowledge to the highest level. AI lowers the barrier to doing science and speeds it up, so people and AI can make more advanced discoveries together.
+
+- **A continuous path, not two products:** student → advanced student (thesis) → researcher. Research features grow out of the study core (deep reading anchored to the document, grounded questions, notes, self-testing).
+- **Work across documents:** projects that group many documents, with cross-references and grounded answers that cite every source.
+- **Shared knowledge, like GitHub:** documents with their notes, exams, flashcards and any other work can be shared, reused and forked with attribution, so others learn faster from what someone already understood.
+
+Today the focus is still studying; the vision guides decisions that would be expensive to undo, such as data ownership and what can be shared. The concrete steps live in `ROADMAP.md` ("Research y conocimiento compartido").
+
 ## Brand Personality
 
 **Erudite, serene, precise.**
