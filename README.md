@@ -35,7 +35,7 @@ Zocratis is for:
 
 ## Features
 
-### 📚 Workspace
+### Workspace
 
 Organize everything you study in collections and nested folders, with favorites, grid and list views, and a curated color palette.
 
@@ -44,7 +44,7 @@ Organize everything you study in collections and nested folders, with favorites,
 
 <img width="1918" height="588" alt="image" src="https://github.com/user-attachments/assets/a28ea8af-254f-4568-a594-aba652e05243" />
 
-### 📖 The reader
+### The reader
 
 A PDF reader designed for long study sessions.
 
@@ -60,7 +60,7 @@ A PDF reader designed for long study sessions.
 <img width="1917" height="1030" alt="image" src="https://github.com/user-attachments/assets/4dd8d223-d166-4deb-a98a-6c3095765946" />
 
 
-### 💬 AI chat with citations
+### AI chat with citations
 
 Ask anything about the document. Answers are grounded in the most relevant passages of your PDF, and every claim is cited inline.
 
@@ -72,13 +72,13 @@ Ask anything about the document. Answers are grounded in the most relevant passa
 <img width="1321" height="692" alt="image" src="https://github.com/user-attachments/assets/ac0785a0-ad2a-49a7-9ad0-7ddee25644b5" />
 
 
-### ✍️ AI notes
+### AI notes
 
 Highlight a passage and turn it into a note: an explanation, a summary or your own words. Notes are streamed as they are written, can be refined with a follow-up instruction, and show changes as an editor-style diff before you save them. Each note keeps its highlight color on the page.
 
 <!-- IMAGE: note dialog — a highlighted passage and its generated note -->
 
-### 🌍 Language mode
+### Language mode
 
 For reading in another language:
 
@@ -89,7 +89,7 @@ For reading in another language:
 <img width="530" height="247" alt="image" src="https://github.com/user-attachments/assets/893c60bc-96d7-49cb-ac24-a95af2344831" />
 
 
-### 🧠 Exams: practice and simulation
+### Exams: practice and simulation
 
 Pick the pages you want to be tested on, then choose the question type (multiple choice, true/false, fill in the blank, open answer or mixed), the difficulty and the size (5, 10, 15 or 20 questions). The credit cost is shown before generating.
 
@@ -102,7 +102,7 @@ Pick the pages you want to be tested on, then choose the question type (multiple
 <img width="1382" height="1023" alt="image" src="https://github.com/user-attachments/assets/38257fc8-515f-4aa9-a879-25a4cc64791d" />
 
 
-### 🗂️ Flashcards and spaced repetition
+### Flashcards and spaced repetition
 
 Turn what you study into cards and remember it for good.
 
@@ -117,12 +117,12 @@ Turn what you study into cards and remember it for good.
 <img width="1087" height="957" alt="image" src="https://github.com/user-attachments/assets/9699afd0-20d6-4d41-8c9e-748e79276466" />
 
 
-### 💳 Plans and credits
+### Plans and credits
 
 AI actions spend credits from your plan's allowance, which renews daily on the free plan and monthly on paid plans. The reader shows your balance at all times, and limits always come with their renewal time and a way to upgrade. Payments are handled with PayPal.
 
 
-### 🌗 Built for long sessions
+### Built for long sessions
 
 - Light and dark themes, both designed (dark is not just inverted).
 - Spanish and English interface. The AI answers in the language of your content, independently of the interface language.
