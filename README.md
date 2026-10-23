@@ -13,7 +13,7 @@ Read, ask, take notes and test yourself without ever leaving the PDF.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-<!-- IMAGE: hero screenshot — the reader with a PDF, highlighted notes and the AI chat open -->
+<img width="1918" height="1032" alt="image" src="https://github.com/user-attachments/assets/b7345629-8802-4664-ae45-2b91a85c55cc" />
 
 </div>
 
@@ -42,7 +42,7 @@ Organize everything you study in collections and nested folders, with favorites,
 - **Continue reading:** the last half-read document waits for you at the top, and every document shows how far you have read ("Page 34 of 120 · 28 %").
 - **Plan usage at a glance:** document and storage quotas live in the sidebar, and uploads are blocked before you hit a limit, not after.
 
-<!-- IMAGE: workspace — collections sidebar, folders and documents with reading progress -->
+<img width="1918" height="588" alt="image" src="https://github.com/user-attachments/assets/a28ea8af-254f-4568-a594-aba652e05243" />
 
 ### 📖 The reader
 
@@ -57,7 +57,8 @@ A PDF reader designed for long study sessions.
 - **Notes and vocabulary panel**, grouped by page and searchable; clicking an item jumps straight to its highlight.
 - **Export** your notes as Markdown, PDF, JSON, CSV or an Anki deck (`.apkg`).
 
-<!-- IMAGE: reader — outline/search sidebar on the left, PDF in the center -->
+<img width="1917" height="1030" alt="image" src="https://github.com/user-attachments/assets/4dd8d223-d166-4deb-a98a-6c3095765946" />
+
 
 ### 💬 AI chat with citations
 
@@ -68,7 +69,8 @@ Ask anything about the document. Answers are grounded in the most relevant passa
 - **Saved conversations**, grouped by date, plus suggested follow-up questions after each answer.
 - **Images and formulas:** draw a box around a figure or an equation and ask about it.
 
-<!-- IMAGE: chat panel — an answer with inline citations and the passage preview open -->
+<img width="1321" height="692" alt="image" src="https://github.com/user-attachments/assets/ac0785a0-ad2a-49a7-9ad0-7ddee25644b5" />
+
 
 ### ✍️ AI notes
 
@@ -84,7 +86,8 @@ For reading in another language:
 - **Vocabulary card** for a saved word: meanings, examples with translation, phonetics, commonly confused words and a usage tip.
 - **Personal vocabulary per document**, highlighted on the page, ready to become flashcards.
 
-<!-- IMAGE: language mode — a highlighted word with its vocabulary card -->
+<img width="530" height="247" alt="image" src="https://github.com/user-attachments/assets/893c60bc-96d7-49cb-ac24-a95af2344831" />
+
 
 ### 🧠 Exams: practice and simulation
 
@@ -94,8 +97,10 @@ Pick the pages you want to be tested on, then choose the question type (multiple
 - **Simulation mode:** a real exam. You get a time limit and can move freely between questions. Answers can be changed until you hand in, and the exam submits automatically when time runs out.
 - **History of every exam and attempt:** resume, review, retake or rename. Reloading the page never loses an attempt.
 
-<!-- IMAGE: exam — selecting pages in the reader and the exam setup panel -->
-<!-- IMAGE: exam — results screen of a finished attempt -->
+<img width="1918" height="1023" alt="image" src="https://github.com/user-attachments/assets/18fa91e3-7680-4efa-8f81-304245855abc" />
+
+<img width="1382" height="1023" alt="image" src="https://github.com/user-attachments/assets/38257fc8-515f-4aa9-a879-25a4cc64791d" />
+
 
 ### 🗂️ Flashcards and spaced repetition
 
@@ -109,13 +114,13 @@ Turn what you study into cards and remember it for good.
 - **Free practice:** flip through a document's deck at your own pace.
 - **Spaced repetition (FSRS):** review what is due, rated _Again / Hard / Good / Easy_, with the next interval shown under each option and keyboard shortcuts (`Space`, `1–4`). Review everything at once or one document at a time.
 
-<!-- IMAGE: flashcards — a review session with the rating buttons -->
+<img width="1087" height="957" alt="image" src="https://github.com/user-attachments/assets/9699afd0-20d6-4d41-8c9e-748e79276466" />
+
 
 ### 💳 Plans and credits
 
 AI actions spend credits from your plan's allowance, which renews daily on the free plan and monthly on paid plans. The reader shows your balance at all times, and limits always come with their renewal time and a way to upgrade. Payments are handled with PayPal.
 
-<!-- IMAGE: plans page — plan cards and current usage -->
 
 ### 🌗 Built for long sessions
 
@@ -136,8 +141,6 @@ Zocratis is made of three services:
 | **Parser** | Converts uploaded PDFs to structured Markdown and locates their images | Python, FastAPI, PyMuPDF |
 
 Files and document embeddings are stored in Supabase (Storage + pgvector). AI runs on Google Gemini through the Vercel AI SDK, translation uses DeepL, and every AI call is metered by tokens and cost.
-
-<!-- IMAGE (optional): architecture diagram -->
 
 ---
 
